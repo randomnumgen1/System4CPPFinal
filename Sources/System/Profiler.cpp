@@ -1,5 +1,4 @@
 #include <System/Profiler.h>
-//#include <chrono>
 #include <array>
 #include <string>
 #include <iostream>
