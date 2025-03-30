@@ -1,4 +1,12 @@
 #include <System/Environment/Environment.h>
+#ifdef SYSTEM4CPPX64_WINDOWS_MSVC
+#include <windows.h> 
+#include <cstdint>
+#else
+#include <unistd.h>
+#include <sys/sysinfo.h>
+#include <limits.h>
+#endif 
 namespace System {
 
     int Environment::CurrentProcessId() {

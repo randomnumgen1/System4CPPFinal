@@ -4,14 +4,7 @@
 #if (defined(__x86_64__) || defined(_M_X64)) && defined(_WIN32)
 #define SYSTEM4CPPX64_WINDOWS_MSVC
 #endif
-#ifdef SYSTEM4CPPX64_WINDOWS_MSVC
-#include <windows.h> 
-#include <cstdint>
-#else
-#include <unistd.h>
-#include <sys/sysinfo.h>
-#include <limits.h>
-#endif 
+ 
 #include <string>
 
 namespace System {
