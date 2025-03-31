@@ -13,6 +13,9 @@ namespace System {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
         uint32_t processID = GetCurrentProcessId();
         return processID;
+#else
+        pid_t processID = getpid();
+        return processID;
 #endif	
     }
 
@@ -58,7 +61,7 @@ namespace System {
         return vendor;
 #endif
     }
-     bool Environment::ProcessorHasFeature(CPUFEATURE ProcessorFeature) {
+    bool Environment::ProcessorHasFeature(CPUFEATURE ProcessorFeature) {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
         const int _ecx = 2;
         const int _edx = 3;
@@ -228,7 +231,7 @@ namespace System {
 
 
 
-    uint64_t Environment::TotalPhysicalMemory(MEMFORMAT memory_format)  {
+    uint64_t Environment::TotalPhysicalMemory(MEMFORMAT memory_format) {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
 
         MEMORYSTATUSEX memInfo{};

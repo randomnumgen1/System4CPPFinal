@@ -25,13 +25,14 @@ namespace System {
         static void BeginSample(const char* name);
         static void EndSample();
 
-    private:
+    private: 
         struct Sample {
-            const char* name;
+            const char* name = nullptr; // Initialize to a default value
             std::chrono::high_resolution_clock::time_point start;
-            std::chrono::high_resolution_clock::time_point end;
+            std::chrono::high_resolution_clock::time_point end; 
+            Sample(const char* sampleName = nullptr)
+                : name(sampleName), start(), end() {}
         };
-
         static const int maxSamples = 31;
         static int sampleIndex;
         static std::chrono::high_resolution_clock::time_point currentFrameStart;
