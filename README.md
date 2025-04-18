@@ -9,7 +9,7 @@ Additionally, the code is binary compatible with plugin architectures, guarantee
 
 # Features
 
-+ **Cross-Platform Compatibility**: Works on both Linux, Windows, ARM and x64.
++ **Cross-Platform Compatibility**: Works on Linux, Windows, ARM and x64.
 + **Simplifies Development**: Designed to make developing applications and games easier.
 + **Coding Styles for Portability**: Uses coding styles that allow for effortless porting to other programming languages.
 + **Beginner-Friendly Code**: Ensures the code is easily readable by beginners.
