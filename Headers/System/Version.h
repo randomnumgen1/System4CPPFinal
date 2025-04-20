@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _SYSTEM_VERSION_H
+#define _SYSTEM_VERSION_H
 /*
 Version.h
 Total Size: 8 Bytes
@@ -72,3 +73,4 @@ public:
 };
 
 }
+#endif
