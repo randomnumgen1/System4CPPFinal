@@ -7,6 +7,11 @@ It uses coding styles that allow for effortless porting to other programming lan
 Furthermore, the framework's types are organized so that users can easily understand the structure or class size just by looking at them. 
 Additionally, the code is binary compatible with plugin architectures, guaranteeing that both the plugin and the application consistently interpret the data type layout being shared between them.
 
+# Status
+
+https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
+
+
 # Features
 
 + **Cross-Platform Compatibility**: Works on Linux, Windows, ARM and x64.
