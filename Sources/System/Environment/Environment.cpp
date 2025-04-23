@@ -29,6 +29,7 @@ namespace System {
 #endif			
     }
     std::string Environment::ProcessorBrand() {
+#ifndef SYSTEM4CPPARM_LINUX_GCC		
         uint32_t regs[4] = {};
         std::string brand;
         // Retrieve the brand information in three parts
@@ -46,6 +47,7 @@ namespace System {
         }
 
         return brand;
+#endif	
     }
     std::string Environment::ProcessorVendor() {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
