@@ -73,7 +73,13 @@ namespace System {
         );
     }
     Vector3 Vector3::MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta) {
-        throw std::runtime_error("Not Implemented Error.");
+        Vector3 toVector = target - current;
+        float sqdist = toVector.sqrMagnitude();
+        if (sqdist == 0.0f || sqdist <= maxDistanceDelta * maxDistanceDelta) {
+            return target;
+        }
+        float scaleFactor = maxDistanceDelta / std::sqrt(sqdist);
+        return  (current + toVector * scaleFactor);
     }
     Vector3 Vector3::Normalize(Vector3 value) {
         throw std::runtime_error("Not Implemented Error.");
