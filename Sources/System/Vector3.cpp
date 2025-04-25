@@ -1,0 +1,139 @@
+#include <System/Vector3.h>
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+namespace System {
+    Vector3::Vector3() {
+        this->x = 0.0f; this->y = 0.0f; this->z = 0.0f;
+    }
+    Vector3::Vector3(float x, float y, float z) {
+        this->x = x; this->y = y; this->z = z;
+    }
+
+    /*
+    ----------------------------------------------------------------------------------------
+    Static Methods
+    ----------------------------------------------------------------------------------------
+    */
+
+    float Vector3::Angle(const Vector3 from, const  Vector3 to) {
+        float denominator = (float)std::sqrt(from.sqrMagnitude() * to.sqrMagnitude());
+        if (denominator < kEpsilonNormalSqrt) {
+            return 0.0f;
+        }
+        float dot = std::clamp(Dot(from, to) / denominator, -1.0f, 1.0f);
+        return std::acos(dot) * Rad2Deg;
+    }
+    Vector3 Vector3::ClampMagnitude(const Vector3 vector, const  float maxLength) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::Cross(const Vector3 lhs, const  Vector3 rhs) {
+        return Vector3(
+            (lhs.y * rhs.z) - (lhs.z * rhs.y),
+            (lhs.z * rhs.x) - (lhs.x * rhs.z),
+            (lhs.x * rhs.y) - (lhs.y * rhs.x));
+    }
+    float Vector3::Distance(const Vector3 lhs, const  Vector3 rhs) {
+        return std::sqrt(
+            std::powf(rhs.x - lhs.x, 2) +
+            std::powf(rhs.y - lhs.y, 2) +
+            std::powf(rhs.z - lhs.z, 2)
+        );
+    }
+    float Vector3::Dot(const Vector3 lhs, const  Vector3 rhs) {
+        return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
+    }
+    Vector3 Vector3::Lerp(const Vector3 lhs, const  Vector3 rhs, float t) {
+        t = std::clamp(t, 0.0f, 1.0f);
+        return Vector3(
+            (lhs.x + (t * (rhs.x - lhs.x))),
+            (lhs.y + (t * (rhs.y - lhs.y))),
+            (lhs.z + (t * (rhs.z - lhs.z)))
+        );
+    }
+    Vector3 Vector3::LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t) {
+        return Vector3(
+            (lhs.x + (t * (rhs.x - lhs.x))),
+            (lhs.y + (t * (rhs.y - lhs.y))),
+            (lhs.z + (t * (rhs.z - lhs.z)))
+        );
+    }
+    Vector3 Vector3::Max(const Vector3 lhs, const  Vector3 rhs) {
+        return  Vector3(
+            std::max(lhs.x, rhs.x),
+            std::max(lhs.y, rhs.y),
+            std::max(lhs.z, rhs.z)
+        );
+    }
+    Vector3 Vector3::Min(const Vector3 lhs, const  Vector3 rhs) {
+        return  Vector3(
+            std::min(lhs.x, rhs.x),
+            std::min(lhs.y, rhs.y),
+            std::min(lhs.z, rhs.z)
+        );
+    }
+    Vector3 Vector3::MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::Normalize(Vector3 value) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    void Vector3::OrthoNormalize(Vector3& normal, Vector3& tangent) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::Project(const Vector3 vector, const  Vector3 onNormal) {
+        return (onNormal * (Dot(vector, onNormal) / Dot(onNormal, onNormal)));
+    }
+    Vector3 Vector3::ProjectOnPlane(const Vector3 vector, const  Vector3 planeNormal) {
+        Vector3 projection = Project(vector, planeNormal);
+        return vector - projection;
+
+    }
+    Vector3 Vector3::Reflect(const Vector3 inDirection, const  Vector3 inNormal) {
+        float factor = -2.0f * Dot(inNormal, inDirection);
+        return Vector3{
+            factor * inNormal.x + inDirection.x,
+            factor * inNormal.y + inDirection.y,
+            factor * inNormal.z + inDirection.z
+        };
+    }
+    Vector3 Vector3::RotateTowards(Vector3 current, Vector3 target, float maxRadiansDelta, float maxMagnitudeDelta) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::Scale(const Vector3 a, const  Vector3 b) {
+        return Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+    float Vector3::SignedAngle(Vector3 from, Vector3 to, Vector3 axis) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::Slerp(Vector3 a, Vector3 b, float t) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::SlerpUnclamped(Vector3 lhs, Vector3 rhs, float t) {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    Vector3 Vector3::SmoothDamp() {
+        throw std::runtime_error("Not Implemented Error.");
+    }
+    /*
+    ----------------------------------------------------------------------------------------
+    Normal Methods
+    ----------------------------------------------------------------------------------------
+    */
+    float Vector3::magnitude() const {
+        return std::sqrt(x * x + y * y + z * z);
+    }
+    float Vector3::sqrMagnitude() const {
+        return x * x + y * y + z * z;
+    }
+
+
+
+
+
+
+
+
+
+
+}
