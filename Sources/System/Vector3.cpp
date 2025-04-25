@@ -3,6 +3,21 @@
 #include <cmath>
 #include <stdexcept>
 namespace System {
+ 
+    Vector3 Vector3::back(0.0f, 0.0f, -1.0f);
+    Vector3 Vector3::down(0.0f, -1.0f, 0.0f);
+    Vector3 Vector3::forward(0.0f, 0.0f, 1.0f);
+    Vector3 Vector3::left(-1.0f, 0.0f, 0.0f);
+    Vector3 Vector3::one(1.0f, 1.0f, 1.0f);
+    Vector3 Vector3::right(1.0f, 0.0f, 0.0f);
+    Vector3 Vector3::up(0.0f, 1.0f, 0.0f);
+    Vector3 Vector3::zero(0.0f, 0.0f, 0.0f);
+
+
+
+
+
+
     Vector3::Vector3() {
         this->x = 0.0f; this->y = 0.0f; this->z = 0.0f;
     }
@@ -131,6 +146,11 @@ namespace System {
     }
     float Vector3::sqrMagnitude() const {
         return x * x + y * y + z * z;
+    }
+    void Vector3::Set(float new_x, float new_y, float new_z){
+        x = new_x;
+        y = new_y;
+        z = new_z;
     }
 
 

@@ -19,6 +19,18 @@ namespace System {
 
         static constexpr float  kEpsilon = 0.00001F;
         static constexpr float  kEpsilonNormalSqrt = 1e-15F;
+
+
+        static Vector3 back;
+        static Vector3 down;
+        static Vector3 forward;
+        static Vector3 left;
+        static Vector3 one;
+        static Vector3 right;
+        static Vector3 up;
+        static Vector3 zero;
+
+
         /*
          ----------------------------------------------------------------------------------------
         Constructors
@@ -68,7 +80,7 @@ namespace System {
         */
         float magnitude() const;
         float sqrMagnitude() const;
-
+        void Set(float new_x, float new_y, float new_z);
         /*
         ----------------------------------------------------------------------------------------
         Operators
