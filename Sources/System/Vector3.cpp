@@ -58,13 +58,9 @@ namespace System {
     float Vector3::Dot(const Vector3 lhs, const  Vector3 rhs) {
         return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
     }
-    Vector3 Vector3::Lerp(const Vector3 lhs, const  Vector3 rhs, float t) {
-        t = std::clamp(t, 0.0f, 1.0f);
-        return Vector3(
-            (lhs.x + (t * (rhs.x - lhs.x))),
-            (lhs.y + (t * (rhs.y - lhs.y))),
-            (lhs.z + (t * (rhs.z - lhs.z)))
-        );
+    Vector3 Vector3::Lerp(const Vector3 lhs, const  Vector3 rhs,const float t) {
+       float t1 = std::clamp(t, 0.0f, 1.0f);
+        return LerpUnclamped(lhs,rhs,t1);
     }
     Vector3 Vector3::LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t) {
         return Vector3(

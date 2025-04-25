@@ -57,7 +57,7 @@ namespace System {
         static Vector3 Cross(const Vector3 lhs, const  Vector3 rhs);
         static float Distance(const Vector3 lhs, const  Vector3 rhs);
         static float Dot(const Vector3 lhs, const  Vector3 rhs);
-        static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs, float t);
+        static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs,const float t);
         static Vector3 LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t);
         static Vector3 Max(const Vector3 lhs, const  Vector3 rhs);
         static Vector3 Min(const Vector3 lhs, const  Vector3 rhs);
