@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _SYSTEM_MATRIX4X4_H
+#define _SYSTEM_MATRIX4X4_H
+
 #include <System/Vector4.h>
 #include "Vector3.h"
 #include "Quaternion.h"
@@ -113,3 +115,4 @@ namespace System {
 
 
 }
+#endif
