@@ -21,14 +21,14 @@ namespace System {
         static constexpr float  kEpsilonNormalSqrt = 1e-15F;
 
 
-        static Vector3 back;
-        static Vector3 down;
-        static Vector3 forward;
-        static Vector3 left;
-        static Vector3 one;
-        static Vector3 right;
-        static Vector3 up;
-        static Vector3 zero;
+        static const Vector3 back;
+        static const Vector3 down;
+        static const Vector3 forward;
+        static const Vector3 left;
+        static const Vector3 one;
+        static const Vector3 right;
+        static const Vector3 up;
+        static const Vector3 zero;
 
 
         /*
