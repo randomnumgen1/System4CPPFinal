@@ -23,7 +23,8 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Hashing Algorithms**: We aim to provide support for all officially recognized hashing algorithms, alongside those employed in reputable cryptocurrencies. These algorithms have been rigorously tested and verified for security, offering reliable options for data integrity verification, digital signatures, and more.
 + **Encryption and Public/Private Key Algorithms**: Our encryption capabilities aim to cover a diverse range of official encryption algorithms, as well as those widely adopted in the cryptocurrency space. This ensures secure data transmission and storage through robust public and private key cryptography, safeguarding sensitive information against unauthorized access.
 + **Compression Algorithms**: Our platform aims to support a full spectrum of compression algorithms, enabling efficient data storage without compromising the integrity or accessibility of the information. This feature enhances performance while minimizing resource usage, making it ideal for both local and cloud storage solutions.
-
++ **File and Directory helpers**
++ **Vector2 and various others**
 
 
 
