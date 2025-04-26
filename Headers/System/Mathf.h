@@ -10,13 +10,13 @@ namespace System{
 		Static Methods
 		----------------------------------------------------------------------------------------
 		*/
-		static float Abs(float f);
-		static float Acos(float f);
-		static bool Approximately(float a, float b);
-		static float Asin(float f);
-		static float Atan(float f);
-		static float Atan2(float y, float x);
-		static float Ceil(float f);
+		static float Abs(const float f);
+		static float Acos(const float f);
+		static bool Approximately(const float a, const  float b);
+		static float Asin(const float f);
+		static float Atan(const float f);
+		static float Atan2(const float y, const  float x);
+		static float Ceil(const float f);
 		static int CeilToInt(float f);
 		static float Clamp(float value, float min, float max);
 		static float Clamp01(float value);

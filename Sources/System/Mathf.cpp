@@ -6,26 +6,26 @@
 Static Methods
 ----------------------------------------------------------------------------------------
 */
-float System::Mathf::Abs(float f){
+float System::Mathf::Abs(const float f){
     return std::fabsf(f);
 }
-float System::Mathf::Acos(float f){
+float System::Mathf::Acos(const float f){
     return std::acosf(f);
 }
-bool System::Mathf::Approximately(float a, float b){
+bool System::Mathf::Approximately(const float a, const  float b){
     return false;
 }
-float System::Mathf::Asin(float f){
+float System::Mathf::Asin(const float f){
     return std::asinf(f);
 }
-float System::Mathf::Atan(float f){
+float System::Mathf::Atan(const float f){
     return std::atanf(f);
 }
-float System::Mathf::Atan2(float y, float x){
+float System::Mathf::Atan2(const float y, const  float x){
     return std::atan2f(y,x);
 }
-float System::Mathf::Ceil(float f){
-    return 0.0f;
+float System::Mathf::Ceil(const float f){
+    return std::ceilf(f);
 }
 int System::Mathf::CeilToInt(float f){
     return 0;
@@ -52,7 +52,7 @@ uint16_t System::Mathf::FloatToHalf(float val){
     return 0;
 }
 float System::Mathf::Floor(float f){
-    return 0.0f;
+    return std::floorf(f);
 }
 int System::Mathf::FloorToInt(float f){
     return 0;
@@ -61,10 +61,14 @@ float System::Mathf::HalfToFloat(uint16_t val){
     return 0.0f;
 }
 float System::Mathf::InverseLerp(float a, float b, float value){
-    return 0.0f;
+    if (a != b) {
+        return Mathf::Clamp01((value - a) / (b - a));
+    }else {
+        return 0.0f;
+    }
 }
-bool System::Mathf::IsPowerOfTwo(int value){
-    return false;
+bool System::Mathf::IsPowerOfTwo(int val){
+    return (val & (val - 1)) == 0;
 }
 float System::Mathf::Lerp(float a, float b, float t){
     return 0.0f;
@@ -103,22 +107,22 @@ float System::Mathf::PerlinNoise1D(float x){
     return 0.0f;
 }
 float System::Mathf::PingPong(float t, float length){
-    return 0.0f;
+   return length - Mathf::Abs(Mathf::Repeat(t, length * 2.0f) - length);
 }
 float System::Mathf::Pow(float f, float p){
     return 0.0f;
 }
 float System::Mathf::Repeat(float t, float length){
-    return 0.0f;
+    return Clamp(t - Mathf::Floor(t / length) * length, 0.0f, length);
 }
 float System::Mathf::Round(float f){
-    return 0.0f;
+    return std::roundf(f);
 }
 int System::Mathf::RoundToInt(float f){
     return 0;
 }
 float System::Mathf::Sign(float f){
-    return 0.0f;
+    return f >= 0.0f ? 1.0f : -1.0f;
 }
 float System::Mathf::Sin(float f){
     return std::sinf(f);
