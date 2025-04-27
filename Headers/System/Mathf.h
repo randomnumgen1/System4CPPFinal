@@ -1,10 +1,14 @@
 #include <cstdint>
+#include <corecrt_math_defines.h>
 #ifndef _SYSTEM_MATHF_H
 #define _SYSTEM_MATHF_H
 
 namespace System{
 	struct Mathf{
 		public:
+			static constexpr float PI =  static_cast<float>(M_PI);
+			static constexpr float Deg2Rad = static_cast<float>(M_PI) / 180.0f; 
+			static constexpr float Rad2Deg = 180.0f / static_cast<float>(M_PI);
 		/*
 		----------------------------------------------------------------------------------------
 		Static Methods
