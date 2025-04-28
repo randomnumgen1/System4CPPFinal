@@ -55,7 +55,7 @@ namespace System{
 
 			return mut1;
 		}
-		static int Range1(int minInclusive, int maxExclusive){
+		static int Range(int minInclusive, int maxExclusive){
 			if (maxExclusive - minInclusive == 0) return minInclusive;
 			int64_t minLong = (int64_t)minInclusive;
 			int64_t maxLong = (int64_t)maxExclusive;
@@ -65,19 +65,19 @@ namespace System{
 			else
 				return (int)(minLong + r % (maxLong - minLong));
 		}
-		static float NextFloat1() {
+		static float value() {
 			return ((float)(NextInt() & 0x7FFFFF)) * 1.192093e-07f;
 		}
-		static float NextFloat2() {
+		static float value2() {
 			return ((float)(XORShift() & 0x7FFFFF)) * 1.192093e-07f;
 		}
+#ifdef _SYSTEM_EXPERIIMENTAL
+		static float Range2(float minInclude, float maxExclude) {
+			float r = value();
+			return (1.0f - r) * maxExclude + r * minInclude;
+		}
+#endif	 
 
-
-
-
-		 
-  
-		
 	};
 	uint32_t  System::Random::m_seed[4] = {0,0,0,0};
 }
