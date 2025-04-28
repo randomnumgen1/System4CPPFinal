@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_VECTOR3_H
-#define _SYSTEM_VECTOR3_H
-#include <corecrt_math_defines.h>
+#define _SYSTEM_VECTOR3_H 
 #include <assert.h>
+ 
 //#include <System/Vector2.h>
 
 namespace System {
@@ -15,7 +15,8 @@ namespace System {
                 float z;
             };
         };
-        static constexpr float Rad2Deg = 180.0f / static_cast<float>(M_PI);
+       
+      //  static constexpr float Rad2Deg = 180.0f / static_cast<float>(M_PI);
 
         static constexpr float  kEpsilon = 0.00001F;
         static constexpr float  kEpsilonNormalSqrt = 1e-15F;

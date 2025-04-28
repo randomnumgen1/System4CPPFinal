@@ -1,7 +1,6 @@
-#include <System/Vector3.h>
-#include <algorithm>
-#include <cmath>
+#include <System/Vector3.h> 
 #include <stdexcept>
+#include <System/Mathf.h>
 namespace System {
  
    const Vector3 Vector3::back(0.0f, 0.0f, -1.0f);
@@ -32,12 +31,12 @@ namespace System {
     */
 
     float Vector3::Angle(const Vector3 from, const  Vector3 to) {
-        float denominator = (float)std::sqrt(from.sqrMagnitude() * to.sqrMagnitude());
+        float denominator = (float)System::Mathf::Sqrt(from.sqrMagnitude() * to.sqrMagnitude());
         if (denominator < kEpsilonNormalSqrt) {
             return 0.0f;
         }
-        float dot = std::clamp(Dot(from, to) / denominator, -1.0f, 1.0f);
-        return std::acos(dot) * Rad2Deg;
+        float dot = System::Mathf::Clamp(Dot(from, to) / denominator, -1.0f, 1.0f);
+        return System::Mathf::Acos(dot) * System::Mathf::Rad2Deg;
     }
     Vector3 Vector3::ClampMagnitude(const Vector3 vector, const  float maxLength) {
         throw std::runtime_error("Not Implemented Error.");
@@ -49,17 +48,17 @@ namespace System {
             (lhs.x * rhs.y) - (lhs.y * rhs.x));
     }
     float Vector3::Distance(const Vector3 lhs, const  Vector3 rhs) {
-        return std::sqrt(
-            std::powf(rhs.x - lhs.x, 2) +
-            std::powf(rhs.y - lhs.y, 2) +
-            std::powf(rhs.z - lhs.z, 2)
+        return System::Mathf::Sqrt(
+            System::Mathf::Pow(rhs.x - lhs.x, 2) +
+            System::Mathf::Pow(rhs.y - lhs.y, 2) +
+            System::Mathf::Pow(rhs.z - lhs.z, 2)
         );
     }
     float Vector3::Dot(const Vector3 lhs, const  Vector3 rhs) {
         return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
     }
     Vector3 Vector3::Lerp(const Vector3 lhs, const  Vector3 rhs,const float t) {
-       float t1 = std::clamp(t, 0.0f, 1.0f);
+       float t1 = System::Mathf::Clamp(t, 0.0f, 1.0f);
         return LerpUnclamped(lhs,rhs,t1);
     }
     Vector3 Vector3::LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t) {
@@ -89,7 +88,7 @@ namespace System {
         if (sqdist == 0.0f || sqdist <= maxDistanceDelta * maxDistanceDelta) {
             return target;
         }
-        float scaleFactor = maxDistanceDelta / std::sqrt(sqdist);
+        float scaleFactor = maxDistanceDelta / System::Mathf::Sqrt(sqdist);
         return  (current + toVector * scaleFactor);
     }
     Vector3 Vector3::Normalize(Vector3 value) {
@@ -138,7 +137,7 @@ namespace System {
     ----------------------------------------------------------------------------------------
     */
     float Vector3::magnitude() const {
-        return std::sqrt(x * x + y * y + z * z);
+        return System::Mathf::Sqrt(x * x + y * y + z * z);
     }
     float Vector3::sqrMagnitude() const {
         return x * x + y * y + z * z;
