@@ -1,8 +1,9 @@
 #include <System/Matrix4x4.h>
+#include <stdexcept>
 namespace System {
 
-    const Matrix4x4 Matrix4x4::identity(Vector4(1, 0, 0, 0), Vector4(0, 1, 0, 0), Vector4(0, 0, 1, 0), Vector4(0, 0, 0, 1));
-    const Matrix4x4 Matrix4x4::zero(Vector4(0, 0, 0, 0),Vector4(0, 0, 0, 0),Vector4(0, 0, 0, 0),Vector4(0, 0, 0, 0));
+    const Matrix4x4 Matrix4x4::identity(System::Vector4(1.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 1.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 1.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+    const Matrix4x4 Matrix4x4::zero(System::Vector4(0.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
 
  
@@ -27,13 +28,13 @@ namespace System {
     }
 
     Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar){
-    
+        throw std::runtime_error("Not Implemented Error.");
     }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar){
-        
+        throw std::runtime_error("Not Implemented Error.");
     }
     Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar){
-        
+        throw std::runtime_error("Not Implemented Error.");
     }
     Matrix4x4 Matrix4x4::Rotation(System::Quaternion q){
         // Precalculate coordinate products
