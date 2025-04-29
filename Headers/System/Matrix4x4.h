@@ -10,7 +10,7 @@ namespace System {
         static const Matrix4x4 identity;
         static const Matrix4x4 zero;
 
-
+        //column major
 
 
         // memory layout:
@@ -31,6 +31,7 @@ namespace System {
          Constructors
          ----------------------------------------------------------------------------------------
         */
+        
         Matrix4x4();
         Matrix4x4(System::Vector4 column0, System::Vector4 column1, System::Vector4 column2, System::Vector4 column3);
         /*
@@ -50,6 +51,11 @@ namespace System {
 
 
 
+         /// <summary>
+         /// Switches between row-major and column-major order.
+         /// </summary>
+         /// <returns>The transposed matrix.</returns>
+         Matrix4x4 transpose() const;
 
 
             /*
@@ -87,8 +93,6 @@ namespace System {
 
 
 
-
-         Matrix4x4 transpose() const;
 
 
     };
