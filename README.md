@@ -2,7 +2,7 @@
 > Some classes may be deemed experimental until their usage is fully validated.
 
 # System4CPP
-This cross-platform framework, compatible with Linux, Windows, ARM and x64, is designed to make developing applications and games easier. 
+This cross-platform framework, compatible with Linux, Windows, ARM and x64 and perhaps Android, is designed to make developing applications and games easier. 
 It uses coding styles that allow for effortless porting to other programming languages and ensure the code is beginner-friendly. 
 Furthermore, the framework's types are organized so that users can easily understand the structure or class size just by looking at them. 
 Additionally, the code is binary compatible with plugin architectures, guaranteeing that both the plugin and the application consistently interpret the data type layout being shared between them.
