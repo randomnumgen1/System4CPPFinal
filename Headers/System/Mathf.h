@@ -39,6 +39,7 @@ namespace System{
 		static float LerpUnclamped(float a, float b, float t);
 		static float Log(float f, float p);
 		static float Log10(float f);
+		static float Map(const float originalNumber, const float oldMin, const float oldMax, const float newMin, const float newMax);
 		static float Max(float a, float b);
 		static float Min(float a, float b);
 		static float MoveTowards(float current, float target, float maxDelta);

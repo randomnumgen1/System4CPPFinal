@@ -86,6 +86,12 @@ float System::Mathf::Log(float f, float p){
 float System::Mathf::Log10(float f){
     return std::log10f(f);
 }
+float System::Mathf::Map(const float originalNumber, const float oldMin, const float oldMax, const float newMin, const float newMax){
+    float oldRange = oldMax - oldMin;
+    float newRange = newMax - newMin;
+    float convertedNumber = (((originalNumber - oldMin) * newRange) / oldRange) + newMin;
+    return convertedNumber;
+}
 float System::Mathf::Max(float a, float b){
    return std::fmaxf(a, b);
 }
