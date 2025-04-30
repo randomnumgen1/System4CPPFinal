@@ -36,11 +36,20 @@ Vector2 Vector2::Lerp(const Vector2 lhs, const Vector2 rhs, float t){
     t = System::Mathf::Clamp(t, 0.0f, 1.0f);
     return LerpUnclamped(lhs, rhs, t);
 }
+Vector2 Vector2::Lerp(Vector2 lhs, Vector2 rhs, Vector2 t){
+    return Vector2(
+        (lhs.x + (t.x * (rhs.x - lhs.x))), 
+        (lhs.y + (t.y * (rhs.y - lhs.y)))
+    );
+}
 Vector2 Vector2::LerpUnclamped(const Vector2 lhs, const Vector2 rhs, const float t){
     return Vector2(
         (lhs.x + (t * (rhs.x - lhs.x))),
         (lhs.y + (t * (rhs.y - lhs.y)))
     );
+}
+Vector2 Vector2::InverseLerp(Vector2 a, Vector2 b, Vector2 v){
+    return (v - a) / (b - a);
 }
 Vector2 Vector2::Max(const Vector2 lhs, const Vector2 rhs){
     return  Vector2(
@@ -53,6 +62,12 @@ Vector2 Vector2::Min(const Vector2 lhs, const Vector2 rhs){
         System::Mathf::Min(lhs.x, rhs.x),
         System::Mathf::Min(lhs.y, rhs.y)
     );
+}
+bool Vector2::PointInsideTriangle(Vector2 point, Vector2 a, Vector2 b, Vector2 c,  float aMargin, float bMargin, float cMargin){
+
+}
+Vector2 Vector2::Remap(Vector2 value, Vector2 oldMin, Vector2 oldMax, Vector2 newMin, Vector2 newMax){
+    return Lerp(newMin, newMax, InverseLerp(oldMin, oldMax, value));
 }
 Vector2 Vector2::Scale(const Vector2 a, const Vector2 b){
     return Vector2(a.x * b.x, a.y * b.y);
