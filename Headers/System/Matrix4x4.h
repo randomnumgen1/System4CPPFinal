@@ -59,6 +59,9 @@ namespace System {
          Vector3 MultiplyPoint(const Vector3 point) const;
          Vector3 MultiplyPoint3x4(const Vector3 point) const;
          Vector3 MultiplyVector(const Vector3 vector) const;
+         float determinant() const;
+         Vector4 GetColumn(int index);
+         Vector4 GetRow(int index);
             /*
             ----------------------------------------------------------------------------------------
             Operators

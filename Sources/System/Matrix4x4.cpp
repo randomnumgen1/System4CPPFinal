@@ -133,6 +133,32 @@ namespace System {
         return result;
     }
 
+    float Matrix4x4::determinant() const{
+        return m00 * (m11 * m22 - m12 * m21) - m10 * (m01 * m22 - m02 * m21) + m20 * (m01 * m12 - m02 * m11);
+    }
+    Vector4 Matrix4x4::GetColumn(const int index){
+        if (index < 0 || index > 3) {
+            throw std::out_of_range("Index out of range");
+        }
+        switch (index) {
+            case 0: return Vector4(m00, m10, m20, m30);
+            case 1: return Vector4(m01, m11, m21, m31);
+            case 2: return Vector4(m02, m12, m22, m32);
+            case 3: return Vector4(m03, m13, m23, m33);
+        }
+    }
+    Vector4 Matrix4x4::GetRow(const int index){
+        if (index < 0 || index > 3) {
+            throw std::out_of_range("Index out of range");
+        }
+        switch (index) {
+            case 0: return Vector4(m00, m01, m02, m03);
+            case 1: return Vector4(m10, m11, m12, m13);
+            case 2: return Vector4(m20, m21, m22, m23);
+            case 3: return Vector4(m30, m31, m32, m33);
+        }
+    }
+
  
 
 
