@@ -56,8 +56,9 @@ namespace System {
          /// </summary>
          /// <returns>The transposed matrix.</returns>
          Matrix4x4 transpose() const;
-
-
+         Vector3 MultiplyPoint(const Vector3 point) const;
+         Vector3 MultiplyPoint3x4(const Vector3 point) const;
+         Vector3 MultiplyVector(const Vector3 vector) const;
             /*
             ----------------------------------------------------------------------------------------
             Operators

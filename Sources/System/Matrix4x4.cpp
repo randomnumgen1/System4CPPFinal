@@ -102,6 +102,37 @@ namespace System {
         return result;
     }
 
+    Vector3 Matrix4x4::MultiplyPoint(const Vector3 point) const{
+        Vector3 result;
+        float w = 0.0f;
+        result.x = m00 * point.x +  m01 * point.y +  m02 * point.z +  m03;
+        result.y =  m10 * point.x +  m11 * point.y +  m12 * point.z +  m13;
+        result.z =  m20 * point.x +  m21 * point.y +  m22 * point.z +  m23;
+        w =  m30 * point.x +  m31 * point.y +  m32 * point.z +  m33;
+
+        w = 1.0f / w;
+        result.x *= w;
+        result.y *= w;
+        result.z *= w;
+        return result;
+    }
+
+    Vector3 Matrix4x4::MultiplyPoint3x4(const Vector3 point) const{
+        Vector3 result;
+        result.x = m00 * point.x + m01 * point.y + m02 * point.z + m03;
+        result.y = m10 * point.x + m11 * point.y + m12 * point.z + m13;
+        result.z = m20 * point.x + m21 * point.y + m22 * point.z + m23;
+        return result;
+    }
+
+    Vector3 Matrix4x4::MultiplyVector(const Vector3 vector) const{
+        Vector3 result;
+        result.x = m00 * vector.x + m01 * vector.y + m02 * vector.z;
+        result.y = m10 * vector.x + m11 * vector.y + m12 * vector.z;
+        result.z = m20 * vector.x + m21 * vector.y + m22 * vector.z;
+        return result;
+    }
+
  
 
 
