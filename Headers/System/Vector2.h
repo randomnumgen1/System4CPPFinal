@@ -37,11 +37,20 @@ namespace System {
         static Vector2 Scale(const Vector2 a, const  Vector2 b);
         static float SignedAngle(Vector2 from, Vector2 to);
         void Set(float newX, float newY);
-
-        float magnitude();
-        float SqrMagnitude();
-
-
+        /*
+        ----------------------------------------------------------------------------------------
+        Normal Methods
+        ----------------------------------------------------------------------------------------
+        */
+        float magnitude() const;
+        float SqrMagnitude() const;
+        float MinScalar() const;
+        float MaxScalar() const;
+        /*
+        ----------------------------------------------------------------------------------------
+        Operators
+        ----------------------------------------------------------------------------------------
+        */
         Vector2 operator-(const Vector2& other) const {
             return Vector2{
                 x - other.x,

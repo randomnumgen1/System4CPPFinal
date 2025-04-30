@@ -87,11 +87,17 @@ void Vector2::Set(float newX, float newY){
 
 
 
-float Vector2::magnitude(){
+float Vector2::magnitude() const{
     return System::Mathf::Sqrt(x * x + y * y);
 }
-float Vector2::SqrMagnitude(){
+float Vector2::SqrMagnitude() const{
     return x * x + y * y;
+}
+float Vector2::MinScalar() const{
+    return x < y ? x : y;
+}
+float Vector2::MaxScalar() const{
+    return x > y ? x : y;
 }
 
 
