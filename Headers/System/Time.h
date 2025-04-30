@@ -6,10 +6,13 @@ namespace System {
     struct Time {
     private:
         static float m_deltaTime;
+        static float m_time;
         static std::chrono::steady_clock::time_point lastTime;
     public:
         // The interval in seconds from the last frame to the current one (Read Only).
         static float const& deltaTime;
+        static float const& time;
+
 
         static void startframe() {
             lastTime = std::chrono::high_resolution_clock::now();
@@ -24,8 +27,11 @@ namespace System {
     };
 
     // Static member definitions
-    float Time::m_deltaTime = 42;
+    float Time::m_deltaTime = 0;
+    float Time::m_time = 0;
     std::chrono::steady_clock::time_point Time::lastTime = std::chrono::high_resolution_clock::now();
     float const& Time::deltaTime = Time::m_deltaTime;
+    float const& Time::time = Time::m_time;
+
 }
 #endif
