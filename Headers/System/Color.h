@@ -3,18 +3,18 @@
 
 namespace System {
     class Color {
+    public:
         static const Color black;
         static const Color white;
-
-
         float r, g, b, a;
+       
     
         Color();
-        Color(float r, float g, float b, float a);
+        Color( float r,   float g,   float b,   float a);
     
 
-        static Color Lerp(Color a, Color b, float t);
-        static Color LerpUnclamped(Color a, Color b, float t);
+        static Color Lerp(const  Color lhs, const   Color rhs, const   float t);
+        static Color LerpUnclamped(const  Color lhs, const   Color rhs, const   float t);
 
     };
 }

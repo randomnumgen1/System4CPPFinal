@@ -18,10 +18,10 @@ namespace System {
         this->b = new_b;
         this->a = new_a;
     }
-    Color Color::Lerp(Color lhs, Color rhs, float t) {
+    Color Color::Lerp(const Color lhs, const Color rhs, const float t) {
         return LerpUnclamped(lhs,rhs,System::Mathf::Clamp(t, 0.0f, 1.0f));
     }
-    Color Color::LerpUnclamped(Color lhs, Color rhs, float t){
+    Color Color::LerpUnclamped(const Color lhs, const Color rhs, const float t){
         return Color(
             lhs.r + t * (rhs.r - lhs.r),
             lhs.g + t * (rhs.g - lhs.g),
