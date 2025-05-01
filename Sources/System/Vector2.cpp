@@ -63,8 +63,19 @@ Vector2 Vector2::Min(const Vector2 lhs, const Vector2 rhs){
         System::Mathf::Min(lhs.y, rhs.y)
     );
 }
-bool Vector2::PointInsideTriangle(Vector2 point, Vector2 a, Vector2 b, Vector2 c,  float aMargin, float bMargin, float cMargin){
-
+bool Vector2::PointInsideTriangle(Vector2 point, Vector2 a, Vector2 b, Vector2 c, float aMargin, float bMargin, float cMargin) {
+        Vector2 v0 = c - a;
+        Vector2 v1 = b - a;
+        Vector2 v2 = point - a;
+        float dot00 = Vector2::Dot(v0,v0);
+        float dot01 = Vector2::Dot(v0,v1);
+        float dot02 = Vector2::Dot(v0,v2);
+        float dot11 = Vector2::Dot(v1,v1);
+        float dot12 = Vector2::Dot(v1,v2);
+        float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+        float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+        return (u >= -aMargin && v >= -bMargin && (u + v) <= (1.0f + cMargin));
 }
 Vector2 Vector2::Remap(Vector2 value, Vector2 oldMin, Vector2 oldMax, Vector2 newMin, Vector2 newMax){
     return Lerp(newMin, newMax, InverseLerp(oldMin, oldMax, value));
