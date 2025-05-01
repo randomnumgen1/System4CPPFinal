@@ -57,6 +57,95 @@ namespace System{
 		static float SmoothStep(float from, float to, float t);
 		static float Sqrt(float f);
 		static float Tan(float f);
+		/*
+		 ----------------------------------------------------------------------------------------
+		Tween In
+		 ----------------------------------------------------------------------------------------
+		*/
+		static float TweenCircIn(float from, float to, float t) {
+			return from + (to - from) * (1 - sqrt(1 - t * t));
+		}
+		static float TweenExpoIn(float from, float to, float t) {
+			return from + (to - from) * (t == 0 ? 0 : pow(2, 10 * (t - 1)));
+		}
+		static float TweenQuintIn(float from, float to, float t) {
+			return from + (to - from) * (t * t * t * t * t);
+		}
+		static float TweenQuartIn(float from, float to, float t) {
+			return from + (to - from) * (t * t * t * t);
+		}
+		static float TweenCubicIn(float from, float to, float t) {
+			return from + (to - from) * (t * t * t);
+		}
+		static float TweenQuadIn(float from, float to, float t) {
+			return from + (to - from) * (t * t);
+		}
+		static float TweenSineIn(const float from, const float to, const float t) {
+			return from + (to - from) * (1 - cosf((t * M_PI) / 2));
+		}
+		static float TweenBounceIn(float from, float to, float t) {
+			return from + (to - from) * (1.0f - TweenBounceOut(0.0f, 1.0f, 1.0f - t));
+		}
+		static float TweenBackIn(const float from, const float to, const float t) {
+			const float s = 1.70158f;
+			return from + (to - from) * (t * t * ((s + 1) * t - s));
+		}
+		static float TweenElasticIn(float from, float to, float t) {
+			if (t == 0) return from;
+			if (t == 1) return to;
+			return from + (to - from) * (-pow(2, 10 * (t - 1)) * sin((t * 10 - 0.75) * (2 * M_PI) / 3));
+		}
+		static float TweenEaseIn(const float from, const float to, const float t) {
+			return from + (to - from) * (t * t);
+		}
+		/*
+		 ----------------------------------------------------------------------------------------
+		Tween Out
+		 ----------------------------------------------------------------------------------------
+		*/
+		static float TweenCircOut(float from, float to, float t) {
+			return from + (to - from) * sqrt(1 - pow(t - 1, 2));
+		}
+		static float TweenExpoOut(float from, float to, float t) {
+			return from + (to - from) * (t == 1 ? 1 : 1 - pow(2, -10 * t));
+		}
+		static float TweenQuintOut(float from, float to, float t) {
+			return from + (to - from) * (1 - pow(1 - t, 5));
+		}
+		static float TweenQuartOut(float from, float to, float t) {
+			return from + (to - from) * (1 - pow(1 - t, 4));
+		}
+		static float TweenCubicOut(float from, float to, float t) {
+			return from + (to - from) * (1 - pow(1 - t, 3));
+		}
+		static float TweenQuadOut(float from, float to, float t) {
+			return from + (to - from) * (1 - (1 - t) * (1 - t));
+		}
+		static float TweenSineOut(const float from, const float to,const float t) {
+			return from + (to - from) * sinf((t * M_PI) / 2);
+		}
+		static float TweenBounceOut(float from, float to, float t) {
+			if (t < 0.3636f) return from + (to - from) * (7.5625f * t * t);
+			if (t < 0.7272f) return from + (to - from) * (7.5625f * (t -= 0.5454f) * t + 0.75f);
+			if (t < 0.9090f) return from + (to - from) * (7.5625f * (t -= 0.8181f) * t + 0.9375f);
+			return from + (to - from) * (7.5625f * (t -= 0.9545f) * t + 0.984375f);
+		}
+		static float TweenBackOut(float from, float to, float t) {
+			const float s = 1.70158f;
+			return from + (to - from) * (1 + s * pow(t - 1, 3) + s * (t - 1) * (t - 1));
+		}
+		static float TweenElasticOut(float from, float to, float t) {
+			if (t == 0) return from;
+			if (t == 1) return to;
+			return from + (to - from) * (pow(2, -10 * t) * sin((t * 10 - 0.75) * (2 * M_PI) / 3) + 1);
+		}
+		static float TweenEaseOut(const float from, const float to, const float t) {
+			return from + (to - from) * (1 - (1 - t) * (1 - t));
+		}
+
+
+
+
 
 	};
 }
