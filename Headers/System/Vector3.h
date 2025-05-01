@@ -63,7 +63,12 @@ namespace System {
         static Vector3 Max(const Vector3 lhs, const  Vector3 rhs);
         static Vector3 Min(const Vector3 lhs, const  Vector3 rhs);
         static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta);
-        static Vector3 Normalize(Vector3 value);
+        /// <summary>
+        /// This does not modify the given vector.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>A new vector with the same direction as the original vector but with a magnitude of 1.0.</returns>
+        static Vector3 Normalize(const Vector3 value);
         static void OrthoNormalize(Vector3& normal, Vector3& tangent);
         static Vector3 Project(const Vector3 vector, const  Vector3 onNormal);
         static Vector3 ProjectOnPlane(const Vector3 vector, const  Vector3 planeNormal);
@@ -82,6 +87,15 @@ namespace System {
         float magnitude() const;
         float sqrMagnitude() const;
         void Set(float new_x, float new_y, float new_z);
+        /// <summary>
+        /// Makes this vector have a magnitude of 1.
+        /// </summary>
+        void Normalize();
+        /// <summary>
+        /// This does not modify the given vector.
+        /// </summary>
+        /// <returns></returns>
+        Vector3 normalized();
         /*
         ----------------------------------------------------------------------------------------
         Operators

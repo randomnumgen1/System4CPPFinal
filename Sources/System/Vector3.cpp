@@ -91,8 +91,12 @@ namespace System {
         float scaleFactor = maxDistanceDelta / System::Mathf::Sqrt(sqdist);
         return  (current + toVector * scaleFactor);
     }
-    Vector3 Vector3::Normalize(Vector3 value) {
-        throw std::runtime_error("Not Implemented Error.");
+    Vector3 Vector3::Normalize(const Vector3 value) {
+        double magnitude = value.magnitude();
+        if (magnitude == 0.0) {
+            return value;
+        }
+        return Vector3(value.x / magnitude, value.y / magnitude, value.z / magnitude);
     }
     void Vector3::OrthoNormalize(Vector3& normal, Vector3& tangent) {
         throw std::runtime_error("Not Implemented Error.");
@@ -146,6 +150,19 @@ namespace System {
         x = new_x;
         y = new_y;
         z = new_z;
+    }
+    void Vector3::Normalize(){
+        float magnitude1 = magnitude();
+        if (magnitude1 == 0.0) return; // Prevent division by zero
+        x /= magnitude1;
+        y /= magnitude1;
+        z /= magnitude1;
+    }
+    Vector3 Vector3::normalized(){
+        float magnitude1 = magnitude();
+        if (magnitude1 == 0.0) return *this; // Return original if magnitude is zero
+        return Vector3(x / magnitude1, y / magnitude1, z / magnitude1);
+
     }
 
 
