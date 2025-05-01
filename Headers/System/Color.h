@@ -12,6 +12,10 @@ namespace System {
         Color();
         Color(float r, float g, float b, float a);
     
+
+        static Color Lerp(Color a, Color b, float t);
+        static Color LerpUnclamped(Color a, Color b, float t);
+
     };
 }
 

@@ -1,4 +1,5 @@
 #include <System/Color.h>
+#include <System/Mathf.h>
 namespace System {
     const Color Color::black(0.0f, 0.0f, 0.0f, 1.0f);
     const Color Color::white(1.0f, 1.0f, 1.0f, 1.0f);
@@ -16,6 +17,17 @@ namespace System {
         this->g = new_g;
         this->b = new_b;
         this->a = new_a;
+    }
+    Color Color::Lerp(Color lhs, Color rhs, float t) {
+        return LerpUnclamped(lhs,rhs,System::Mathf::Clamp(t, 0.0f, 1.0f));
+    }
+    Color Color::LerpUnclamped(Color lhs, Color rhs, float t){
+        return Color(
+            lhs.r + t * (rhs.r - lhs.r),
+            lhs.g + t * (rhs.g - lhs.g),
+            lhs.b + t * (rhs.b - lhs.b),
+            lhs.a + t * (rhs.a - lhs.a)
+        );
     }
 
 }
