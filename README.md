@@ -33,3 +33,4 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 # Credits
 
 BigInt - Author: Syed Faheel Ahmad (faheel@live.in)
+glgen  - Author: MetricPanda
