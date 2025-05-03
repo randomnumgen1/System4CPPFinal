@@ -30,6 +30,47 @@ namespace System {
     Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar){
         throw std::runtime_error("Not Implemented Error.");
     }
+    Matrix4x4 Matrix4x4::LookAt2(Vector3 from, Vector3 to, Vector3 up) {
+        Vector3 forward = (to - from).normalized();
+        Vector3 right = Vector3::Cross(up,forward).normalized();
+        Vector3 trueUp = Vector3::Cross(forward,right);
+
+        return {
+            Vector4(right.x, trueUp.x, -forward.x, 0.0f),
+            Vector4(right.y, trueUp.y, -forward.y, 0.0f),
+           Vector4(right.z, trueUp.z, -forward.z, 0.0f),
+          Vector4(-Vector3::Dot(right,from), -Vector3::Dot(trueUp,from), Vector3::Dot(forward,from), 1.0f) 
+        };
+    }
+    Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up){
+        Matrix4x4 m =  Matrix4x4();
+        Vector3 vector = from - to;
+        vector.Normalize();
+
+        Vector3 vector2 = Vector3::Cross(up, vector);
+        vector2.Normalize();
+
+        Vector3 vector3 = Vector3::Cross(vector, vector2);
+
+        m.m00 = vector2.x;
+        m.m01 = vector2.y;
+        m.m02 = vector2.z;
+
+        m.m10 = vector3.x;
+        m.m11 = vector3.y;
+        m.m12 = vector3.z;
+
+        m.m20 = vector.x;
+        m.m21 = vector.y;
+        m.m22 = vector.z;
+
+        m.m03 = -Vector3::Dot(from, vector2);
+        m.m13 = -Vector3::Dot(from, vector3);
+        m.m23 = -Vector3::Dot(from, vector);
+        m.m33 = 1;
+
+        return m;
+    }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar){
         throw std::runtime_error("Not Implemented Error.");
     }
