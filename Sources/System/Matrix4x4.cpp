@@ -1,5 +1,6 @@
 #include <System/Matrix4x4.h>
 #include <stdexcept>
+#include <System/Mathf.h>
 namespace System {
 
     const Matrix4x4 Matrix4x4::identity(System::Vector4(1.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 1.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 1.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -72,10 +73,23 @@ namespace System {
         return m;
     }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar){
-        throw std::runtime_error("Not Implemented Error.");
+        System::Matrix4x4 orthoMatrix = {
+            Vector4(2.0f / (right - left),  0.0f, 0.0f, -(right + left) / (right - left)),
+            Vector4(0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom)),
+            Vector4(0.0f, 0.0f, -2.0f / (zFar - zNear),  -(zFar + zNear) / (zFar - zNear)),
+            Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+        };
+        return orthoMatrix;
     }
     Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar){
-        throw std::runtime_error("Not Implemented Error.");
+        float tanHalfFov = System::Mathf::Tan(fov * 0.5f * (System::Mathf::PI / 180.0f));
+        System::Matrix4x4 perspectiveMatrix = {
+            Vector4(1.0f / (aspect * tanHalfFov), 0.0f, 0.0f, 0.0f),
+            Vector4(0.0f, 1.0f / tanHalfFov, 0.0f, 0.0f),
+            Vector4(0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear),  -2.0f * zFar * zNear / (zFar - zNear)),
+            Vector4(0.0f, 0.0f, -1.0f, 0.0f)
+        };
+        return perspectiveMatrix;
     }
     Matrix4x4 Matrix4x4::Rotation(System::Quaternion q){
         // Precalculate coordinate products
