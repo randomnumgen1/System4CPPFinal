@@ -38,10 +38,13 @@ float System::Mathf::Clamp01(float value){
     return std::clamp(value, 0.0f, 1.0f);
 }
 int System::Mathf::ClosestPowerOfTwo(int value){
-    throw std::runtime_error("Not Implemented Error.");
+    if (value <= 0) return 1;
+    int lower = 1 << (static_cast<int>(std::log2(value)));
+    int upper = lower << 1;
+    return (value - lower < upper - value) ? lower : upper;
 }
 float System::Mathf::Cos(float f){
-    throw std::runtime_error("Not Implemented Error.");
+   return std::cosf(f);
 }
 float System::Mathf::DeltaAngle(float current, float target){
     throw std::runtime_error("Not Implemented Error.");
@@ -72,7 +75,7 @@ bool System::Mathf::IsPowerOfTwo(int val){
     return (val & (val - 1)) == 0;
 }
 float System::Mathf::Lerp(float a, float b, float t){
-    throw std::runtime_error("Not Implemented Error.");
+    return LerpUnclamped(a,b,Clamp(t,0.0f,1.0f));
 }
 float System::Mathf::LerpAngle(float a, float b, float t){
     throw std::runtime_error("Not Implemented Error.");
@@ -105,8 +108,16 @@ float System::Mathf::MoveTowardsAngle(float current, float target, float maxDelt
     throw std::runtime_error("Not Implemented Error.");
 }
 int System::Mathf::NextPowerOfTwo(int value){
-    throw std::runtime_error("Not Implemented Error.");
+    if (value <= 0) return 1;
+    value--; 
+    value |= value >> 1;
+    value |= value >> 2;
+    value |= value >> 4;
+    value |= value >> 8;
+    value |= value >> 16;
+    return value + 1;
 }
+
 float System::Mathf::PerlinNoise(float x, float y){
     throw std::runtime_error("Not Implemented Error.");
 }
@@ -134,8 +145,10 @@ float System::Mathf::Sign(float f){
 float System::Mathf::Sin(float f){
     return std::sinf(f);
 }
-float System::Mathf::SmoothStep(float from, float to, float t){
-    throw std::runtime_error("Not Implemented Error.");
+float System::Mathf::SmoothStep(const float from,const float to, float t){
+    t = std::clamp(t, 0.0f, 1.0f);
+    t = t * t * (3.0f - 2.0f * t);
+    return from + (to - from) * t;
 }
 float System::Mathf::Sqrt(float f){
     return std::sqrtf(f);

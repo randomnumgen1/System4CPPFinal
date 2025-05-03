@@ -54,7 +54,7 @@ namespace System{
 		static int RoundToInt(float f);
 		static float Sign(float f);
 		static float Sin(float f);
-		static float SmoothStep(float from, float to, float t);
+		static float SmoothStep(const float from, const float to, float t);
 		static float Sqrt(float f);
 		static float Tan(float f);
 		static float Radians(float degrees){
