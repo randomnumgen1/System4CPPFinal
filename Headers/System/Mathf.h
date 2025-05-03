@@ -57,6 +57,12 @@ namespace System{
 		static float SmoothStep(float from, float to, float t);
 		static float Sqrt(float f);
 		static float Tan(float f);
+		static float Radians(float degrees){
+			return degrees * (3.141592653589793f / 180.0f);
+		}
+		static float Degrees(float radians) {
+			return radians * (180.0f / 3.141592653589793f);
+		}
 		/*
 		 ----------------------------------------------------------------------------------------
 		Tween In
