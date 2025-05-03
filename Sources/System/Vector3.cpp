@@ -92,8 +92,8 @@ namespace System {
         return  (current + toVector * scaleFactor);
     }
     Vector3 Vector3::Normalize(const Vector3 value) {
-        double magnitude = value.magnitude();
-        if (magnitude == 0.0) {
+        float magnitude = value.magnitude();
+        if (magnitude == 0.0f) {
             return value;
         }
         return Vector3(value.x / magnitude, value.y / magnitude, value.z / magnitude);
