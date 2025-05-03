@@ -102,7 +102,7 @@ namespace System {
     Quaternion System::Quaternion::SlerpUnclamped(Quaternion q1, Quaternion  q2, float t) {
         q1.Normalize();
         q2.Normalize();
-        double dot = (double)q1.x * q2.x + (double)q1.y * q2.y + (double)q1.z * q2.z + (double)q1.w * q2.w;
+        float dot = (float)q1.x * q2.x + (float)q1.y * q2.y + (float)q1.z * q2.z + (float)q1.w * q2.w;
         if (dot < 0.0f) {
             dot *= -1.0f;
             q2.x = -q2.x;
@@ -113,8 +113,8 @@ namespace System {
         if (std::abs(dot) < 1e-10) {
             dot = 1e-10;
         }
-        double angle = Mathf::Acos(dot);
-        double sina = Mathf::Sin(angle);
+        float angle = Mathf::Acos(dot);
+        float sina = Mathf::Sin(angle);
         float st0 = (float)(Mathf::Sin(angle * (1.0f - t)) / sina);
         float st1 = (float)(Mathf::Sin(angle * t) / sina);
 
