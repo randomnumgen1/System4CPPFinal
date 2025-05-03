@@ -81,7 +81,7 @@ namespace System{
 			return from + (to - from) * (t * t);
 		}
 		static float TweenSineIn(const float from, const float to, const float t) {
-			return from + (to - from) * (1 - Cos((t * M_PI) / 2));
+			return from + (to - from) * (1.0f - Cos((t * PI) / 2));
 		}
 		static float TweenBounceIn(float from, float to, float t) {
 			return from + (to - from) * (1.0f - TweenBounceOut(0.0f, 1.0f, 1.0f - t));
@@ -91,9 +91,9 @@ namespace System{
 			return from + (to - from) * (t * t * ((s + 1) * t - s));
 		}
 		static float TweenElasticIn(float from, float to, float t) {
-			if (t == 0) return from;
-			if (t == 1) return to;
-			return from + (to - from) * (-Pow(2, 10 * (t - 1)) * Sin((t * 10 - 0.75) * (2 * M_PI) / 3));
+			if (t == 0.0f) return from;
+			if (t == 1.0f) return to;
+			return from + (to - from) * (-Pow(2.0f, 10.0f * (t - 1.0f)) * Sin((t * 10.0f - 0.75f) * (2.0f * PI) / 3.0f));
 		}
 		static float TweenEaseIn(const float from, const float to, const float t) {
 			return from + (to - from) * (t * t);
@@ -107,7 +107,7 @@ namespace System{
 			return from + (to - from) * Sqrt(1 - Pow(t - 1, 2));
 		}
 		static float TweenExpoOut(float from, float to, float t) {
-			return from + (to - from) * (t == 1 ? 1 : 1 - Pow(2, -10 * t));
+			return from + (to - from) * (t == 1.0f ? 1.0f : 1.0f - Pow(2, -10.0f * t));
 		}
 		static float TweenQuintOut(float from, float to, float t) {
 			return from + (to - from) * (1 - Pow(1 - t, 5));
@@ -122,7 +122,7 @@ namespace System{
 			return from + (to - from) * (1 - (1 - t) * (1 - t));
 		}
 		static float TweenSineOut(const float from, const float to,const float t) {
-			return from + (to - from) * Sin((t * M_PI) / 2);
+			return from + (to - from) * Sin((t * PI) / 2);
 		}
 		static float TweenBounceOut(float from, float to, float t) {
 			if (t < 0.3636f) return from + (to - from) * (7.5625f * t * t);
@@ -135,9 +135,9 @@ namespace System{
 			return from + (to - from) * (1 + s * Pow(t - 1, 3) + s * (t - 1) * (t - 1));
 		}
 		static float TweenElasticOut(float from, float to, float t) {
-			if (t == 0) return from;
-			if (t == 1) return to;
-			return from + (to - from) * (Pow(2, -10 * t) * Sin((t * 10 - 0.75) * (2 * M_PI) / 3) + 1);
+			if (t == 0.0f) return from;
+			if (t == 1.0f) return to;
+			return from + (to - from) * (Pow(2.0f, -10.0f * t) * Sin((t * 10.0f - 0.75f) * (2.0f * PI) / 3.0f) + 1.0f);
 		}
 		static float TweenEaseOut(const float from, const float to, const float t) {
 			return from + (to - from) * (1 - (1 - t) * (1 - t));
