@@ -27,9 +27,16 @@ namespace System {
         m20 = column0.z;  m21 = column1.z;  m22 = column2.z;  m23 = column3.z;
         m30 = column0.w;  m31 = column1.w;  m32 = column2.w;  m33 = column3.w;
     }
-
-    Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar){
-        throw std::runtime_error("Not Implemented Error.");
+    Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar) {
+        float invWidth = 1.0f / (right - left);
+        float invHeight = 1.0f / (top - bottom);
+        float invDepth = 1.0f / (zFar - zNear);
+        return Matrix4x4({
+            Vector4(2.0f * zNear * invWidth, 0.0f, (right + left) * invWidth, 0.0f),
+            Vector4(0.0f, 2.0f * zNear * invHeight, (top + bottom) * invHeight, 0.0f),
+            Vector4(0.0f, 0.0f, (zFar + zNear) * invDepth, 2.0f * zFar * zNear * invDepth),
+            Vector4(0.0f, 0.0f, 1.0f, 0.0f) 
+                         });
     }
     Matrix4x4 Matrix4x4::LookAt2(Vector3 from, Vector3 to, Vector3 up) {
         Vector3 forward = (to - from).normalized();
