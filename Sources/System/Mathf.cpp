@@ -14,7 +14,8 @@ float System::Mathf::Acos(const float f){
     return std::acosf(f);
 }
 bool System::Mathf::Approximately(const float a, const  float b){
-    throw std::runtime_error("Not Implemented Error.");
+    constexpr float epsilon = 1e-6f;
+    return std::fabs(a - b) < epsilon;
 }
 float System::Mathf::Asin(const float f){
     return std::asinf(f);
