@@ -1,7 +1,8 @@
-#include <cstdint>
-#include <corecrt_math_defines.h>
 #ifndef _SYSTEM_MATHF_H
 #define _SYSTEM_MATHF_H
+
+#include <cstdint>
+#include <corecrt_math_defines.h>
 
 namespace System{
 	struct Mathf{

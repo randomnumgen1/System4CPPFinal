@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_VECTOR4_H  
-#define _SYSTEM_VECTOR4_H  
+#define _SYSTEM_VECTOR4_H
+
 namespace System {  
    struct Vector4 {  
    public:  

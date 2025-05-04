@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_COLOR_H
-#define _SYSTEM_COLOR_H 
+#define _SYSTEM_COLOR_H
+
 #include <cassert>
 namespace System {
     class Color {

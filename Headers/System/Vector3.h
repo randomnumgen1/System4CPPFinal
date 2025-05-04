@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_VECTOR3_H
-#define _SYSTEM_VECTOR3_H 
+#define _SYSTEM_VECTOR3_H
+
 #include <assert.h>
  
 //#include <System/Vector2.h>

@@ -1,4 +1,4 @@
-#include "System/Quaternion.h"
+#include <System/Quaternion.h>
 #include <System/Mathf.h>
 #include <stdexcept>
 #include <cmath>

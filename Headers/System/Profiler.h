@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_PROFILER_H
 #define _SYSTEM_PROFILER_H
+
 #include <chrono>
 #if defined(SYSTEM_PROFILER_ENABLED)
 #define SYSTEM_PROFILER_BEGIN_FRAME() System::Profiler::BeginFrame();

@@ -1,6 +1,6 @@
-#pragma once
 #ifndef SYSTEM_ENVIROMENT_H
 #define SYSTEM_ENVIROMENT_H
+
 #if (defined(__x86_64__) || defined(_M_X64)) && defined(_WIN32)
 #define SYSTEM4CPPX64_WINDOWS_MSVC
 #elif (defined(__arm__) || defined(_M_ARM))
