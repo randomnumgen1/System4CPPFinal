@@ -1,5 +1,6 @@
 #ifndef _SYSTEM_RANDOM_H
 #define _SYSTEM_RANDOM_H
+
 #include <cstdint>
 #include <System/Mathf.h>
 /*
@@ -24,7 +25,7 @@ namespace System{
 		static uint32_t& y() { return m_seed[1]; }
 		static uint32_t& z() { return m_seed[2]; }
 		static uint32_t& w() { return m_seed[3]; }
- 		static void InitState(int seed){
+ 		static void InitState(const int seed){
 			m_seed[0] = seed;
 			m_seed[1] = m_seed[0] * 0x6c078965 + 1;
 			m_seed[2] = m_seed[1] * 0x6c078965 + 1;
@@ -42,7 +43,7 @@ namespace System{
 			return w();
 
 		}
-		static uint32_t  NextInt() {
+		static uint32_t NextInt() {
 			uint32_t mut1 = (m_seed[0] << 11) ^ m_seed[0];
 
 			m_seed[0] = m_seed[1];
@@ -55,7 +56,7 @@ namespace System{
 
 			return mut1;
 		}
-		static int Range(int minInclusive, int maxExclusive){
+		static int Range(const int minInclusive, const int maxExclusive){
 			if (maxExclusive - minInclusive == 0) return minInclusive;
 			int64_t minLong = (int64_t)minInclusive;
 			int64_t maxLong = (int64_t)maxExclusive;
@@ -71,13 +72,13 @@ namespace System{
 		static float value2() {
 			return ((float)(XORShift() & 0x7FFFFF)) * 1.192093e-07f;
 		}
-#ifdef _SYSTEM_EXPERIIMENTAL
-		static float Range2(float minInclude, float maxExclude) {
-			float r = value();
-			return (1.0f - r) * maxExclude + r * minInclude;
+#ifdef _SYSTEM_EXPERIIMENTAL 
+		static float Ranged(const float minInclusive, const float maxInclusive) {
+			// Assume value() returns [0,1]
+			float result = value2();
+			return (1.0f - result) * maxInclusive + result * minInclusive;
 		}
 #endif	 
-
 	};
 	uint32_t  System::Random::m_seed[4] = {0,0,0,0};
 }
