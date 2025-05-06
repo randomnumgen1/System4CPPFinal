@@ -1,9 +1,9 @@
 #ifndef _SYSTEM_MATRIX4X4_H
 #define _SYSTEM_MATRIX4X4_H
 
-#include <System/Vector4.h>
-#include <System/Vector3.h>
-#include <System/Quaternion.h>
+#include <System/Vector4.hpp>
+#include <System/Vector3.hpp>
+#include <System/Quaternion.hpp>
 namespace System {
     struct Matrix4x4 {
 
