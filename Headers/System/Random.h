@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <System/Mathf.h>
+#include <System/Vector2.h>
 /*
  Random.h
  IMPORTANT: DO NOT USE THIS FOR SECURITY OR CRYPTOGRAPHY
@@ -56,6 +57,13 @@ namespace System{
 
 			return mut1;
 		}
+
+		static float value() {
+			return ((float)(NextInt() & 0x7FFFFF)) * 1.192093e-07f;
+		}
+		static float value2() {
+			return ((float)(XORShift() & 0x7FFFFF)) * 1.192093e-07f;
+		}
 		static int Range(const int minInclusive, const int maxExclusive){
 			if (maxExclusive - minInclusive == 0) return minInclusive;
 			int64_t minLong = (int64_t)minInclusive;
@@ -66,17 +74,20 @@ namespace System{
 			else
 				return (int)(minLong + r % (maxLong - minLong));
 		}
-		static float value() {
-			return ((float)(NextInt() & 0x7FFFFF)) * 1.192093e-07f;
-		}
-		static float value2() {
-			return ((float)(XORShift() & 0x7FFFFF)) * 1.192093e-07f;
-		}
-#ifdef _SYSTEM_EXPERIIMENTAL 
-		static float Ranged(const float minInclusive, const float maxInclusive) {
+		static float Range(const float minInclusive, const float maxInclusive) {
 			// Assume value() returns [0,1]
 			float result = value2();
 			return (1.0f - result) * maxInclusive + result * minInclusive;
+		}
+#ifdef _SYSTEM_EXPERIIMENTAL 
+
+		static System::Vector2 InsideUnitCircle(){
+			float rad = Range(0.0f, Mathf::PI * 2.0f);
+			float x = Mathf::Cos(rad);
+			float y = Mathf::Sin(rad);
+			float ze = Range(0.0f, 1.0f);
+			float d = Mathf::Sqrt(ze);
+			return Vector2(x * d, y * d);
 		}
 #endif	 
 	};
