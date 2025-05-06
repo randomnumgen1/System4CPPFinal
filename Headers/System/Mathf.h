@@ -59,10 +59,12 @@ namespace System{
 		static float Sqrt(float f);
 		static float Tan(float f);
 		static float Radians(float degrees){
-			return degrees * (3.141592653589793f / 180.0f);
+			const float calc = (3.141592653589793f / 180.0f); 
+			return degrees * calc;
 		}
 		static float Degrees(float radians) {
-			return radians * (180.0f / 3.141592653589793f);
+			const float calc = (180.0f / 3.141592653589793f);
+			return radians * calc;
 		}
 		/*
 		 ----------------------------------------------------------------------------------------
