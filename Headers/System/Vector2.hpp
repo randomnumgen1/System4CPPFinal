@@ -1,6 +1,6 @@
 #ifndef _SYSTEM_VECTOR2_H
 #define _SYSTEM_VECTOR2_H
-
+#include <cassert>
 namespace System {
     struct Vector2 {
     public:
@@ -52,10 +52,17 @@ namespace System {
         Operators
         ----------------------------------------------------------------------------------------
         */
+
         Vector2 operator-(const Vector2& other) const {
             return Vector2{
                 x - other.x,
                 y - other.y
+            };
+        }
+        Vector2 operator+(const Vector2& other) const {
+            return Vector2{
+                x + other.x,
+                y + other.y
             };
         }
         Vector2 operator/(const Vector2& other) const {
@@ -64,6 +71,20 @@ namespace System {
                 y / other.y
             };
         }
+        Vector2 operator*(const Vector2& other) const {
+            return Vector2{
+                x * other.x,
+                y * other.y
+            };
+        }
+        Vector2 operator*(float scalar) const {
+            return Vector2{
+                x * scalar,
+                y * scalar
+            };
+        }
+        inline float operator[](int i) const { assert((i >= 0) && (i < 2)); return (&x)[i]; }
+        inline float& operator[](int i) { assert((i >= 0) && (i < 1)); return (&x)[i]; }
     };
 }
 #endif
