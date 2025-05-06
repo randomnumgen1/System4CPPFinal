@@ -207,6 +207,8 @@ namespace System {
             case 1: return Vector4(m01, m11, m21, m31);
             case 2: return Vector4(m02, m12, m22, m32);
             case 3: return Vector4(m03, m13, m23, m33);
+            default:
+                throw std::out_of_range("Index out of range");
         }
     }
     Vector4 Matrix4x4::GetRow(const int index){
@@ -218,6 +220,8 @@ namespace System {
             case 1: return Vector4(m10, m11, m12, m13);
             case 2: return Vector4(m20, m21, m22, m23);
             case 3: return Vector4(m30, m31, m32, m33);
+            default:
+                throw std::out_of_range("Index out of range");
         }
     }
 
