@@ -110,8 +110,8 @@ namespace System {
             q2.z = -q2.z;
             q2.w = -q2.w;
         }
-        if (std::abs(dot) < 1e-10) {
-            dot = 1e-10;
+        if (std::abs(dot) < 1e-10f) {
+            dot = 1e-10f;
         }
         float angle = Mathf::Acos(dot);
         float sina = Mathf::Sin(angle);
