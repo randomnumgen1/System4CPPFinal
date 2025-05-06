@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_QUATERNION_H
 #define _SYSTEM_QUATERNION_H
 
-#include <System/Vector3.h> 
+#include <System/Vector3.hpp> 
 namespace System {
     struct Quaternion {
     public:
