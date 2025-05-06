@@ -1,5 +1,5 @@
 #include <System/Color.h>
-#include <System/Mathf.h>
+#include <System/Mathf.hpp>
 namespace System {
     const Color Color::black(0.0f, 0.0f, 0.0f, 1.0f);
     const Color Color::white(1.0f, 1.0f, 1.0f, 1.0f);

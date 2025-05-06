@@ -1,6 +1,6 @@
-#include <System/Matrix4x4.h>
+#include <System/Matrix4x4.hpp>
 #include <stdexcept>
-#include <System/Mathf.h>
+#include <System/Mathf.hpp>
 namespace System {
 
     const Matrix4x4 Matrix4x4::identity(System::Vector4(1.0f, 0.0f, 0.0f, 0.0f), System::Vector4(0.0f, 1.0f, 0.0f, 0.0f), System::Vector4(0.0f, 0.0f, 1.0f, 0.0f), System::Vector4(0.0f, 0.0f, 0.0f, 1.0f));

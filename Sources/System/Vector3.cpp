@@ -1,6 +1,6 @@
-#include <System/Vector3.h> 
+#include <System/Vector3.hpp> 
 #include <stdexcept>
-#include <System/Mathf.h>
+#include <System/Mathf.hpp>
 namespace System {
  
    const Vector3 Vector3::back(0.0f, 0.0f, -1.0f);

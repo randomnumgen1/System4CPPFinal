@@ -1,5 +1,5 @@
-#include <System/Vector4.h>
-#include <System/Mathf.h>
+#include <System/Vector4.hpp>
+#include <System/Mathf.hpp>
 #include <stdexcept>
 System::Vector4::Vector4(){
     this->x = 0.0f; this->y = 0.0f; this->z = 0.0f; this->w = 0.0f;

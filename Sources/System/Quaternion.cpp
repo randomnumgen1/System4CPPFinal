@@ -1,5 +1,5 @@
-#include <System/Quaternion.h>
-#include <System/Mathf.h>
+#include <System/Quaternion.hpp>
+#include <System/Mathf.hpp>
 #include <stdexcept>
 #include <cmath>
 namespace System {

@@ -1,4 +1,4 @@
-#include <System/Profiler.h>
+#include <System/Profiler.hpp>
 #include <array>
 #include <string>
 #include <iostream>

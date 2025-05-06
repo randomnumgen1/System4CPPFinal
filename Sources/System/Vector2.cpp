@@ -1,5 +1,5 @@
-#include <System/Vector2.h>
-#include <System/Mathf.h>
+#include <System/Vector2.hpp>
+#include <System/Mathf.hpp>
 
 namespace System {
 
