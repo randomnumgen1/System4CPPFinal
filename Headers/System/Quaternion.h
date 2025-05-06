@@ -58,7 +58,9 @@ namespace System {
         float magnitude() const;
         float sqrMagnitude() const;
         void Set(float newX, float newY, float newZ, float newW);
-
+        System::Quaternion conjugate() const {
+            return System::Quaternion(-x, -y, -z, w);
+        }
         /*
         ----------------------------------------------------------------------------------------
         Operators
@@ -72,7 +74,12 @@ namespace System {
                 w * q.z + x * q.y - y * q.x + z * q.w
             );
         }
-
+        System::Vector3 operator*(const System::Vector3& v) const {
+            System::Quaternion vecQuat(v.x, v.y, v.z, 0.0f);
+            System::Quaternion result = (*this) * vecQuat * this->conjugate();
+            return System::Vector3(result.x, result.y, result.z);
+        }
+ 
 
         inline float operator[](int i) const { return (&x)[i]; }
         inline float& operator[](int i) { return (&x)[i]; }
