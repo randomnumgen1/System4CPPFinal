@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <System/Mathf.h>
-#include <System/Vector2.h>
+#include <System/Vector2.hpp>
 /*
  Random.h
  IMPORTANT: DO NOT USE THIS FOR SECURITY OR CRYPTOGRAPHY
