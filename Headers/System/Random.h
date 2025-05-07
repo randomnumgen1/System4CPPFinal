@@ -2,7 +2,7 @@
 #define _SYSTEM_RANDOM_H
 
 #include <cstdint>
-#include <System/Mathf.h>
+#include <System/Mathf.hpp>
 #include <System/Vector2.hpp>
 /*
  Random.h
