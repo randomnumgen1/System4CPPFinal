@@ -134,6 +134,12 @@ namespace System::Graphics{
 			}
 			return extensions;
 		}
+		inline static void gl_glUniformMatrix4fv(int location, int count, bool transpose, const float* value) {
+			SYSTEM_INTERNAL_glUniformMatrix4fv(location, count, transpose, value);
+		}
+		inline static int gl_glGetUniformLocation(uint32_t program, const char* name) {
+			return SYSTEM_INTERNAL_glGetUniformLocation(program, name);
+		}
 		inline static void gl_glBindFramebuffer(GL_FrameBufferTarget target, uint32_t framebuffer){
 			SYSTEM_INTERNAL_glBindFramebuffer(static_cast<GLenum>(target), static_cast<GLuint>(framebuffer));
 		}
@@ -221,9 +227,7 @@ namespace System::Graphics{
 		inline static void gl_glGetIntegerv(GLenum pname, GLint* data){
 			SYSTEM_INTERNAL_glGetIntegerv(  pname,   data);
 		}
-		inline static void gl_glGetUniformLocation(GLuint program, const GLchar* name) {
-			SYSTEM_INTERNAL_glGetUniformLocation(  program,  name);
-		}
+
 		inline static void gl_glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3){
 			SYSTEM_INTERNAL_glUniform4f(  location,   v0,   v1,   v2,   v3);
 		}
