@@ -19,15 +19,9 @@ namespace System{
 			 ----------------------------------------------------------------------------------------
 			*/		
 			Vector3d();
-			Vector3d(double x, double y, double z);	
+			Vector3d(double new_x, double new_y, double new_z);
 		
-		
-		
-		
-		
-		
-		
-		
+
 		
 	};
 }
