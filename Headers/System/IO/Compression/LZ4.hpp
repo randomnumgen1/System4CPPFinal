@@ -1,3 +1,5 @@
+#ifndef _SYSTEM_IO_COMPRESSION_LZ4_H
+#define _SYSTEM_IO_COMPRESSION_LZ4_H
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
@@ -8,12 +10,14 @@ namespace Compression {
 	//| 4 bytes	| 3-15 bytes	|               |       |4 bytes	|  0-4 bytes  |
 	class LZ4{
 		private:
-			struct LZ4Frame {
-				uint32_t magic;
-				uint8_t FLG;
-				uint8_t BD;
+#pragma pack(push, 1)
+            struct LZ4Frame {
+                uint32_t magic;
+                uint8_t FLG;
+                uint8_t BD;
+            };
+#pragma pack(pop)
 
-			};
 			// Determine maximum block size from the BD (Block Descriptor) byte.
             size_t getMaxBlockSize(uint8_t BD);
             // A helper that decompresses one block in LZ4 format.
@@ -89,3 +93,4 @@ namespace Compression {
 }
 }
 }
+#endif

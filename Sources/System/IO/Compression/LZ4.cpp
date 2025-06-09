@@ -1,4 +1,4 @@
-#include "System/IO/Compression/LZ4.hpp"
+#include <System/IO/Compression/LZ4.hpp>
 
 size_t System::IO::Compression::LZ4::getMaxBlockSize(uint8_t BD){
    uint8_t blockSizeIndicator = BD >> 4;
