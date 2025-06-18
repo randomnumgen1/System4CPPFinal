@@ -72,6 +72,12 @@ std::vector<uint8_t> System::IO::Compression::LZ4::Decompress(const std::vector<
 
     std::vector<uint8_t> decompressedData;
 
+    /*
+    Data Blocks
+    */
+
+
+
     // Process each data block until we hit a zero block size (end marker).
     while (pos < compressedData.size()) {
         // Each block starts with a 4-byte size field.
@@ -85,8 +91,7 @@ std::vector<uint8_t> System::IO::Compression::LZ4::Decompress(const std::vector<
 
         // A block size of 0 indicates the end of the block section.
         if (blockSizeField == 0)
-            break;
-
+            break; 
         // The MSB of the block size indicates if the block is stored uncompressed.
         bool uncompressed = (blockSizeField & 0x80000000) != 0;
         uint32_t blockSize = blockSizeField & 0x7FFFFFFF;
