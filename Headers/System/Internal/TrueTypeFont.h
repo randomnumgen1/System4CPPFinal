@@ -6,18 +6,33 @@
 namespace System::Internal{
 	class TrueTypeFont{
 		private:
-			struct OffsetSubTable_t{
+			constexpr uint32_t TTF_CHECKSUM_MAGIC = 0xB1B0AFBA;
+			
+			struct TableDirectory_t{
 				uint32_t scaler_type;
 				uint16_t numTables;
 				uint16_t searchRange;
 				uint16_t entrySelector;
 				uint16_t rangeShift;
+				void fixendian(){
+					scaler_type = _byteswap_ulong(scaler_type);
+					numTables = _byteswap_ushort(numTables);
+					searchRange = _byteswap_ushort(searchRange);
+					entrySelector = _byteswap_ushort(entrySelector);
+					rangeShift = _byteswap_ushort(rangeShift);
+				}
 			}
-			struct TableDirectory_t{
+			struct TableRecord_t{
 				uint32_t tag;
 				uint32_t checkSum;
 				uint32_t offset;
 				uint32_t length;
+				void fixendian(){
+					tag = _byteswap_ulong(tag);
+					checkSum = _byteswap_ulong(checkSum);
+					offset = _byteswap_ulong(offset);
+					length = _byteswap_ulong(length);
+				}
 			}
 			struct head_t{
 				uint16_t majorVersion;
@@ -38,6 +53,10 @@ namespace System::Internal{
 				uint16_t fontDirectionHint;
 				uint16_t indexToLocFormat;
 				uint16_t glyphDataFormat;
+				void fixendian(){
+					created = _byteswap_uint64(created);
+					modified = _byteswap_uint64(modified);
+				}
 			}
 			//maximum profile
 			struct maxp_t{
@@ -70,10 +89,10 @@ namespace System::Internal{
 					throw std::invalid_argument( "TrueTypeFont File Error" );
 					return;
 				}
-				OffsetSubTable_t offsetHeader;
+				TableDirectory_t offsetHeader;
 				file.read(reinterpret_cast<char*>(&offsetHeader), sizeof(offsetHeader));
-				std::vector<TableDirectory_t> tables(offsetHeader.numTables);
-				file.read(reinterpret_cast<char*>(tables.data()), sizeof(TableDirectory_t) * offsetHeader.numTables);
+				std::vector<TableRecord_t> tables(offsetHeader.numTables);
+				file.read(reinterpret_cast<char*>(tables.data()), sizeof(TableRecord_t) * offsetHeader.numTables);
 			}
 		
 	};
