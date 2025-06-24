@@ -39,6 +39,30 @@ namespace System::Internal{
 				uint16_t indexToLocFormat;
 				uint16_t glyphDataFormat;
 			}
+			//maximum profile
+			struct maxp_t{
+				
+			}
+			//horizontal header
+			struct hhea_t{
+				
+			}
+			//horizontal metrics
+			struct hmtx_t{
+				
+			}
+			//glyph location
+			struct loca_t{
+				
+			}
+			//glyph outline
+			struct glyf_t{
+				
+			}
+			//character code mapping
+			struct cmap_t{
+				
+			}
 		public:
 			void LoadFont(std::string filepath){
 				std::ifstream file(filepath, std::ios::binary);
