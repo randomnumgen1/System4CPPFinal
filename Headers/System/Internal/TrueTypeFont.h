@@ -6,20 +6,20 @@
 namespace System::Internal{
 	class TrueTypeFont{
 		private:
-			struct OffsetSubTable{
+			struct OffsetSubTable_t{
 				uint32_t scaler_type;
 				uint16_t numTables;
 				uint16_t searchRange;
 				uint16_t entrySelector;
 				uint16_t rangeShift;
 			}
-			struct TableDirectory{
+			struct TableDirectory_t{
 				uint32_t tag;
 				uint32_t checkSum;
 				uint32_t offset;
 				uint32_t length;
 			}
-			struct head{
+			struct head_t{
 				uint16_t majorVersion;
 				uint16_t minorVersion;
 				uint32_t fontRevision;
@@ -46,10 +46,10 @@ namespace System::Internal{
 					throw std::invalid_argument( "TrueTypeFont File Error" );
 					return;
 				}
-				OffsetSubTable offsetHeader;
+				OffsetSubTable_t offsetHeader;
 				file.read(reinterpret_cast<char*>(&offsetHeader), sizeof(offsetHeader));
-				std::vector<TableDirectory> tables(offsetHeader.numTables);
-				file.read(reinterpret_cast<char*>(tables.data()), sizeof(TableDirectory) * offsetHeader.numTables);
+				std::vector<TableDirectory_t> tables(offsetHeader.numTables);
+				file.read(reinterpret_cast<char*>(tables.data()), sizeof(TableDirectory_t) * offsetHeader.numTables);
 			}
 		
 	};
