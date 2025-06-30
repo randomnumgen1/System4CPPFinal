@@ -82,6 +82,7 @@ namespace System::Tools{
 				da = uint8_t((sa + da * invA + 127) / 255);
 			}
 			inline void SetPixel8(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
+				if (x < 0 || y < 0 || x >= width || y >= height) return;
 				int idx = 4 * (y * m_width + x);
 				m_pixels[idx + 0] = sr;
 				m_pixels[idx + 1] = sg;
@@ -89,6 +90,7 @@ namespace System::Tools{
 				m_pixels[idx + 3] = sa;
 			}
 			inline void SetPixel32(int x, int y, uint32_t rgba) {
+				if (x < 0 || y < 0 || x >= width || y >= height) return;
 				uint32_t* p = reinterpret_cast<uint32_t*>(m_pixels.data() + y * (w * 4) + (x << 2));
 				*p = rgba;
 			}
@@ -218,7 +220,11 @@ namespace System::Tools{
 			
 		}
 		void rect(float x, float y, float w, float h){
-			
+			moveTo(x, y);
+			lineTo(x + w, y);
+			lineTo(x + w, y + h);
+			lineTo(x, y + h);
+			closePath();
 		}
 		void arcTo(float x1,float y1,float x2,float y2,float r){
 			
@@ -227,7 +233,32 @@ namespace System::Tools{
 			arc(x,y,r,sAngle,eAngle,false);
 		}
 		void arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise){
-			
+			const float tau = 2.0f * 3.14159265f;
+			float sweep = eAngle - sAngle;
+			// Normalize sweep
+			if (!counterclockwise && sweep < 0)
+				sweep += tau;
+			else if (counterclockwise && sweep > 0)
+				sweep -= tau;
+
+			// Number of segments (fixed subdivision or adaptive)
+			int segments = std::max(8, static_cast<int>(std::ceil(std::abs(sweep) / (tau / 32))));
+
+			float angleStep = sweep / segments;
+			float angle = sAngle;
+
+			// Build arc as line segments
+			for (int i = 0; i <= segments; ++i) {
+				float x = cx + std::cos(angle) * r;
+				float y = cy + std::sin(angle) * r;
+
+				if (i == 0)
+					moveTo(x, y);  // starts new subpath if necessary
+				else
+					lineTo(x, y);
+
+				angle += angleStep;
+			}
 		}
 		void translate(float x, float y){
 			auto &st = m_states.back();
