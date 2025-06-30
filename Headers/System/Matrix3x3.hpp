@@ -22,7 +22,51 @@ namespace System {
 			m[1] = 0.f; m[4] = 1.f; m[7] = 0.f;
 			m[2] = 0.f; m[5] = 0.f; m[8] = 1.f;			
 		}
+		static Matrix3x3 translation(float tx, float ty) {
+			return {
+				1.f, 0.f, 0.f,
+				0.f, 1.f, 0.f,
+				tx , ty , 1.f
+			};
+		}
+		static Matrix3x3 scale(float sx, float sy) {
+			return {
+				sx , 0.f, 0.f,
+				0.f, sy , 0.f,
+				0.f, 0.f, 1.f
+			};
+		}
+		static Matrix3x3 rotation(float radians) {
+			float c = std::cos(radians);
+			float s = std::sin(radians);
+			return {
+				 c ,  s , 0.f,
+				-s ,  c , 0.f,
+				 0.f, 0.f, 1.f
+			};
+		}
 		
+		
+
+		Matrix3x3 Matrix3x3::operator*(const Matrix3x3& B) const {
+			const Matrix3x3& A = *this;
+			Matrix3x3 R;
+			// First column
+			R.m[0] = A.m[0]*B.m[0] + A.m[3]*B.m[1] + A.m[6]*B.m[2];
+			R.m[1] = A.m[1]*B.m[0] + A.m[4]*B.m[1] + A.m[7]*B.m[2];
+			R.m[2] = A.m[2]*B.m[0] + A.m[5]*B.m[1] + A.m[8]*B.m[2];
+			// Second column
+			R.m[3] = A.m[0]*B.m[3] + A.m[3]*B.m[4] + A.m[6]*B.m[5];
+			R.m[4] = A.m[1]*B.m[3] + A.m[4]*B.m[4] + A.m[7]*B.m[5];
+			R.m[5] = A.m[2]*B.m[3] + A.m[5]*B.m[4] + A.m[8]*B.m[5];
+			// Third column
+			R.m[6] = A.m[0]*B.m[6] + A.m[3]*B.m[7] + A.m[6]*B.m[8];
+			R.m[7] = A.m[1]*B.m[6] + A.m[4]*B.m[7] + A.m[7]*B.m[8];
+			R.m[8] = A.m[2]*B.m[6] + A.m[5]*B.m[7] + A.m[8]*B.m[8];
+			return R;
+	}
+
+
 
 	};
 }
