@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 #include <stack>
+#include <System/Matrix3x3.hpp>
+
 
 namespace System::Tools{
 	class software_canvas{
@@ -16,6 +18,7 @@ namespace System::Tools{
 				uint8_t R, G, B, A;
 			};		
 			struct state{
+				System::Matrix3x3 m_transform;
 				Color m_stroke;
 				Color m_fill;
 				float globalAlpha;
@@ -227,9 +230,17 @@ namespace System::Tools{
 			
 		}
 		void translate(float x, float y){
-			
+			auto &st = m_states.back();
+			Matrix3x3 T = Matrix3x3::translation(x, y);
+			st.transform = T * st.transform;
 		}
 		void scale(float scalewidth,float scaleheight){
+			auto &st = m_states.back();
+			Matrix3x3 T = Matrix3x3::scailing(x, y);
+			st.transform = T * st.transform;			
+		}
+		void rotate(float angle){
+			
 			
 		}
 		void moveTo(float x, float y){
@@ -238,6 +249,11 @@ namespace System::Tools{
 		void lineTo(float x, float y){
 			
 		}
+		void resetTransform() {
+			auto &st = m_states.back();
+			st.m_transform = Matrix3x3::identity();
+		}
+
 		void debug(){
 			auto &st = m_states.top();
 			std::cout << "m_stroke: " << st.m_stroke << std::endl;
