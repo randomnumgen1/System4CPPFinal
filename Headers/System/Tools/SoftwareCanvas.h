@@ -8,20 +8,38 @@
 namespace System::Tools{
 	class software_canvas{
 		private:
+			enum class TextAlign {Start, End, Left, Right, Center};
+			enum class LineCap {butt, round, square};
+			enum class LineJoin {round, bevel, miter};
+			enum class TextBaseline {top, hanging, middle, alphabetic, ideographic, bottom};
 			struct Color{
 				uint8_t R, G, B, A;
 			};		
 			struct state{
-				
+				Color m_stroke;
+				Color m_fill;
+				float globalAlpha;
+				float lineWidth;
+				LineCap lineCap;
+				LineJoin lineJoin;
+				float miterLimit;
+				float lineDashOffset;
+				float shadowOffsetX;
+				float shadowOffsetY;
+				float shadowBlur;
+				//shadowColor
+				//globalCompositeOperation
+				//font
+				TextAlign m_textAlign;
+				TextBaseline textBaseline;
+				//direction
+				//imageSmoothingEnabled				
 			}
 		
 		
 			int m_width, m_height;
 			std::vector<uint8_t> m_pixels;
 			std::stack<state> m_states;
-
-			Color m_fill;
-			Color m_stroke;
 			// helper: trim in-place via pointers
 			static inline void trimPointers(const std::string& s, const char*& b, const char*& e){
 				b = s.c_str();
@@ -75,29 +93,59 @@ namespace System::Tools{
 		Canvas(int w, int h){
 			m_width = w;
 			m_height = h;
-			m_fill = {0,0,0,255};
-			m_stroke = {0,0,0,255};
+
 			m_pixels.assign(width * height * 4, 255);
-
-		}
-
-		
-		
-		
-		void save(){
+			
+			
+			state currentstate = {};
+			currentstate.m_fill = {0,0,0,255};
+			currentstate.m_stroke = {0,0,0,255};
+			currentstate.m_textAlign = TextAlign::Start;
 			m_states.push(m_currentstate);
 		}
-		void restore(){
-			if (m_states.size() <= 1) return;
-			m_states.pop();
-			m_currentstate = m_states.top()
 
+		// save/restore:
+		void save(){
+			m_states.push(m_states.top());
 		}
-		
+		void restore(){
+			if(m_states.size()>1) m_states.pop();
+		}
+		void clip(){
+			
+		}
+		void rotate(){
+			
+		}
 		void fill(){
 			
 		}
 		void stroke(){
+			
+		}
+		void fillText(std::string str, float x, float y){
+			
+		}
+		void strokeText(std::string str, float x, float y){
+			
+		}
+		void settextAlign(std::string str){
+			auto &st = m_states.top();
+			if(s == "left"){ 
+				st.m_textAlign = TextAlign::Left;
+			}else if(s == "right"){
+				st.m_textAlign = TextAlign::Right;
+			}else if(s == "center"){
+				st.m_textAlign = TextAlign::Center;
+			}else if(s == "start"){
+				st.m_textAlign = TextAlign::Start;
+			}else if(s == "end"){
+				st.m_textAlign = TextAlign::End;
+			}else{ 
+				throw std::invalid_argument("Invalid textAlign: " + align);
+			}
+		}
+		void setlineWidth(){
 			
 		}
 		void setFillStyle(const std::string& cssColor){
@@ -146,28 +194,42 @@ namespace System::Tools{
 			}
 		}
 		void setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-			m_fill = {r,g,b,a};
+			auto &st = m_states.top();
+			st.m_fill = {r,g,b,a};
 		}
 		//
 		void setStrokeStyle(const std::string& cssColor){
 			m_stroke = ParseCssColor(cssColor);
 		}
 		void setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-			m_stroke = {r,g,b,a};
+			auto &st = m_states.top();
+			st.m_stroke = {r,g,b,a};
 		}
 		void beginPath(){
 			m_path.clear();
 		}
+		void bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y){
+			
+		}
+		void quadraticCurveTo(cpx, cpy, x, y){
+			
+		}
 		void rect(float x, float y, float w, float h){
 			
 		}
-		void arc(float cx, float cy, float r, float startAngle, float endAngle){
+		void arcTo(float x1,float y1,float x2,float y2,float r){
 			
 		}
-		void translate(float dx, float dy){
+		void arc(float x,float y,float r,float sAngle,float eAngle){
+			arc(x,y,r,sAngle,eAngle,false);
+		}
+		void arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise){
 			
 		}
-		void scale(float sx, float sy){
+		void translate(float x, float y){
+			
+		}
+		void scale(float scalewidth,float scaleheight){
 			
 		}
 		void moveTo(float x, float y){
@@ -175,6 +237,27 @@ namespace System::Tools{
 		}
 		void lineTo(float x, float y){
 			
+		}
+		void debug(){
+			auto &st = m_states.top();
+			std::cout << "m_stroke: " << st.m_stroke << std::endl;
+			std::cout << "m_fill: " << st.m_fill << std::endl;
+			std::cout << "globalAlpha: " << st.globalAlpha << std::endl;
+			std::cout << "lineWidth: " << st.lineWidth << std::endl;
+			std::cout << "lineCap: " << st.lineCap << std::endl;
+			std::cout << "lineJoin: " << st.lineJoin << std::endl;
+			std::cout << "miterLimit: " << st.miterLimit << std::endl;
+			std::cout << "lineDashOffset: " << st.lineDashOffset << std::endl;
+			std::cout << "shadowOffsetX: " << st.shadowOffsetX << std::endl;
+			std::cout << "shadowOffsetY: " << st.shadowOffsetY << std::endl;
+			std::cout << "shadowBlur: " << st.shadowBlur << std::endl;
+			//std::cout << "shadowColor: " << st. << std::endl;
+			//std::cout << "globalCompositeOperation: " << st. << std::endl;
+			//std::cout << "font: " << st. << std::endl;
+			std::cout << "m_textAlign: " << st.m_textAlign << std::endl;
+			std::cout << "textBaseline: " << st.textBaseline << std::endl;
+			std::cout << "direction: " << st.direction << std::endl;
+			std::cout << "imageSmoothingEnabled: " << st.imageSmoothingEnabled << std::endl;
 		}
 	}
 }
