@@ -37,7 +37,7 @@ namespace System::Tools{
 				float shadowOffsetY;
 				float shadowBlur;
 				//shadowColor
-				//globalCompositeOperation
+				//std::string globalCompositeOperation;//
 				//font
 				TextAlign m_textAlign;
 				TextBaseline textBaseline;
@@ -106,7 +106,40 @@ namespace System::Tools{
 				db = uint8_t((sb * sa + db * invA + 127) / 255);
 				da = uint8_t((sa + da * invA + 127) / 255);
 			}
-			inline void SetPixel8(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
+			inline void SetPixelBlend(int x, int y, const Color& src){
+				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
+				if (src.a == 0) return;
+
+				size_t idx = (static_cast<size_t>(y) * m_width + x) * 4;
+				uint8_t& dr = m_pixels[idx + 0];
+				uint8_t& dg = m_pixels[idx + 1];
+				uint8_t& db = m_pixels[idx + 2];
+				uint8_t& da = m_pixels[idx + 3];
+
+				if (src.a == 255 || da == 0) {
+					dr = src.r; dg = src.g; db = src.b; da = src.a;
+					return;
+				}
+
+				// Standard alpha blending: C_out = (C_src * A_src + C_dst * A_dst * (1 - A_src)) / A_out
+				// A_out = A_src + A_dst * (1 - A_src)
+				uint32_t src_a = src.a;
+				uint32_t dst_a = da;
+				uint32_t out_a = src_a + dst_a * (255 - src_a) / 255;
+				if (out_a == 0) {
+					dr = 0; dg = 0; db = 0; da = 0;
+					return;
+				}
+				
+				uint32_t src_r = src.r; uint32_t src_g = src.g; uint32_t src_b = src.b;
+				uint32_t dst_r = dr; uint32_t dst_g = dg; uint32_t dst_b = db;
+
+				dr = static_cast<uint8_t>((src_r * src_a + dst_r * dst_a * (255 - src_a) / 255) / out_a);
+				dg = static_cast<uint8_t>((src_g * src_a + dst_g * dst_a * (255 - src_a) / 255) / out_a);
+				db = static_cast<uint8_t>((src_b * src_a + dst_b * dst_a * (255 - src_a) / 255) / out_a);
+				da = static_cast<uint8_t>(out_a);
+			}
+			inline void SetPixel(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
 				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
 				int idx = 4 * (y * m_width + x);
 				m_pixels[idx + 0] = sr;
@@ -114,6 +147,28 @@ namespace System::Tools{
 				m_pixels[idx + 2] = sb;
 				m_pixels[idx + 3] = sa;
 			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+			
+			
+			
 			inline void SetPixel32(int x, int y, uint32_t rgba) {
 				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
 				int off = (y * m_width + x) * 4;
@@ -132,7 +187,7 @@ namespace System::Tools{
 			void fillText(std::string str, float x, float y);
 			void strokeText(std::string str, float x, float y);
 			void settextAlign(const std::string& str);
-			void setlineWidth();
+			void setlineWidth(float width);
 		
 		
 			void setFillStyle(const std::string& cssColor){
@@ -166,7 +221,7 @@ namespace System::Tools{
 				}
 				
 				
-				static const std::pair<const char*,FillStyle> kNamedColors[] = {
+				static const std::pair<const char*,Color> kNamedColors[] = {
 					{ "black",       {  0,  0,  0,255} },
 					{ "white",       {255,255,255,255} },
 					{ "red",         {255,  0,  0,255} },
@@ -175,7 +230,7 @@ namespace System::Tools{
 				};
 				for (auto &entry : kNamedColors) {
 					size_t n = std::strlen(entry.first);
-					if (n == totalLen && strncasecmp(p, entry.first, n) == 0){
+					if (n == len && strncasecmp(p, entry.first, n) == 0){
 						st.m_fill = entry.second;
 						return;
 					}
@@ -184,8 +239,8 @@ namespace System::Tools{
 			void setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 			void setStrokeStyle(const std::string& cssColor);
 			void setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-			void bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
-			void quadraticCurveTo(cpx, cpy, x, y);
+			void bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y);
+			void quadraticCurveTo(float cpx,float cpy,float x,float y);
 			void rect(float x, float y, float w, float h);
 			void arcTo(float x1,float y1,float x2,float y2,float r);
 			void arc(float x,float y,float r,float sAngle,float eAngle);
@@ -204,28 +259,7 @@ namespace System::Tools{
 			void lineTo(float x, float y);
 			void closePath();
 			void resetTransform();
-			
-			void debug(){
-				auto &st = m_states.top();
-				std::cout << "m_stroke: " << st.m_stroke << std::endl;
-				std::cout << "m_fill: " << st.m_fill << std::endl;
-				std::cout << "globalAlpha: " << st.globalAlpha << std::endl;
-				std::cout << "lineWidth: " << st.lineWidth << std::endl;
-				std::cout << "lineCap: " << st.lineCap << std::endl;
-				std::cout << "lineJoin: " << st.lineJoin << std::endl;
-				std::cout << "miterLimit: " << st.miterLimit << std::endl;
-				std::cout << "lineDashOffset: " << st.lineDashOffset << std::endl;
-				std::cout << "shadowOffsetX: " << st.shadowOffsetX << std::endl;
-				std::cout << "shadowOffsetY: " << st.shadowOffsetY << std::endl;
-				std::cout << "shadowBlur: " << st.shadowBlur << std::endl;
-				//std::cout << "shadowColor: " << st. << std::endl;
-				//std::cout << "globalCompositeOperation: " << st. << std::endl;
-				//std::cout << "font: " << st. << std::endl;
-				std::cout << "m_textAlign: " << st.m_textAlign << std::endl;
-				std::cout << "textBaseline: " << st.textBaseline << std::endl;
-				std::cout << "direction: " << st.direction << std::endl;
-				std::cout << "imageSmoothingEnabled: " << st.imageSmoothingEnabled << std::endl;
-			}
+			void debug();
 	};
 }
 #endif

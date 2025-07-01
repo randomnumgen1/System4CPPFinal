@@ -106,8 +106,10 @@ void SoftwareCanvas::settextAlign(const std::string& str){
 		throw std::invalid_argument("Invalid textAlign: " + str);
 	}
 }		
-void SoftwareCanvas::setlineWidth(){
-	
+void SoftwareCanvas::setlineWidth(float width){
+    if (width > 0){
+        m_states.top().lineWidth = width;
+    }
 }
 		
 		
@@ -137,10 +139,10 @@ void SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	auto &st = m_states.top();
 	st.m_stroke = {r,g,b,a};
 }	
-void SoftwareCanvas::bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y){
+void SoftwareCanvas::bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y){
 
 }
-void SoftwareCanvas::quadraticCurveTo(cpx, cpy, x, y){
+void SoftwareCanvas::quadraticCurveTo(float cpx,float cpy,float x,float y){
 
 }
 void SoftwareCanvas::rect(float x, float y, float w, float h){
@@ -212,4 +214,25 @@ void SoftwareCanvas::closePath() {
 void SoftwareCanvas::resetTransform() {
 	auto &st = m_states.back();
 	st.m_transform = Matrix3x3::identity();
+}
+void SoftwareCanvas::debug(){
+	auto &st = m_states.top();
+	std::cout << "m_stroke: " << st.m_stroke << std::endl;
+	std::cout << "m_fill: " << st.m_fill << std::endl;
+	std::cout << "globalAlpha: " << st.globalAlpha << std::endl;
+	std::cout << "lineWidth: " << st.lineWidth << std::endl;
+	std::cout << "lineCap: " << st.lineCap << std::endl;
+	std::cout << "lineJoin: " << st.lineJoin << std::endl;
+	std::cout << "miterLimit: " << st.miterLimit << std::endl;
+	std::cout << "lineDashOffset: " << st.lineDashOffset << std::endl;
+	std::cout << "shadowOffsetX: " << st.shadowOffsetX << std::endl;
+	std::cout << "shadowOffsetY: " << st.shadowOffsetY << std::endl;
+	std::cout << "shadowBlur: " << st.shadowBlur << std::endl;
+	//std::cout << "shadowColor: " << st. << std::endl;
+	//std::cout << "globalCompositeOperation: " << st. << std::endl;
+	//std::cout << "font: " << st. << std::endl;
+	std::cout << "m_textAlign: " << st.m_textAlign << std::endl;
+	std::cout << "textBaseline: " << st.textBaseline << std::endl;
+	std::cout << "direction: " << st.direction << std::endl;
+	std::cout << "imageSmoothingEnabled: " << st.imageSmoothingEnabled << std::endl;
 }
