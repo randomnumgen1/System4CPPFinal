@@ -1,5 +1,6 @@
 > [!CAUTION]
 > Some classes may be deemed experimental until their usage is fully validated.
+> Some things will be broken until v1.0 release.
 
 # System4CPP
 This cross-platform framework, compatible with Linux, Windows, ARM and x64 and perhaps Android, is designed to make developing applications and games easier. 
@@ -23,7 +24,10 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Hashing Algorithms**: We aim to provide support for all officially recognized hashing algorithms, alongside those employed in reputable cryptocurrencies. These algorithms have been rigorously tested and verified for security, offering reliable options for data integrity verification, digital signatures, and more.
 + **Encryption and Public/Private Key Algorithms**: Our encryption capabilities aim to cover a diverse range of official encryption algorithms, as well as those widely adopted in the cryptocurrency space. This ensures secure data transmission and storage through robust public and private key cryptography, safeguarding sensitive information against unauthorized access.
 + **Compression Algorithms**: Our platform aims to support a full spectrum of compression algorithms, enabling efficient data storage without compromising the integrity or accessibility of the information. This feature enhances performance while minimizing resource usage, making it ideal for both local and cloud storage solutions.
++ **Checksum Algorithms**: Provide a fast, lightweight way to verify data integrity—ideal for validating network packets, though they lack the cryptographic strength needed for security.
 + **File and Directory helpers**
++ **TrueType font loading** Enables parsing of TrueType (.ttf) files for text rendering.
++ **Drawing Canvas** provides a HTML Canvas–style interface for 2D drawing.
 + **Vector2 and various others**
 
 
