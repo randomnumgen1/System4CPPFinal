@@ -1,10 +1,28 @@
-#pragma once
+#ifndef _SYSTEM_IO_FILE_H
+#define _SYSTEM_IO_FILE_H
+
+
 #include <string>
 #include <fileapi.h>
 #include <handleapi.h>
 #include <stdexcept>
 #include <vector>
+
+
+#include <ostream>
+#include <iostream>
+
+#if defined(_WIN32) || defined(_WIN64)
+
+#include <errhandlingapi.h>
+#include <winerror.h>
+#include <WinBase.h>
+
+#else
+	
 #include <sys/stat.h>
+
+#endif
 namespace System::IO{
 	class File{
 		public:
@@ -114,3 +132,4 @@ namespace System::IO{
 		
 	};
 }
+#endif
