@@ -1,3 +1,6 @@
+#ifndef SYSTEM_TOOLS_INI_H
+#define SYSTEM_TOOLS_INI_H
+
 /*
 INI ini;
 ini.Load("settings.ini");
@@ -53,3 +56,4 @@ namespace System::Tools{
 		
 	};
 }
+#endif
