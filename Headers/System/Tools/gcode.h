@@ -17,12 +17,14 @@ class gcode{
 	
 	uint32_t flags;
 	gcode(){
-		Addgcode("G00",);
-		Addgcode("G01",);
-		Addgcode("G02",);
-		Addgcode("G03",);
-		Addgcode("G04",);
-		Addgcode("G05",);
+		Addgcode("G00","Rapid Move");
+		Addgcode("G01","Linear Move");
+		Addgcode("G02","Arc Move (clockwise)");
+		Addgcode("G03","Arc Move (counterclockwise)");
+		Addgcode("G04","Dwell");
+		Addgcode("G05","Cubic Spline");
+		Addgcode("G5.1 ","Quadratic Spline");
+		
 		Addgcode("G09",);
 		Addgcode("G10",);
 		Addgcode("G15",);
