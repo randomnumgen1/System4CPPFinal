@@ -26,6 +26,7 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Compression Algorithms**: Our platform aims to support a full spectrum of compression algorithms, enabling efficient data storage without compromising the integrity or accessibility of the information. This feature enhances performance while minimizing resource usage, making it ideal for both local and cloud storage solutions.
 + **Checksum Algorithms**: Provide a fast, lightweight way to verify data integrity—ideal for validating network packets, though they lack the cryptographic strength needed for security.
 + **File and Directory helpers**
++ **Text-Based formats** Provides classes to parse CSV, INI, and JSON
 + **TrueType font loading** Enables parsing of TrueType (.ttf) files for text rendering.
 + **Drawing Canvas** provides a HTML Canvas–style interface for 2D drawing.
 + **Vector2 and various others**
