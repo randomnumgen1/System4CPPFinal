@@ -19,6 +19,7 @@ namespace System::Tools{
 			enum class LineCap {butt, round, square};
 			enum class LineJoin {round, bevel, miter};
 			enum class TextBaseline {top, hanging, middle, alphabetic, ideographic, bottom};
+			enum class FillRule { nonzero, evenodd};
 			struct Color{
 				uint8_t r, g, b, a;
 
