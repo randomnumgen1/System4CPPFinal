@@ -22,6 +22,9 @@ namespace System::Tools{
 				return result;
 			}
 		public:
+			INI(){
+				
+			}
 			void Load(const std::string& filename){
 				
 				
