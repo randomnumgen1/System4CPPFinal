@@ -12,8 +12,20 @@ namespace System::Tools {
     class CSV {
     private:
         std::vector<std::vector<std::string>> data;
-
+		char delimiter = ',';
+		bool HasHeader = false;
+		bool HasFieldsEnclosedInQuotes = true;
+		bool TrimWhiteSpace = true;
     public:
+		CSV(){
+			delimiter = ',';
+			HasHeader = false;
+			HasFieldsEnclosedInQuotes = true;
+			TrimWhiteSpace = true;
+		}
+		void SetDelimiter(char newDelimiter) {
+			delimiter = newDelimiter;
+		}
 		void Load(const std::string& filename) {
 			std::ifstream file(filename);
 			if (!file.is_open())
@@ -37,7 +49,7 @@ namespace System::Tools {
 						} else {
 							inQuote = !inQuote; // Toggle quote context
 						}
-					} else if (c == ',' && !inQuote) {
+					} else if (c == delimiter && !inQuote) {
 						row.push_back(cell);
 						cell.clear();
 					} else {
