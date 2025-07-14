@@ -1,6 +1,8 @@
 #ifndef SYSTEM_TOOLS_INI_H
 #define SYSTEM_TOOLS_INI_H
 
+#include <stdexcept>
+
 /*
 INI ini;
 ini.Load("settings.ini");
@@ -12,6 +14,7 @@ ini.Save("settings.ini");
 namespace System::Tools{
 	class INI{
 		private:
+			uint32_t flags;
 			// map<section, map<key, value>>
 			std::map<std::string, std::map<std::string, std::string> > config;
 			
@@ -23,7 +26,21 @@ namespace System::Tools{
 			}
 		public:
 			INI(){
-				
+				flags = 0;
+			}
+			void SetCapitalizeFirstLetter(bool value){
+				if(value){
+					flags |= (1 << 0);
+				}else{
+					flags &= ~(1 << 0);
+				}
+			}
+			void SetHierarchicalKeys(bool value){
+				if(value){
+					flags |= (1 << 1);
+				}else{
+					flags &= ~(1 << 1);
+				}
 			}
 			void Load(const std::string& filename){
 				std::ifstream file(filename);
@@ -65,10 +82,18 @@ namespace System::Tools{
 				config[CapitalizeFirst(section)][CapitalizeFirst(key)] = value;
 			}
 			uint32_t GetBitMask32(const std::string& section, const std::string& key, const uint32_t& defaultValue){
-				
+				std::string valueStr = GetValue(section, key, "");
+				if(valueStr.empty()){
+					return defaultValue;
+				}
+				return std::stoul(valueStr, nullptr, 16);
 			}
 			uint64_t GetBitMask64(const std::string& section, const std::string& key, const uint64_t& defaultValue){
-				
+				std::string valueStr = GetValue(section, key, "");
+				if(valueStr.empty()){
+					return defaultValue;
+				}
+				return std::stoull(valueStr, nullptr, 16);
 			}
 			template<>
 			bool GetValue<bool>(const std::string& section, const std::string& key, const bool& defaultValue) const {
