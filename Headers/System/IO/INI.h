@@ -24,23 +24,25 @@ namespace System::Tools{
 				result[0] = std::toupper(static_cast<unsigned char>(result[0]));
 				return result;
 			}
+			void BitBool(bool value, uint32_t pos){
+				if(value){
+					flags |= (1 << pos);
+				}else{
+					flags &= ~(1 << pos);
+				}				
+			}
 		public:
 			INI(){
 				flags = 0;
 			}
 			void SetCapitalizeFirstLetter(bool value){
-				if(value){
-					flags |= (1 << 0);
-				}else{
-					flags &= ~(1 << 0);
-				}
+				BitBool(value, 0);
 			}
 			void SetHierarchicalKeys(bool value){
-				if(value){
-					flags |= (1 << 1);
-				}else{
-					flags &= ~(1 << 1);
-				}
+				BitBool(value, 1);
+			}
+			void SetQuoteString(bool value){
+				BitBool(value, 2);
 			}
 			void Load(const std::string& filename){
 				std::ifstream file(filename);
