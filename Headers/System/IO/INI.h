@@ -35,6 +35,12 @@ namespace System::Tools{
 			void SetValue(const std::string& section, const std::string& key, const std::string& value) {
 				config[CapitalizeFirst(section)][CapitalizeFirst(key)] = value;
 			}
+			uint32_t GetBitMask32(const std::string& section, const std::string& key, const uint32_t& defaultValue){
+				
+			}
+			uint64_t GetBitMask64(const std::string& section, const std::string& key, const uint64_t& defaultValue){
+				
+			}
 			template<>
 			bool GetValue<bool>(const std::string& section, const std::string& key, const bool& defaultValue) const {
 				auto str = GetValue<std::string>(section, key, defaultValue ? "true" : "false");
