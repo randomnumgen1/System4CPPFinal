@@ -21,6 +21,9 @@
 #else
 	
 #include <sys/stat.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
 
 #endif
 namespace System::IO{
@@ -39,8 +42,14 @@ namespace System::IO{
 				if (hFile == INVALID_HANDLE_VALUE) {
 					throw std::runtime_error("File::Create failed");
 				}
+				CloseHandle(hFile);
 #else
-
+				FILE* f = fopen(path.c_str(), "w");
+				if (f == NULL) {
+					throw std::runtime_error("File::Create failed");
+				}
+				fclose(f);
+				return true;
 #endif
 			}
 		static bool Exists(std::string path){
@@ -52,28 +61,39 @@ namespace System::IO{
 			return true;
 #else
 			struct stat st;
-			if (stat("myfile", &st) == 0) {
-				std::cout << "myfile exists\n";
+			if (stat(path.c_str(), &st) == 0) {
+				return true;
 			}
 			else {
-				std::cout << "Can't stat myfile: errno=" << errno << ": "
-					<< strerror(errno) << '\n';
+				return false;
 			}
 #endif
 		}
 		static void Delete(std::string path){
+#if defined(_WIN32) || defined(_WIN64)
 			if (DeleteFileA(path.c_str()) == 0){
 				DWORD error = GetLastError();
 				std::cerr << "Error deleting file: " << error << std::endl;
 			}else{
 				std::cout << "File deleted successfully." << std::endl;
 			}
+#else
+			if (remove(path.c_str()) != 0) {
+				perror("Error deleting file");
+			}
+#endif
 		}
 		static void Move(std::string sourceFileName, std::string destFileName){
+#if defined(_WIN32) || defined(_WIN64)
 			if (MoveFileA(sourceFileName.c_str(), destFileName.c_str()) == 0) {
 				DWORD error = GetLastError();
 				std::cerr << "Error moving file: " << error << std::endl;
 			}
+#else
+			if (rename(sourceFileName.c_str(), destFileName.c_str()) != 0) {
+				perror("Error moving file");
+			}
+#endif
 		}
 		static void WriteAllBytes(std::string path, std::vector<uint8_t> bytes){
 			std::ofstream file(path, std::ios::binary);
@@ -106,6 +126,7 @@ namespace System::IO{
 			file.close();
 		}
 		static void CreateSymboliclink(std::string path, std::string pathToTarget){
+#if defined(_WIN32) || defined(_WIN64)
 			if (CreateSymbolicLinkA(path.c_str(), pathToTarget.c_str(), 0x00000000) == 0) {
 				// Handle error
 				DWORD error = GetLastError();
@@ -114,6 +135,11 @@ namespace System::IO{
 			else {
 				std::cout << "Symbolic link created successfully." << std::endl;
 			}
+#else
+			if (symlink(pathToTarget.c_str(), path.c_str()) != 0) {
+				perror("Error creating symbolic link");
+			}
+#endif
 		}
 		
 		
