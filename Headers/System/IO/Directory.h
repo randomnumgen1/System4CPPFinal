@@ -10,6 +10,9 @@
 
 
 namespace System::IO{
+#ifdef _WIN32
+#undef CreateDirectory
+#endif
 	class Directory{
 		static void CreateDirectory(std::string path){
 #ifdef _WIN32
