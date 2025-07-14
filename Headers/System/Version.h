@@ -16,9 +16,12 @@ struct Version{
 public:
 	uint16_t Major, Minor,Revision, Build;
 	
-	Version(std::string versionStr)
-	{
-        sscanf_s(versionStr.c_str(), "%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16, &this->Major, &this->Minor, &this->Revision, &this->Build);
+	Version(std::string versionStr){
+#if defined(_WIN32)
+		sscanf_s(versionStr.c_str(), "%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16, &this->Major, &this->Minor, &this->Revision, &this->Build);
+#else
+		sscanf(versionStr.c_str(), "%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16   ".%"   SCNu16, &this->Major, &this->Minor, &this->Revision, &this->Build);
+#endif
 	}
     Version(uint16_t major, uint16_t minor, uint16_t revision, uint16_t build)
         : Major(major), Minor(minor), Revision(revision), Build(build) {}
@@ -30,14 +33,14 @@ public:
     }
     bool operator<(const Version& otherVersion) const
     {
-        if (Major < otherVersion.Major)
-            return true;
-        if (Minor < otherVersion.Minor)
-            return true;
-        if (Revision < otherVersion.Revision)
-            return true;
-        if (Build < otherVersion.Build)
-            return true;
+        if (Major != otherVersion.Major)
+            return Major < otherVersion.Major;
+        if (Minor != otherVersion.Minor)
+            return Minor < otherVersion.Minor;
+        if (Revision != otherVersion.Revision)
+            return Revision < otherVersion.Revision;
+        if (Build != otherVersion.Build)
+            return Build < otherVersion.Build;
         return false;
     }
     bool operator==(const Version& other) const {
