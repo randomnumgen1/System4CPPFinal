@@ -2,6 +2,8 @@
 #define _SYSTEM_PROFILER_H
 
 #include <chrono>
+#include <array>
+
 #if defined(SYSTEM_PROFILER_ENABLED)
 #define SYSTEM_PROFILER_BEGIN_FRAME() System::Profiler::BeginFrame();
 #define SYSTEM_PROFILER_END_FRAME() System::Profiler::EndFrame();
