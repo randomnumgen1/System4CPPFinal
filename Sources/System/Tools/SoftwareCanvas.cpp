@@ -76,7 +76,7 @@ void SoftwareCanvas::fill(){
 				int x0 = static_cast<int>(std::round(x));
 				int x1 = static_cast<int>(std::round(xNext));
 				for (int xi = x0; xi < x1; ++xi)
-					drawPixel(m_pixels, m_width, m_height, xi, y, state.fill);
+					drawPixel(m_pixels, m_width, m_height, xi, y, state.m_fill);
 			}
 		}
 	}
@@ -175,24 +175,24 @@ void SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle,bool 
 
 	// Build arc as line segments
 	for (int i = 0; i <= segments; ++i) {
-		float x = cx + std::cos(angle) * r;
-		float y = cy + std::sin(angle) * r;
+		float cur_x = x + std::cos(angle) * r;
+		float cur_y = y + std::sin(angle) * r;
 
 		if (i == 0)
-			moveTo(x, y);  // starts new subpath if necessary
+			moveTo(cur_x, cur_y);  // starts new subpath if necessary
 		else
-			lineTo(x, y);
+			lineTo(cur_x, cur_y);
 
 		angle += angleStep;
 	}
 }
 void SoftwareCanvas::translate(float x, float y){
-	auto &st = m_states.back();
+	auto &st = m_states.top();
 	Matrix3x3 T = Matrix3x3::translation(x, y);
 	st.transform = T * st.transform;
 }
 void SoftwareCanvas::scale(float scalewidth,float scaleheight){
-	auto &st = m_states.back();
+	auto &st = m_states.top();
 	Matrix3x3 S = Matrix3x3::scaling(x, y);
 	st.transform = S * st.transform;			
 }
@@ -212,7 +212,7 @@ void SoftwareCanvas::closePath() {
 	m_path.push_back({ PathCommand::Type::ClosePath, {} });
 }
 void SoftwareCanvas::resetTransform() {
-	auto &st = m_states.back();
+	auto &st = m_states.top();
 	st.m_transform = Matrix3x3::identity();
 }
 void SoftwareCanvas::debug(){

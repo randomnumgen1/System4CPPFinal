@@ -24,7 +24,11 @@ namespace System::Tools{
 			struct Color{
 				uint8_t r, g, b, a;
 
-			};		
+			};	
+			struct Edge {
+				float x0, y0, x1, y1;
+				int winding;
+			};			
 			struct State{
 				System::Matrix3x3 m_transform;
 				Color m_stroke;
