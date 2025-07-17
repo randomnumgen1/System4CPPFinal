@@ -89,6 +89,9 @@ namespace System::Tools{
 				if (c >= 'A' && c <= 'F') return 10 + c - 'A';
 				return 0;
 			}
+			static System::Vector2 transform(const System::Matrix3x3& m, const System::Vector2& p) {
+				return m * p;
+			}
 			static Color ParseCssColor(const std::string& cssColor){
 				return { 0,0,0,0 };
 			}
