@@ -76,7 +76,8 @@ void SoftwareCanvas::fill(){
 				int x0 = static_cast<int>(std::round(x));
 				int x1 = static_cast<int>(std::round(xNext));
 				for (int xi = x0; xi < x1; ++xi)
-					drawPixel(m_pixels, m_width, m_height, xi, y, state.m_fill);
+					//drawPixel(m_pixels, m_width, m_height, xi, y, state.m_fill);
+					SetPixelBlend(xi, y, state.m_fill);
 			}
 		}
 	}
