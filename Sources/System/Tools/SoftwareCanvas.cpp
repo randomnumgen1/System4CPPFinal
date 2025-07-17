@@ -1,23 +1,81 @@
 #include <System/Tools/SoftwareCanvas.h>
 
+#include <stdexcept>
+#include <algorithm>
+#include <fstream>
 
-SoftwareCanvas::SoftwareCanvas(int w, int h){
+
+System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
 	m_width = w;
 	m_height = h;
 	
 	m_pixels.assign(m_width * m_height * 4, 255);
 	m_states.push(State());
 }
-void SoftwareCanvas::save(){
+void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
+		std::ofstream file(filename, std::ios::binary);
+		if (!file) {
+			return ;
+		}
+
+		// BMP Header
+		const int fileSize = 54 + m_width * m_height * 4;
+		const int reserved = 0;
+		const int dataOffset = 54;
+
+		file.put('B');
+		file.put('M');
+		file.write(reinterpret_cast<const char*>(&fileSize), 4);
+		file.write(reinterpret_cast<const char*>(&reserved), 4);
+		file.write(reinterpret_cast<const char*>(&dataOffset), 4);
+
+		// DIB Header
+		const int dibHeaderSize = 40;
+		const int planes = 1;
+		const int bpp = 32;
+		const int compression = 0;
+		const int imageSize = m_width * m_height * 4;
+		const int xPelsPerMeter = 2835; // 72 DPI
+		const int yPelsPerMeter = 2835; // 72 DPI
+		const int clrUsed = 0;
+		const int clrImportant = 0;
+
+		file.write(reinterpret_cast<const char*>(&dibHeaderSize), 4);
+		file.write(reinterpret_cast<const char*>(&m_width), 4);
+		file.write(reinterpret_cast<const char*>(&m_height), 4);
+		file.write(reinterpret_cast<const char*>(&planes), 2);
+		file.write(reinterpret_cast<const char*>(&bpp), 2);
+		file.write(reinterpret_cast<const char*>(&compression), 4);
+		file.write(reinterpret_cast<const char*>(&imageSize), 4);
+		file.write(reinterpret_cast<const char*>(&xPelsPerMeter), 4);
+		file.write(reinterpret_cast<const char*>(&yPelsPerMeter), 4);
+		file.write(reinterpret_cast<const char*>(&clrUsed), 4);
+		file.write(reinterpret_cast<const char*>(&clrImportant), 4);
+
+		// Pixel Data
+		for (int y = m_height - 1; y >= 0; --y) {
+			for (int x = 0; x < m_width; ++x) {
+				int idx = (y * m_width + x) * 4;
+				// BMP expects BGR order
+				file.put(m_pixels[idx + 2]);
+				file.put(m_pixels[idx + 1]);
+				file.put(m_pixels[idx + 0]);
+				file.put(m_pixels[idx + 3]);
+			}
+		}
+
+		return ;
+}
+void System::Tools::SoftwareCanvas::save(){
 	m_states.push(m_states.top());
 }
-void SoftwareCanvas::restore(){
+void System::Tools::SoftwareCanvas::restore(){
 	if(m_states.size()>1) m_states.pop();
 }
-void SoftwareCanvas::clip(){
+void System::Tools::SoftwareCanvas::clip(){
 	auto& st = m_states.top();
 }
-void SoftwareCanvas::fill(){
+void System::Tools::SoftwareCanvas::fill(){
 	const auto& state = m_states.top();
 	std::vector<Edge> edges;
 	Vector2 start, prev;
@@ -82,16 +140,16 @@ void SoftwareCanvas::fill(){
 		}
 	}
 }	
-void SoftwareCanvas::stroke(){
+void System::Tools::SoftwareCanvas::stroke(){
 	auto& st = m_states.top();
 }
-void SoftwareCanvas::fillText(std::string str, float x, float y){
+void System::Tools::SoftwareCanvas::fillText(std::string str, float x, float y){
 	auto& st = m_states.top();
 }
-void SoftwareCanvas::strokeText(std::string str, float x, float y){
+void System::Tools::SoftwareCanvas::strokeText(std::string str, float x, float y){
 	auto& st = m_states.top();
 }
-void SoftwareCanvas::settextAlign(const std::string& str){
+void System::Tools::SoftwareCanvas::settextAlign(const std::string& str){
 	auto &st = m_states.top();
 	if(str == "left"){ 
 		st.m_textAlign = TextAlign::Left;
@@ -107,7 +165,7 @@ void SoftwareCanvas::settextAlign(const std::string& str){
 		throw std::invalid_argument("Invalid textAlign: " + str);
 	}
 }		
-void SoftwareCanvas::setlineWidth(float width){
+void System::Tools::SoftwareCanvas::setlineWidth(float width){
     if (width > 0){
         m_states.top().lineWidth = width;
     }
@@ -128,38 +186,38 @@ void SoftwareCanvas::setlineWidth(float width){
 		
 		
 		
-void SoftwareCanvas::setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+void System::Tools::SoftwareCanvas::setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	auto &st = m_states.top();
 	st.m_fill = {r,g,b,a};
 }
-void SoftwareCanvas::setStrokeStyle(const std::string& cssColor){
+void System::Tools::SoftwareCanvas::setStrokeStyle(const std::string& cssColor){
 	auto& st = m_states.top();
 	st.m_stroke = ParseCssColor(cssColor);
 }
-void SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+void System::Tools::SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 	auto &st = m_states.top();
 	st.m_stroke = {r,g,b,a};
 }	
-void SoftwareCanvas::bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y){
+void System::Tools::SoftwareCanvas::bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y){
 
 }
-void SoftwareCanvas::quadraticCurveTo(float cpx,float cpy,float x,float y){
+void System::Tools::SoftwareCanvas::quadraticCurveTo(float cpx,float cpy,float x,float y){
 
 }
-void SoftwareCanvas::rect(float x, float y, float w, float h){
+void System::Tools::SoftwareCanvas::rect(float x, float y, float w, float h){
 	moveTo(x, y);
 	lineTo(x + w, y);
 	lineTo(x + w, y + h);
 	lineTo(x, y + h);
 	closePath();
 }
-void SoftwareCanvas::arcTo(float x1,float y1,float x2,float y2,float r){
+void System::Tools::SoftwareCanvas::arcTo(float x1,float y1,float x2,float y2,float r){
 	
 }
-void SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle){
+void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle){
 	arc(x,y,r,sAngle,eAngle,false);
 }
-void SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise){
+void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise){
 	const float tau = 2.0f * 3.14159265f;
 	float sweep = eAngle - sAngle;
 	// Normalize sweep
@@ -187,36 +245,36 @@ void SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle,bool 
 		angle += angleStep;
 	}
 }
-void SoftwareCanvas::translate(float x, float y){
+void System::Tools::SoftwareCanvas::translate(float x, float y){
 	auto &st = m_states.top();
 	Matrix3x3 T = Matrix3x3::translation(x, y);
 	st.transform = T * st.transform;
 }
-void SoftwareCanvas::scale(float scalewidth,float scaleheight){
+void System::Tools::SoftwareCanvas::scale(float scalewidth,float scaleheight){
 	auto &st = m_states.top();
 	Matrix3x3 S = Matrix3x3::scaling(x, y);
 	st.transform = S * st.transform;			
 }
-void SoftwareCanvas::rotate(float angle){
+void System::Tools::SoftwareCanvas::rotate(float angle){
 	auto& st = m_states.top();
 }
-void SoftwareCanvas::beginPath(){
+void System::Tools::SoftwareCanvas::beginPath(){
 	m_path.clear();
 }
-void SoftwareCanvas::moveTo(float x, float y) {
+void System::Tools::SoftwareCanvas::moveTo(float x, float y) {
 	m_path.push_back({ PathCommand::Type::MoveTo, {x, y} });
 }
-void SoftwareCanvas::lineTo(float x, float y) {
+void System::Tools::SoftwareCanvas::lineTo(float x, float y) {
 	m_path.push_back({ PathCommand::Type::LineTo, {x, y} });
 }
-void SoftwareCanvas::closePath() {
+void System::Tools::SoftwareCanvas::closePath() {
 	m_path.push_back({ PathCommand::Type::ClosePath, {} });
 }
-void SoftwareCanvas::resetTransform() {
+void System::Tools::SoftwareCanvas::resetTransform() {
 	auto &st = m_states.top();
 	st.m_transform = Matrix3x3::identity();
 }
-void SoftwareCanvas::debug(){
+void System::Tools::SoftwareCanvas::debug(){
 	auto &st = m_states.top();
 	std::cout << "m_stroke: " << st.m_stroke << std::endl;
 	std::cout << "m_fill: " << st.m_fill << std::endl;
