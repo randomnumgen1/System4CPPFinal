@@ -1,6 +1,8 @@
 #ifndef _SYSTEM_MATRIX3X3_H
 #define _SYSTEM_MATRIX3X3_H
 
+#include <cmath>
+#include "Vector2.hpp"
 namespace System {
 	struct Matrix3x3 {
 		private:
@@ -33,21 +35,21 @@ namespace System {
 			m[3] = m3; m[4] = m4; m[5] = m5;
 			m[6] = m6; m[7] = m7; m[8] = m8;
 		}
-		static Matrix3x3 translation(float tx, float ty) {
+		static Matrix3x3 Translate(float tx, float ty) {
 			return Matrix3x3(
 				1.f, 0.f, 0.f,
 				0.f, 1.f, 0.f,
 				tx , ty , 1.f
 			);
 		}
-		static Matrix3x3 scale(float sx, float sy) {
+		static Matrix3x3 Scale(float sx, float sy) {
 			return Matrix3x3(
 				sx , 0.f, 0.f,
 				0.f, sy , 0.f,
 				0.f, 0.f, 1.f
 			);
 		}
-		static Matrix3x3 rotation(float radians) {
+		static Matrix3x3 Rotate(float radians) {
 			float c = std::cos(radians);
 			float s = std::sin(radians);
 			return Matrix3x3(
