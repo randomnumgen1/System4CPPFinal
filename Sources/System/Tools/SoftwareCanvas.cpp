@@ -18,7 +18,7 @@ void SoftwareCanvas::clip(){
 	auto& st = m_states.top();
 }
 void SoftwareCanvas::fill(){
-	const auto& state = m_states.back();
+	const auto& state = m_states.top();
 	std::vector<Edge> edges;
 	Vector2 start, prev;
 	bool hasStart = false;
@@ -193,8 +193,8 @@ void SoftwareCanvas::translate(float x, float y){
 }
 void SoftwareCanvas::scale(float scalewidth,float scaleheight){
 	auto &st = m_states.back();
-	Matrix3x3 T = Matrix3x3::scaling(x, y);
-	st.transform = T * st.transform;			
+	Matrix3x3 S = Matrix3x3::scaling(x, y);
+	st.transform = S * st.transform;			
 }
 void SoftwareCanvas::rotate(float angle){
 	auto& st = m_states.top();

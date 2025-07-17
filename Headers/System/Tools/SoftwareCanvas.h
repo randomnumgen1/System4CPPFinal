@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iostream>
 #include <System/Matrix3x3.hpp>
+#include <System/Vector2.hpp>
 
 
 namespace System::Tools{
@@ -63,8 +64,12 @@ namespace System::Tools{
   {}
 
 			};
-			struct Point { float x, y; };
-			std::vector<Point> m_path;
+			struct PathCommand {
+				enum class Type { MoveTo, LineTo, ClosePath };
+				Type type;
+				System::Vector2 p;
+			};
+			std::vector<PathCommand> m_path;
 		
 			int m_width, m_height;
 			std::vector<uint8_t> m_pixels;
