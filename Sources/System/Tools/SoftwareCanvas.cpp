@@ -4,7 +4,13 @@
 #include <algorithm>
 #include <fstream>
 #include <cmath>
-
+#include <cstdint>
+#include <vector>
+#include <stack>
+#include <string>
+#include <cctype>
+#include <cstring>
+#include <iostream>
 System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
 	m_width = w;
 	m_height = h;
@@ -335,6 +341,7 @@ void System::Tools::SoftwareCanvas::resetTransform() {
 	st.m_transform = Matrix3x3::identity();
 }
 void System::Tools::SoftwareCanvas::debug(){
+#if dfsd
 	auto &st = m_states.top();
 	std::cout << "m_stroke: " << st.m_stroke << std::endl;
 	std::cout << "m_fill: " << st.m_fill << std::endl;
@@ -354,4 +361,5 @@ void System::Tools::SoftwareCanvas::debug(){
 	std::cout << "textBaseline: " << st.textBaseline << std::endl;
 	std::cout << "direction: " << st.direction << std::endl;
 	std::cout << "imageSmoothingEnabled: " << st.imageSmoothingEnabled << std::endl;
+#endif
 }

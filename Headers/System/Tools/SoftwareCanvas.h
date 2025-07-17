@@ -51,7 +51,7 @@ namespace System::Tools{
 				 State()
     : m_transform(Matrix3x3::identity())
     , m_stroke{   0,   0,   0, 255 }
-    , m_fill{     0,   0,   0, 255 }
+    , m_fill{     255,   0,   0, 255 }
     , globalAlpha(1.0f)
     , lineWidth(  1.0f )
     , lineCap(LineCap::butt)
@@ -204,7 +204,7 @@ namespace System::Tools{
 			void settextAlign(const std::string& str);
 			void setlineWidth(float width);
 		
-		
+#define strncasecmp _strnicmp
 			void setFillStyle(const std::string& cssColor){
 				auto &st = m_states.top();
 				const char *p, *e;
