@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <fstream>
-
+#include <cmath>
 
 System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
 	m_width = w;
@@ -247,16 +247,18 @@ void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,flo
 }
 void System::Tools::SoftwareCanvas::translate(float x, float y){
 	auto &st = m_states.top();
-	Matrix3x3 T = Matrix3x3::translation(x, y);
-	st.transform = T * st.transform;
+	Matrix3x3 T = Matrix3x3::Translate(x, y);
+	st.m_transform = T * st.m_transform;
 }
 void System::Tools::SoftwareCanvas::scale(float scalewidth,float scaleheight){
 	auto &st = m_states.top();
-	Matrix3x3 S = Matrix3x3::scaling(scalewidth, scaleheight);
-	st.transform = S * st.transform;			
+	Matrix3x3 S = Matrix3x3::Scale(scalewidth, scaleheight);
+	st.m_transform = S * st.m_transform;
 }
 void System::Tools::SoftwareCanvas::rotate(float angle){
 	auto& st = m_states.top();
+	Matrix3x3 R = Matrix3x3::Rotate(angle);
+	st.m_transform = R * st.m_transform;
 }
 void System::Tools::SoftwareCanvas::beginPath(){
 	m_path.clear();

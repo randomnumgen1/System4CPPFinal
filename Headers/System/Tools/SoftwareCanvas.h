@@ -90,7 +90,7 @@ namespace System::Tools{
 				return 0;
 			}
 			static Color ParseCssColor(const std::string& cssColor){
-				
+				return { 0,0,0,0 };
 			}
 			void SetPixelBlendNoCheck(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
 				// fully transparent, do nothing
