@@ -66,6 +66,10 @@ void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
 
 		return ;
 }
+bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y)
+{
+	return false;
+}
 void System::Tools::SoftwareCanvas::save(){
 	m_states.push(m_states.top());
 }

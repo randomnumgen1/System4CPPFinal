@@ -187,6 +187,8 @@ namespace System::Tools{
 			SoftwareCanvas(int w, int h);
 			//
 			void SaveAsBitmap(const std::string& filename);
+
+			bool isPointInPath(int x, int y);
 			// save/restore:
 			void save();
 			void restore();
