@@ -8,7 +8,13 @@ namespace System {
 		public:
 		float m[9];
 		
-		static const Matrix3x3 identity;
+		static Matrix3x3 identity() {
+			return Matrix3x3{
+				1.f, 0.f, 0.f,
+				0.f, 1.f, 0.f,
+				0.f, 0.f, 1.f
+			};
+		}
 		Matrix3x3 transpose() const{
 			Matrix3x3 T;
 			T.m[0] = m[0];  T.m[1] = m[3];  T.m[2] = m[6];
@@ -22,33 +28,38 @@ namespace System {
 			m[1] = 0.f; m[4] = 1.f; m[7] = 0.f;
 			m[2] = 0.f; m[5] = 0.f; m[8] = 1.f;			
 		}
+		Matrix3x3(float m0, float m1, float m2, float m3, float m4, float m5, float m6, float m7, float m8) {
+			m[0] = m0; m[1] = m1; m[2] = m2;
+			m[3] = m3; m[4] = m4; m[5] = m5;
+			m[6] = m6; m[7] = m7; m[8] = m8;
+		}
 		static Matrix3x3 translation(float tx, float ty) {
-			return {
+			return Matrix3x3(
 				1.f, 0.f, 0.f,
 				0.f, 1.f, 0.f,
 				tx , ty , 1.f
-			};
+			);
 		}
 		static Matrix3x3 scale(float sx, float sy) {
-			return {
+			return Matrix3x3(
 				sx , 0.f, 0.f,
 				0.f, sy , 0.f,
 				0.f, 0.f, 1.f
-			};
+			);
 		}
 		static Matrix3x3 rotation(float radians) {
 			float c = std::cos(radians);
 			float s = std::sin(radians);
-			return {
+			return Matrix3x3(
 				 c ,  s , 0.f,
 				-s ,  c , 0.f,
 				 0.f, 0.f, 1.f
-			};
+			);
 		}
 		
 		
 
-		Matrix3x3 Matrix3x3::operator*(const Matrix3x3& B) const {
+		Matrix3x3 operator*(const Matrix3x3& B) const {
 			const Matrix3x3& A = *this;
 			Matrix3x3 R;
 			// First column
@@ -65,7 +76,11 @@ namespace System {
 			R.m[8] = A.m[2]*B.m[6] + A.m[5]*B.m[7] + A.m[8]*B.m[8];
 			return R;
 	}
-
+		Vector2 operator*(const Vector2& v) const {
+			float x = m[0] * v.x + m[3] * v.y + m[6];
+			float y = m[1] * v.x + m[4] * v.y + m[7];
+			return Vector2(x, y);
+		}
 
 
 	};
