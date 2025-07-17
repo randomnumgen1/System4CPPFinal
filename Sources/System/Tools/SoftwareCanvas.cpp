@@ -252,7 +252,7 @@ void System::Tools::SoftwareCanvas::translate(float x, float y){
 }
 void System::Tools::SoftwareCanvas::scale(float scalewidth,float scaleheight){
 	auto &st = m_states.top();
-	Matrix3x3 S = Matrix3x3::scaling(x, y);
+	Matrix3x3 S = Matrix3x3::scaling(scalewidth, scaleheight);
 	st.transform = S * st.transform;			
 }
 void System::Tools::SoftwareCanvas::rotate(float angle){
