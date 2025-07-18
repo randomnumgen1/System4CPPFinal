@@ -118,4 +118,24 @@ namespace System {
             0.f, 0.f, 1.f
         );
     }
+    Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale){
+        const float radians = rotation * (3.14159265f / 180.0f);
+        const float c = std::cos(radians);
+        const float s = std::sin(radians);
+        Matrix3x3 m;
+
+        m.M00 = scale.x * c;
+        m.M01 = scale.y * -s;
+        m.M02 = translation.x;
+
+        m.M10 = scale.x * s;
+        m.M11 = scale.y * c;
+        m.M12 = translation.y;
+
+        m.M20 = 0.0f;
+        m.M21 = 0.0f;
+        m.M22 = 1.0f;
+
+        return m;
+    }
 }

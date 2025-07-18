@@ -50,6 +50,7 @@ namespace System {
 			static Matrix3x3 Translate(float tx, float ty);
 			static Matrix3x3 Scale(float sx, float sy);
 			static Matrix3x3 Rotate(float radians);
+			static Matrix3x3 TRS(Vector2 translation, float rotation, Vector2 scale);
 			static Matrix3x3 identity();
 			Matrix3x3 transpose() const;
 			Matrix3x3 Invert() const;
