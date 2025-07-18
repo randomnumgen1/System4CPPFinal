@@ -22,29 +22,30 @@ namespace System {
 			// (=horiz)   2  | m31 m32 m33
 			union {
 				float raw[9];
+				float m[3][3];
 				struct {
+					/// <summary>row 0 column 0.</summary>
+					float M00;
+					/// <summary>row 1 column 0.</summary>
+					float M10;
+					/// <summary>row 2 column 0.</summary>
+					float M20;
+					/// <summary>row 0 column 1.</summary>
+					float M01;
 					/// <summary>row 1 column 1.</summary>
 					float M11;
-					/// <summary>row 1 column 2.</summary>
-					float M12;
-					/// <summary>row 1 column 3.</summary>
-					float M13;
 					/// <summary>row 2 column 1.</summary>
 					float M21;
+					/// <summary>row 0 column 2.</summary>
+					float M02;
+					/// <summary>row 1 column 2.</summary>
+					float M12;
 					/// <summary>row 2 column 2.</summary>
 					float M22;
-					/// <summary>row 2 column 3.</summary>
-					float M23;
-					/// <summary>row 3 column 1.</summary>
-					float M31;
-					/// <summary>row 3 column 2.</summary>
-					float M32;
-					/// <summary>row 3 column 3.</summary>
-					float M33;
 				};
 			};
 			Matrix3x3();
-			Matrix3x3(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33);
+			Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
 			static Matrix3x3 Translate(float tx, float ty);
 			static Matrix3x3 Scale(float sx, float sy);
@@ -61,23 +62,23 @@ namespace System {
 
 		
 
-		Matrix3x3 operator*(const Matrix3x3& B) const {
-			const Matrix3x3& A = *this;
-			Matrix3x3 R;
-			// First column
-			R.m[0] = A.m[0]*B.m[0] + A.m[3]*B.m[1] + A.m[6]*B.m[2];
-			R.m[1] = A.m[1]*B.m[0] + A.m[4]*B.m[1] + A.m[7]*B.m[2];
-			R.m[2] = A.m[2]*B.m[0] + A.m[5]*B.m[1] + A.m[8]*B.m[2];
-			// Second column
-			R.m[3] = A.m[0]*B.m[3] + A.m[3]*B.m[4] + A.m[6]*B.m[5];
-			R.m[4] = A.m[1]*B.m[3] + A.m[4]*B.m[4] + A.m[7]*B.m[5];
-			R.m[5] = A.m[2]*B.m[3] + A.m[5]*B.m[4] + A.m[8]*B.m[5];
-			// Third column
-			R.m[6] = A.m[0]*B.m[6] + A.m[3]*B.m[7] + A.m[6]*B.m[8];
-			R.m[7] = A.m[1]*B.m[6] + A.m[4]*B.m[7] + A.m[7]*B.m[8];
-			R.m[8] = A.m[2]*B.m[6] + A.m[5]*B.m[7] + A.m[8]*B.m[8];
-			return R;
-	}
+			Matrix3x3 operator*(const Matrix3x3& other) const {
+				Matrix3x3 result;
+
+				result.raw[0] = this->raw[0] * other.raw[0] + this->raw[3] * other.raw[1] + this->raw[6] * other.raw[2];
+				result.raw[1] = this->raw[1] * other.raw[0] + this->raw[4] * other.raw[1] + this->raw[7] * other.raw[2];
+				result.raw[2] = this->raw[2] * other.raw[0] + this->raw[5] * other.raw[1] + this->raw[8] * other.raw[2];
+
+				result.raw[3] = this->raw[0] * other.raw[3] + this->raw[3] * other.raw[4] + this->raw[6] * other.raw[5];
+				result.raw[4] = this->raw[1] * other.raw[3] + this->raw[4] * other.raw[4] + this->raw[7] * other.raw[5];
+				result.raw[5] = this->raw[2] * other.raw[3] + this->raw[5] * other.raw[4] + this->raw[8] * other.raw[5];
+
+				result.raw[6] = this->raw[0] * other.raw[6] + this->raw[3] * other.raw[7] + this->raw[6] * other.raw[8];
+				result.raw[7] = this->raw[1] * other.raw[6] + this->raw[4] * other.raw[7] + this->raw[7] * other.raw[8];
+				result.raw[8] = this->raw[2] * other.raw[6] + this->raw[5] * other.raw[7] + this->raw[8] * other.raw[8];
+				return result;
+			}
+
 	 
 
 
