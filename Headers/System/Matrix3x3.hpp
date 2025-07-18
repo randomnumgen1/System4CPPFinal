@@ -3,13 +3,20 @@
 
 #include <cmath>
 #include "Vector2.hpp"
+//struct should be column major
 namespace System {
 	struct Matrix3x3 {
 		private:
 		
 		public:
-		float m[9];
-		
+			union {
+				float m[9];
+				struct {
+					float m00, m10, m20;
+					float m01, m11, m21;
+					float m02, m12, m22;
+				};
+			};
 		static Matrix3x3 identity() {
 			return Matrix3x3{
 				1.f, 0.f, 0.f,
@@ -24,7 +31,34 @@ namespace System {
 			T.m[6] = m[2];  T.m[7] = m[5];  T.m[8] = m[8];
 			return T;
 		}
-		
+		Matrix3x3 Invert() const {
+			float det = m[0] * (m[4] * m[8] - m[7] * m[5]) -
+				m[3] * (m[1] * m[8] - m[7] * m[2]) +
+				m[6] * (m[1] * m[5] - m[4] * m[2]);
+
+			if (det == 0.f) {
+				return Matrix3x3::identity();
+			}
+
+			float invDet = 1.f / det;
+
+			Matrix3x3 inv;
+			inv.m[0] = (m[4] * m[8] - m[7] * m[5]) * invDet;
+			inv.m[3] = (m[6] * m[5] - m[3] * m[8]) * invDet;
+			inv.m[6] = (m[3] * m[7] - m[6] * m[4]) * invDet;
+			inv.m[1] = (m[7] * m[2] - m[1] * m[8]) * invDet;
+			inv.m[4] = (m[0] * m[8] - m[6] * m[2]) * invDet;
+			inv.m[7] = (m[6] * m[1] - m[0] * m[7]) * invDet;
+			inv.m[2] = (m[1] * m[5] - m[4] * m[2]) * invDet;
+			inv.m[5] = (m[3] * m[2] - m[0] * m[5]) * invDet;
+			inv.m[8] = (m[0] * m[4] - m[3] * m[1]) * invDet;
+
+			return inv;
+		}
+
+
+
+
 		Matrix3x3(){
 			m[0] = 1.f; m[3] = 0.f; m[6] = 0.f;
 			m[1] = 0.f; m[4] = 1.f; m[7] = 0.f;
