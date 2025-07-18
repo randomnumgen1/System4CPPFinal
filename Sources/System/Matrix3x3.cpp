@@ -53,6 +53,33 @@ namespace System {
             (raw[1] * raw[5] - raw[2] * raw[4]), -(raw[0] * raw[5] - raw[2] * raw[3]), (raw[0] * raw[4] - raw[1] * raw[3])
         ).transpose();
     }
+    //compare matrixA against matrixB ignoring column/row major order
+    bool Matrix3x3::CompareMajorityIndependant(Matrix3x3 matrixA, Matrix3x3 matrixB){
+        const float epsilon = 1e-6f;
+
+        bool matchRowMajor = true;
+        bool matchColumnMajor = true;
+
+        // Compare row-major directly
+        for (int i = 0; i < 9; ++i) {
+            if (std::fabs(matrixA.raw[i] - matrixB.raw[i]) > epsilon)
+                matchRowMajor = false;
+        }
+
+        // Compare column-major (transpose simulation)
+        int idx = 0;
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                int flatIndexRowMajor = row * 3 + col;     // i * width + j
+                int flatIndexColMajor = col * 3 + row;     // j * height + i
+                if (std::fabs(matrixA.raw[idx] - matrixB.raw[flatIndexColMajor]) > epsilon)
+                    matchColumnMajor = false;
+                idx++;
+            }
+        }
+
+        return matchRowMajor || matchColumnMajor;
+    }
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(
             1.f, 0.f, 0.f,

@@ -55,7 +55,7 @@ namespace System {
 			Matrix3x3 Invert() const;
 			float Determinant() const;
 			Matrix3x3 Adjugate() const;
-
+			bool CompareMajorityIndependant(Matrix3x3 matrixA, Matrix3x3 matrixB);
 	
 
 
