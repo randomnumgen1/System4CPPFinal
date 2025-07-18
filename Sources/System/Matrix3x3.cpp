@@ -2,21 +2,32 @@
 
 namespace System {
     Matrix3x3::Matrix3x3() {
-        m[0] = 1.f; m[3] = 0.f; m[6] = 0.f;
-        m[1] = 0.f; m[4] = 1.f; m[7] = 0.f;
-        m[2] = 0.f; m[5] = 0.f; m[8] = 1.f;
+       
+
     }
-    Matrix3x3::Matrix3x3(float m00, float m10, float m20, float m01, float m11, float m21, float m02, float m12, float m22) {
-        m[0] = m00; m[1] = m10; m[2] = m20;
-        m[3] = m01; m[4] = m11; m[5] = m21;
-        m[6] = m02; m[7] = m12; m[8] = m22;
+    Matrix3x3::Matrix3x3(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33) {
+        M11 = m11;
+        M12 = m12;
+        M13 = m13;
+        M21 = m21;
+        M22 = m22;
+        M23 = m23;
+        M31 = m31;
+        M32 = m32;
+        M33 = m33;
     }
     Matrix3x3 Matrix3x3::transpose() const {
-        Matrix3x3 T;
-        T.m[0] = m[0];  T.m[1] = m[3];  T.m[2] = m[6];
-        T.m[3] = m[1];  T.m[4] = m[4];  T.m[5] = m[7];
-        T.m[6] = m[2];  T.m[7] = m[5];  T.m[8] = m[8];
-        return T;
+        return Matrix3x3(
+            M11,
+            M21,
+            M31,
+            M12,
+            M22,
+            M32,
+            M13,
+            M23,
+            M33
+        );
     }
     Matrix3x3 Matrix3x3::Invert() const{
         float det =
@@ -48,6 +59,14 @@ namespace System {
         inv.m[8] = (m[0] * m[4] - m[1] * m[3]) * invDet;
 
         return inv;
+    }
+    float Matrix3x3::Determinant() const
+    {
+        return 0.0f;
+    }
+    Matrix3x3 Matrix3x3::Adjugate() const
+    {
+        return Matrix3x3();
     }
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(

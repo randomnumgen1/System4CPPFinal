@@ -17,19 +17,34 @@ namespace System {
 			//             row no (=vertical)
 			//               |  0   1   2 
 			//            ---+------------
-			//            0  | m00 m10 m20
-			// column no  1  | m01 m11 m21
-			// (=horiz)   2  | m02 m12 m22
+			//            0  | m11 m12 m13
+			// column no  1  | m21 m22 m23
+			// (=horiz)   2  | m31 m32 m33
 			union {
-				float m[9];
+				float raw[9];
 				struct {
-					float m00, m10, m20;
-					float m01, m11, m21;
-					float m02, m12, m22;
+					/// <summary>row 1 column 1.</summary>
+					float M11;
+					/// <summary>row 1 column 2.</summary>
+					float M12;
+					/// <summary>row 1 column 3.</summary>
+					float M13;
+					/// <summary>row 2 column 1.</summary>
+					float M21;
+					/// <summary>row 2 column 2.</summary>
+					float M22;
+					/// <summary>row 2 column 3.</summary>
+					float M23;
+					/// <summary>row 3 column 1.</summary>
+					float M31;
+					/// <summary>row 3 column 2.</summary>
+					float M32;
+					/// <summary>row 3 column 3.</summary>
+					float M33;
 				};
 			};
 			Matrix3x3();
-			Matrix3x3(float m00, float m10, float m20, float m01, float m11, float m21, float m02, float m12, float m22);
+			Matrix3x3(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33);
 
 			static Matrix3x3 Translate(float tx, float ty);
 			static Matrix3x3 Scale(float sx, float sy);
@@ -37,8 +52,8 @@ namespace System {
 			static Matrix3x3 identity();
 			Matrix3x3 transpose() const;
 			Matrix3x3 Invert() const;
-
-
+			float Determinant() const;
+			Matrix3x3 Adjugate() const;
 
 		Matrix3x3 Invert1() const {
 			float det = m[0] * (m[4] * m[8] - m[7] * m[5]) -
