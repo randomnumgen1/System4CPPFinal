@@ -3,12 +3,23 @@
 
 #include <cmath>
 #include "Vector2.hpp"
-//struct should be column major
+//Matrix3x3 should be column major
+//functions and constructors should be checked for correctness
 namespace System {
 	struct Matrix3x3 {
 		private:
 		
 		public:
+			//column major
+
+			// memory layout:
+			//
+			//             row no (=vertical)
+			//               |  0   1   2 
+			//            ---+------------
+			//            0  | m00 m10 m20
+			// column no  1  | m01 m11 m21
+			// (=horiz)   2  | m02 m12 m22
 			union {
 				float m[9];
 				struct {
