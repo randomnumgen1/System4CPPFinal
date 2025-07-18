@@ -36,7 +36,7 @@ namespace System {
 			static Matrix3x3 Rotate(float radians);
 			static Matrix3x3 identity();
 			Matrix3x3 transpose() const;
-
+			Matrix3x3 Invert() const;
 
 
 
@@ -121,11 +121,7 @@ namespace System {
 			R.m[8] = A.m[2]*B.m[6] + A.m[5]*B.m[7] + A.m[8]*B.m[8];
 			return R;
 	}
-		Vector2 operator*(const Vector2& v) const {
-			float x = m[0] * v.x + m[3] * v.y + m[6];
-			float y = m[1] * v.x + m[4] * v.y + m[7];
-			return Vector2(x, y);
-		}
+	 
 
 
 	};
