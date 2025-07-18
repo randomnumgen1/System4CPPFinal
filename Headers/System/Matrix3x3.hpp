@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include "Vector2.hpp"
+#include <ostream>
 //Matrix3x3 should be column major
 //functions and constructors should be checked for correctness
 namespace System {
@@ -84,5 +85,14 @@ namespace System {
 
 
 	};
+
+	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
+		os << std::fixed << std::setprecision(3);
+		os << "[[" << m.M00 << ", " << m.M10 << ", " << m.M20 << "]," << std::endl
+			<< " [" << m.M01 << ", " << m.M11 << ", " << m.M21 << "]," << std::endl
+			<< " [" << m.M02 << ", " << m.M12 << ", " << m.M22 << "]]" << std::endl;
+		return os;
+	}
+
 }
 #endif
