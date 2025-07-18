@@ -55,65 +55,7 @@ namespace System {
 			float Determinant() const;
 			Matrix3x3 Adjugate() const;
 
-		Matrix3x3 Invert1() const {
-			float det = m[0] * (m[4] * m[8] - m[7] * m[5]) -
-				m[3] * (m[1] * m[8] - m[7] * m[2]) +
-				m[6] * (m[1] * m[5] - m[4] * m[2]);
-
-			if (det == 0.f) {
-				return Matrix3x3::identity();
-			}
-
-			float invDet = 1.f / det;
-
-			Matrix3x3 inv;
-			//First column
-			inv.m[0] = (m[4] * m[8] - m[7] * m[5]) * invDet;
-			inv.m[3] = (m[2] * m[7] - m[1] * m[8]) * invDet;
-			inv.m[6] = (m[1] * m[5] - m[2] * m[4]) * invDet;
-			// Second column
-			inv.m[1] = (m[5] * m[6] - m[3] * m[8]) * invDet;
-			inv.m[4] = (m[0] * m[8] - m[2] * m[6]) * invDet;
-			inv.m[7] = (m[2] * m[3] - m[0] * m[5]) * invDet;
-			// Third column
-			inv.m[2] = (m[3] * m[7] - m[5] * m[6]) * invDet;
-			inv.m[5] = (m[1] * m[6] - m[0] * m[7]) * invDet;
-			inv.m[8] = (m[0] * m[4] - m[3] * m[1]) * invDet;
-
-			return inv;
-		}
-		Matrix3x3 Invert2() const {
-			float det =
-				m[0] * (m[4] * m[8] - m[5] * m[7]) -
-				m[3] * (m[1] * m[8] - m[2] * m[7]) +
-				m[6] * (m[1] * m[5] - m[2] * m[4]);
-
-			if (det == 0.f) {
-				return Matrix3x3::identity();
-			}
-
-			float invDet = 1.f / det;
-
-			Matrix3x3 inv;
-
-			// First column
-			inv.m[0] = (m[4] * m[8] - m[5] * m[7]) * invDet;
-			inv.m[1] = -(m[1] * m[8] - m[2] * m[7]) * invDet;
-			inv.m[2] = (m[1] * m[5] - m[2] * m[4]) * invDet;
-
-			// Second column
-			inv.m[3] = -(m[3] * m[8] - m[5] * m[6]) * invDet;
-			inv.m[4] = (m[0] * m[8] - m[2] * m[6]) * invDet;
-			inv.m[5] = -(m[0] * m[5] - m[2] * m[3]) * invDet;
-
-			// Third column
-			inv.m[6] = (m[3] * m[7] - m[4] * m[6]) * invDet;
-			inv.m[7] = -(m[0] * m[7] - m[1] * m[6]) * invDet;
-			inv.m[8] = (m[0] * m[4] - m[1] * m[3]) * invDet;
-
-			return inv;
-		}
-
+	
 
 
 

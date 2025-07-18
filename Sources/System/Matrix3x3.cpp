@@ -30,43 +30,28 @@ namespace System {
         );
     }
     Matrix3x3 Matrix3x3::Invert() const{
-        float det =
-            m[0] * (m[4] * m[8] - m[5] * m[7]) -
-            m[3] * (m[1] * m[8] - m[2] * m[7]) +
-            m[6] * (m[1] * m[5] - m[2] * m[4]);
-
-        if (det == 0.f) {
+        Matrix3x3 adj = Adjugate();
+        float det = Determinant();
+        if (det == 0) {
             return Matrix3x3::identity();
         }
-
         float invDet = 1.f / det;
-
-        Matrix3x3 inv;
-
-        // First column
-        inv.m[0] = (m[4] * m[8] - m[5] * m[7]) * invDet;
-        inv.m[1] = -(m[1] * m[8] - m[2] * m[7]) * invDet;
-        inv.m[2] = (m[1] * m[5] - m[2] * m[4]) * invDet;
-
-        // Second column
-        inv.m[3] = -(m[3] * m[8] - m[5] * m[6]) * invDet;
-        inv.m[4] = (m[0] * m[8] - m[2] * m[6]) * invDet;
-        inv.m[5] = -(m[0] * m[5] - m[2] * m[3]) * invDet;
-
-        // Third column
-        inv.m[6] = (m[3] * m[7] - m[4] * m[6]) * invDet;
-        inv.m[7] = -(m[0] * m[7] - m[1] * m[6]) * invDet;
-        inv.m[8] = (m[0] * m[4] - m[1] * m[3]) * invDet;
-
-        return inv;
+        return Matrix3x3(
+            adj.raw[0] * invDet, adj.raw[1] * invDet, adj.raw[2] * invDet,
+            adj.raw[3] * invDet, adj.raw[4] * invDet, adj.raw[5] * invDet,
+            adj.raw[6] * invDet, adj.raw[7] * invDet, adj.raw[8] * invDet);
     }
-    float Matrix3x3::Determinant() const
-    {
-        return 0.0f;
+    float Matrix3x3::Determinant() const{
+        return raw[0] * (raw[4] * raw[8] - raw[5] * raw[7]) -
+            raw[3] * (raw[1] * raw[8] - raw[2] * raw[7]) +
+            raw[6] * (raw[1] * raw[5] - raw[2] * raw[4]);
     }
-    Matrix3x3 Matrix3x3::Adjugate() const
-    {
-        return Matrix3x3();
+    Matrix3x3 Matrix3x3::Adjugate() const{
+        return Matrix3x3(
+            (raw[4] * raw[8] - raw[5] * raw[7]), -(raw[1] * raw[8] - raw[2] * raw[7]), (raw[1] * raw[5] - raw[2] * raw[4]),
+            -(raw[3] * raw[8] - raw[5] * raw[6]), (raw[0] * raw[8] - raw[2] * raw[6]), -(raw[0] * raw[5] - raw[2] * raw[3]),
+            (raw[3] * raw[7] - raw[4] * raw[6]), -(raw[0] * raw[7] - raw[1] * raw[6]), (raw[0] * raw[4] - raw[1] * raw[3])
+        );
     }
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(
