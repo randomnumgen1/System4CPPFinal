@@ -70,9 +70,9 @@ namespace System {
 
     Matrix3x3 Matrix3x3::Translate(float tx, float ty) {
         return Matrix3x3(
-            1.f, 0.f, 0.f,
-            0.f, 1.f, 0.f,
-            tx, ty, 1.f
+            1.f, 0.f, tx,
+            0.f, 1.f, ty,
+            0.f, 0.f, 1.f
         );
     }
     Matrix3x3 Matrix3x3::Scale(float sx, float sy) {
@@ -86,8 +86,8 @@ namespace System {
         float c = std::cos(radians);
         float s = std::sin(radians);
         return Matrix3x3(
-            c, -s, 0.f,
-            s, c, 0.f,
+            c, s, 0.f,
+            -s, c, 0.f,
             0.f, 0.f, 1.f
         );
     }
