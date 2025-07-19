@@ -2,7 +2,13 @@
 #define _SYSTEM_MATHF_H
 
 #include <cstdint>
-#include <corecrt_math_defines.h>
+
+#ifdef _WIN32
+    #include <corecrt_math_defines.h>
+#else
+	#define _USE_MATH_DEFINES
+	#include <cmath>
+#endif
 
 namespace System{
 	struct Mathf{
@@ -27,6 +33,7 @@ namespace System{
 		static float Clamp01(float value);
 		static int ClosestPowerOfTwo(int value);
 		static float Cos(float f);
+		static int CountSetBits(uint32_t x);
 		static float DeltaAngle(float current, float target);
 		static float Exp(float power);
 		static uint16_t FloatToHalf(float val);
@@ -40,6 +47,8 @@ namespace System{
 		static float LerpUnclamped(float a, float b, float t);
 		static float Log(float f, float p);
 		static float Log10(float f);
+		static uint64_t Majority3(uint64_t a, uint64_t b, uint64_t c);
+		static uint64_t Majority5 (uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e);
 		static float Map(const float originalNumber, const float oldMin, const float oldMax, const float newMin, const float newMax);
 		static float Max(float a, float b);
 		static float Min(float a, float b);
@@ -58,14 +67,8 @@ namespace System{
 		static float SmoothStep(const float from, const float to, float t);
 		static float Sqrt(float f);
 		static float Tan(float f);
-		static float Radians(float degrees){
-			const float calc = (3.141592653589793f / 180.0f); 
-			return degrees * calc;
-		}
-		static float Degrees(float radians) {
-			const float calc = (180.0f / 3.141592653589793f);
-			return radians * calc;
-		}
+		static float Radians(float degrees);
+		static float Degrees(float radians);
 		/*
 		 ----------------------------------------------------------------------------------------
 		Tween In
@@ -113,25 +116,25 @@ namespace System{
 		 ----------------------------------------------------------------------------------------
 		*/
 		static float TweenCircOut(float from, float to, float t) {
-			return from + (to - from) * Sqrt(1 - Pow(t - 1, 2));
+			return from + (to - from) * Sqrt(1.0f - Pow(t - 1.0f, 2.0f));
 		}
 		static float TweenExpoOut(float from, float to, float t) {
-			return from + (to - from) * (t == 1.0f ? 1.0f : 1.0f - Pow(2, -10.0f * t));
+			return from + (to - from) * (t == 1.0f ? 1.0f : 1.0f - Pow(2.0f, -10.0f * t));
 		}
 		static float TweenQuintOut(float from, float to, float t) {
-			return from + (to - from) * (1 - Pow(1 - t, 5));
+			return from + (to - from) * (1.0f - Pow(1.0f - t, 5.0f));
 		}
 		static float TweenQuartOut(float from, float to, float t) {
-			return from + (to - from) * (1 - Pow(1 - t, 4));
+			return from + (to - from) * (1.0f - Pow(1.0f - t, 4.0f));
 		}
 		static float TweenCubicOut(float from, float to, float t) {
-			return from + (to - from) * (1 - Pow(1 - t, 3));
+			return from + (to - from) * (1.0f - Pow(1 - t, 3.0f));
 		}
 		static float TweenQuadOut(float from, float to, float t) {
-			return from + (to - from) * (1 - (1 - t) * (1 - t));
+			return from + (to - from) * (1.0f - (1.0f - t) * (1.0f - t));
 		}
 		static float TweenSineOut(const float from, const float to,const float t) {
-			return from + (to - from) * Sin((t * PI) / 2);
+			return from + (to - from) * Sin((t * PI) / 2.0f);
 		}
 		static float TweenBounceOut(float from, float to, float t) {
 			if (t < 0.3636f) return from + (to - from) * (7.5625f * t * t);
@@ -141,7 +144,7 @@ namespace System{
 		}
 		static float TweenBackOut(float from, float to, float t) {
 			const float s = 1.70158f;
-			return from + (to - from) * (1 + s * Pow(t - 1, 3) + s * (t - 1) * (t - 1));
+			return from + (to - from) * (1 + s * Pow(t - 1.0f, 3.0f) + s * (t - 1) * (t - 1));
 		}
 		static float TweenElasticOut(float from, float to, float t) {
 			if (t == 0.0f) return from;
@@ -151,7 +154,6 @@ namespace System{
 		static float TweenEaseOut(const float from, const float to, const float t) {
 			return from + (to - from) * (1 - (1 - t) * (1 - t));
 		}
-
 
 
 

@@ -47,6 +47,19 @@ int System::Mathf::ClosestPowerOfTwo(int value){
 float System::Mathf::Cos(float f){
    return std::cosf(f);
 }
+int System::Mathf::CountSetBits(uint32_t x){
+#if defined(__GNUC__) || defined(__clang__)
+    return __builtin_popcount(x);
+#else
+    // Portable fallback
+    int count = 0;
+    while (x) {
+        x &= (x - 1);
+        ++count;
+    }
+    return count;
+#endif
+}
 float System::Mathf::DeltaAngle(float current, float target){
     throw std::runtime_error("Not Implemented Error.");
 }
@@ -89,6 +102,12 @@ float System::Mathf::Log(float f, float p){
 }
 float System::Mathf::Log10(float f){
     return std::log10f(f);
+}
+uint64_t System::Mathf::Majority3(uint64_t a, uint64_t b, uint64_t c){
+	return (((b & c) | a) & (b | c));
+}
+uint64_t System::Mathf::Majority5 (uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e){
+	return Majority3 (a, Majority3 (c, d, e), Majority3 (b, c, Majority3 (b, d, e))); 
 }
 float System::Mathf::Map(const float originalNumber, const float oldMin, const float oldMax, const float newMin, const float newMax){
     float oldRange = oldMax - oldMin;
@@ -147,7 +166,7 @@ float System::Mathf::Sin(float f){
     return std::sinf(f);
 }
 float System::Mathf::SmoothStep(const float from,const float to, float t){
-    t = std::clamp(t, 0.0f, 1.0f);
+    t = Clamp01(t);
     t = t * t * (3.0f - 2.0f * t);
     return from + (to - from) * t;
 }
@@ -156,4 +175,12 @@ float System::Mathf::Sqrt(float f){
 }
 float System::Mathf::Tan(float f){
     return std::tanf(f);
+}
+float System::Mathf::Radians(float degrees){
+    const float calc = (3.141592653589793f / 180.0f);
+    return degrees * calc;
+}
+float System::Mathf::Degrees(float radians){
+    const float calc = (180.0f / 3.141592653589793f);
+    return radians * calc;
 }
