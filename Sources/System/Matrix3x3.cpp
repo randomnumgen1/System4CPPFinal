@@ -2,7 +2,9 @@
 
 namespace System {
     Matrix3x3::Matrix3x3() {
-       
+        for (int i = 0; i < 9; ++i) {
+            raw[i] = 0.0f;
+        }
 
     }
     Matrix3x3::Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
