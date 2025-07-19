@@ -1,4 +1,11 @@
-
+#include "gtest/gtest.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtx/matrix_transform_2d.hpp>
+#include "System/Matrix3x3.hpp"
+#include "System/Mathf.hpp"
+include <iostream>
+#include <cmath>
 
 void PrintMatrix(const System::Matrix3x3& m) {
     for (int i = 0; i < 3; ++i) {
@@ -19,23 +26,18 @@ void PrintMatrix(const glm::mat3& m) {
 }
 
 
-#include "gtest/gtest.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include <glm/gtx/matrix_transform_2d.hpp>
-#include "System/Matrix3x3.hpp"
-#include "System/Mathf.hpp"
+
 
 // Helper function to compare System::Matrix3x3 and glm::mat3
-::testing::AssertionResult CompareMatrices(const System::Matrix3x3& sysMat, const glm::mat3& glmMat) {
+:testing::AssertionResult CompareMatrices(const System::Matrix3x3& sysMat, const glm::mat3& glmMat) {
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (std::abs(sysMat.m[i][j] - glmMat[i][j]) > 1e-6) {
+            if (std::abs(sysMat.m[j][i] - glmMat[j][i]) > 1e-6) {
                 return ::testing::AssertionFailure() << "Matrices differ at (" << i << ", " << j << ")\n"
                     << "System Matrix:\n"
-                    << sysMat.raw[0] << " " << sysMat.raw[1] << " " << sysMat.raw[2] << "\n"
-                    << sysMat.raw[3] << " " << sysMat.raw[4] << " " << sysMat.raw[5] << "\n"
-                    << sysMat.raw[6] << " " << sysMat.raw[7] << " " << sysMat.raw[8] << "\n"
+                    << sysMat.m[0][0] << " " << sysMat.m[0][1] << " " << sysMat.m[0][2] << "\n"
+                    << sysMat.m[1][0] << " " << sysMat.m[1][1] << " " << sysMat.m[1][2] << "\n"
+                    << sysMat.m[2][0] << " " << sysMat.m[2][1] << " " << sysMat.m[2][2] << "\n"
                     << "GLM Matrix:\n"
                     << glmMat[0][0] << " " << glmMat[0][1] << " " << glmMat[0][2] << "\n"
                     << glmMat[1][0] << " " << glmMat[1][1] << " " << glmMat[1][2] << "\n"
@@ -45,7 +47,6 @@ void PrintMatrix(const glm::mat3& m) {
     }
     return ::testing::AssertionSuccess();
 }
-
 TEST(Matrix3x3Test, Identity) {
     System::Matrix3x3 sysIdentity = System::Matrix3x3::identity();
     glm::mat3 glmIdentity = glm::mat3(1.0f);
@@ -65,12 +66,11 @@ TEST(Matrix3x3Test, Scale) {
 }
 
 TEST(Matrix3x3Test, Rotation) {
-    float angle = 45.0f * System::Mathf::Deg2Rad;
+    float angle = 45.0f;
     System::Matrix3x3 sysRotate = System::Matrix3x3::Rotate(angle);
-    glm::mat3 glmRotate = glm::rotate(glm::mat3(1.0f), angle);
+    glm::mat3 glmRotate = glm::rotate(glm::mat3(1.0f), angle * System::Mathf::Deg2Rad);
     EXPECT_TRUE(CompareMatrices(sysRotate, glmRotate));
 }
-
 TEST(Matrix3x3Test, TRS) {
     System::Vector2 translation(10.0f, 20.0f);
     float rotation = 30.0f;
