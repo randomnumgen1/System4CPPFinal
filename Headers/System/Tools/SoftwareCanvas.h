@@ -203,8 +203,9 @@ namespace System::Tools{
 			void strokeText(std::string str, float x, float y);
 			void settextAlign(const std::string& str);
 			void setlineWidth(float width);
-		
+#if defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))
 #define strncasecmp _strnicmp
+#endif
 			void setFillStyle(const std::string& cssColor){
 				auto &st = m_states.top();
 				const char *p, *e;
