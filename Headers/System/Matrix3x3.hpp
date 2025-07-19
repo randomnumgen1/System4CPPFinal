@@ -51,6 +51,17 @@ namespace System {
 			static Matrix3x3 Translate(float tx, float ty);
 			static Matrix3x3 Scale(float sx, float sy);
 			static Matrix3x3 Rotate(float radians);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="rotation">rotation in degrees</param>
+			/// <returns></returns>
+			static Matrix3x3 TRSOptimised(Vector2 translation, float rotation, Vector2 scale);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="rotation">rotation in degrees</param>
+			/// <returns></returns>
 			static Matrix3x3 TRS(Vector2 translation, float rotation, Vector2 scale);
 			static Matrix3x3 identity();
 			Matrix3x3 transpose() const;
@@ -87,7 +98,6 @@ namespace System {
 	};
 
 	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
-		os << std::fixed << std::setprecision(3);
 		os << "[[" << m.M00 << ", " << m.M10 << ", " << m.M20 << "]," << std::endl
 			<< " [" << m.M01 << ", " << m.M11 << ", " << m.M21 << "]," << std::endl
 			<< " [" << m.M02 << ", " << m.M12 << ", " << m.M22 << "]]" << std::endl;

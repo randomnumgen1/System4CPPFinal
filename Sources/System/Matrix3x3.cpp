@@ -1,11 +1,11 @@
 #include "System/Matrix3x3.hpp"
+#include <System/Mathf.hpp>
 
 namespace System {
     Matrix3x3::Matrix3x3() {
-        for (int i = 0; i < 9; ++i) {
-            raw[i] = 0.0f;
-        }
-
+        raw[0] = 1.0f; raw[3] = 0.0f; raw[6] = 0.0f;
+        raw[1] = 0.0f; raw[4] = 1.0f; raw[7] = 0.0f;
+        raw[2] = 0.0f; raw[5] = 0.0f; raw[8] = 1.0f;
     }
     Matrix3x3::Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
         M00 = m00;
@@ -81,7 +81,7 @@ namespace System {
             for (int col = 0; col < 3; ++col) {
                 int flatIndexRowMajor = row * 3 + col;     // i * width + j
                 int flatIndexColMajor = col * 3 + row;     // j * height + i
-                if (std::fabs(matrixA.raw[idx] - matrixB.raw[flatIndexColMajor]) > epsilon)
+                if (System::Mathf::Abs(matrixA.raw[idx] - matrixB.raw[flatIndexColMajor]) > epsilon)
                     matchColumnMajor = false;
                 idx++;
             }
@@ -91,9 +91,9 @@ namespace System {
     }
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(
-            1.f, 0.f, 0.f,
-            0.f, 1.f, 0.f,
-            0.f, 0.f, 1.f
+            1.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f
         );
     }
 
@@ -106,31 +106,31 @@ namespace System {
 
     Matrix3x3 Matrix3x3::Translate(float tx, float ty) {
         return Matrix3x3(
-            1.f, 0.f, tx,
-            0.f, 1.f, ty,
-            0.f, 0.f, 1.f
+            1.0f, 0.0f, tx,
+            0.0f, 1.0f, ty,
+            0.0f, 0.0f, 1.0f
         );
     }
     Matrix3x3 Matrix3x3::Scale(float sx, float sy) {
         return Matrix3x3(
-            sx, 0.f, 0.f,
-            0.f, sy, 0.f,
-            0.f, 0.f, 1.f
+            sx, 0.f, 0.0f,
+            0.0f, sy, 0.0f,
+            0.0f, 0.0f, 1.0f
         );
     }
     Matrix3x3 Matrix3x3::Rotate(float radians) {
-        float c = std::cos(radians);
-        float s = std::sin(radians);
+        float c = System::Mathf::Cos(radians);
+        float s = System::Mathf::Sin(radians);
         return Matrix3x3(
-            c, s, 0.f,
-            -s, c, 0.f,
-            0.f, 0.f, 1.f
+            c, s, 0.0f,
+            -s, c, 0.0f,
+            0.0f, 0.0f, 1.0f
         );
     }
-    Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale){
-        const float radians = rotation * (3.14159265f / 180.0f);
-        const float c = std::cos(radians);
-        const float s = std::sin(radians);
+    Matrix3x3 Matrix3x3::TRSOptimised(Vector2 translation, float rotation, Vector2 scale){
+        const float radians = rotation * System::Mathf::Deg2Rad;
+        const float c = System::Mathf::Cos(radians);
+        const float s = System::Mathf::Sin(radians);
         Matrix3x3 m;
 
         m.M00 = scale.x * c;
@@ -146,5 +146,11 @@ namespace System {
         m.M22 = 1.0f;
 
         return m;
+    }
+    Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale) {
+        Matrix3x3 T = Translate(translation.x, translation.y);
+        Matrix3x3 R = Rotate(rotation);
+        Matrix3x3 S = Scale(scale.x, scale.y);
+        return T * S * R;
     }
 }
