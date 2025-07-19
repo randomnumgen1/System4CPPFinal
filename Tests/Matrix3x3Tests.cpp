@@ -125,3 +125,15 @@ TEST(Matrix3x3Test, Invert) {
 
     EXPECT_TRUE(CompareMatrices(sysInverse, glmInverse));
 }
+TEST(Matrix3x3Test, Transpose) {
+    System::Matrix3x3 sysMat = System::Matrix3x3::TRS({10, 20}, 45, {2, 3});
+    System::Matrix3x3 sysTranspose = sysMat.transpose();
+
+    glm::mat3 model = glm::mat3(1.0f);
+    model = glm::translate(model, glm::vec2(10.0f, 20.0f));
+    model = glm::rotate(model, 45.0f * System::Mathf::Deg2Rad);
+    model = glm::scale(model, glm::vec2(2.0f, 3.0f));
+    glm::mat3 glmTranspose = glm::transpose(model);
+
+    EXPECT_TRUE(CompareMatrices(sysTranspose, glmTranspose));
+}
