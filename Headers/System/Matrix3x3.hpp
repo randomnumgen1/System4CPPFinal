@@ -105,12 +105,7 @@ namespace System {
 
 	};
 
-	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
-		os << "[[" << m.raw[0] << ", " << m.raw[1] << ", " << m.raw[2] << "]," << std::endl
-			<< " [" << m.raw[3] << ", " << m.raw[4] << ", " << m.raw[5] << "]," << std::endl
-			<< " [" << m.raw[6] << ", " << m.raw[7] << ", " << m.raw[8] << "]]" << std::endl;
-		return os;
-	}
+	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m);
 
 }
 #endif
