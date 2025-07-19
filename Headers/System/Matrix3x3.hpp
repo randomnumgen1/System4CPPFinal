@@ -45,6 +45,9 @@ namespace System {
 					float M22;
 				};
 			};
+			/// <summary>
+			/// column-major initialization.
+			/// </summary>
 			Matrix3x3();
 			Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22);
 
@@ -64,6 +67,11 @@ namespace System {
 			/// <returns></returns>
 			static Matrix3x3 TRS(Vector2 translation, float rotation, Vector2 scale);
 			static Matrix3x3 identity();
+			/// <summary>
+			/// Produces a transposed 3x3 matrix copy without modifying the original.
+			/// Optimized with explicit swaps-independent of memory layout assumptions.
+			/// </summary>
+			/// <returns></returns>
 			Matrix3x3 transpose() const;
 			Matrix3x3 Invert() const;
 			float Determinant() const;
@@ -98,9 +106,9 @@ namespace System {
 	};
 
 	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
-		os << "[[" << m.M00 << ", " << m.M10 << ", " << m.M20 << "]," << std::endl
-			<< " [" << m.M01 << ", " << m.M11 << ", " << m.M21 << "]," << std::endl
-			<< " [" << m.M02 << ", " << m.M12 << ", " << m.M22 << "]]" << std::endl;
+		os << "[[" << m.raw[0] << ", " << m.raw[1] << ", " << m.raw[2] << "]," << std::endl
+			<< " [" << m.raw[3] << ", " << m.raw[4] << ", " << m.raw[5] << "]," << std::endl
+			<< " [" << m.raw[6] << ", " << m.raw[7] << ", " << m.raw[8] << "]]" << std::endl;
 		return os;
 	}
 

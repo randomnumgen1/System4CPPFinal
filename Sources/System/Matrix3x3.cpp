@@ -7,16 +7,16 @@ namespace System {
         raw[1] = 0.0f; raw[4] = 1.0f; raw[7] = 0.0f;
         raw[2] = 0.0f; raw[5] = 0.0f; raw[8] = 1.0f;
     }
-    Matrix3x3::Matrix3x3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) {
-        M00 = m00;
-        M01 = m01;
-        M02 = m02;
-        M10 = m10;
-        M11 = m11;
-        M12 = m12;
-        M20 = m20;
-        M21 = m21;
-        M22 = m22;
+    Matrix3x3::Matrix3x3(float v0, float v1, float v2, float v3, float v4, float v5, float v6, float v7, float v8) {
+        raw[0] = v0;
+        raw[1] = v1;
+        raw[2] = v2;
+        raw[3] = v3;
+        raw[4] = v4;
+        raw[5] = v5;
+        raw[6] = v6;
+        raw[7] = v7;
+        raw[8] = v8;
     }
     // Produces a transposed 3x3 matrix copy without modifying the original.
     // Optimized with explicit swaps-independent of memory layout assumptions.
@@ -148,9 +148,28 @@ namespace System {
         return m;
     }
     Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale) {
-        Matrix3x3 T = Translate(translation.x, translation.y);
-        Matrix3x3 R = Rotate(rotation);
-        Matrix3x3 S = Scale(scale.x, scale.y);
-        return T * S * R;
+        const float radians = rotation * System::Mathf::Deg2Rad;
+        const float c = System::Mathf::Cos(radians);
+        const float s = System::Mathf::Sin(radians);
+
+        Matrix3x3 m;
+
+        // First column (X-axis basis vector)
+        m.raw[0] = scale.x * c;
+        m.raw[1] = scale.x * s;
+        m.raw[2] = 0.0f;
+
+        // Second column (Y-axis basis vector)
+        m.raw[3] = scale.y * -s;
+        m.raw[4] = scale.y * c;
+        m.raw[5] = 0.0f;
+
+        // Third column (Translation vector)
+        m.raw[6] = translation.x;
+        m.raw[7] = translation.y;
+        m.raw[8] = 1.0f;
+
+        return m;
+
     }
 }
