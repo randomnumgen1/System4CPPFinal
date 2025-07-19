@@ -8,44 +8,44 @@ Static Methods
 ----------------------------------------------------------------------------------------
 */
 float System::Mathf::Abs(const float f){
-    return std::fabsf(f);
+    return fabsf(f);
 }
 float System::Mathf::Acos(const float f){
-    return std::acosf(f);
+    return acosf(f);
 }
 bool System::Mathf::Approximately(const float a, const  float b){
     constexpr float epsilon = 1e-6f;
-    return std::fabs(a - b) < epsilon;
+    return fabs(a - b) < epsilon;
 }
 float System::Mathf::Asin(const float f){
-    return std::asinf(f);
+    return asinf(f);
 }
 float System::Mathf::Atan(const float f){
-    return std::atanf(f);
+    return atanf(f);
 }
 float System::Mathf::Atan2(const float y, const  float x){
-    return std::atan2f(y,x);
+    return atan2f(y,x);
 }
 float System::Mathf::Ceil(const float f){
-    return std::ceilf(f);
+    return ceilf(f);
 }
 int System::Mathf::CeilToInt(float f){
     return static_cast<int>(Ceil(f));
 }
 float System::Mathf::Clamp(float value, float min, float max){
-    return std::clamp(value, min, max);
+    return fmax(min,  fmin(value, max));
 }
 float System::Mathf::Clamp01(float value){
-    return std::clamp(value, 0.0f, 1.0f);
+    return Clamp(value, 0.0f, 1.0f);
 }
 int System::Mathf::ClosestPowerOfTwo(int value){
     if (value <= 0) return 1;
-    int lower = 1 << (static_cast<int>(std::log2(value)));
+    int lower = 1 << (static_cast<int>(log2f(value)));
     int upper = lower << 1;
     return (value - lower < upper - value) ? lower : upper;
 }
 float System::Mathf::Cos(float f){
-   return std::cosf(f);
+   return cosf(f);
 }
 int System::Mathf::CountSetBits(uint32_t x){
 #if defined(__GNUC__) || defined(__clang__)
@@ -70,7 +70,7 @@ uint16_t System::Mathf::FloatToHalf(float val){
     throw std::runtime_error("Not Implemented Error.");
 }
 float System::Mathf::Floor(float f){
-    return std::floorf(f);
+    return floorf(f);
 }
 int System::Mathf::FloorToInt(float f){
     return static_cast<int>(Floor(f));
@@ -80,7 +80,7 @@ float System::Mathf::HalfToFloat(uint16_t val){
 }
 float System::Mathf::InverseLerp(float a, float b, float value){
     if (a != b) {
-        return Mathf::Clamp01((value - a) / (b - a));
+        return Clamp01((value - a) / (b - a));
     }else {
         return 0.0f;
     }
@@ -101,7 +101,7 @@ float System::Mathf::Log(float f, float p){
    return log(f) / log(p);
 }
 float System::Mathf::Log10(float f){
-    return std::log10f(f);
+    return log10f(f);
 }
 uint64_t System::Mathf::Majority3(uint64_t a, uint64_t b, uint64_t c){
 	return (((b & c) | a) & (b | c));
@@ -116,10 +116,10 @@ float System::Mathf::Map(const float originalNumber, const float oldMin, const f
     return convertedNumber;
 }
 float System::Mathf::Max(float a, float b){
-   return std::fmaxf(a, b);
+   return fmaxf(a, b);
 }
 float System::Mathf::Min(float a, float b){
-    return std::fminf(a,b);
+    return fminf(a,b);
 }
 float System::Mathf::MoveTowards(float current, float target, float maxDelta){
     throw std::runtime_error("Not Implemented Error.");
@@ -163,7 +163,7 @@ float System::Mathf::Sign(float f){
     return f >= 0.0f ? 1.0f : -1.0f;
 }
 float System::Mathf::Sin(float f){
-    return std::sinf(f);
+    return sinf(f);
 }
 float System::Mathf::SmoothStep(const float from,const float to, float t){
     t = Clamp01(t);
@@ -171,10 +171,10 @@ float System::Mathf::SmoothStep(const float from,const float to, float t){
     return from + (to - from) * t;
 }
 float System::Mathf::Sqrt(float f){
-    return std::sqrtf(f);
+    return sqrtf(f);
 }
 float System::Mathf::Tan(float f){
-    return std::tanf(f);
+    return tanf(f);
 }
 float System::Mathf::Radians(float degrees){
     const float calc = (3.141592653589793f / 180.0f);
