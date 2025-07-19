@@ -118,7 +118,8 @@ namespace System {
             0.0f, 0.0f, 1.0f
         );
     }
-    Matrix3x3 Matrix3x3::Rotate(float radians) {
+    Matrix3x3 Matrix3x3::Rotate(float rotation) {
+        const float radians = rotation * System::Mathf::Deg2Rad;
         float c = System::Mathf::Cos(radians);
         float s = System::Mathf::Sin(radians);
         return Matrix3x3(

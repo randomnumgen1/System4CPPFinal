@@ -53,7 +53,7 @@ namespace System {
 
 			static Matrix3x3 Translate(float tx, float ty);
 			static Matrix3x3 Scale(float sx, float sy);
-			static Matrix3x3 Rotate(float radians);
+			static Matrix3x3 Rotate(float rotation);
 			/// <summary>
 			/// 
 			/// </summary>
