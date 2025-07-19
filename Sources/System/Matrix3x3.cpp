@@ -16,18 +16,25 @@ namespace System {
         M21 = m21;
         M22 = m22;
     }
+    // Produces a transposed 3x3 matrix copy without modifying the original.
+    // Optimized with explicit swaps-independent of memory layout assumptions.
     Matrix3x3 Matrix3x3::transpose() const {
-        return Matrix3x3(
-            M00,
-            M10,
-            M20,
-            M01,
-            M11,
-            M21,
-            M02,
-            M12,
-            M22
-        );
+        Matrix3x3 result;
+
+        result.m[0][0] = m[0][0];
+        result.m[0][1] = m[1][0];
+        result.m[0][2] = m[2][0];
+
+        result.m[1][0] = m[0][1];
+        result.m[1][1] = m[1][1];
+        result.m[1][2] = m[2][1];
+
+        result.m[2][0] = m[0][2];
+        result.m[2][1] = m[1][2];
+        result.m[2][2] = m[2][2];
+
+        return result;
+
     }
     Matrix3x3 Matrix3x3::Invert() const {
         Matrix3x3 adj = Adjugate();
