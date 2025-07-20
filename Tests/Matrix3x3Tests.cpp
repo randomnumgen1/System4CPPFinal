@@ -5,7 +5,7 @@
 #include <glm/gtx/matrix_transform_2d.hpp>
 #include "System/Matrix3x3.hpp"
 #include "System/Mathf.hpp"
-include <iostream>
+#include <iostream>
 #include <cmath>
 
 void PrintMatrix(const System::Matrix3x3& m) {
