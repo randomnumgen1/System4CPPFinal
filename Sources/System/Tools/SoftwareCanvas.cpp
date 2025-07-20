@@ -18,8 +18,8 @@ System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
 	m_pixels.assign(m_width * m_height * 4, 255);
 	m_states.push(State());
 	//add clipping path (By default the canvas has a clipping path that's the exact same size as the canvas itself. In other words, no clipping occurs.)
-	const auto& state = m_states.top();
-	//state.clippingpath
+	auto& state = m_states.top();
+	state.clippingpath.rect(0, 0, w, h);
 }
 void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
 		std::ofstream file(filename, std::ios::binary);
@@ -75,8 +75,56 @@ void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
 
 		return ;
 }
-bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y){
-	return false;
+bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
+	const auto& state = m_states.top();
+	int winding_number = 0;
+	float fy = static_cast<float>(y) + 0.5f;
+
+	Vector2 start, prev;
+	bool hasStart = false;
+
+	for (const auto& cmd : path.m_path) {
+		Vector2 p_transformed = transform(state.m_transform, cmd.p);
+		switch (cmd.type) {
+		case PathCommand::Type::MoveTo:
+			start = prev = p_transformed;
+			hasStart = true;
+			break;
+		case PathCommand::Type::LineTo:
+		{
+			if (!hasStart) break;
+			Vector2 a = prev;
+			Vector2 b = p_transformed;
+			if (a.y != b.y) {
+				if ((a.y <= fy && b.y > fy) || (b.y <= fy && a.y > fy)) {
+					float x_intersect = a.x + (fy - a.y) * (b.x - a.x) / (b.y - a.y);
+					if (x_intersect <= x) {
+						winding_number += (a.y < b.y) ? 1 : -1;
+					}
+				}
+			}
+			prev = b;
+			break;
+		}
+		case PathCommand::Type::ClosePath:
+			if (hasStart) {
+				Vector2 a = prev;
+				Vector2 b = start;
+				if (a.y != b.y) {
+					if ((a.y <= fy && b.y > fy) || (b.y <= fy && a.y > fy)) {
+						float x_intersect = a.x + (fy - a.y) * (b.x - a.x) / (b.y - a.y);
+						if (x_intersect <= x) {
+							winding_number += (a.y < b.y) ? 1 : -1;
+						}
+					}
+				}
+				prev = start;
+			}
+			break;
+		}
+	}
+
+	return winding_number != 0;
 }
 bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y){
 	const auto& state = m_states.top();
@@ -137,9 +185,11 @@ void System::Tools::SoftwareCanvas::restore(){
 }
 void System::Tools::SoftwareCanvas::clip(){
 	auto& st = m_states.top();
+	st.clippingpath.m_path = m_path;
 }
 void System::Tools::SoftwareCanvas::clip(Path2D path){
 	auto& st = m_states.top();
+	st.clippingpath = path;
 }
 void System::Tools::SoftwareCanvas::fill() {
     const auto& state = m_states.top();
