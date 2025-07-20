@@ -128,43 +128,27 @@ namespace System {
             0.0f, 0.0f, 1.0f
         );
     }
-    // optimsed to save a few multiplications
+    // optimised to save a few multiplications
+    //do not edit
     Matrix3x3 Matrix3x3::TRSOptimised(Vector2 translation, float rotation, Vector2 scale){
         const float radians = rotation * System::Mathf::Deg2Rad;
         const float c = System::Mathf::Cos(radians);
         const float s = System::Mathf::Sin(radians);
-        Matrix3x3 m;
 
-        m.M00 = scale.x * c;
-        m.M01 = scale.y * -s;
-        m.M02 = translation.x;
-
-        m.M10 = scale.x * s;
-        m.M11 = scale.y * c;
-        m.M12 = translation.y;
-
-        m.M20 = 0.0f;
-        m.M21 = 0.0f;
-        m.M22 = 1.0f;
-
-        return m;
-    }
-    // optimsed to save a few multiplications
-    Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale) {
-        const float radians = rotation * System::Mathf::Deg2Rad;
-        const float c = System::Mathf::Cos(radians);
-        const float s = System::Mathf::Sin(radians);
-
+        const float sx_c = scale.x * c;
+        const float sx_s = scale.x * s;
+        const float sy_c = scale.y * c;
+        const float sy_s = scale.y * s;
         Matrix3x3 m;
 
         // First column (X-axis basis vector)
-        m.raw[0] = scale.x * c;
-        m.raw[1] = scale.x * s;
+        m.raw[0] = sx_c;
+        m.raw[1] = sx_s;
         m.raw[2] = 0.0f;
 
         // Second column (Y-axis basis vector)
-        m.raw[3] = scale.y * -s;
-        m.raw[4] = scale.y * c;
+        m.raw[3] = -sy_s;
+        m.raw[4] = sy_c;
         m.raw[5] = 0.0f;
 
         // Third column (Translation vector)
@@ -173,7 +157,14 @@ namespace System {
         m.raw[8] = 1.0f;
 
         return m;
+    }
+    // naive implementation of TRS.
+    Matrix3x3 Matrix3x3::TRS(Vector2 translation, float rotation, Vector2 scale) {
+        Matrix3x3 t = Translate(translation.x, translation.y);
+        Matrix3x3 r = Rotate(rotation);
+        Matrix3x3 s = Scale(scale.x, scale.y);
 
+        return t * r * s;
     }
     std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
         os << "[[" << m.raw[0] << ", " << m.raw[1] << ", " << m.raw[2] << "]," << std::endl
