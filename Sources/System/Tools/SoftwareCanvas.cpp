@@ -204,8 +204,63 @@ void System::Tools::SoftwareCanvas::fill() {
         }
     }
 }	
-void System::Tools::SoftwareCanvas::stroke(){
-	auto& st = m_states.top();
+void System::Tools::SoftwareCanvas::stroke() {
+	const auto& state = m_states.top();
+	if (m_path.empty()) return;
+
+	Vector2 start, prev;
+	bool hasStart = false;
+
+	for (const auto& cmd : m_path) {
+		Vector2 p_transformed = transform(state.m_transform, cmd.p);
+		switch (cmd.type) {
+		case PathCommand::Type::MoveTo:
+			start = prev = p_transformed;
+			hasStart = true;
+			break;
+		case PathCommand::Type::LineTo:
+		{
+			if (!hasStart) break;
+			Vector2 a = prev;
+			Vector2 b = p_transformed;
+
+			// Simple thick line drawing
+			float thickness = state.lineWidth;
+			Vector2 dir = (b - a).normalized();
+			Vector2 normal = { -dir.y, dir.x };
+
+			for (float i = 0; i < (b - a).magnitude(); i += 0.5f) {
+				Vector2 p = a + dir * i;
+				for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
+					Vector2 q = p + normal * j;
+					SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+				}
+			}
+			prev = b;
+			break;
+		}
+		case PathCommand::Type::ClosePath:
+			if (hasStart) {
+				Vector2 a = prev;
+				Vector2 b = start;
+
+				// Simple thick line drawing
+				float thickness = state.lineWidth;
+				Vector2 dir = (b - a).normalized();
+				Vector2 normal = { -dir.y, dir.x };
+
+				for (float i = 0; i < (b - a).magnitude(); i += 0.5f) {
+					Vector2 p = a + dir * i;
+					for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
+						Vector2 q = p + normal * j;
+						SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+					}
+				}
+				prev = start;
+			}
+			break;
+		}
+	}
 }
 void System::Tools::SoftwareCanvas::fillText(std::string str, float x, float y){
 	auto& st = m_states.top();
