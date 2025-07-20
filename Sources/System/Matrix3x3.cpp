@@ -89,6 +89,7 @@ namespace System {
 
         return matchRowMajor || matchColumnMajor;
     }
+    //working 100%
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(
             1.0f, 0.0f, 0.0f,
@@ -96,27 +97,25 @@ namespace System {
             0.0f, 0.0f, 1.0f
         );
     }
-
-
-
-
-
-
-
-
+    //working 100%
     Matrix3x3 Matrix3x3::Translate(float tx, float ty) {
-        return Matrix3x3(
-            1.0f, 0.0f, tx,
-            0.0f, 1.0f, ty,
-            0.0f, 0.0f, 1.0f
-        );
+        Matrix3x3 result;
+
+        result.m[0][0] = 1.0f;result.m[0][1] = 0.0f;result.m[0][2] = 0.0f;
+        result.m[1][0] = 0.0f;result.m[1][1] = 1.0f;result.m[1][2] = 0.0f;
+        result.m[2][0] = tx;result.m[2][1] = ty;result.m[2][2] = 1.0f;
+
+        return result;
     }
+
     Matrix3x3 Matrix3x3::Scale(float sx, float sy) {
-        return Matrix3x3(
-            sx, 0.f, 0.0f,
-            0.0f, sy, 0.0f,
-            0.0f, 0.0f, 1.0f
-        );
+        Matrix3x3 result;
+
+        result.m[0][0] = sx;   result.m[1][0] = 0.0f; result.m[2][0] = 0.0f;
+        result.m[0][1] = 0.0f; result.m[1][1] = sy;   result.m[2][1] = 0.0f;
+        result.m[0][2] = 0.0f; result.m[1][2] = 0.0f; result.m[2][2] = 1.0f;
+
+        return result;
     }
     Matrix3x3 Matrix3x3::Rotate(float rotation) {
         const float radians = rotation * System::Mathf::Deg2Rad;
