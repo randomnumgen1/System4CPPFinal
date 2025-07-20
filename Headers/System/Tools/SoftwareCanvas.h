@@ -89,6 +89,7 @@ namespace System::Tools{
 
 				 State()
     : m_transform(Matrix3x3::identity())
+					 , clippingpath()
     , m_stroke{   0,   0,   0, 255 }
     , m_fill{     255,   0,   0, 255 }
     , globalAlpha(1.0f)

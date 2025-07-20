@@ -296,7 +296,9 @@ void System::Tools::SoftwareCanvas::stroke() {
 				Vector2 p = a + dir * i;
 				for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
 					Vector2 q = p + normal * j;
-					SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+					if (isPointInPath(state.clippingpath, static_cast<int>(q.x), static_cast<int>(q.y))) {
+						SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+					}
 				}
 			}
 			prev = b;
@@ -316,7 +318,9 @@ void System::Tools::SoftwareCanvas::stroke() {
 					Vector2 p = a + dir * i;
 					for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
 						Vector2 q = p + normal * j;
-						SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+						if (isPointInPath(state.clippingpath, static_cast<int>(q.x), static_cast<int>(q.y))) {
+							SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
+						}
 					}
 				}
 				prev = start;
