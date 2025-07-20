@@ -48,6 +48,7 @@ namespace System {
         float SqrMagnitude() const;
         float MinScalar() const;
         float MaxScalar() const;
+        Vector2 normalized() const;
         /*
         ----------------------------------------------------------------------------------------
         Operators

@@ -111,6 +111,14 @@ float Vector2::MaxScalar() const{
     return x > y ? x : y;
 }
 
+Vector2 Vector2::normalized() const{
+    float mag = magnitude();
+    if (mag > 0) {
+        return Vector2(x / mag, y / mag);
+    }
+    return Vector2(0, 0);
+}
+
 
 
 
