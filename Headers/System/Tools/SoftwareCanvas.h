@@ -261,18 +261,42 @@ namespace System::Tools{
 			void arcTo(float x1,float y1,float x2,float y2,float r);
 			void arc(float x,float y,float r,float sAngle,float eAngle);
 			void arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise);
-			/**********************************************/
-			/*********transform manipulation***************/
-			/**********************************************/
+			/// <summary>
+			/// method remaps the (0,0) position.
+			/// </summary>
+			/// <param name="x">Value to add to horizontal (x) coordinate</param>
+			/// <param name="y">Value to add to vertical (y) coordinate</param>
 			void translate(float x, float y);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="scalewidth">Scales the width (1=100%, 0.5=50%, 2=200%)</param>
+			/// <param name="scaleheight">Scales the height (1=100%, 0.5=50%, 2=200%)</param>
 			void scale(float scalewidth,float scaleheight);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="angle">The rotation angle in radians</param>
 			void rotate(float angle);
-			/**********************************************/
-			/***************path and line******************/
-			/**********************************************/
+			/// <summary>
+			/// Begins a new path or resets the current path
+			/// </summary>
 			void beginPath();
+			/// <summary>
+			/// Moves the path to a point in the canvas (without drawing)
+			/// </summary>
+			/// <param name="x">The x-coordinate of where to move the path to</param>
+			/// <param name="y">The y-coordinate of where to move the path to</param>
 			void moveTo(float x, float y);
+			/// <summary>
+			/// adds a line from the last point in the path to a new point.
+			/// </summary>
+			/// <param name="x">The x-coordinate of where to create the line to</param>
+			/// <param name="y">The y-coordinate of where to create the line to</param>
 			void lineTo(float x, float y);
+			/// <summary>
+			/// Adds a line to the path from the current point to the start
+			/// </summary>
 			void closePath();
 			void resetTransform();
 			void debug();
