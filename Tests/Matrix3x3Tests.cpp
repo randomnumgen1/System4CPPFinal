@@ -30,7 +30,7 @@ void PrintMatrix(const glm::mat3& m) {
 
 
 // Helper function to compare System::Matrix3x3 and glm::mat3. this function works for matrix that are both column major. do not modify
-:testing::AssertionResult CompareMatricesmat(const System::Matrix3x3& sysMat, const glm::mat3& glmMat) {
+:testing::AssertionResult CompareMatrices(const System::Matrix3x3& sysMat, const glm::mat3& glmMat) {
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             if (std::abs(sysMat.m[j][i] - glmMat[j][i]) > 1e-6) {
