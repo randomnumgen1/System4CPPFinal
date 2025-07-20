@@ -12,6 +12,15 @@
 
 
 namespace System::Tools{
+	class Path2D {
+	public:
+		Path2D() {
+
+		}
+		Path2D(std::string d) {
+
+		}
+	};
 	class SoftwareCanvas{
 		private:
 			enum class TextAlign {Start, End, Left, Right, Center};
@@ -29,6 +38,7 @@ namespace System::Tools{
 			};			
 			struct State{
 				System::Matrix3x3 m_transform;
+				Path2D clippingpath;
 				Color m_stroke;
 				Color m_fill;
 				float globalAlpha;
@@ -196,6 +206,8 @@ namespace System::Tools{
 			void save();
 			void restore();
 			void clip();
+			void clip(Path2D path);
+
 			void fill();
 			
 			void stroke();

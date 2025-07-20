@@ -17,6 +17,9 @@ System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
 	
 	m_pixels.assign(m_width * m_height * 4, 255);
 	m_states.push(State());
+	//add clipping path (By default the canvas has a clipping path that's the exact same size as the canvas itself. In other words, no clipping occurs.)
+	const auto& state = m_states.top();
+	//state.clippingpath
 }
 void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
 		std::ofstream file(filename, std::ios::binary);
@@ -130,6 +133,9 @@ void System::Tools::SoftwareCanvas::restore(){
 	if(m_states.size()>1) m_states.pop();
 }
 void System::Tools::SoftwareCanvas::clip(){
+	auto& st = m_states.top();
+}
+void System::Tools::SoftwareCanvas::clip(Path2D path){
 	auto& st = m_states.top();
 }
 void System::Tools::SoftwareCanvas::fill() {
