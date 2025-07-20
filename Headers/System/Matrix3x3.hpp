@@ -83,22 +83,7 @@ namespace System {
 
 		
 
-			Matrix3x3 operator*(const Matrix3x3& other) const {
-				Matrix3x3 result;
-
-				result.raw[0] = this->raw[0] * other.raw[0] + this->raw[3] * other.raw[1] + this->raw[6] * other.raw[2];
-				result.raw[1] = this->raw[1] * other.raw[0] + this->raw[4] * other.raw[1] + this->raw[7] * other.raw[2];
-				result.raw[2] = this->raw[2] * other.raw[0] + this->raw[5] * other.raw[1] + this->raw[8] * other.raw[2];
-
-				result.raw[3] = this->raw[0] * other.raw[3] + this->raw[3] * other.raw[4] + this->raw[6] * other.raw[5];
-				result.raw[4] = this->raw[1] * other.raw[3] + this->raw[4] * other.raw[4] + this->raw[7] * other.raw[5];
-				result.raw[5] = this->raw[2] * other.raw[3] + this->raw[5] * other.raw[4] + this->raw[8] * other.raw[5];
-
-				result.raw[6] = this->raw[0] * other.raw[6] + this->raw[3] * other.raw[7] + this->raw[6] * other.raw[8];
-				result.raw[7] = this->raw[1] * other.raw[6] + this->raw[4] * other.raw[7] + this->raw[7] * other.raw[8];
-				result.raw[8] = this->raw[2] * other.raw[6] + this->raw[5] * other.raw[7] + this->raw[8] * other.raw[8];
-				return result;
-			}
+			Matrix3x3 operator*(const Matrix3x3& other) const;
 
 	 
 

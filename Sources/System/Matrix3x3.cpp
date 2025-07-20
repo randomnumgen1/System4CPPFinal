@@ -89,6 +89,7 @@ namespace System {
 
         return matchRowMajor || matchColumnMajor;
     }
+
     //working 100%
     Matrix3x3 Matrix3x3::identity() {
         return Matrix3x3(
@@ -165,6 +166,29 @@ namespace System {
 
         return t * r * s;
     }
+
+
+
+
+    Matrix3x3 Matrix3x3::operator*(const Matrix3x3& other) const{
+        Matrix3x3 result;
+
+        result.raw[0] = this->raw[0] * other.raw[0] + this->raw[3] * other.raw[1] + this->raw[6] * other.raw[2];
+        result.raw[1] = this->raw[1] * other.raw[0] + this->raw[4] * other.raw[1] + this->raw[7] * other.raw[2];
+        result.raw[2] = this->raw[2] * other.raw[0] + this->raw[5] * other.raw[1] + this->raw[8] * other.raw[2];
+
+        result.raw[3] = this->raw[0] * other.raw[3] + this->raw[3] * other.raw[4] + this->raw[6] * other.raw[5];
+        result.raw[4] = this->raw[1] * other.raw[3] + this->raw[4] * other.raw[4] + this->raw[7] * other.raw[5];
+        result.raw[5] = this->raw[2] * other.raw[3] + this->raw[5] * other.raw[4] + this->raw[8] * other.raw[5];
+
+        result.raw[6] = this->raw[0] * other.raw[6] + this->raw[3] * other.raw[7] + this->raw[6] * other.raw[8];
+        result.raw[7] = this->raw[1] * other.raw[6] + this->raw[4] * other.raw[7] + this->raw[7] * other.raw[8];
+        result.raw[8] = this->raw[2] * other.raw[6] + this->raw[5] * other.raw[7] + this->raw[8] * other.raw[8];
+        return result;
+    }
+
+
+
     std::ostream& operator<<(std::ostream& os, const Matrix3x3& m) {
         os << "[[" << m.raw[0] << ", " << m.raw[1] << ", " << m.raw[2] << "]," << std::endl
             << " [" << m.raw[3] << ", " << m.raw[4] << ", " << m.raw[5] << "]," << std::endl
