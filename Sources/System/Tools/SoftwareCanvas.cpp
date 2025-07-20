@@ -75,6 +75,9 @@ void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
 
 		return ;
 }
+bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y){
+	return false;
+}
 bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y){
 	const auto& state = m_states.top();
 	int winding_number = 0;

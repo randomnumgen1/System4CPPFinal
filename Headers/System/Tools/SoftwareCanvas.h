@@ -12,14 +12,43 @@
 
 
 namespace System::Tools{
+	struct PathCommand {
+		enum class Type { MoveTo, LineTo, ClosePath };
+		Type type;
+		System::Vector2 p;
+	};
 	class Path2D {
 	public:
+		std::vector<PathCommand> m_path;
 		Path2D() {
 
 		}
 		Path2D(std::string d) {
 
 		}
+		void rect(float x, float y, float w, float h){
+			moveTo(x, y);
+			lineTo(x + w, y);
+			lineTo(x + w, y + h);
+			lineTo(x, y + h);
+			closePath();
+		}
+		void moveTo(float x, float y) {
+			m_path.push_back({ PathCommand::Type::MoveTo, {x, y} });
+		}
+		void lineTo(float x, float y) {
+			m_path.push_back({ PathCommand::Type::LineTo, {x, y} });
+		}
+		// If the shape has already been closed or has only one point, this function does nothing.
+		void closePath(){
+			// Skip if there's 1 command (not enough to close)
+			if (m_path.size() <= 1) return;
+			// Skip if last command is already a ClosePath
+			if (m_path.back().type == PathCommand::Type::ClosePath) return;
+			//add a ClosePath command
+			m_path.push_back({ PathCommand::Type::ClosePath, {} });
+		}
+
 	};
 	class SoftwareCanvas{
 		private:
@@ -76,11 +105,7 @@ namespace System::Tools{
   {}
 
 			};
-			struct PathCommand {
-				enum class Type { MoveTo, LineTo, ClosePath };
-				Type type;
-				System::Vector2 p;
-			};
+
 			std::vector<PathCommand> m_path;
 		
 			int m_width, m_height;
@@ -200,7 +225,7 @@ namespace System::Tools{
 			SoftwareCanvas(int w, int h);
 			//
 			void SaveAsBitmap(const std::string& filename);
-
+			bool isPointInPath(Path2D path,int x,int y);
 			bool isPointInPath(int x, int y);
 			// save/restore:
 			void save();
