@@ -1,6 +1,6 @@
 #include <System/Vector2.hpp>
 #include <System/Mathf.hpp>
-
+#include <System/Matrix3x3.hpp>
 namespace System {
 
     Vector2::Vector2() {
@@ -110,6 +110,18 @@ float Vector2::MinScalar() const{
 float Vector2::MaxScalar() const{
     return x > y ? x : y;
 }
+
+
+
+
+Vector2 operator*(const Matrix3x3& m, const Vector2& v) {
+    float x = m.raw[0] * v.x + m.raw[3] * v.y + m.raw[6];
+    float y = m.raw[1] * v.x + m.raw[4] * v.y + m.raw[7];
+    return Vector2(x, y);
+}
+
+
+
 
 
 }
