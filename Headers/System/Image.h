@@ -19,7 +19,11 @@ namespace System {
                 System::Drawing::Size Size;
             };
             std::vector<uint8_t> m_pixels;
-           
+			Image(int w, int h) {
+				Width = w;
+				Height = h;
+				m_pixels.assign(Width * Height * 4, 255);
+			}
 			 
 			void SaveAsBitmap(const std::string& filename) {
 				std::ofstream file(filename, std::ios::binary);
@@ -80,11 +84,7 @@ namespace System {
 
 
 
-			Image(int w, int h) {
-				Width = w;
-				Height = h;
-				m_pixels.assign(Width * Height * 4, 255);
-			}
+
 
 
 
