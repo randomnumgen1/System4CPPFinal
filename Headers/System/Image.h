@@ -76,11 +76,35 @@ namespace System {
 						file.put(m_pixels[idx + 3]);
 					}
 				}
-
+				file.close();
 				return;
 			}
 
+			void SaveAsTGA(const std::string& filename) {
+				std::ofstream file(filename, std::ios::binary);
+				if (!file) return;
 
+				uint8_t header[18] = {};
+				header[2] = 2; // Uncompressed true-color
+				header[12] = Width & 0xFF;
+				header[13] = (Width >> 8) & 0xFF;
+				header[14] = Height & 0xFF;
+				header[15] = (Height >> 8) & 0xFF;
+				header[16] = 32; // Bits per pixel
+				file.write(reinterpret_cast<char*>(header), sizeof(header));
+
+				for (int y = Height - 1; y >= 0; --y) {
+					for (int x = 0; x < Width; ++x) {
+						int idx = (y * Width + x) * 4;
+						file.put(m_pixels[idx + 2]); // B
+						file.put(m_pixels[idx + 1]); // G
+						file.put(m_pixels[idx + 0]); // R
+						file.put(m_pixels[idx + 3]); // A
+					}
+				}
+				file.close();
+				return;
+			}
 
 
 
