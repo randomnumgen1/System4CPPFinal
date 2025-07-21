@@ -49,10 +49,9 @@ TEST(SoftwareCanvasTests, RectStrokeTimingTest) {
 	
 	//fail when the total elapsed time exceeds 2 ms as chromes canvas can do this in under 2 ms.
 	ASSERT_LT(elapsed.count(), 2) << "Canvas rendering took too long: " << elapsed.count() << " ms";
-    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
+    std::cout << "RectStrokeTimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
     SUCCEED();
 }
-
 TEST(SoftwareCanvasTests, RectFillTimingTest) {
     System::Tools::SoftwareCanvas canvas(10, 10);
 	auto start = std::chrono::high_resolution_clock::now();
@@ -66,7 +65,48 @@ TEST(SoftwareCanvasTests, RectFillTimingTest) {
 	
 	//fail when the total elapsed time exceeds 2 ms as chromes canvas can do this in under 2 ms.
 	ASSERT_LT(elapsed.count(), 2) << "Canvas rendering took too long: " << elapsed.count() << " ms";
-    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
+    std::cout << "RectFillTimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
     SUCCEED();
 }
 
+TEST(SoftwareCanvasTests, LineStrokeTimingTest) {
+    System::Tools::SoftwareCanvas canvas(10, 10);
+	auto start = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 1000; ++i) {
+
+		canvas.beginPath();
+		canvas.moveTo(0, 0);
+		canvas.lineTo(200, 100);
+		canvas.stroke();
+
+
+	}
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+	
+	//fail when the total elapsed time exceeds 2 ms as chromes canvas can do this in under 2 ms.
+	ASSERT_LT(elapsed.count(), 2) << "Canvas rendering took too long: " << elapsed.count() << " ms";
+    std::cout << "LineStrokeTimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
+    SUCCEED();
+}
+TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
+    System::Tools::SoftwareCanvas canvas(10, 10);
+	auto start = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 1000; ++i) {
+
+		ctx.beginPath();
+		ctx.arc(95, 50, 40, 0, 2 * 3.14f);
+		ctx.stroke();
+
+
+	}
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+	
+	//fail when the total elapsed time exceeds 2 ms as chromes canvas can do this in under 2 ms.
+	ASSERT_LT(elapsed.count(), 2) << "Canvas rendering took too long: " << elapsed.count() << " ms";
+    std::cout << "CircleStrokeTimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
+    SUCCEED();
+}
+
+ 
