@@ -30,6 +30,6 @@ TEST(SoftwareCanvasTests, TimingTest) {
 	}
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end - start;
-    std::cout << "Constructor timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;
+    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;
     SUCCEED();
 }
