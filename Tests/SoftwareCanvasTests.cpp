@@ -36,3 +36,20 @@ TEST(SoftwareCanvasTests, TimingTest) {
     std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
     SUCCEED();
 }
+TEST(SoftwareCanvasTests, RectTimingTest) {
+    System::Tools::SoftwareCanvas canvas(10, 10);
+	auto start = std::chrono::high_resolution_clock::now();
+	for (int i = 0; i < 1000; ++i) {
+		ctx.beginPath();
+		ctx.rect(95, 50, 40, 40);
+		ctx.stroke();
+	}
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+	
+	//fail when the total elapsed time exceeds 2 ms
+	ASSERT_LT(elapsed.count(), 2) << "Canvas rendering took too long: " << elapsed.count() << " ms";
+    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
+    SUCCEED();
+}
+
