@@ -5,13 +5,15 @@
 #include <chrono>
 
 TEST(SoftwareCanvasTests, Constructor) {
-    System::Tools::SoftwareCanvas canvas(100, 100);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
     SUCCEED();
 }
 TEST(SoftwareCanvasTests, ConstructorTiming) {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000; ++i) {
-        System::Tools::SoftwareCanvas canvas(100, 100);
+		System::Image image = System::Image(1920,1080);
+        System::Tools::SoftwareCanvas canvas(image);
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end - start;
@@ -19,7 +21,8 @@ TEST(SoftwareCanvasTests, ConstructorTiming) {
     SUCCEED();
 }
 TEST(SoftwareCanvasTests, TimingTest) {
-    System::Tools::SoftwareCanvas canvas(10, 10);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 		canvas.rect(2, 2, 6, 6);
@@ -37,7 +40,8 @@ TEST(SoftwareCanvasTests, TimingTest) {
     SUCCEED();
 }
 TEST(SoftwareCanvasTests, RectStrokeTimingTest) {
-    System::Tools::SoftwareCanvas canvas(10, 10);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 		canvas.beginPath();
@@ -53,7 +57,8 @@ TEST(SoftwareCanvasTests, RectStrokeTimingTest) {
     SUCCEED();
 }
 TEST(SoftwareCanvasTests, RectFillTimingTest) {
-    System::Tools::SoftwareCanvas canvas(10, 10);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 		canvas.beginPath();
@@ -70,7 +75,8 @@ TEST(SoftwareCanvasTests, RectFillTimingTest) {
 }
 
 TEST(SoftwareCanvasTests, LineStrokeTimingTest) {
-    System::Tools::SoftwareCanvas canvas(10, 10);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 
@@ -90,7 +96,8 @@ TEST(SoftwareCanvasTests, LineStrokeTimingTest) {
     SUCCEED();
 }
 TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
-    System::Tools::SoftwareCanvas canvas(10, 10);
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 
