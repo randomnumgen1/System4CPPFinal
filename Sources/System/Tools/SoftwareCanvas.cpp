@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <limits>
 #include <fstream>
 #include <cmath>
 #include <cstdint>
@@ -11,69 +12,69 @@
 #include <cctype>
 #include <cstring>
 #include <iostream>
-System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h){
+System::Tools::SoftwareCanvas::SoftwareCanvas(int w, int h) {
 	m_width = w;
 	m_height = h;
-	
+
 	m_pixels.assign(m_width * m_height * 4, 255);
 	m_states.push(State());
 	//add clipping path (By default the canvas has a clipping path that's the exact same size as the canvas itself. In other words, no clipping occurs.)
 	auto& state = m_states.top();
 	state.clippingpath.rect(0, 0, w, h);
 }
-void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename){
-		std::ofstream file(filename, std::ios::binary);
-		if (!file) {
-			return ;
+void System::Tools::SoftwareCanvas::SaveAsBitmap(const std::string& filename) {
+	std::ofstream file(filename, std::ios::binary);
+	if (!file) {
+		return;
+	}
+
+	// BMP Header
+	const int fileSize = 54 + m_width * m_height * 4;
+	const int reserved = 0;
+	const int dataOffset = 54;
+
+	file.put('B');
+	file.put('M');
+	file.write(reinterpret_cast<const char*>(&fileSize), 4);
+	file.write(reinterpret_cast<const char*>(&reserved), 4);
+	file.write(reinterpret_cast<const char*>(&dataOffset), 4);
+
+	// DIB Header
+	const int dibHeaderSize = 40;
+	const int planes = 1;
+	const int bpp = 32;
+	const int compression = 0;
+	const int imageSize = m_width * m_height * 4;
+	const int xPelsPerMeter = 2835; // 72 DPI
+	const int yPelsPerMeter = 2835; // 72 DPI
+	const int clrUsed = 0;
+	const int clrImportant = 0;
+
+	file.write(reinterpret_cast<const char*>(&dibHeaderSize), 4);
+	file.write(reinterpret_cast<const char*>(&m_width), 4);
+	file.write(reinterpret_cast<const char*>(&m_height), 4);
+	file.write(reinterpret_cast<const char*>(&planes), 2);
+	file.write(reinterpret_cast<const char*>(&bpp), 2);
+	file.write(reinterpret_cast<const char*>(&compression), 4);
+	file.write(reinterpret_cast<const char*>(&imageSize), 4);
+	file.write(reinterpret_cast<const char*>(&xPelsPerMeter), 4);
+	file.write(reinterpret_cast<const char*>(&yPelsPerMeter), 4);
+	file.write(reinterpret_cast<const char*>(&clrUsed), 4);
+	file.write(reinterpret_cast<const char*>(&clrImportant), 4);
+
+	// Pixel Data
+	for (int y = m_height - 1; y >= 0; --y) {
+		for (int x = 0; x < m_width; ++x) {
+			int idx = (y * m_width + x) * 4;
+			// BMP expects BGR order
+			file.put(m_pixels[idx + 2]);
+			file.put(m_pixels[idx + 1]);
+			file.put(m_pixels[idx + 0]);
+			file.put(m_pixels[idx + 3]);
 		}
+	}
 
-		// BMP Header
-		const int fileSize = 54 + m_width * m_height * 4;
-		const int reserved = 0;
-		const int dataOffset = 54;
-
-		file.put('B');
-		file.put('M');
-		file.write(reinterpret_cast<const char*>(&fileSize), 4);
-		file.write(reinterpret_cast<const char*>(&reserved), 4);
-		file.write(reinterpret_cast<const char*>(&dataOffset), 4);
-
-		// DIB Header
-		const int dibHeaderSize = 40;
-		const int planes = 1;
-		const int bpp = 32;
-		const int compression = 0;
-		const int imageSize = m_width * m_height * 4;
-		const int xPelsPerMeter = 2835; // 72 DPI
-		const int yPelsPerMeter = 2835; // 72 DPI
-		const int clrUsed = 0;
-		const int clrImportant = 0;
-
-		file.write(reinterpret_cast<const char*>(&dibHeaderSize), 4);
-		file.write(reinterpret_cast<const char*>(&m_width), 4);
-		file.write(reinterpret_cast<const char*>(&m_height), 4);
-		file.write(reinterpret_cast<const char*>(&planes), 2);
-		file.write(reinterpret_cast<const char*>(&bpp), 2);
-		file.write(reinterpret_cast<const char*>(&compression), 4);
-		file.write(reinterpret_cast<const char*>(&imageSize), 4);
-		file.write(reinterpret_cast<const char*>(&xPelsPerMeter), 4);
-		file.write(reinterpret_cast<const char*>(&yPelsPerMeter), 4);
-		file.write(reinterpret_cast<const char*>(&clrUsed), 4);
-		file.write(reinterpret_cast<const char*>(&clrImportant), 4);
-
-		// Pixel Data
-		for (int y = m_height - 1; y >= 0; --y) {
-			for (int x = 0; x < m_width; ++x) {
-				int idx = (y * m_width + x) * 4;
-				// BMP expects BGR order
-				file.put(m_pixels[idx + 2]);
-				file.put(m_pixels[idx + 1]);
-				file.put(m_pixels[idx + 0]);
-				file.put(m_pixels[idx + 3]);
-			}
-		}
-
-		return ;
+	return;
 }
 bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
 	const auto& state = m_states.top();
@@ -126,7 +127,7 @@ bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
 
 	return winding_number != 0;
 }
-bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y){
+bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y) {
 	const auto& state = m_states.top();
 	int winding_number = 0;
 	float fy = static_cast<float>(y) + 0.5f;
@@ -177,91 +178,85 @@ bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y){
 
 	return winding_number != 0;
 }
-void System::Tools::SoftwareCanvas::save(){
+void System::Tools::SoftwareCanvas::save() {
 	m_states.push(m_states.top());
 }
-void System::Tools::SoftwareCanvas::restore(){
-	if(m_states.size()>1) m_states.pop();
+void System::Tools::SoftwareCanvas::restore() {
+	if (m_states.size() > 1) m_states.pop();
 }
-void System::Tools::SoftwareCanvas::clip(){
+void System::Tools::SoftwareCanvas::clip() {
 	auto& st = m_states.top();
 	st.clippingpath.m_path = m_path;
 	m_path.clear();
 }
-void System::Tools::SoftwareCanvas::clip(Path2D path){
+void System::Tools::SoftwareCanvas::clip(Path2D path) {
 	auto& st = m_states.top();
 	st.clippingpath = path;
 }
 void System::Tools::SoftwareCanvas::fill() {
 	const auto& state = m_states.top();
-	std::vector<Edge> edges;
-	Vector2 start, prev;
-	bool hasStart = false;
+	if (m_path.empty()) return;
 
-	// Convert path to directional edges
+	// Bounding box for the path
+	float minX = std::numeric_limits<float>::max();
+	float minY = std::numeric_limits<float>::max();
+	float maxX = std::numeric_limits<float>::min();
+	float maxY = std::numeric_limits<float>::min();
+
 	for (const auto& cmd : m_path) {
-		Vector2 p_transformed = transform(state.m_transform, cmd.p);
-		switch (cmd.type) {
-		case PathCommand::Type::MoveTo:
-			start = prev = p_transformed;
-			hasStart = true;
-			break;
-		case PathCommand::Type::LineTo:
-		{
-			if (!hasStart) break;
-			Vector2 a = prev;
-			Vector2 b = p_transformed;
-			if (a.y != b.y) { // Ignore horizontal lines
-				int wind = (a.y < b.y) ? 1 : -1;
-				edges.push_back({ a.x, a.y, b.x, b.y, wind });
-			}
-			prev = b;
-			break;
-		}
-		case PathCommand::Type::ClosePath:
-			if (hasStart) {
-				Vector2 a = prev;
-				Vector2 b = start;
-				if (a.y != b.y) { // Ignore horizontal lines
-					int wind = (a.y < b.y) ? 1 : -1;
-					edges.push_back({ a.x, a.y, b.x, b.y, wind });
-				}
-				prev = start;
-			}
-			break;
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			Vector2 p_transformed = transform(state.m_transform, cmd.p);
+			minX = std::min(minX, p_transformed.x);
+			maxX = std::max(maxX, p_transformed.x);
+			minY = std::min(minY, p_transformed.y);
+			maxY = std::max(maxY, p_transformed.y);
 		}
 	}
 
-	// Scanline fill using non-zero winding rule
-	for (int y = 0; y < m_height; ++y) {
-		float fy = static_cast<float>(y) + 0.5f;
-		std::vector<float> crossings;
-		for (const auto& e : edges) {
-			if ((e.y0 <= fy && e.y1 > fy) || (e.y1 <= fy && e.y0 > fy)) {
-				float x = e.x0 + (fy - e.y0) * (e.x1 - e.x0) / (e.y1 - e.y0);
-				crossings.push_back(x);
+	int startY = std::max(0, static_cast<int>(minY));
+	int endY = std::min(m_height, static_cast<int>(std::ceil(maxY)));
+
+	for (int y = startY; y < endY; ++y) {
+		std::vector<float> intersections;
+		Vector2 start, prev;
+		bool hasStart = false;
+
+		for (const auto& cmd : m_path) {
+			Vector2 p_transformed = transform(state.m_transform, cmd.p);
+			switch (cmd.type) {
+			case PathCommand::Type::MoveTo:
+				start = prev = p_transformed;
+				hasStart = true;
+				break;
+			case PathCommand::Type::LineTo:
+				if (hasStart) {
+					if ((prev.y <= y && p_transformed.y > y) || (p_transformed.y <= y && prev.y > y)) {
+						float x_intersect = (y - prev.y) * (p_transformed.x - prev.x) / (p_transformed.y - prev.y) + prev.x;
+						intersections.push_back(x_intersect);
+					}
+					prev = p_transformed;
+				}
+				break;
+			case PathCommand::Type::ClosePath:
+				if (hasStart) {
+					if ((prev.y <= y && start.y > y) || (start.y <= y && prev.y > y)) {
+						float x_intersect = (y - prev.y) * (start.x - prev.x) / (start.y - prev.y) + prev.x;
+						intersections.push_back(x_intersect);
+					}
+					prev = start; // End of subpath
+				}
+				break;
 			}
 		}
-		std::sort(crossings.begin(), crossings.end());
 
-		int winding_number = 0;
-		if (!crossings.empty()) {
-			int x0 = static_cast<int>(std::round(crossings[0]));
-			for (size_t i = 0; i < crossings.size(); ++i) {
-				// Determine winding contribution of the edge that generated this crossing
-				// This is a simplified approach. A full implementation would need to
-				// re-evaluate winding at each crossing.
-				// For simplicity, we alternate winding based on sorted crossings.
-				if (i % 2 == 0) { // Entry point
-					int x_start = static_cast<int>(std::round(crossings[i]));
-					if (i + 1 < crossings.size()) {
-						int x_end = static_cast<int>(std::round(crossings[i + 1]));
-						for (int xi = x_start; xi < x_end; ++xi) {
-							if (isPointInPath(state.clippingpath, xi, y)) {
-								SetPixelBlend(xi, y, state.m_fill);
-							}
-						}
-					}
+		std::sort(intersections.begin(), intersections.end());
+
+		for (size_t i = 0; i + 1 < intersections.size(); i += 2) {
+			int x_start = std::max(0, static_cast<int>(std::ceil(intersections[i])));
+			int x_end = std::min(m_width, static_cast<int>(std::ceil(intersections[i + 1])));
+			for (int x = x_start; x < x_end; ++x) {
+				if (isPointInPath(state.clippingpath, x, y)) {
+					SetPixelBlend(x, y, state.m_fill);
 				}
 			}
 		}
@@ -271,139 +266,169 @@ void System::Tools::SoftwareCanvas::stroke() {
 	const auto& state = m_states.top();
 	if (m_path.empty()) return;
 
-	Vector2 start, prev;
-	bool hasStart = false;
-
+	std::vector<Vector2> points;
 	for (const auto& cmd : m_path) {
-		Vector2 p_transformed = transform(state.m_transform, cmd.p);
-		switch (cmd.type) {
-		case PathCommand::Type::MoveTo:
-			start = prev = p_transformed;
-			hasStart = true;
-			break;
-		case PathCommand::Type::LineTo:
-		{
-			if (!hasStart) break;
-			Vector2 a = prev;
-			Vector2 b = p_transformed;
-
-			// Simple thick line drawing
-			float thickness = state.lineWidth;
-			Vector2 dir = (b - a).normalized();
-			Vector2 normal = { -dir.y, dir.x };
-
-			for (float i = 0; i < (b - a).magnitude(); i += 0.5f) {
-				Vector2 p = a + dir * i;
-				for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
-					Vector2 q = p + normal * j;
-					if (isPointInPath(state.clippingpath, static_cast<int>(q.x), static_cast<int>(q.y))) {
-						SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
-					}
-				}
-			}
-			prev = b;
-			break;
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			points.push_back(transform(state.m_transform, cmd.p));
 		}
-		case PathCommand::Type::ClosePath:
-			if (hasStart) {
-				Vector2 a = prev;
-				Vector2 b = start;
+	}
+	if (m_path.back().type == PathCommand::Type::ClosePath) {
+		points.push_back(points.front());
+	}
 
-				// Simple thick line drawing
-				float thickness = state.lineWidth;
-				Vector2 dir = (b - a).normalized();
-				Vector2 normal = { -dir.y, dir.x };
+	if (points.size() < 2) return;
 
-				for (float i = 0; i < (b - a).magnitude(); i += 0.5f) {
-					Vector2 p = a + dir * i;
-					for (float j = -thickness / 2; j <= thickness / 2; j += 0.5f) {
-						Vector2 q = p + normal * j;
-						if (isPointInPath(state.clippingpath, static_cast<int>(q.x), static_cast<int>(q.y))) {
-							SetPixelBlend(static_cast<int>(q.x), static_cast<int>(q.y), state.m_stroke);
-						}
-					}
+	for (size_t i = 0; i < points.size() - 1; ++i) {
+		const Vector2& p1 = points[i];
+		const Vector2& p2 = points[i + 1];
+
+		// Draw line segment
+		float thickness = state.lineWidth;
+		Vector2 dir = (p2 - p1).normalized();
+		Vector2 normal = { -dir.y, dir.x };
+		float half_thickness = thickness / 2.0f;
+
+		Vector2 v1 = p1 - normal * half_thickness;
+		Vector2 v2 = p2 - normal * half_thickness;
+		Vector2 v3 = p2 + normal * half_thickness;
+		Vector2 v4 = p1 + normal * half_thickness;
+
+		std::vector<PathCommand> old_path = m_path;
+		m_path.clear();
+		moveTo(v1.x, v1.y);
+		lineTo(v2.x, v2.y);
+		lineTo(v3.x, v3.y);
+		lineTo(v4.x, v4.y);
+		closePath();
+		fill();
+		m_path = old_path;
+
+		// Draw join
+		if (i < points.size() - 2) {
+			const Vector2& p3 = points[i + 2];
+			Vector2 dir2 = (p3 - p2).normalized();
+			Vector2 normal2 = { -dir2.y, dir2.x };
+
+			if (state.lineJoin == LineJoin::miter) {
+				Vector2 miter_dir = (normal + normal2).normalized();
+				float miter_length = half_thickness / Vector2::Dot(miter_dir, normal);
+
+				if (miter_length < state.miterLimit * half_thickness) {
+					Vector2 miter_point = p2 + miter_dir * miter_length;
+
+					std::vector<PathCommand> old_path = m_path;
+					m_path.clear();
+					moveTo(p2.x, p2.y);
+					lineTo(p2.x - normal.x * half_thickness, p2.y - normal.y * half_thickness);
+					lineTo(miter_point.x, miter_point.y);
+					lineTo(p2.x - normal2.x * half_thickness, p2.y - normal2.y * half_thickness);
+					closePath();
+					fill();
+					m_path = old_path;
 				}
-				prev = start;
 			}
-			break;
+			else if (state.lineJoin == LineJoin::round) {
+				// Draw a circle at the join
+				std::vector<PathCommand> old_path = m_path;
+				m_path.clear();
+				arc(p2.x, p2.y, half_thickness, 0, 2 * 3.14159265f);
+				fill();
+				m_path = old_path;
+			}
+			else if (state.lineJoin == LineJoin::bevel) {
+				// Draw a triangle to fill the gap
+				std::vector<PathCommand> old_path = m_path;
+				m_path.clear();
+				moveTo(p2.x, p2.y);
+				lineTo(p2.x - normal.x * half_thickness, p2.y - normal.y * half_thickness);
+				lineTo(p2.x - normal2.x * half_thickness, p2.y - normal2.y * half_thickness);
+				closePath();
+				fill();
+				m_path = old_path;
+			}
 		}
 	}
 }
-void System::Tools::SoftwareCanvas::fillText(std::string str, float x, float y){
+void System::Tools::SoftwareCanvas::fillText(std::string str, float x, float y) {
 	auto& st = m_states.top();
 }
-void System::Tools::SoftwareCanvas::strokeText(std::string str, float x, float y){
+void System::Tools::SoftwareCanvas::strokeText(std::string str, float x, float y) {
 	auto& st = m_states.top();
 }
-void System::Tools::SoftwareCanvas::settextAlign(const std::string& str){
-	auto &st = m_states.top();
-	if(str == "left"){ 
+void System::Tools::SoftwareCanvas::settextAlign(const std::string& str) {
+	auto& st = m_states.top();
+	if (str == "left") {
 		st.m_textAlign = TextAlign::Left;
-	}else if(str == "right"){
+	}
+	else if (str == "right") {
 		st.m_textAlign = TextAlign::Right;
-	}else if(str == "center"){
+	}
+	else if (str == "center") {
 		st.m_textAlign = TextAlign::Center;
-	}else if(str == "start"){
+	}
+	else if (str == "start") {
 		st.m_textAlign = TextAlign::Start;
-	}else if(str == "end"){
+	}
+	else if (str == "end") {
 		st.m_textAlign = TextAlign::End;
-	}else{ 
+	}
+	else {
 		throw std::invalid_argument("Invalid textAlign: " + str);
 	}
-}		
-void System::Tools::SoftwareCanvas::setlineWidth(float width){
-    if (width > 0){
-        m_states.top().lineWidth = width;
-    }
 }
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-void System::Tools::SoftwareCanvas::setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-	auto &st = m_states.top();
-	st.m_fill = {r,g,b,a};
+void System::Tools::SoftwareCanvas::setlineWidth(float width) {
+	if (width > 0) {
+		m_states.top().lineWidth = width;
+	}
 }
-void System::Tools::SoftwareCanvas::setStrokeStyle(const std::string& cssColor){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void System::Tools::SoftwareCanvas::setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	auto& st = m_states.top();
+	st.m_fill = { r,g,b,a };
+}
+void System::Tools::SoftwareCanvas::setStrokeStyle(const std::string& cssColor) {
 	auto& st = m_states.top();
 	st.m_stroke = ParseCssColor(cssColor);
 }
-void System::Tools::SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
-	auto &st = m_states.top();
-	st.m_stroke = {r,g,b,a};
-}	
-void System::Tools::SoftwareCanvas::bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y){
+void System::Tools::SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	auto& st = m_states.top();
+	st.m_stroke = { r,g,b,a };
+}
+void System::Tools::SoftwareCanvas::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y) {
 
 }
-void System::Tools::SoftwareCanvas::quadraticCurveTo(float cpx,float cpy,float x,float y){
+void System::Tools::SoftwareCanvas::quadraticCurveTo(float cpx, float cpy, float x, float y) {
 
 }
-void System::Tools::SoftwareCanvas::rect(float x, float y, float w, float h){
+void System::Tools::SoftwareCanvas::rect(float x, float y, float w, float h) {
 	moveTo(x, y);
 	lineTo(x + w, y);
 	lineTo(x + w, y + h);
 	lineTo(x, y + h);
 	closePath();
 }
-void System::Tools::SoftwareCanvas::arcTo(float x1,float y1,float x2,float y2,float r){
-	
+void System::Tools::SoftwareCanvas::arcTo(float x1, float y1, float x2, float y2, float r) {
+
 }
-void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle){
-	arc(x,y,r,sAngle,eAngle,false);
+void System::Tools::SoftwareCanvas::arc(float x, float y, float r, float sAngle, float eAngle) {
+	arc(x, y, r, sAngle, eAngle, false);
 }
-void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise){
+void System::Tools::SoftwareCanvas::arc(float x, float y, float r, float sAngle, float eAngle, bool counterclockwise) {
 	const float tau = 2.0f * 3.14159265f;
 	float sweep = eAngle - sAngle;
 	// Normalize sweep
@@ -431,22 +456,22 @@ void System::Tools::SoftwareCanvas::arc(float x,float y,float r,float sAngle,flo
 		angle += angleStep;
 	}
 }
-void System::Tools::SoftwareCanvas::translate(float x, float y){
-	auto &st = m_states.top();
+void System::Tools::SoftwareCanvas::translate(float x, float y) {
+	auto& st = m_states.top();
 	Matrix3x3 T = Matrix3x3::Translate(x, y);
 	st.m_transform = T * st.m_transform;
 }
-void System::Tools::SoftwareCanvas::scale(float scalewidth,float scaleheight){
-	auto &st = m_states.top();
+void System::Tools::SoftwareCanvas::scale(float scalewidth, float scaleheight) {
+	auto& st = m_states.top();
 	Matrix3x3 S = Matrix3x3::Scale(scalewidth, scaleheight);
 	st.m_transform = S * st.m_transform;
 }
-void System::Tools::SoftwareCanvas::rotate(float angle){
+void System::Tools::SoftwareCanvas::rotate(float angle) {
 	auto& st = m_states.top();
 	Matrix3x3 R = Matrix3x3::Rotate(angle);
 	st.m_transform = R * st.m_transform;
 }
-void System::Tools::SoftwareCanvas::beginPath(){
+void System::Tools::SoftwareCanvas::beginPath() {
 	m_path.clear();
 }
 void System::Tools::SoftwareCanvas::moveTo(float x, float y) {
@@ -459,12 +484,12 @@ void System::Tools::SoftwareCanvas::closePath() {
 	m_path.push_back({ PathCommand::Type::ClosePath, {} });
 }
 void System::Tools::SoftwareCanvas::resetTransform() {
-	auto &st = m_states.top();
+	auto& st = m_states.top();
 	st.m_transform = Matrix3x3::identity();
 }
-void System::Tools::SoftwareCanvas::debug(){
+void System::Tools::SoftwareCanvas::debug() {
 #if dfsd
-	auto &st = m_states.top();
+	auto& st = m_states.top();
 	std::cout << "m_stroke: " << st.m_stroke << std::endl;
 	std::cout << "m_fill: " << st.m_fill << std::endl;
 	std::cout << "globalAlpha: " << st.globalAlpha << std::endl;
