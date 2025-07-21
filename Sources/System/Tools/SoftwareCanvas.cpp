@@ -288,10 +288,10 @@ void System::Tools::SoftwareCanvas::stroke() {
 		Vector2 normal = { -dir.y, dir.x };
 		float half_thickness = thickness / 2.0f;
 
-		Vector2 v1 = p1 - normal * half_thickness;
-		Vector2 v2 = p2 - normal * half_thickness;
-		Vector2 v3 = p2 + normal * half_thickness;
-		Vector2 v4 = p1 + normal * half_thickness;
+		Vector2 v1 = p1 - normal * half_thickness - dir * half_thickness;
+		Vector2 v2 = p2 - normal * half_thickness + dir * half_thickness;
+		Vector2 v3 = p2 + normal * half_thickness + dir * half_thickness;
+		Vector2 v4 = p1 + normal * half_thickness - dir * half_thickness;
 
 		std::vector<PathCommand> old_path = m_path;
 		m_path.clear();
