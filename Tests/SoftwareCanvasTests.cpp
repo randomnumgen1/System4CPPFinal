@@ -30,6 +30,9 @@ TEST(SoftwareCanvasTests, TimingTest) {
 	}
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end - start;
-    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;
+	
+	//fail when the total elapsed time exceeds 16 ms
+	ASSERT_LT(elapsed.count(), 16.67) << "Canvas rendering took too long: " << elapsed.count() << " ms";
+    std::cout << "TimingTest timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;	
     SUCCEED();
 }
