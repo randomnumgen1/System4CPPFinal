@@ -9,6 +9,8 @@
 #include <cstring>
 #include <System/Matrix3x3.hpp>
 #include <System/Vector2.hpp>
+#include <System/Image.h>
+#include <algorithm>
 
 
 namespace System::Tools{
@@ -49,32 +51,7 @@ namespace System::Tools{
 			m_path.push_back({ PathCommand::Type::ClosePath, {} });
 		}
 		void arc(float x, float y, float r, float sAngle, float eAngle, bool counterclockwise = false) {
-			const float tau = 2.0f * 3.14159265f;
-			float sweep = eAngle - sAngle;
-			// Normalize sweep
-			if (!counterclockwise && sweep < 0)
-				sweep += tau;
-			else if (counterclockwise && sweep > 0)
-				sweep -= tau;
-
-			// Number of segments (fixed subdivision or adaptive)
-			int segments =  max(8, static_cast<int>(std::ceil(std::abs(sweep) / (tau / 32))));
-
-			float angleStep = sweep / segments;
-			float angle = sAngle;
-
-			// Build arc as line segments
-			for (int i = 0; i <= segments; ++i) {
-				float cur_x = x + std::cos(angle) * r;
-				float cur_y = y + std::sin(angle) * r;
-
-				if (i == 0)
-					moveTo(cur_x, cur_y);  // starts new subpath if necessary
-				else
-					lineTo(cur_x, cur_y);
-
-				angle += angleStep;
-			}
+		 
 		}
 	};
 	class SoftwareCanvas{
@@ -137,7 +114,11 @@ namespace System::Tools{
 			std::vector<PathCommand> m_path;
 		
 			int m_width, m_height;
-			std::vector<uint8_t> m_pixels;
+			//std::vector<uint8_t> m_pixels;
+
+			System::Image* m_image;
+
+
 			std::stack<State> m_states;
 			// helper: trim in-place via pointers
 			static inline void trimPointers(const std::string& s, const char*& b, const char*& e){
@@ -163,10 +144,10 @@ namespace System::Tools{
 				if (sa == 0) return;      
 				int idx = 4 * (y * m_width + x);
 
-				uint8_t& dr = m_pixels[idx + 0];
-				uint8_t& dg = m_pixels[idx + 1];
-				uint8_t& db = m_pixels[idx + 2];
-				uint8_t& da = m_pixels[idx + 3];
+				uint8_t& dr = m_image->m_pixels[idx + 0];
+				uint8_t& dg = m_image->m_pixels[idx + 1];
+				uint8_t& db = m_image->m_pixels[idx + 2];
+				uint8_t& da = m_image->m_pixels[idx + 3];
 				//fully opaque: overwrite
 				if (sa == 255) {
 					dr = sr;  dg = sg;  db = sb;  da = 255;
@@ -185,10 +166,10 @@ namespace System::Tools{
 				if (src.a == 0) return;
 
 				size_t idx = (static_cast<size_t>(y) * m_width + x) * 4;
-				uint8_t& dr = m_pixels[idx + 0];
-				uint8_t& dg = m_pixels[idx + 1];
-				uint8_t& db = m_pixels[idx + 2];
-				uint8_t& da = m_pixels[idx + 3];
+				uint8_t& dr = m_image->m_pixels[idx + 0];
+				uint8_t& dg = m_image->m_pixels[idx + 1];
+				uint8_t& db = m_image->m_pixels[idx + 2];
+				uint8_t& da = m_image->m_pixels[idx + 3];
 
 				if (src.a == 255 || da == 0) {
 					dr = src.r; dg = src.g; db = src.b; da = src.a;
@@ -216,10 +197,10 @@ namespace System::Tools{
 			inline void SetPixel(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
 				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
 				int idx = 4 * (y * m_width + x);
-				m_pixels[idx + 0] = sr;
-				m_pixels[idx + 1] = sg;
-				m_pixels[idx + 2] = sb;
-				m_pixels[idx + 3] = sa;
+				m_image->m_pixels[idx + 0] = sr;
+				m_image->m_pixels[idx + 1] = sg;
+				m_image->m_pixels[idx + 2] = sb;
+				m_image->m_pixels[idx + 3] = sa;
 			}
 
 
@@ -247,12 +228,11 @@ namespace System::Tools{
 				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
 				int off = (y * m_width + x) * 4;
 				uint32_t pix = rgba;
-				std::memcpy(&m_pixels[off], &pix, sizeof(pix));
+				std::memcpy(&m_image->m_pixels[off], &pix, sizeof(pix));
 			}
 		public:
-			SoftwareCanvas(int w, int h);
+			SoftwareCanvas(System::Image& image);
 			//
-			void SaveAsBitmap(const std::string& filename);
 			bool isPointInPath(Path2D path,int x,int y);
 			bool isPointInPath(int x, int y);
 			// save/restore:
