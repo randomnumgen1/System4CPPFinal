@@ -48,7 +48,34 @@ namespace System::Tools{
 			//add a ClosePath command
 			m_path.push_back({ PathCommand::Type::ClosePath, {} });
 		}
+		void arc(float x, float y, float r, float sAngle, float eAngle, bool counterclockwise = false) {
+			const float tau = 2.0f * 3.14159265f;
+			float sweep = eAngle - sAngle;
+			// Normalize sweep
+			if (!counterclockwise && sweep < 0)
+				sweep += tau;
+			else if (counterclockwise && sweep > 0)
+				sweep -= tau;
 
+			// Number of segments (fixed subdivision or adaptive)
+			int segments =  max(8, static_cast<int>(std::ceil(std::abs(sweep) / (tau / 32))));
+
+			float angleStep = sweep / segments;
+			float angle = sAngle;
+
+			// Build arc as line segments
+			for (int i = 0; i <= segments; ++i) {
+				float cur_x = x + std::cos(angle) * r;
+				float cur_y = y + std::sin(angle) * r;
+
+				if (i == 0)
+					moveTo(cur_x, cur_y);  // starts new subpath if necessary
+				else
+					lineTo(cur_x, cur_y);
+
+				angle += angleStep;
+			}
+		}
 	};
 	class SoftwareCanvas{
 		private:
