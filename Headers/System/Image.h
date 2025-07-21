@@ -9,7 +9,7 @@
 
 namespace System {
 
-        struct Image {
+        class Image {
         public:
             union {
                 struct {
@@ -108,6 +108,73 @@ namespace System {
 
 
 
+			void LoadFromBitmap(const std::string& filename) {
+				std::ifstream file(filename, std::ios::binary);
+				if (!file) {
+					return;
+				}
+
+				// BMP Header
+				char bmpHeader[14];
+				file.read(bmpHeader, 14);
+
+				if (bmpHeader[0] != 'B' || bmpHeader[1] != 'M') {
+					return;
+				}
+
+				// DIB Header
+				char dibHeader[40];
+				file.read(dibHeader, 40);
+
+				Width = *reinterpret_cast<int32_t*>(&dibHeader[4]);
+				Height = *reinterpret_cast<int32_t*>(&dibHeader[8]);
+				int16_t bpp = *reinterpret_cast<int16_t*>(&dibHeader[14]);
+
+				if (bpp != 32) {
+					return;
+				}
+
+				m_pixels.assign(Width * Height * 4, 255);
+
+				// Pixel Data
+				file.seekg(*reinterpret_cast<uint32_t*>(&bmpHeader[10]), std::ios::beg);
+				for (int y = Height - 1; y >= 0; --y) {
+					for (int x = 0; x < Width; ++x) {
+						int idx = (y * Width + x) * 4;
+						// BMP stores pixels in BGR order
+						file.read(reinterpret_cast<char*>(&m_pixels[idx + 2]), 1);
+						file.read(reinterpret_cast<char*>(&m_pixels[idx + 1]), 1);
+						file.read(reinterpret_cast<char*>(&m_pixels[idx + 0]), 1);
+						file.read(reinterpret_cast<char*>(&m_pixels[idx + 3]), 1);
+					}
+				}
+			}
+			void LoadFromTGA(const std::string& filename) {
+				std::ifstream file(filename, std::ios::binary);
+				if (!file) return;
+
+				uint8_t header[18];
+				file.read(reinterpret_cast<char*>(header), sizeof(header));
+
+				if (header[2] == 2) { // Uncompressed true-color
+					Width = (header[13] << 8) | header[12];
+					Height = (header[15] << 8) | header[14];
+					int bpp = header[16];
+
+					if (bpp == 32) {
+						m_pixels.assign(Width * Height * 4, 255);
+						for (int y = Height - 1; y >= 0; --y) {
+							for (int x = 0; x < Width; ++x) {
+								int idx = (y * Width + x) * 4;
+								file.read(reinterpret_cast<char*>(&m_pixels[idx + 2]), 1); // B
+								file.read(reinterpret_cast<char*>(&m_pixels[idx + 1]), 1); // G
+								file.read(reinterpret_cast<char*>(&m_pixels[idx + 0]), 1); // R
+								file.read(reinterpret_cast<char*>(&m_pixels[idx + 3]), 1); // A
+							}
+						}
+					}
+				}
+			}
 
 
 
@@ -115,14 +182,7 @@ namespace System {
 
 
 
-
-
-
-
-  
-            void FromFile(const std::string& file) {
-                FromFile(file.c_str());
-            }
+			
 
             ~Image() {
                 // Clear vector and ensure raw memory is managed correctly
