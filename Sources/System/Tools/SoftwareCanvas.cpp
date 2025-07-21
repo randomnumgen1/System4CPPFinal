@@ -261,6 +261,7 @@ void System::Tools::SoftwareCanvas::fill() {
 			}
 		}
 	}
+	m_path.clear();
 }
 void System::Tools::SoftwareCanvas::stroke() {
 	const auto& state = m_states.top();
