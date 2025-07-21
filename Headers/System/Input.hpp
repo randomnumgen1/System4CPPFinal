@@ -54,15 +54,15 @@ namespace System {
         } 
   
 
-        static bool GetKey(const std::string& name) {
+        static bool GetKey(KeyCode key) {
             
         }
 
-        static bool GetKeyDown(const std::string& name) {
+        static bool GetKeyDown(KeyCode key) {
         
         }
 
-        static bool GetKeyUp(const std::string& name) {
+        static bool GetKeyUp(KeyCode key) {
             
         }
         static void UpdateKeyState(uint32_t vkCode, bool isDown) {
@@ -73,7 +73,7 @@ namespace System {
             mousePos = pos;
         }
         // Call once per frame to update the key states
-        static void UpdateInputState( ) {
+        static void UpdateInputState(){
         
         }
     };
