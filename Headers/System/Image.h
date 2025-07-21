@@ -2,13 +2,12 @@
 #define _SYSTEM_IMAGE_H
 
 
-#include "Size.h"
+#include "System/Drawing/Size.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
 
 namespace System {
-    namespace Drawing { 
 
         struct Image {
         public:
@@ -81,7 +80,11 @@ namespace System {
 
 
 
-
+			Image(int w, int h) {
+				Width = w;
+				Height = h;
+				m_pixels.assign(Width * Height * 4, 255);
+			}
 
 
 
@@ -103,5 +106,4 @@ namespace System {
             }
         };
     }
-}
 #endif
