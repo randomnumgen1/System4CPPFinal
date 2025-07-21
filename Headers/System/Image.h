@@ -24,7 +24,34 @@ namespace System {
 				Height = h;
 				m_pixels.assign(Width * Height * 4, 255);
 			}
-			 
+			enum ImageFormat {
+				BMP,
+				TGA
+			};
+			void Load(const std::string& filename) {
+				std::string ext = filename.substr(filename.find_last_of(".") + 1);
+				if (ext == "bmp") {
+					LoadFromBitmap(filename);
+				}
+				else if (ext == "tga") {
+					LoadFromTGA(filename);
+				}
+			}
+
+			void Save(const std::string& filename, ImageFormat format) {
+				switch (format) {
+				case BMP:
+					SaveAsBitmap(filename);
+					break;
+				case TGA:
+					SaveAsTGA(filename);
+					break;
+				}
+			}
+
+
+
+
 			void SaveAsBitmap(const std::string& filename) {
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) {
