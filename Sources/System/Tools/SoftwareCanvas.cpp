@@ -225,88 +225,64 @@ void System::Tools::SoftwareCanvas::stroke() {
 	const auto& state = m_states.top();
 	if (m_path.empty()) return;
 
-	std::vector<Vector2> points;
+	std::vector<PathCommand> stroke_path;
+	Vector2 start, prev;
+	bool hasStart = false;
+
 	for (const auto& cmd : m_path) {
-		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
-			points.push_back(transform(state.m_transform, cmd.p));
+		Vector2 p_transformed = transform(state.m_transform, cmd.p);
+		switch (cmd.type) {
+		case PathCommand::Type::MoveTo:
+			start = prev = p_transformed;
+			hasStart = true;
+			break;
+		case PathCommand::Type::LineTo:
+			if (hasStart) {
+				float thickness = state.lineWidth;
+				Vector2 dir = (p_transformed - prev).normalized();
+				Vector2 normal = { -dir.y, dir.x };
+				float half_thickness = thickness / 2.0f;
+
+				Vector2 v1 = prev - normal * half_thickness;
+				Vector2 v2 = p_transformed - normal * half_thickness;
+				Vector2 v3 = p_transformed + normal * half_thickness;
+				Vector2 v4 = prev + normal * half_thickness;
+
+				stroke_path.push_back({ PathCommand::Type::MoveTo, v1 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v2 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v3 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v4 });
+				stroke_path.push_back({ PathCommand::Type::ClosePath, {} });
+			}
+			prev = p_transformed;
+			break;
+		case PathCommand::Type::ClosePath:
+			if (hasStart) {
+				float thickness = state.lineWidth;
+				Vector2 dir = (start - prev).normalized();
+				Vector2 normal = { -dir.y, dir.x };
+				float half_thickness = thickness / 2.0f;
+
+				Vector2 v1 = prev - normal * half_thickness;
+				Vector2 v2 = start - normal * half_thickness;
+				Vector2 v3 = start + normal * half_thickness;
+				Vector2 v4 = prev + normal * half_thickness;
+
+				stroke_path.push_back({ PathCommand::Type::MoveTo, v1 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v2 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v3 });
+				stroke_path.push_back({ PathCommand::Type::LineTo, v4 });
+				stroke_path.push_back({ PathCommand::Type::ClosePath, {} });
+			}
+			prev = start;
+			break;
 		}
 	}
-	if (m_path.back().type == PathCommand::Type::ClosePath) {
-		points.push_back(points.front());
-	}
 
-	if (points.size() < 2) return;
-
-	for (size_t i = 0; i < points.size() - 1; ++i) {
-		const Vector2& p1 = points[i];
-		const Vector2& p2 = points[i + 1];
-
-		// Draw line segment
-		float thickness = state.lineWidth;
-		Vector2 dir = (p2 - p1).normalized();
-		Vector2 normal = { -dir.y, dir.x };
-		float half_thickness = thickness / 2.0f;
-
-		Vector2 v1 = p1 - normal * half_thickness - dir * half_thickness;
-		Vector2 v2 = p2 - normal * half_thickness + dir * half_thickness;
-		Vector2 v3 = p2 + normal * half_thickness + dir * half_thickness;
-		Vector2 v4 = p1 + normal * half_thickness - dir * half_thickness;
-
-		std::vector<PathCommand> old_path = m_path;
-		m_path.clear();
-		moveTo(v1.x, v1.y);
-		lineTo(v2.x, v2.y);
-		lineTo(v3.x, v3.y);
-		lineTo(v4.x, v4.y);
-		closePath();
-		fill();
-		m_path = old_path;
-
-		// Draw join
-		if (i < points.size() - 2) {
-			const Vector2& p3 = points[i + 2];
-			Vector2 dir2 = (p3 - p2).normalized();
-			Vector2 normal2 = { -dir2.y, dir2.x };
-
-			if (state.lineJoin == LineJoin::miter) {
-				Vector2 miter_dir = (normal + normal2).normalized();
-				float miter_length = half_thickness / Vector2::Dot(miter_dir, normal);
-
-				if (miter_length < state.miterLimit * half_thickness) {
-					Vector2 miter_point = p2 + miter_dir * miter_length;
-
-					std::vector<PathCommand> old_path = m_path;
-					m_path.clear();
-					moveTo(p2.x, p2.y);
-					lineTo(p2.x - normal.x * half_thickness, p2.y - normal.y * half_thickness);
-					lineTo(miter_point.x, miter_point.y);
-					lineTo(p2.x - normal2.x * half_thickness, p2.y - normal2.y * half_thickness);
-					closePath();
-					fill();
-					m_path = old_path;
-				}
-			}
-			else if (state.lineJoin == LineJoin::round) {
-				// Draw a circle at the join
-				std::vector<PathCommand> old_path = m_path;
-				m_path.clear();
-				arc(p2.x, p2.y, half_thickness, 0, 2 * 3.14159265f);
-				fill();
-				m_path = old_path;
-			}
-			else if (state.lineJoin == LineJoin::bevel) {
-				// Draw a triangle to fill the gap
-				std::vector<PathCommand> old_path = m_path;
-				m_path.clear();
-				moveTo(p2.x, p2.y);
-				lineTo(p2.x - normal.x * half_thickness, p2.y - normal.y * half_thickness);
-				lineTo(p2.x - normal2.x * half_thickness, p2.y - normal2.y * half_thickness);
-				closePath();
-				fill();
-				m_path = old_path;
-			}
-		}
-	}
+	std::vector<PathCommand> old_path = m_path;
+	m_path = stroke_path;
+	fill();
+	m_path = old_path;
 }
 void System::Tools::SoftwareCanvas::fillText(std::string str, float x, float y) {
 	auto& st = m_states.top();
