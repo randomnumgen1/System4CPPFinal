@@ -9,8 +9,11 @@ namespace System {
         uint8_t r, g, b, a;
 
 
-        static const Color black;
-        static const Color white;
+        static const Color32 black;
+        static const Color32 white;
+        static const Color32 red;
+        static const Color32 green;
+        static const Color32 blue;
 
 
 
