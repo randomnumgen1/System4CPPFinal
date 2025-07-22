@@ -22,12 +22,18 @@ namespace System {
         a = _a;
     }
 
-    Color32 Color32::Lerp(const Color32 lhs, const Color32 rhs, const float t){
-        return Color32();
+    Color32 Color32::Lerp(const Color32 lhs, const Color32 rhs, float t){
+        t = Mathf::Clamp01(t);
+        return LerpUnclamped(lhs, rhs,t);
     }
 
     Color32 Color32::LerpUnclamped(const Color32 lhs, const Color32 rhs, const float t){
-        return Color32();
+        return Color32(
+            static_cast<uint8_t>(lhs.r + (rhs.r - lhs.r) * t),
+            static_cast<uint8_t>(lhs.g + (rhs.g - lhs.g) * t),
+            static_cast<uint8_t>(lhs.b + (rhs.b - lhs.b) * t),
+            static_cast<uint8_t>(lhs.a + (rhs.a - lhs.a) * t)
+        );
     }
 
 
