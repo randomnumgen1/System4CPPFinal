@@ -24,8 +24,20 @@ float Vector2::Angle(Vector2 from, Vector2 to){
     return System::Mathf::Acos(dot) * System::Mathf::Rad2Deg;
 }
 Vector2 Vector2::ClosestPointOnLineSegment(const Vector2& linestart, const Vector2& lineend, const Vector2& point){
-
-    return Vector2();
+    // Calculate the direction vector from origin to end
+    Vector2 heading = lineend - linestart;
+    // Compute the length of the heading vector
+    float magnitudeMax =  heading.magnitude();
+    // Normalize the heading vector
+    heading = heading.normalized();
+    // Calculate the vector from origin to the given point
+    Vector2 lhs = point - linestart;
+    // Project the lhs vector onto the heading vector
+    float dotP = Dot(lhs, heading);
+    // Clamp the dot product to the range [0, magnitudeMax]
+    dotP = Mathf::Clamp(dotP, 0.0f, magnitudeMax);
+    // Calculate and return the nearest point on the line segment
+   // return origin + heading * dotP;
 }
 float Vector2::Distance(const Vector2 lhs, const Vector2 rhs){
     return System::Mathf::Sqrt(
