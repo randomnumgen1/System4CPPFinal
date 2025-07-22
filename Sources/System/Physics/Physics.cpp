@@ -1,4 +1,10 @@
 #include <System/Physics/Physics.h>
+
+#if defined(SYSTEM_PHYSICS_BULLET)
+#include <bullet/btBulletDynamicsCommon.h>
+#endif
+
+
 namespace System {
     void Physics::Initialize(){
 #if defined(SYSTEM_PHYSICS_BULLET)
@@ -10,7 +16,15 @@ namespace System {
         dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
 #endif
     }
-
+    void Physics::Shutdown() {
+#if defined(SYSTEM_PHYSICS_BULLET)
+        dynamicsWorld.reset();
+        solver.reset();
+        broadphase.reset();
+        dispatcher.reset();
+        collisionConfiguration.reset();
+#endif
+    }
 
 
 

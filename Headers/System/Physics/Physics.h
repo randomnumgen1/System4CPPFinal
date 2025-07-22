@@ -6,8 +6,13 @@
 #include <System/Mathf.hpp>
 #include <memory>
 
+
 #if defined(SYSTEM_PHYSICS_BULLET)
-#include <bullet/btBulletDynamicsCommon.h>
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btBroadphaseInterface;
+class btSequentialImpulseConstraintSolver;
+class btDiscreteDynamicsWorld;
 #endif
 
 namespace System{
@@ -34,6 +39,7 @@ namespace System{
 #endif
     public:
         static void Initialize();
+        static void Shutdown();
         static bool Raycast(Vector3 origin, Vector3 direction, float maxDistance = System::Mathf::Infinity, uint32_t layerMask = -1);
         static bool Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, float maxDistance, uint32_t layerMask);
         static void Simulate(float step);
