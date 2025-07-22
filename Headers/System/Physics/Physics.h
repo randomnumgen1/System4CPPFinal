@@ -59,7 +59,7 @@ namespace System{
         }
         static void Simulate(float step){
 #if defined(SYSTEM_PHYSICS_BULLET)
-            dynamicsWorld->stepSimulation(deltaTime);
+            dynamicsWorld->stepSimulation(step);
 #endif
         }
 
