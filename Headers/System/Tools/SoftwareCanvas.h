@@ -239,7 +239,8 @@ namespace System::Tools{
 			void clip(Path2D path);
 
 			void fill();
-			
+			void fill(FillRule fillrule);
+
 			void stroke();
 			void fillText(std::string str, float x, float y);
 			void strokeText(std::string str, float x, float y);

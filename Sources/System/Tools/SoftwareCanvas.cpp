@@ -139,7 +139,10 @@ void System::Tools::SoftwareCanvas::clip(Path2D path) {
 	auto& st = m_states.top();
 	st.clippingpath = path;
 }
-void System::Tools::SoftwareCanvas::fill() {
+void System::Tools::SoftwareCanvas::fill(){
+	fill(FillRule::nonzero);
+}
+void System::Tools::SoftwareCanvas::fill(FillRule fillrule) {
 	const auto& state = m_states.top();
 	if (m_path.empty()) return;
 
@@ -209,6 +212,7 @@ void System::Tools::SoftwareCanvas::fill() {
 	}
 	m_path.clear();
 }
+
 void System::Tools::SoftwareCanvas::stroke() {
 	const auto& state = m_states.top();
 	if (m_path.empty()) return;
