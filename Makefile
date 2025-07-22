@@ -1,7 +1,7 @@
 CXX = g++
 INCLUDES = -IHeaders
 STANDARD = -std=c++14
-SRCS = Sources/System/Tools/SoftwareCanvas.cpp Tests/SoftwareCanvasTests.cpp Sources/System/Vector2.cpp Sources/System/Matrix3x3.cpp Sources/System/Mathf.cpp
+SRCS = Sources/System/Tools/SoftwareCanvas.cpp Tests/SoftwareCanvasTests.cpp Sources/System/Vector2.cpp Sources/System/Matrix3x3.cpp Sources/System/Mathf.cpp Sources/System/Color32.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Targets
