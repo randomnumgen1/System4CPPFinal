@@ -87,7 +87,7 @@ namespace System {
             };
         }
         inline float operator[](int i) const { assert((i >= 0) && (i < 2)); return (&x)[i]; }
-        inline float& operator[](int i) { assert((i >= 0) && (i < 1)); return (&x)[i]; }
+        inline float& operator[](int i) { assert((i >= 0) && (i < 2)); return (&x)[i]; }
     };
     Vector2 operator*(const Matrix3x3& m, const Vector2& v);
 }

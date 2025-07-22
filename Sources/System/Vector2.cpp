@@ -37,7 +37,7 @@ Vector2 Vector2::ClosestPointOnLineSegment(const Vector2& linestart, const Vecto
     // Clamp the dot product to the range [0, magnitudeMax]
     dotP = Mathf::Clamp(dotP, 0.0f, magnitudeMax);
     // Calculate and return the nearest point on the line segment
-   // return origin + heading * dotP;
+    return linestart + heading * dotP;
 }
 float Vector2::Distance(const Vector2 lhs, const Vector2 rhs){
     return System::Mathf::Sqrt(
