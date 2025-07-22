@@ -15,10 +15,8 @@ namespace System{
     public:
         Vector3 origin;
         Vector3 direction;
-        Ray(Vector3 origin, Vector3 direction){
-            this->origin = origin;
-            this->direction = direction;
-        }
+        Ray(const Vector3& origin, const Vector3& direction)
+            : origin(origin), direction(direction) {}
     };
     struct RaycastHit {
     public:
