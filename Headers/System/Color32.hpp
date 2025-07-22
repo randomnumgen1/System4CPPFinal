@@ -17,23 +17,12 @@ namespace System {
 
 
 
-        Color32() {
-            r = 0;
-            g = 0;
-            b = 0;
-            a = 0;
-        }
+        Color32();
 
-        Color32(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a) {
-            r = _r;
-            g = _g;
-            b = _b;
-            a = _a;
-        }
+        Color32(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a);
 
 
-        static Color32 Lerp(const Color32 lhs, const Color32 rhs, const float t) {}
-        static Color32 LerpUnclamped(const Color32 lhs, const Color32 rhs, const float t) {}
+        
 
 
         
