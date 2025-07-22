@@ -23,11 +23,11 @@ namespace System{
     class Physics{
     private:
 #if defined(SYSTEM_PHYSICS_BULLET)
-        std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
-        std::unique_ptr<btCollisionDispatcher> dispatcher;
-        std::unique_ptr<btBroadphaseInterface> broadphase;
-        std::unique_ptr<btSequentialImpulseConstraintSolver> solver;
-        std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
+        static std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
+        static std::unique_ptr<btCollisionDispatcher> dispatcher;
+        static std::unique_ptr<btBroadphaseInterface> broadphase;
+        static std::unique_ptr<btSequentialImpulseConstraintSolver> solver;
+        static std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 #endif
     public:
         Physics() {
