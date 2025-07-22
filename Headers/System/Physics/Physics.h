@@ -55,16 +55,26 @@ namespace System{
 
             btCollisionWorld::ClosestRayResultCallback rayCallback(btOrigin, btEnd);
             dynamicsWorld->rayTest(btOrigin, btEnd, rayCallback);
-
-            if (rayCallback.hasHit()) {
-                return true;
-            }
-#endif
+            return rayCallback.hasHit();
+#else
             return false;
+#endif
         }
         static bool Raycast(Vector3 origin, Vector3 direction,RaycastHit& hitInfo, float maxDistance, uint32_t layerMask) {
 #if defined(SYSTEM_PHYSICS_BULLET)
+            if (!dynamicsWorld) return false;
 
+            btVector3 btOrigin(origin.x, origin.y, origin.z);
+            btVector3 btDirection(direction.x, direction.y, direction.z);
+            btVector3 btEnd = btOrigin + btDirection.normalized() * maxDistance;
+
+            btCollisionWorld::ClosestRayResultCallback rayCallback(btOrigin, btEnd);
+            dynamicsWorld->rayTest(btOrigin, btEnd, rayCallback);
+            if (rayCallback.hasHit()) {
+                hitInfo.point = Vector3(rayCallback.m_hitPointWorld.x(), rayCallback.m_hitPointWorld.y(), rayCallback.m_hitPointWorld.z());
+                hitInfo.normal = Vector3(rayCallback.m_hitNormalWorld.x(), rayCallback.m_hitNormalWorld.y(), rayCallback.m_hitNormalWorld.z());
+                return true;
+            }
 #endif
             return false;
         }
