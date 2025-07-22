@@ -28,6 +28,13 @@ namespace System {
         
 
     };
+    inline bool operator==(const Color32& lhs, const Color32& rhs) {
+        return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
+    }
+
+    inline bool operator!=(const Color32& lhs, const Color32& rhs) {
+        return !(lhs == rhs);
+    }
 }
 
 #endif
