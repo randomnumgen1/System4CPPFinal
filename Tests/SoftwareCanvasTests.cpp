@@ -112,7 +112,7 @@ TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
     SUCCEED();
 }
 
- TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
+ TEST(SoftwareCanvasTests, ComplexShapeStrokeTest) {
 	System::Image image = System::Image(1920,1080);
     System::Tools::SoftwareCanvas canvas(image);
  
