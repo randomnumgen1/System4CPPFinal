@@ -27,6 +27,7 @@ namespace System{
     public:
         Vector3 point;
         Vector3 normal;
+        float distance;
     };
     class Physics{
     private:
