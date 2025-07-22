@@ -3,11 +3,13 @@
 
 #include <cassert>
 namespace System {
-    class Color {
+    struct Color {
     public:
+        float r, g, b, a;
+
         static const Color black;
         static const Color white;
-        float r, g, b, a;
+
        
     
         Color();
