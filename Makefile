@@ -9,7 +9,7 @@ DEBUG_TARGET = test_software_canvas_debug
 RELEASE_TARGET = test_software_canvas_release
 
 # Flags
-DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG
+DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -DSYSTEM_PROFILER_ENABLED
 RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG
 
 LDFLAGS = -lgtest -lpthread -lgtest_main
