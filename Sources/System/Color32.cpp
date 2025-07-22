@@ -22,6 +22,14 @@ namespace System {
         a = _a;
     }
 
+    Color32 Color32::Lerp(const Color32 lhs, const Color32 rhs, const float t){
+        return Color32();
+    }
+
+    Color32 Color32::LerpUnclamped(const Color32 lhs, const Color32 rhs, const float t){
+        return Color32();
+    }
+
 
 }
 
