@@ -118,18 +118,7 @@ namespace System::Tools{
 
 			std::stack<State> m_states;
 			// helper: trim in-place via pointers
-			static inline void trimPointers(const std::string& s, const char*& b, const char*& e){
-				b = s.c_str();
-				e = b + s.size();
-				while (b < e && std::isspace(static_cast<unsigned char>(*b))) ++b;
-				while (e > b && std::isspace(static_cast<unsigned char>(*(e-1)))) --e;
-			}
-			static int hexVal(char c) {
-				if (c >= '0' && c <= '9') return c - '0';
-				c = static_cast<char>(std::toupper((unsigned char)c));
-				if (c >= 'A' && c <= 'F') return 10 + c - 'A';
-				return 0;
-			}
+ 
 			static System::Vector2 transform(const System::Matrix3x3& m, const System::Vector2& p) {
 				return m * p;
 			}
@@ -246,55 +235,7 @@ namespace System::Tools{
 			void strokeText(std::string str, float x, float y);
 			void settextAlign(const std::string& str);
 			void setlineWidth(float width);
-#if defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))
-#define strncasecmp _strnicmp
-#endif
-			void setFillStyle(const std::string& cssColor){
-				auto &st = m_states.top();
-				const char *p, *e;
-				trimPointers(cssColor, p, e);
-				if (p >= e) return;
-				size_t len = e - p;
-				// #RGB / #RRGGBB / #RRGGBBAA
-				if (*p == '#'){
-					++p;
-					if (len == 4){
-						st.m_fill.r = hexVal(p[0]) * 17;
-						st.m_fill.g = hexVal(p[1]) * 17;
-						st.m_fill.b = hexVal(p[2]) * 17;
-						st.m_fill.a = 255;
-					}else if(len==7 || len==9){
-						st.m_fill.r = hexVal(p[0])*16 + hexVal(p[1]);
-						st.m_fill.g = hexVal(p[2])*16 + hexVal(p[3]);
-						st.m_fill.b = hexVal(p[4])*16 + hexVal(p[5]);
-						st.m_fill.a = 255;
-						if (len == 9){
-							st.m_fill.a = hexVal(p[6])*16 + hexVal(p[7]);
-						}	
-					}
-					return;
-				}else if(*p == 'r'){
-					
-				}else if(*p == 'h'){
-					
-				}
-				
-				
-				static const std::pair<const char*, Color32> kNamedColors[] = {
-					{ "black",       {  0,  0,  0,255} },
-					{ "white",       {255,255,255,255} },
-					{ "red",         {255,  0,  0,255} },
-					{ "green",       {  0,128,  0,255} },
-					{ "blue",        {  0,  0,255,255} },
-				};
-				for (auto &entry : kNamedColors) {
-					size_t n = std::strlen(entry.first);
-					if (n == len && strncasecmp(p, entry.first, n) == 0){
-						st.m_fill = entry.second;
-						return;
-					}
-				}
-			}
+			void setFillStyle(const std::string& cssColor);
 			void setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 			void setStrokeStyle(const std::string& cssColor);
 			void setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);

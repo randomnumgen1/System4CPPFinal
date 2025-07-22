@@ -317,10 +317,13 @@ void System::Tools::SoftwareCanvas::setlineWidth(float width) {
 	}
 }
 
+void System::Tools::SoftwareCanvas::setFillStyle(const std::string& cssColor){
+	auto& st = m_states.top();
+	Color32::TryGetColor32(cssColor, st.m_fill);
+}
 
 
-
-
+ 
 
 
 
@@ -338,7 +341,7 @@ void System::Tools::SoftwareCanvas::setFillStyle(uint8_t r, uint8_t g, uint8_t b
 }
 void System::Tools::SoftwareCanvas::setStrokeStyle(const std::string& cssColor) {
 	auto& st = m_states.top();
-	st.m_stroke = ParseCssColor(cssColor);
+	Color32::TryGetColor32(cssColor, st.m_stroke);
 }
 void System::Tools::SoftwareCanvas::setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	auto& st = m_states.top();
