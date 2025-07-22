@@ -11,6 +11,7 @@
 #include <System/Vector2.hpp>
 #include <System/Image.h>
 #include <algorithm>
+#include <System/Color32.hpp>
 
 
 namespace System::Tools{
@@ -61,10 +62,6 @@ namespace System::Tools{
 			enum class LineJoin {round, bevel, miter};
 			enum class TextBaseline {top, hanging, middle, alphabetic, ideographic, bottom};
 			enum class FillRule { nonzero, evenodd};
-			struct Color{
-				uint8_t r, g, b, a;
-
-			};	
 			struct Edge {
 				float x0, y0, x1, y1;
 				int winding;
@@ -72,8 +69,8 @@ namespace System::Tools{
 			struct State{
 				System::Matrix3x3 m_transform;
 				Path2D clippingpath;
-				Color m_stroke;
-				Color m_fill;
+				Color32 m_stroke;
+				Color32 m_fill;
 				float globalAlpha;
 				float lineWidth;
 				LineCap lineCap;
@@ -136,7 +133,7 @@ namespace System::Tools{
 			static System::Vector2 transform(const System::Matrix3x3& m, const System::Vector2& p) {
 				return m * p;
 			}
-			static Color ParseCssColor(const std::string& cssColor){
+			static Color32 ParseCssColor(const std::string& cssColor){
 				return { 0,0,0,0 };
 			}
 			void SetPixelBlendNoCheck(int x, int y, uint8_t sr, uint8_t sg, uint8_t sb, uint8_t sa){
@@ -161,7 +158,7 @@ namespace System::Tools{
 				db = uint8_t((sb * sa + db * invA + 127) / 255);
 				da = uint8_t((sa + da * invA + 127) / 255);
 			}
-			inline void SetPixelBlend(int x, int y, const Color& src){
+			inline void SetPixelBlend(int x, int y, const Color32& src){
 				if (x < 0 || y < 0 || x >= m_width || y >= m_height) return;
 				if (src.a == 0) return;
 
@@ -282,7 +279,7 @@ namespace System::Tools{
 				}
 				
 				
-				static const std::pair<const char*,Color> kNamedColors[] = {
+				static const std::pair<const char*, Color32> kNamedColors[] = {
 					{ "black",       {  0,  0,  0,255} },
 					{ "white",       {255,255,255,255} },
 					{ "red",         {255,  0,  0,255} },
