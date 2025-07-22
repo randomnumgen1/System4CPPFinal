@@ -4,11 +4,7 @@
 #include <vector>
 #include <chrono>
 
-TEST(SoftwareCanvasTests, Constructor) {
-	System::Image image = System::Image(1920,1080);
-    System::Tools::SoftwareCanvas canvas(image);
-    SUCCEED();
-}
+
 TEST(SoftwareCanvasTests, ConstructorTiming) {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1000; ++i) {
@@ -101,9 +97,9 @@ TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
 	auto start = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < 1000; ++i) {
 
-		ctx.beginPath();
-		ctx.arc(95, 50, 40, 0, 2 * 3.14f);
-		ctx.stroke();
+		canvas.beginPath();
+		canvas.arc(95, 50, 40, 0, 2 * 3.14f);
+		canvas.stroke();
 
 
 	}
@@ -116,4 +112,27 @@ TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
     SUCCEED();
 }
 
+ TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
+	System::Image image = System::Image(1920,1080);
+    System::Tools::SoftwareCanvas canvas(image);
  
+ 
+ 
+ 
+ 
+     canvas.beginPath(); 
+     canvas.moveTo(50,50);
+     canvas.lineTo(120,150);
+     canvas.lineTo(0,180); 
+     canvas.lineTo(120,210);
+     canvas.lineTo(50,310);  
+     canvas.lineTo(160,250);
+     canvas.lineTo(190,370);
+     canvas.lineTo(220,250);
+     canvas.lineTo(330,310);
+     canvas.lineTo(260,210);
+     canvas.lineTo(380,180);
+     canvas.closePath();
+     canvas.stroke();
+	 
+ }
