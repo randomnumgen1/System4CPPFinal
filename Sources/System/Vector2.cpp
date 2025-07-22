@@ -23,6 +23,10 @@ float Vector2::Angle(Vector2 from, Vector2 to){
     float dot = System::Mathf::Clamp(Dot(from, to) / denominator, -1.0f, 1.0f);
     return System::Mathf::Acos(dot) * System::Mathf::Rad2Deg;
 }
+Vector2 Vector2::ClosestPointOnLineSegment(const Vector2& linestart, const Vector2& lineend, const Vector2& point){
+
+    return Vector2();
+}
 float Vector2::Distance(const Vector2 lhs, const Vector2 rhs){
     return System::Mathf::Sqrt(
         System::Mathf::Pow(rhs.x - lhs.x, 2) +
