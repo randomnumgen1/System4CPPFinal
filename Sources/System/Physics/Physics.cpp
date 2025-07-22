@@ -79,6 +79,7 @@ namespace System {
         if (rayCallback.hasHit()) {
             hitInfo.point = Vector3(rayCallback.m_hitPointWorld.x(), rayCallback.m_hitPointWorld.y(), rayCallback.m_hitPointWorld.z());
             hitInfo.normal = Vector3(rayCallback.m_hitNormalWorld.x(), rayCallback.m_hitNormalWorld.y(), rayCallback.m_hitNormalWorld.z());
+            hitInfo.distance = (hitInfo.point - origin).magnitude();
             return true;
         }
 #endif
