@@ -16,6 +16,7 @@ namespace System{
 			static constexpr float PI =  static_cast<float>(M_PI);
 			static constexpr float Deg2Rad = static_cast<float>(M_PI) / 180.0f; 
 			static constexpr float Rad2Deg = 180.0f / static_cast<float>(M_PI);
+			static constexpr float Infinity = 10000.0f;
 		/*
 		----------------------------------------------------------------------------------------
 		Static Methods
