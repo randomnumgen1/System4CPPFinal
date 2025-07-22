@@ -134,5 +134,6 @@ TEST(SoftwareCanvasTests, CircleStrokeTimingTest) {
      canvas.lineTo(380,180);
      canvas.closePath();
      canvas.stroke();
+	 SUCCEED();
 	 
  }
