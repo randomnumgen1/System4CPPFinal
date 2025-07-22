@@ -20,6 +20,11 @@ namespace System{
             this->direction = direction;
         }
     };
+    struct RaycastHit {
+    public:
+        Vector3 point;
+        Vector3 normal;
+    };
     class Physics{
     private:
 #if defined(SYSTEM_PHYSICS_BULLET)
@@ -54,6 +59,12 @@ namespace System{
             if (rayCallback.hasHit()) {
                 return true;
             }
+#endif
+            return false;
+        }
+        static bool Raycast(Vector3 origin, Vector3 direction,RaycastHit& hitInfo, float maxDistance, uint32_t layerMask) {
+#if defined(SYSTEM_PHYSICS_BULLET)
+
 #endif
             return false;
         }
