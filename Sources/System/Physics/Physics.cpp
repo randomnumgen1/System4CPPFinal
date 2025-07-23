@@ -103,7 +103,7 @@ namespace System {
 
     void Physics::Setgravity(const Vector3& gravity){
 #if defined(SYSTEM_PHYSICS_BULLET)
-
+        dynamicsWorld->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 #endif
     }
 
