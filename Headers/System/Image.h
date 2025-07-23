@@ -48,65 +48,78 @@ namespace System {
 					break;
 				}
 			}
+			const uint16_t BITMAP_MAGIC = 0x4D42;
+#pragma pack(push, 1)
+			struct BITMAPFILEHEADER {
+				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
+				uint32_t FileSize;      // Size of the file in bytes
+				uint16_t Reserved1; // Reserved; must be 0
+				uint16_t Reserved2; // Reserved; must be 0
+				uint32_t pixeloffset;   // Offset to pixel data from start of file
+			};
+			struct BITMAPINFOHEADER {
+				uint32_t ThisHeaderSize;          // Size of this header (40 bytes)
+				int32_t  WidthInPixels;         // Image width in pixels
+				int32_t  HeightInPixels;        // Image height in pixels
+				uint16_t Planes;        // Must be 1
+				uint16_t bpp;      // Bits per pixel (e.g., 24 for truecolor)
+				uint32_t Compression;   // Compression type (usually 0 = BI_RGB)
+				uint32_t ImageSize;     // Image size (can be 0 for BI_RGB)
+				int32_t  XPelsPerMeter; // Horizontal resolution (pixels/meter)
+				int32_t  YPelsPerMeter; // Vertical resolution (pixels/meter)
+				uint32_t biClrUsed;       // Number of colors in palette
+				uint32_t biClrImportant;  // Important colors
+			};
+#pragma pack(pop)
 
-
-
-
-			void SaveAsBitmap(const std::string& filename) {
+			void SaveAsBitmap(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) {
 					return;
 				}
+				BITMAPFILEHEADER bitmapfileheader = {};
+				bitmapfileheader.Magic = BITMAP_MAGIC;
+				bitmapfileheader.FileSize = (sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)) + Width * Height * 4;
+				bitmapfileheader.Reserved1 = 0;
+				bitmapfileheader.Reserved2 = 0;
+				bitmapfileheader.pixeloffset = 54;
+				file.write(reinterpret_cast<const char*>(&bitmapfileheader), sizeof(BITMAPFILEHEADER));
 
-				// BMP Header
-				const int fileSize = 54 + Width * Height * 4;
-				const int reserved = 0;
-				const int dataOffset = 54;
+				BITMAPINFOHEADER bitmapinfoheader = {};
+				bitmapinfoheader.ThisHeaderSize = sizeof(BITMAPINFOHEADER);
+				bitmapinfoheader.WidthInPixels = Width;
+				bitmapinfoheader.HeightInPixels = Height;
+				bitmapinfoheader.Planes = 1;
+				bitmapinfoheader.bpp = 32;
+				bitmapinfoheader.Compression = 0;
+				bitmapinfoheader.ImageSize = Width * Height * 4;
+				bitmapinfoheader.XPelsPerMeter = 2835;
+				bitmapinfoheader.YPelsPerMeter = 2835;
+				bitmapinfoheader.biClrUsed = 0;
+				bitmapinfoheader.biClrImportant = 0;
+				file.write(reinterpret_cast<const char*>(&bitmapinfoheader), sizeof(BITMAPINFOHEADER));
 
-				file.put('B');
-				file.put('M');
-				file.write(reinterpret_cast<const char*>(&fileSize), 4);
-				file.write(reinterpret_cast<const char*>(&reserved), 4);
-				file.write(reinterpret_cast<const char*>(&dataOffset), 4);
-
-				// DIB Header
-				const int dibHeaderSize = 40;
-				const int planes = 1;
-				const int bpp = 32;
-				const int compression = 0;
-				const int imageSize = Width * Height * 4;
-				const int xPelsPerMeter = 2835; // 72 DPI
-				const int yPelsPerMeter = 2835; // 72 DPI
-				const int clrUsed = 0;
-				const int clrImportant = 0;
-
-				file.write(reinterpret_cast<const char*>(&dibHeaderSize), 4);
-				file.write(reinterpret_cast<const char*>(&Width), 4);
-				file.write(reinterpret_cast<const char*>(&Height), 4);
-				file.write(reinterpret_cast<const char*>(&planes), 2);
-				file.write(reinterpret_cast<const char*>(&bpp), 2);
-				file.write(reinterpret_cast<const char*>(&compression), 4);
-				file.write(reinterpret_cast<const char*>(&imageSize), 4);
-				file.write(reinterpret_cast<const char*>(&xPelsPerMeter), 4);
-				file.write(reinterpret_cast<const char*>(&yPelsPerMeter), 4);
-				file.write(reinterpret_cast<const char*>(&clrUsed), 4);
-				file.write(reinterpret_cast<const char*>(&clrImportant), 4);
 
 				// Pixel Data
 				for (int y = Height - 1; y >= 0; --y) {
 					for (int x = 0; x < Width; ++x) {
 						int idx = (y * Width + x) * 4;
 						// BMP expects BGR order
-						file.put(m_pixels[idx + 2]);
-						file.put(m_pixels[idx + 1]);
-						file.put(m_pixels[idx + 0]);
-						file.put(m_pixels[idx + 3]);
+					
+
+
+						uint8_t r = m_pixels[idx + 0];
+						uint8_t g = m_pixels[idx + 1];
+						uint8_t b = m_pixels[idx + 2];
+						uint8_t a = m_pixels[idx + 3];
+						uint32_t bgra = (b) | (g << 8) | (r << 16) | (a << 24);
+						file.write(reinterpret_cast<const char*>(&bgra), sizeof(uint32_t));
+
 					}
 				}
 				file.close();
-				return;
 			}
-
+		 
 			void SaveAsTGA(const std::string& filename) {
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) return;
