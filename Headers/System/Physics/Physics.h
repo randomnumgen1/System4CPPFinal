@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <System/Mathf.hpp>
 #include <memory>
+#include <System/Mesh.h>
 
 
 #if defined(SYSTEM_PHYSICS_BULLET)
@@ -47,7 +48,18 @@ namespace System{
         static void Setgravity(const Vector3& gravity);
 
 
+        static void GenerateCollider(System::Mesh mesh){
+#if defined(SYSTEM_PHYSICS_BULLET)
+            btConvexHullComputer ch;
+            ch.compute(&vertices[0].x(), sizeof(btVector3), vertices.size(), 0.0f, 0.0f);
 
+            // Access hull points:
+            for (int i = 0; i < ch.vertices.size(); ++i) {
+                btVector3 pt(ch.vertices[i]);
+                // Use pt to build your new mesh
+            }
+#endif
+        }
 
 
 
