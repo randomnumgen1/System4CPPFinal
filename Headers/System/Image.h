@@ -96,6 +96,16 @@ namespace System {
 				std::vector<uint8_t> Data;
 				uint32_t CRC;
 			};
+			struct PNG_IHDR {
+				uint32_t width;
+				uint32_t height;
+				uint8_t bitDepth;
+				uint8_t colorType;
+				uint8_t compression;
+				uint8_t filter;
+				uint8_t interlace;
+			};
+
 			void SaveAsPNG(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) {
