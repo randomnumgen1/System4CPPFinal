@@ -101,15 +101,33 @@ namespace System {
 				if (!file) {
 					return;
 				}
-				file.write(reinterpret_cast<const char*>(&PNG_MAGIC), sizeof(PNG_MAGIC));
+				//file.write(reinterpret_cast<const char*>(&PNG_MAGIC), sizeof(PNG_MAGIC));
+
+				PNG_CHUNK chunk;
+				chunk.Type = 6;
+				chunk.Data = { 'H', 'e', 'l', 'l', 'o', '!', '!', '!' };
 				std::vector<PNG_CHUNK> Chunks;
+				Chunks.push_back(chunk);
+
+
 				for (int i = 0; i < Chunks.size(); ++i) {
 					System::Security::Cryptography::HashAlgorithm::CRC32 crc32;
 					crc32.update(reinterpret_cast<const uint8_t*>(&Chunks[i].Type), 4);
 					crc32.update(reinterpret_cast<const uint8_t*>(Chunks[i].Data.data()), Chunks[i].Data.size());
 					crc32.finalize(reinterpret_cast<uint8_t*>(&Chunks[i].CRC));
 
+				
+
+
+
+
+					file.write(reinterpret_cast<const char*>(&Chunks[i].Type), 4);
+					file.write(reinterpret_cast<const char*>(Chunks[i].Data.data()), Chunks[i].Data.size());
+					file.write(reinterpret_cast<const char*>(&Chunks[i].CRC), 4);
+
+
 				}
+				
 			}
 
 
