@@ -48,7 +48,7 @@ namespace System {
 					break;
 				}
 			}
-			const uint16_t BITMAP_MAGIC = 0x4D42;
+			static constexpr uint16_t BITMAP_MAGIC = 0x4D42;
 #pragma pack(push, 1)
 			struct BITMAPFILEHEADER {
 				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
@@ -98,23 +98,14 @@ namespace System {
 				bitmapinfoheader.biClrUsed = 0;
 				bitmapinfoheader.biClrImportant = 0;
 				file.write(reinterpret_cast<const char*>(&bitmapinfoheader), sizeof(BITMAPINFOHEADER));
-
-
 				// Pixel Data
+				uint32_t* pixel_data_rgba = reinterpret_cast<uint32_t*>(m_pixels.data());
 				for (int y = Height - 1; y >= 0; --y) {
 					for (int x = 0; x < Width; ++x) {
-						int idx = (y * Width + x) * 4;
-						// BMP expects BGR order
-					
-
-
-						uint8_t r = m_pixels[idx + 0];
-						uint8_t g = m_pixels[idx + 1];
-						uint8_t b = m_pixels[idx + 2];
-						uint8_t a = m_pixels[idx + 3];
-						uint32_t bgra = (b) | (g << 8) | (r << 16) | (a << 24);
+						int idx = (y * Width + x);
+						uint32_t pixel = pixel_data_rgba[idx];
+						uint32_t bgra = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
 						file.write(reinterpret_cast<const char*>(&bgra), sizeof(uint32_t));
-
 					}
 				}
 				file.close();
