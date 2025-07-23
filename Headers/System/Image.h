@@ -10,6 +10,44 @@
 namespace System {
 
         class Image {
+		private:
+#pragma pack(push, 1)
+			struct BITMAPFILEHEADER {
+				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
+				uint32_t FileSize;      // Size of the file in bytes
+				uint16_t Reserved1; // Reserved; must be 0
+				uint16_t Reserved2; // Reserved; must be 0
+				uint32_t pixeloffset;   // Offset to pixel data from start of file
+			};
+			struct BITMAPINFOHEADER {
+				uint32_t ThisHeaderSize;          // Size of this header (40 bytes)
+				int32_t  WidthInPixels;         // Image width in pixels
+				int32_t  HeightInPixels;        // Image height in pixels
+				uint16_t Planes;        // Must be 1
+				uint16_t bpp;      // Bits per pixel (e.g., 24 for truecolor)
+				uint32_t Compression;   // Compression type (usually 0 = BI_RGB)
+				uint32_t ImageSize;     // Image size (can be 0 for BI_RGB)
+				int32_t  XPelsPerMeter; // Horizontal resolution (pixels/meter)
+				int32_t  YPelsPerMeter; // Vertical resolution (pixels/meter)
+				uint32_t biClrUsed;       // Number of colors in palette
+				uint32_t biClrImportant;  // Important colors
+			};
+			struct TGAFILEHEADER {
+				uint8_t  idLength;         // Length of image ID field
+				uint8_t  colorMapType;     // 0 = no color map
+				uint8_t  imageType;        // e.g., 2 = uncompressed true-color, 10 = RLE compressed
+				uint16_t colorMapStart;    // Index of first color map entry
+				uint16_t colorMapLength;   // Total number of color map entries
+				uint8_t  colorMapDepth;    // Number of bits per palette entry
+				uint16_t xOrigin;          // X origin of image
+				uint16_t yOrigin;          // Y origin of image
+				uint16_t width;            // Image width in pixels
+				uint16_t height;           // Image height in pixels
+				uint8_t  pixelDepth;       // Bits per pixel (e.g., 24 or 32)
+				uint8_t  imageDescriptor;  // Bit 4-5: origin, Bit 0-3: alpha channel depth
+			};
+#pragma pack(pop)
+
         public:
             union {
                 struct {
@@ -49,28 +87,7 @@ namespace System {
 				}
 			}
 			static constexpr uint16_t BITMAP_MAGIC = 0x4D42;
-#pragma pack(push, 1)
-			struct BITMAPFILEHEADER {
-				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
-				uint32_t FileSize;      // Size of the file in bytes
-				uint16_t Reserved1; // Reserved; must be 0
-				uint16_t Reserved2; // Reserved; must be 0
-				uint32_t pixeloffset;   // Offset to pixel data from start of file
-			};
-			struct BITMAPINFOHEADER {
-				uint32_t ThisHeaderSize;          // Size of this header (40 bytes)
-				int32_t  WidthInPixels;         // Image width in pixels
-				int32_t  HeightInPixels;        // Image height in pixels
-				uint16_t Planes;        // Must be 1
-				uint16_t bpp;      // Bits per pixel (e.g., 24 for truecolor)
-				uint32_t Compression;   // Compression type (usually 0 = BI_RGB)
-				uint32_t ImageSize;     // Image size (can be 0 for BI_RGB)
-				int32_t  XPelsPerMeter; // Horizontal resolution (pixels/meter)
-				int32_t  YPelsPerMeter; // Vertical resolution (pixels/meter)
-				uint32_t biClrUsed;       // Number of colors in palette
-				uint32_t biClrImportant;  // Important colors
-			};
-#pragma pack(pop)
+
 
 			void SaveAsBitmap(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
@@ -111,31 +128,35 @@ namespace System {
 				file.close();
 			}
 		 
-			void SaveAsTGA(const std::string& filename) {
+
+
+			void SaveAsTGA(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
-				if (!file) return;
-
-				uint8_t header[18] = {};
-				header[2] = 2; // Uncompressed true-color
-				header[12] = Width & 0xFF;
-				header[13] = (Width >> 8) & 0xFF;
-				header[14] = Height & 0xFF;
-				header[15] = (Height >> 8) & 0xFF;
-				header[16] = 32; // Bits per pixel
-				file.write(reinterpret_cast<char*>(header), sizeof(header));
-
+				if (!file) {
+					return;
+				}
+				TGAFILEHEADER tgafileheader = {};
+				tgafileheader.imageType = 2;//Uncompressed true-color
+				tgafileheader.width = Width;
+				tgafileheader.height = Height;
+				tgafileheader.pixelDepth = 32;// Bits per pixel
+				file.write(reinterpret_cast<const char*>(&tgafileheader), sizeof(TGAFILEHEADER));
+				// Pixel Data
+				uint32_t* pixel_data_rgba = reinterpret_cast<uint32_t*>(m_pixels.data());
 				for (int y = Height - 1; y >= 0; --y) {
 					for (int x = 0; x < Width; ++x) {
-						int idx = (y * Width + x) * 4;
-						file.put(m_pixels[idx + 2]); // B
-						file.put(m_pixels[idx + 1]); // G
-						file.put(m_pixels[idx + 0]); // R
-						file.put(m_pixels[idx + 3]); // A
+						int idx = (y * Width + x);
+						uint32_t pixel = pixel_data_rgba[idx];
+						uint32_t bgra = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+						file.write(reinterpret_cast<const char*>(&bgra), sizeof(uint32_t));
 					}
 				}
 				file.close();
-				return;
 			}
+
+
+
+		 
 
 
 
