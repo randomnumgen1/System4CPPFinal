@@ -83,14 +83,8 @@ namespace System {
                                 --len;
                             }
                         }else {
-#if 1==2
-                            while (len > 0) {
-                                    state.hash = _mm_crc32_u8(state.hash, bytes[i]);
-                                ++i;
-                                --len;
-                            }
-#else 
 
+#if defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))
                             // Process 32-bit chunks first
                             while (len >= 4) {
                                 state.hash = _mm_crc32_u32(state.hash, *reinterpret_cast<const uint32_t*>(&bytes[i]));
@@ -101,6 +95,28 @@ namespace System {
                             // Process remaining bytes
                             while (len > 0) {
                                 state.hash = _mm_crc32_u8(state.hash, bytes[i]);
+                                ++i;
+                                --len;
+                            }
+#elif (defined(__arm__) || defined(_M_ARM))
+                            // Process 32-bit chunks first
+                            while (len >= 4) {
+                                state.hash = __crc32cw(state.hash, *reinterpret_cast<const uint32_t*>(&bytes[i]));
+
+                                i += 4;
+                                len -= 4;
+                            }
+
+                            // Process remaining bytes
+                            while (len > 0) {
+                                state.hash = __crc32cb(state.hash, bytes[i]);
+
+                                ++i;
+                                --len;
+                            }
+#else
+                            while (len > 0) {
+                                    state.hash = _mm_crc32_u8(state.hash, bytes[i]);
                                 ++i;
                                 --len;
                             }
