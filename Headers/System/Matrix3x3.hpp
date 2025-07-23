@@ -89,7 +89,16 @@ namespace System {
 
 
 	};
-
+	inline bool operator==(const Matrix3x3& lhs, const Matrix3x3& rhs) {
+		for (int i = 0; i < 9; ++i) {
+			if (lhs.raw[i] != rhs.raw[i]){
+				return false;
+			}
+		}
+	}
+	inline bool operator!=(const Matrix3x3& lhs, const Matrix3x3& rhs) {
+		return !(lhs == rhs);
+	}
 	std::ostream& operator<<(std::ostream& os, const Matrix3x3& m);
 
 }
