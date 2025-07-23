@@ -101,5 +101,11 @@ namespace System {
 #endif
 }
 
+    void Physics::Setgravity(const Vector3& gravity){
+#if defined(SYSTEM_PHYSICS_BULLET)
+
+#endif
+    }
+
 
 }
