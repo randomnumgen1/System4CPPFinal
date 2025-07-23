@@ -6,13 +6,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "Security/Cryptography/CRC32.h"
 
 namespace System {
 
         class Image {
 		private:
 			static constexpr uint16_t BITMAP_MAGIC = 0x4D42;
-			static constexpr uint64_t PNG_MAGIC = 0x89504E470D0A1A0A;
+			
 #pragma pack(push, 1)
 			struct BITMAPFILEHEADER {
 				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
@@ -88,13 +89,27 @@ namespace System {
 					break;
 				}
 			}
-			
+			static constexpr uint64_t PNG_MAGIC = 0x89504E470D0A1A0A;
+			struct PNG_CHUNK {
+				uint32_t Length;
+				uint32_t Type;
+				std::vector<uint8_t> Data;
+				uint32_t CRC;
+			};
 			void SaveAsPNG(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) {
 					return;
 				}
 				file.write(reinterpret_cast<const char*>(&PNG_MAGIC), sizeof(PNG_MAGIC));
+				std::vector<PNG_CHUNK> Chunks;
+				for (int i = 0; i < Chunks.size(); ++i) {
+					System::Security::Cryptography::HashAlgorithm::CRC32 crc32;
+					crc32.update(reinterpret_cast<const uint8_t*>(&Chunks[i].Type), 4);
+					crc32.update(reinterpret_cast<const uint8_t*>(Chunks[i].Data.data()), Chunks[i].Data.size());
+					crc32.finalize(reinterpret_cast<uint8_t*>(&Chunks[i].CRC));
+
+				}
 			}
 
 

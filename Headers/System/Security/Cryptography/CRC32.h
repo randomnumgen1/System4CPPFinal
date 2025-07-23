@@ -1,3 +1,6 @@
+//   System::Security::Cryptography::HashAlgorithm::CRC32
+
+
 #pragma once
 /*
 
@@ -11,6 +14,8 @@ CRC-32/ISCSI (CRC-32/BASE91-C, CRC-32/CASTAGNOLI, CRC-32/INTERLAKEN, CRC-32C, CR
 #include <stdexcept>
 #include <array>
 #include <iostream>
+#include <vector>
+#include <cassert>
 namespace System {
     namespace Security {
         namespace Cryptography {
