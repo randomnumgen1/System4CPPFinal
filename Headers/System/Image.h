@@ -11,6 +11,8 @@ namespace System {
 
         class Image {
 		private:
+			static constexpr uint16_t BITMAP_MAGIC = 0x4D42;
+			static constexpr uint64_t PNG_MAGIC = 0x89504E470D0A1A0A;
 #pragma pack(push, 1)
 			struct BITMAPFILEHEADER {
 				uint16_t Magic;      // File type; must be 'BM' (0x4D42)
@@ -86,7 +88,14 @@ namespace System {
 					break;
 				}
 			}
-			static constexpr uint16_t BITMAP_MAGIC = 0x4D42;
+			
+			void SaveAsPNG(const std::string& filename){
+				std::ofstream file(filename, std::ios::binary);
+				if (!file) {
+					return;
+				}
+				file.write(reinterpret_cast<const char*>(&PNG_MAGIC), sizeof(PNG_MAGIC));
+			}
 
 
 			void SaveAsBitmap(const std::string& filename){
