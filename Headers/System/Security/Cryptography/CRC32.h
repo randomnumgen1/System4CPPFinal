@@ -16,6 +16,14 @@ CRC-32/ISCSI (CRC-32/BASE91-C, CRC-32/CASTAGNOLI, CRC-32/INTERLAKEN, CRC-32C, CR
 #include <iostream>
 #include <vector>
 #include <cassert>
+
+#if (defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))) || (defined(__x86_64__) || defined(__i386__))
+#include <nmmintrin.h>
+#elif (defined(__arm__) || defined(_M_ARM))
+#include <arm_acle.h>
+#endif
+
+
 namespace System {
     namespace Security {
         namespace Cryptography {
@@ -84,7 +92,8 @@ namespace System {
                             }
                         }else {
 
-#if defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))
+#if (defined(__x86_64__) || defined(_M_X64)  || defined(__amd64__))
+
                             // Process 32-bit chunks first
                             while (len >= 4) {
                                 state.hash = _mm_crc32_u32(state.hash, *reinterpret_cast<const uint32_t*>(&bytes[i]));
