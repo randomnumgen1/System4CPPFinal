@@ -19,9 +19,6 @@ namespace System {
 					last = 1,
 					more = 0
 				}; 
-
-			private: 
-
 				static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
 					uint32_t value = 0;
 					for (int i = 0; i < count; ++i) {
