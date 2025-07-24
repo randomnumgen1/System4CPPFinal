@@ -19,7 +19,7 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Simplifies Development**: Designed to make developing applications and games easier.
 + **Coding Styles for Portability**: Uses coding styles that allow for effortless porting to other programming languages.
 + **Beginner-Friendly Code**: Ensures the code is easily readable by beginners.
-+ **Intuitive Type Structure**: Types are organized so users can easily understand the structure or class size by looking at them.
++ **Intuitive Type Structure**: Structures are designed for raw memory copies, while classes encapsulate pointer-based relationships and complex behavior.
 + **Binary Compatibility with Plugin Architectures**: Ensures both the plugin and the application consistently interpret the data type layout being shared.
 + **Hashing Algorithms**: We aim to provide support for all officially recognized hashing algorithms, alongside those employed in reputable cryptocurrencies. These algorithms have been rigorously tested and verified for security, offering reliable options for data integrity verification, digital signatures, and more.
 + **Encryption and Public/Private Key Algorithms**: Our encryption capabilities aim to cover a diverse range of official encryption algorithms, as well as those widely adopted in the cryptocurrency space. This ensures secure data transmission and storage through robust public and private key cryptography, safeguarding sensitive information against unauthorized access.
