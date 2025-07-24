@@ -9,8 +9,16 @@ namespace System {
 		namespace Compression {
 			class Deflate {
 			public:
-
-
+				enum blocktype {
+					Stored = 0b00,
+					Static = 0b01,
+					Dynamic = 0b10,
+					Reserved = 0b11
+				};
+				enum blockmarker{
+					last = 1,
+					more = 0
+				};
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data){
 					
 
