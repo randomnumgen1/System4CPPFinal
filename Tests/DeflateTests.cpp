@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+#include "System/IO/Compression/Deflate.hpp"
 
 
 TEST(DeflateTests, DeflateDecompression) {
@@ -10,7 +12,7 @@ TEST(DeflateTests, DeflateDecompression) {
 	if (std::string(decompressed_data.begin(), decompressed_data.end()) == "Hello, World!") {
 		SUCCEED();
 	}else{
-		
+		FAIL();
 		
 	}
 	
