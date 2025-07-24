@@ -28,6 +28,8 @@ namespace System {
 							if ((data[byte_index] >> bit_index) & 1) {
 								value |= (1 << i);
 							}
+						}else{
+							throw std::runtime_error("Error:  read_bits reading past file");
 						}
 					}
 					bit_position += count;
