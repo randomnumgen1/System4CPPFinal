@@ -61,8 +61,7 @@ namespace System {
 							uint16_t nlen =  read_bits(data, bit_position, 16);
 
 							if ((len ^ nlen) != 0xFFFF) {
-								// Error: invalid stored block length
-								return {};
+								throw std::runtime_error("Error: invalid stored block length");
 							}
 
 							for (int i = 0; i < len; ++i) {
