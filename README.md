@@ -34,17 +34,20 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 # Defines
 
-SYSTEM_PROFILER_ENABLED
 
 
-SYSTEM_GRAPHICS_VULKAN
-SYSTEM_GRAPHICS_OPENGL
-
-
+|         Define         |   Comment     |
+| ---------------------- | ------------- |
+| SYSTEM_PROFILER_ENABLED| Content Cell  |
 
 
 
 
+|                Graphics                |
+|         Define         |   Comment     |
+| ---------------------- | ------------- |
+| SYSTEM_GRAPHICS_VULKAN |     NA        |
+| SYSTEM_GRAPHICS_OPENGL |     NA        |
 
 
 
