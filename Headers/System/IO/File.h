@@ -110,6 +110,26 @@ namespace System::IO{
 			}
 			file.close();
 		}
+		static std::vector<uint8_t> ReadAllBytes(const std::string& path) {
+			std::ifstream file(path, std::ios::binary);
+			if (!file) {
+				throw std::runtime_error("Unable to open file: " + path);
+			}
+
+			// Seek to end to get file size
+			file.seekg(0, std::ios::end);
+			std::streamsize size = file.tellg();
+			file.seekg(0, std::ios::beg);
+
+			std::vector<uint8_t> buffer(size);
+			if (!file.read(reinterpret_cast<char*>(buffer.data()), size)) {
+				throw std::runtime_error("Failed to read file: " + path);
+			}
+
+			return buffer;
+		}
+
+
 		static void WriteAllText(std::string path, std::string text){
 			std::ofstream file(path);
 			if (!file) {
