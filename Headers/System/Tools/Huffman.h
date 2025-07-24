@@ -22,9 +22,10 @@ namespace System {
 
 		class HuffmanTree {
 		private:
+			
 			HuffmanNode* root;
 			std::map<uint8_t, std::vector<bool>> codes;
-
+		
 			struct CompareNodes {
 				bool operator()(HuffmanNode* a, HuffmanNode* b) {
 					return a->Frequency > b->Frequency;
@@ -53,6 +54,7 @@ namespace System {
 				delete node;
 			}
 		public:
+			HuffmanTree() : root(nullptr) {}
 			void DeleteTree() {
 				DeleteTree(root);
 			}
@@ -75,6 +77,9 @@ namespace System {
 					pq.pop();
 					HuffmanNode* right = pq.top();
 					pq.pop();
+					if (left->Symbol > right->Symbol) {
+						std::swap(left, right);
+					}
 					HuffmanNode* parent = new HuffmanNode{ 0, left->Frequency + right->Frequency, left, right };
 					pq.push(parent);
 				}
@@ -86,7 +91,41 @@ namespace System {
 			inline bool IsLeaf(const HuffmanNode* node) const {
 				return (node->Left == nullptr && node->Right == nullptr);
 			}
+			void PrintTree(HuffmanNode* node, std::string indent, bool last) {
+				if (node != nullptr) {
+					std::cout << indent;
+					if (last) {
+						std::cout << "R----";
+						indent += "     ";
+					}
+					else {
+						std::cout << "L----";
+						indent += "|    ";
+					}
 
+					if (node->IsLeaf()) {
+						std::cout << "'" << node->Symbol << "' (" << node->Frequency << ")" << std::endl;
+					}
+					else {
+						std::cout << "(" << node->Frequency << ")" << std::endl;
+					}
+
+					PrintTree(node->Left, indent, false);
+					PrintTree(node->Right, indent, true);
+				}
+			}
+			void PrintTree() {
+				PrintTree(root, "", true);
+			}
+			void PrintCodes() {
+				for (auto const& [symbol, code] : codes) {
+					std::cout << "'" << symbol << "' (" << (int)symbol << "): ";
+					for (bool bit : code) {
+						std::cout << bit;
+					}
+					std::cout << std::endl;
+				}
+			}
 			std::vector<bool> Encode(const std::vector<uint8_t>& source) {
 				std::vector<bool> encoded;
 				for (uint8_t symbol : source) {
