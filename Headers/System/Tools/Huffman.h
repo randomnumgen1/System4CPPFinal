@@ -115,7 +115,44 @@ namespace System {
 				}
 			}
 			void PrintTree() {
-				PrintTree(root, "", true);
+				if (root == nullptr) {
+					return;
+				}
+				std::vector<std::pair<HuffmanNode*, std::string>> nodes;
+				nodes.push_back({ root, "" });
+
+				while (!nodes.empty()) {
+					HuffmanNode* node = nodes.back().first;
+					std::string indent = nodes.back().second;
+					nodes.pop_back();
+
+					std::cout << indent;
+					if (indent.length() > 0) {
+						if (nodes.empty() || nodes.back().second.length() < indent.length()) {
+							std::cout << "R----";
+							indent += "     ";
+						}
+						else {
+							std::cout << "L----";
+							indent += "|    ";
+						}
+					}
+					else {
+						indent += "     ";
+					}
+					if (node->IsLeaf()) {
+						std::cout << "'" << node->Symbol << "' (" << node->Frequency << ")" << std::endl;
+					}
+					else {
+						std::cout << "(" << node->Frequency << ")" << std::endl;
+					}
+					if (node->Right != nullptr) {
+						nodes.push_back({ node->Right, indent });
+					}
+					if (node->Left != nullptr) {
+						nodes.push_back({ node->Left, indent });
+					}
+				}
 			}
 			void PrintCodes() {
 				for (auto const& [symbol, code] : codes) {
