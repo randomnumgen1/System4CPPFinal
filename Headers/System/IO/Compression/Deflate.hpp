@@ -8,7 +8,7 @@ namespace System {
 	namespace IO {
 		namespace Compression {
 			class Deflate {
-			public:
+			private:
 				enum blocktype {
 					Stored = 0b00,
 					Static = 0b01,
@@ -19,6 +19,8 @@ namespace System {
 					last = 1,
 					more = 0
 				};
+			public:
+
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data){
 					
 
