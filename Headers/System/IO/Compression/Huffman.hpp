@@ -26,7 +26,7 @@ namespace System {
 			class HuffmanTree {
 			private:
 
-				HuffmanNode* root;
+				
 				std::map<uint8_t, std::vector<bool>> codes;
 
 				struct CompareNodes {
@@ -57,6 +57,7 @@ namespace System {
 					delete node;
 				}
 			public:
+HuffmanNode* root;
 				HuffmanTree() : root(nullptr) {}
 				void DeleteTree() {
 					DeleteTree(root);
