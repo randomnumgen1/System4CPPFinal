@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 #include "System/IO/Compression/Deflate.hpp"
+#include "System/IO/File.h"
+
 
 TEST(DeflateTests, DeflateDecompressFile) {
 	System::IO::Compression::Deflate deflate;
