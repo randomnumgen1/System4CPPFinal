@@ -73,9 +73,8 @@ namespace System {
 							uint16_t hdist =  read_bits(data, bit_position, 5) + 1;
 							uint16_t hclen = read_bits(data, bit_position, 4) + 4;
 							std::cout << "hlit: " << hlit << ", hdist: " << hdist << ", hclen: " << hclen << std::endl;
-						 
-						 
-						   
+
+							exit;
 						}else{
 							throw std::runtime_error("block type, error");
 						}
