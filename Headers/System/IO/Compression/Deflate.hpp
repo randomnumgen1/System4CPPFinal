@@ -66,7 +66,7 @@ namespace System {
 								result.push_back( read_bits(data, bit_position, 8));
 							}
 						}else if (type == Static){
-							std::cout << "Static" << std::endl;
+							std::cout << "Static/fixed (pre-agreed Huffman tree defined in the RFC)" << std::endl;
 						}else if (type == Dynamic){
 							std::cout << "Dynamic" << std::endl;
 							uint16_t hlit =  read_bits(data, bit_position, 5) + 257;
