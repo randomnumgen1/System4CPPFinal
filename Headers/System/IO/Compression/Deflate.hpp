@@ -18,7 +18,7 @@ namespace System {
 				enum blockmarker {
 					last = 1,
 					more = 0
-				};
+				}; 
 
 			private: 
 
@@ -37,42 +37,7 @@ namespace System {
 					return value;
 				}
 
-				static uint16_t DecodeSymbol(const std::vector<uint8_t>& data, int& bit_position, HuffmanTree& tree) {
-					HuffmanNode* current = tree.root;
-					while (current && !current->IsLeaf()) {
-						int bit = read_bits(data, bit_position, 1);
-						if (bit) {
-							current = current->Right;
-						}
-						else {
-							current = current->Left;
-						}
-					}
-					return current ? current->Symbol : -1;
-				}
-
-				static uint16_t DecodeLength(uint16_t symbol, const std::vector<uint8_t>& data, int& bit_position) {
-					if (symbol < 265) {
-						return symbol - 254;
-					}
-					if (symbol > 284) {
-						return 258;
-					}
-					uint8_t extra_bits = length_extra[symbol - 257];
-					return length_base[symbol - 257] + read_bits(data, bit_position, extra_bits);
-				}
-
-				static uint16_t DecodeDistance(uint16_t symbol, const std::vector<uint8_t>& data, int& bit_position) {
-					if (symbol < 4) {
-						return symbol + 1;
-					}
-					if (symbol > 29) {
-						// error
-						return 0;
-					}
-					uint8_t extra_bits = dist_extra[symbol];
-					return dist_base[symbol] + read_bits(data, bit_position, extra_bits);
-				}
+				 
 
 			public:
 
@@ -92,8 +57,8 @@ namespace System {
 							// Skip to the next byte boundary
 							bit_position = (bit_position + 7) & ~7;
 
-							uint16_t len = Deflate::read_bits(data, bit_position, 16);
-							uint16_t nlen = Deflate::read_bits(data, bit_position, 16);
+							uint16_t len =  read_bits(data, bit_position, 16);
+							uint16_t nlen =  read_bits(data, bit_position, 16);
 
 							if ((len ^ nlen) != 0xFFFF) {
 								// Error: invalid stored block length
@@ -101,12 +66,18 @@ namespace System {
 							}
 
 							for (int i = 0; i < len; ++i) {
-								result.push_back(Deflate::read_bits(data, bit_position, 8));
+								result.push_back( read_bits(data, bit_position, 8));
 							}
 						}else if (type == Static){
 						 
 						}else if (type == Dynamic){
-							// TODO: Implement dynamic Huffman decoding
+							uint16_t hlit =  read_bits(data, bit_position, 5) + 257;
+							uint16_t hdist =  read_bits(data, bit_position, 5) + 1;
+							uint16_t hclen = read_bits(data, bit_position, 4) + 4;
+
+						 
+						 
+						   
 						}else{
 							throw std::runtime_error("block type, error");
 						}
