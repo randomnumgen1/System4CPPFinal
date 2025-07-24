@@ -32,6 +32,19 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Vector2 and various others**
 
 
+# Defines
+
+SYSTEM_PROFILER_ENABLED
+
+
+SYSTEM_GRAPHICS_VULKAN
+SYSTEM_GRAPHICS_OPENGL
+
+
+
+
+
+
 
 
 
