@@ -59,7 +59,7 @@ namespace System {
 			~HuffmanTree() {
 				DeleteTree();
 			}
-			void Build(std::vector<uint8_t> source) {
+			void Build(const std::vector<uint8_t>& source) {
 				std::map<uint8_t, int> frequencies;
 				for (uint8_t symbol : source) {
 					frequencies[symbol]++;
@@ -83,11 +83,11 @@ namespace System {
 				GenerateCodes(root, {});
 			}
 
-			inline bool IsLeaf(HuffmanNode* node) const {
+			inline bool IsLeaf(const HuffmanNode* node) const {
 				return (node->Left == nullptr && node->Right == nullptr);
 			}
 
-			std::vector<bool> Encode(std::vector<uint8_t> source) {
+			std::vector<bool> Encode(const std::vector<uint8_t>& source) {
 				std::vector<bool> encoded;
 				for (uint8_t symbol : source) {
 					encoded.insert(encoded.end(), codes[symbol].begin(), codes[symbol].end());
@@ -95,7 +95,7 @@ namespace System {
 				return encoded;
 			}
 
-			std::vector<uint8_t> Decode(std::vector<bool> source) {
+			std::vector<uint8_t> Decode(const std::vector<bool>& source) {
 				std::vector<uint8_t> decoded;
 				HuffmanNode* currentNode = root;
 				for (bool bit : source) {
