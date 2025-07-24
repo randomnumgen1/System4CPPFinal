@@ -44,8 +44,21 @@ namespace System {
 				rightCode.push_back(true);
 				GenerateCodes(node->Right, rightCode);
 			}
-
+			void DeleteTree(HuffmanNode* node) {
+				if (node == nullptr) {
+					return;
+				}
+				DeleteTree(node->Left);
+				DeleteTree(node->Right);
+				delete node;
+			}
 		public:
+			void DeleteTree() {
+				DeleteTree(root);
+			}
+			~HuffmanTree() {
+				DeleteTree();
+			}
 			void Build(std::vector<uint8_t> source) {
 				std::map<uint8_t, int> frequencies;
 				for (uint8_t symbol : source) {
