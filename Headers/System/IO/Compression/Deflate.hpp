@@ -51,12 +51,13 @@ namespace System {
 						blocktype type = (blocktype)Deflate::read_bits(data, bit_position, 2);
 
 						if (type == Stored) {
+							std::cout << "Stored" << std::endl;
 							// Skip to the next byte boundary
 							bit_position = (bit_position + 7) & ~7;
 
 							uint16_t len =  read_bits(data, bit_position, 16);
 							uint16_t nlen =  read_bits(data, bit_position, 16);
-
+							std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
 							if ((len ^ nlen) != 0xFFFF) {
 								throw std::runtime_error("Error: invalid stored block length");
 							}
@@ -65,12 +66,13 @@ namespace System {
 								result.push_back( read_bits(data, bit_position, 8));
 							}
 						}else if (type == Static){
-						 
+							std::cout << "Static" << std::endl;
 						}else if (type == Dynamic){
+							std::cout << "Dynamic" << std::endl;
 							uint16_t hlit =  read_bits(data, bit_position, 5) + 257;
 							uint16_t hdist =  read_bits(data, bit_position, 5) + 1;
 							uint16_t hclen = read_bits(data, bit_position, 4) + 4;
-
+							std::cout << "hlit: " << hlit << ", hdist: " << hdist << ", hclen: " << hclen << std::endl;
 						 
 						 
 						   
