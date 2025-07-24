@@ -57,7 +57,9 @@ namespace System {
 					delete node;
 				}
 			public:
-HuffmanNode* root;
+				HuffmanNode* root;
+
+
 				HuffmanTree() : root(nullptr) {}
 				void DeleteTree() {
 					DeleteTree(root);

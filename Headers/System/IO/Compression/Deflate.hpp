@@ -20,11 +20,7 @@ namespace System {
 					more = 0
 				};
 
-			private:
-				static const uint16_t length_base[29];
-				static const uint8_t length_extra[29];
-				static const uint16_t dist_base[30];
-				static const uint8_t dist_extra[30];
+			private: 
 
 				static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
 					uint32_t value = 0;
@@ -107,50 +103,13 @@ namespace System {
 							for (int i = 0; i < len; ++i) {
 								result.push_back(Deflate::read_bits(data, bit_position, 8));
 							}
-						}
-						else if (type == Static) {
-							HuffmanTree lit_len_tree, dist_tree;
-							std::vector<int> lit_len_lengths(288, 0);
-							std::vector<int> dist_lengths(32, 0);
-
-							for (int i = 0; i <= 143; i++) lit_len_lengths[i] = 8;
-							for (int i = 144; i <= 255; i++) lit_len_lengths[i] = 9;
-							for (int i = 256; i <= 279; i++) lit_len_lengths[i] = 7;
-							for (int i = 280; i <= 287; i++) lit_len_lengths[i] = 8;
-
-							for (int i = 0; i < 32; i++) dist_lengths[i] = 5;
-
-							lit_len_tree.BuildFromLengths(lit_len_lengths, 0);
-							dist_tree.BuildFromLengths(dist_lengths, 0);
-
-							while (true) {
-								uint16_t symbol = Deflate::DecodeSymbol(data, bit_position, lit_len_tree);
-								if (symbol < 256) {
-									result.push_back(symbol);
-								}
-								else if (symbol == 256) {
-									break;
-								}
-								else {
-									// length/distance pair
-									uint16_t length = Deflate::DecodeLength(symbol, data, bit_position);
-									uint16_t dist_symbol = Deflate::DecodeSymbol(data, bit_position, dist_tree);
-									uint16_t distance = Deflate::DecodeDistance(dist_symbol, data, bit_position);
-
-									for (int i = 0; i < length; ++i) {
-										result.push_back(result[result.size() - distance]);
-									}
-								}
-							}
-						}
-						else if (type == Dynamic) {
+						}else if (type == Static){
+						 
+						}else if (type == Dynamic){
 							// TODO: Implement dynamic Huffman decoding
+						}else{
+							throw std::runtime_error("block type, error");
 						}
-						else {
-							// Reserved block type, error
-							return {};
-						}
-
 						if (marker == last) {
 							break;
 						}
