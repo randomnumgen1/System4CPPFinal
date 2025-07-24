@@ -3,8 +3,10 @@
 
 
 #include <string>
+#if defined(_WIN32) || defined(_WIN64)
 #include <fileapi.h>
 #include <handleapi.h>
+#endif
 #include <stdexcept>
 #include <vector>
 
