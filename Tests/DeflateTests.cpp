@@ -7,7 +7,6 @@ TEST(DeflateTests, DeflateDecompressFile) {
     System::IO::Compression::Deflate deflate;
     std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(System::IO::File::ReadAllBytes("compressed.deflate"));
     std::string decompressed_string(decompressed_data.begin(), decompressed_data.end());
-	std::vector<uint8_t> expected = {0xEF, 0xBB, 0xBF, 'H','e','l','l','o',',',' ','W','o','r','l','d','!'};
-	ASSERT_EQ(decompressed_data, expected);
+	ASSERT_EQ(decompressed_string, std::string("\xEF\xBB\xBFHello, World!"));
 }
  
