@@ -12,42 +12,75 @@ namespace System {
 				struct Node {
 					int Symbol;
 					int Left;
-					int Right; 
+					int Right;
 				};
 
 				std::vector<Node> tree;
 
 				DeflateHuffmanTree(const std::vector<int>& code_lengths) {
 					tree.push_back({ -1, -1, -1 });
-					std::map<int, std::vector<bool>> codes;
-					generate_codes(code_lengths, codes);
 
-					for (auto const& [symbol, code] : codes) {
-						int currentNode = 0;
-						for (bool bit : code) {
-							if (bit) {
-								if (tree[currentNode].Right == -1) {
-									tree[currentNode].Right = tree.size();
-									tree.push_back({ -1, -1, -1 });
-								}
-								currentNode = tree[currentNode].Right;
-							}
-							else {
-								if (tree[currentNode].Left == -1) {
-									tree[currentNode].Left = tree.size();
-									tree.push_back({ -1, -1, -1 });
-								}
-								currentNode = tree[currentNode].Left;
-							}
+					int max_length = 0;
+					for (int length : code_lengths) {
+						if (length > max_length) {
+							max_length = length;
 						}
-						tree[currentNode].Symbol = symbol;
+					}
+
+					std::vector<int> bl_count(max_length + 1, 0);
+					for (int length : code_lengths) {
+						if (length > 0) {
+							bl_count[length]++;
+						}
+					}
+
+					std::vector<int> next_code(max_length + 1, 0);
+					int code = 0;
+					for (int bits = 1; bits <= max_length; bits++) {
+						code = (code + bl_count[bits - 1]) << 1;
+						next_code[bits] = code;
+					}
+
+					for (int i = 0; i < code_lengths.size(); i++) {
+						int len = code_lengths[i];
+						if (len != 0) {
+							int current_code = next_code[len];
+							next_code[len]++;
+							int currentNode = 0;
+							for (int j = 0; j < len; j++) {
+								bool bit = (current_code >> (len - 1 - j)) & 1;
+								if (bit) {
+									if (tree[currentNode].Right == -1) {
+										tree[currentNode].Right = tree.size();
+										tree.push_back({ -1, -1, -1 });
+									}
+									currentNode = tree[currentNode].Right;
+								}
+								else {
+									if (tree[currentNode].Left == -1) {
+										tree[currentNode].Left = tree.size();
+										tree.push_back({ -1, -1, -1 });
+									}
+									currentNode = tree[currentNode].Left;
+								}
+							}
+							tree[currentNode].Symbol = i;
+						}
 					}
 				}
-				
+
 				int decode(const std::vector<uint8_t>& data, int& bit_position) const {
 					int currentNode = 0;
+					int current_byte = data[bit_position / 8];
+					int bit_offset = bit_position % 8;
+
 					while (tree[currentNode].Left != -1) {
-						int bit = (data[bit_position / 8] >> (bit_position % 8)) & 1;
+						int bit = (current_byte >> bit_offset) & 1;
+						bit_offset++;
+						if (bit_offset == 8) {
+							bit_offset = 0;
+							current_byte = data[bit_position / 8 + 1];
+						}
 						bit_position++;
 						if (bit) {
 							currentNode = tree[currentNode].Right;
