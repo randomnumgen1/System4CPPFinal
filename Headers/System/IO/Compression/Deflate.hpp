@@ -188,7 +188,14 @@ namespace System {
 
 					return result;
 				}
-				// Reads and processes a Stored block from the compressed data
+				/// <summary>
+				/// Reads and processes a stored block from Deflate-compressed data.
+				/// Stored blocks are the simplest DEFLATE block type - no compression,
+				/// no Huffman codes, just raw data and integrity checks via LEN and NLEN.
+				/// </summary>
+				/// <param name="result"></param>
+				/// <param name="data"></param>
+				/// <param name="bit_position"></param>
 				static void ReadStoredBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position) {
 					// Skip to the next byte boundary
 					bit_position = (bit_position + 7) & ~7;
@@ -205,7 +212,14 @@ namespace System {
 						result.push_back(read_bits(data, bit_position, 8));
 					}
 				}
-				// Reads and processes a static block from the compressed data
+				/// <summary>
+				/// Reads and processes a fixed Huffman block from Deflate-compressed data.
+				/// Fixed blocks (also called static blocks) use a predefined literal/length Huffman tree
+				/// which is specified by the Deflate RFC, enabling fast decoding without custom tree parsing.
+				/// </summary>
+				/// <param name="result"></param>
+				/// <param name="data"></param>
+				/// <param name="bit_position"></param>
 				static void ReadStaticBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position){
 					std::vector<int> literal_lengths(MAX_LITERALS, 0);
 					for (int i = 0; i <= 143; ++i) literal_lengths[i] = 8;
