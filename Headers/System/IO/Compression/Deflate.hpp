@@ -263,10 +263,10 @@ namespace System {
 					if ((len ^ nlen) != 0xFFFF) {
 						throw std::runtime_error("Error: invalid stored block length");
 					}
-					// Copy data
-					for (int i = 0; i < len; ++i) {
-						result.push_back(read_bits(data, bit_position, 8));
-					}
+					// straight copy data as we are on a byte boundary
+					int byte_position = bit_position / 8;
+					result.insert(result.end(), data.begin() + byte_position, data.begin() + byte_position + len);
+					bit_position += len * 8;
 				}
 				/// <summary>
 				/// Reads and processes a fixed Huffman block from Deflate-compressed data.
