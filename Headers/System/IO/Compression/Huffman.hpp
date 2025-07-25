@@ -7,7 +7,7 @@
 #include <queue>
 #include <string>
 #include <iostream>
-
+#include <System/IO/Compression/LZSS.hpp>
 namespace System {
 	namespace IO {
 		namespace Compression {
@@ -121,6 +121,16 @@ namespace System {
 					}
 				}
 				void PrintTree() {
+					std::cout << "Huffman Codes:" << std::endl;
+
+					for (auto const& [symbol, code] : codes) {
+						std::cout << "'" << symbol << "' (" << (int)symbol << "): ";
+						for (bool bit : code) {
+							std::cout << bit;
+						}
+						std::cout << std::endl;
+					}
+					std::cout << "Huffman Tree:" << std::endl;
 					if (root == nullptr) {
 						return;
 					}
@@ -158,15 +168,6 @@ namespace System {
 						if (node->Left != nullptr) {
 							nodes.push_back({ node->Left, indent });
 						}
-					}
-				}
-				void PrintCodes() {
-					for (auto const& [symbol, code] : codes) {
-						std::cout << "'" << symbol << "' (" << (int)symbol << "): ";
-						for (bool bit : code) {
-							std::cout << bit;
-						}
-						std::cout << std::endl;
 					}
 				}
 				std::vector<bool> Encode(const std::vector<uint8_t>& source) {
