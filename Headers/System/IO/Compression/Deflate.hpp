@@ -99,17 +99,25 @@ namespace System {
 			// Deflate class for handling Deflate compression and decompression
 			class Deflate {
 			private:
+				// Constants for Deflate algorithm
+				static const int MAX_LITERALS = 288;
+				static const int MAX_DISTANCES = 32;
+				static const int END_OF_BLOCK = 256;
+				static const int LENGTH_CODES_START = 257;
+				static const int NUM_LENGTH_CODES = 29;
+				static const int NUM_DISTANCE_CODES = 30;
+				static const int CODE_LENGTH_CODES = 19;
 				// Enum for block types in Deflate stream
-				enum blocktype {
+				enum BlockType {
 					Stored = 0b00,
 					Static = 0b01,
 					Dynamic = 0b10,
 					Reserved = 0b11
 				};
 				// Enum for block markers in Deflate stream
-				enum blockmarker {
-					last = 1,
-					more = 0
+				enum BlockMarker {
+					Last = 1,
+					More = 0
 				}; 
 				// Reads a specified number of bits from the data vector
 				static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
@@ -128,7 +136,20 @@ namespace System {
 					bit_position += count;
 					return value;
 				}
-
+				// Writes a specified number of bits to the data vector
+				static void write_bits(std::vector<uint8_t>& data, int& bit_position, uint32_t value, int count) {
+					for (int i = 0; i < count; ++i) {
+						int byte_index = (bit_position + i) / 8;
+						int bit_index = (bit_position + i) % 8;
+						if (byte_index >= data.size()) {
+							data.resize(byte_index + 1, 0);
+						}
+						if ((value >> i) & 1) {
+							data[byte_index] |= (1 << bit_index);
+						}
+					}
+					bit_position += count;
+				}
 
 			public:
 				// Enum for compression levels
@@ -146,8 +167,26 @@ namespace System {
 
 				 };
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
+					std::vector<uint8_t> result;
+					int bit_position = 0;
 
+					// For now, we only support stored blocks
+					write_bits(result, bit_position, (uint32_t)BlockMarker::Last, 1);
+					write_bits(result, bit_position, (uint32_t)BlockType::Stored, 2);
 
+					// Skip to the next byte boundary
+					bit_position = (bit_position + 7) & ~7;
+
+					uint16_t len = data.size();
+					uint16_t nlen = ~len;
+					write_bits(result, bit_position, len, 16);
+					write_bits(result, bit_position, nlen, 16);
+
+					for (uint8_t byte : data) {
+						write_bits(result, bit_position, byte, 8);
+					}
+
+					return result;
 				}
 				// Reads and processes a static block from the compressed data
 				static void ReadStaticBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position){
@@ -194,10 +233,10 @@ namespace System {
 					int bit_position = 0;
 
 					while (true) {
-						blockmarker marker = (blockmarker)Deflate::read_bits(data, bit_position, 1);
-						blocktype type = (blocktype)Deflate::read_bits(data, bit_position, 2);
+						BlockMarker marker = (BlockMarker)Deflate::read_bits(data, bit_position, 1);
+						BlockType type = (BlockType)Deflate::read_bits(data, bit_position, 2);
 
-						if (type == blocktype::Stored) {
+						if (type == BlockType::Stored) {
 							std::cout << "Stored" << std::endl;
 							// Skip to the next byte boundary
 							bit_position = (bit_position + 7) & ~7;
@@ -212,11 +251,11 @@ namespace System {
 							for (int i = 0; i < len; ++i) {
 								result.push_back( read_bits(data, bit_position, 8));
 							}
-						}else if (type == blocktype::Static){
+						}else if (type == BlockType::Static){
 							std::cout << "Static/fixed (pre-agreed Huffman tree defined in the RFC)" << std::endl;
 							ReadStaticBlock(result, data, bit_position);
 							return result;
-						}else if (type == blocktype::Dynamic){
+						}else if (type == BlockType::Dynamic){
 							std::cout << "Dynamic" << std::endl;
 							uint16_t hlit = read_bits(data, bit_position, 5) + 257;
 							uint16_t hdist = read_bits(data, bit_position, 5) + 1;
@@ -295,7 +334,7 @@ namespace System {
 						}else{
 							throw std::runtime_error("block type, error");
 						}
-						if (marker == last) {
+						if (marker == BlockMarker::Last) {
 							break;
 						}
 					}
