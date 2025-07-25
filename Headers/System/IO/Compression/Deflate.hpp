@@ -257,20 +257,11 @@ namespace System {
 					bit_position = (bit_position + 7) & ~7;
 					int byte_position = bit_position / 8;
 					// Read length and negated length
-					//uint16_t len = read_bits(data, bit_position, 16);
-					//uint16_t nlen = read_bits(data, bit_position, 16);
-
-
-
-
 					uint16_t len = *(uint16_t*)(data.data() + byte_position);
 					byte_position += 2;
 					uint16_t nlen = *(uint16_t*)(data.data() + byte_position);
 					byte_position += 2;
 					bit_position += 32;
-
-
-
 					std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
 					// Check if length and negated length are complements
 					if ((len ^ nlen) != 0xFFFF) {
