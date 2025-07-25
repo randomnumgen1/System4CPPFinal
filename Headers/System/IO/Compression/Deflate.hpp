@@ -255,16 +255,29 @@ namespace System {
 				static void ReadStoredBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position) {
 					// Skip to the next byte boundary
 					bit_position = (bit_position + 7) & ~7;
+					int byte_position = bit_position / 8;
 					// Read length and negated length
-					uint16_t len = read_bits(data, bit_position, 16);
-					uint16_t nlen = read_bits(data, bit_position, 16);
+					//uint16_t len = read_bits(data, bit_position, 16);
+					//uint16_t nlen = read_bits(data, bit_position, 16);
+
+
+
+
+					uint16_t len = *(uint16_t*)(data.data() + byte_position);
+					byte_position += 2;
+					uint16_t nlen = *(uint16_t*)(data.data() + byte_position);
+					byte_position += 2;
+					bit_position += 32;
+
+
+
 					std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
 					// Check if length and negated length are complements
 					if ((len ^ nlen) != 0xFFFF) {
 						throw std::runtime_error("Error: invalid stored block length");
 					}
 					// straight copy data as we are on a byte boundary
-					int byte_position = bit_position / 8;
+					byte_position = bit_position / 8;
 					result.insert(result.end(), data.begin() + byte_position, data.begin() + byte_position + len);
 					bit_position += len * 8;
 				}
