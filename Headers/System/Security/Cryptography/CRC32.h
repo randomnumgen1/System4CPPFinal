@@ -19,7 +19,7 @@ CRC-32/ISCSI (CRC-32/BASE91-C, CRC-32/CASTAGNOLI, CRC-32/INTERLAKEN, CRC-32C, CR
 
 #if (defined(_WIN32) && (defined(__x86_64__) || defined(_M_X64))) || (defined(__x86_64__) || defined(__i386__))
 #include <nmmintrin.h>
-#elif (defined(__arm__) || defined(_M_ARM))
+#elif (defined(__arm__) || defined(_M_ARM) || defined(__aarch64__))
 #include <arm_acle.h>
 #endif
 
@@ -107,7 +107,7 @@ namespace System {
                                 ++i;
                                 --len;
                             }
-#elif (defined(__arm__) || defined(_M_ARM))
+#elif (defined(__arm__) || defined(_M_ARM) || defined(__aarch64__))
                             // Process 32-bit chunks first
                             while (len >= 4) {
                                 state.hash = __crc32cw(state.hash, *reinterpret_cast<const uint32_t*>(&bytes[i]));
