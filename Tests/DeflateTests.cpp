@@ -9,4 +9,13 @@ TEST(DeflateTests, DeflateDecompressFile) {
     std::string decompressed_string(decompressed_data.begin(), decompressed_data.end());
 	ASSERT_EQ(decompressed_string, std::string("\xEF\xBB\xBFHello, World!"));
 }
- 
+
+
+TEST(DeflateTests, DeflateCompressDecompressRoundtrip) {
+    std::string original_string = "Test";
+    std::vector<uint8_t> original_data(original_string.begin(), original_string.end());
+    std::vector<uint8_t> compressed_data = System::IO::Compression::Deflate::Compress(original_data);
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(compressed_data);
+    std::string result(decompressed_data.begin(), decompressed_data.end());
+    ASSERT_EQ(result, original_string);
+}
