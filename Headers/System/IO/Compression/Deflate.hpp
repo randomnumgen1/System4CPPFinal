@@ -58,8 +58,6 @@ namespace System {
 					}
 					return tree[currentNode].Symbol;
 				}
-
-			private:
 				void generate_codes(const std::vector<int>& code_lengths, std::map<int, std::vector<bool>>& codes) {
 					int max_length = 0;
 					for (int length : code_lengths) {
@@ -95,6 +93,8 @@ namespace System {
 						}
 					}
 				}
+			private:
+
 			};
 			// Deflate class for handling Deflate compression and decompression
 			class Deflate {
@@ -167,27 +167,47 @@ namespace System {
 
 				 };
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
-					if (compressionlevel != CompressionLevel::Level0) {
-						throw std::runtime_error("Error: we currently only support CompressionLevel 0");
-					}
 					std::vector<uint8_t> result;
 					int bit_position = 0;
-
-					// For now, we only support stored blocks
 					write_bits(result, bit_position, (uint32_t)BlockMarker::Last, 1);
-					write_bits(result, bit_position, (uint32_t)BlockType::Stored, 2);
+					if (compressionlevel == CompressionLevel::Level0){
+						// Stored block
+						write_bits(result, bit_position, (uint32_t)BlockType::Stored, 2);
+						// Skip to the next byte boundary
+						bit_position = (bit_position + 7) & ~7;
+						uint16_t len = data.size();
+						uint16_t nlen = ~len;
+						write_bits(result, bit_position, len, 16);
+						write_bits(result, bit_position, nlen, 16);
+						for (uint8_t byte : data){
+							write_bits(result, bit_position, byte, 8);
+						}
+					}else if(compressionlevel == CompressionLevel::Level1){
+						// Static Huffman block
+						write_bits(result, bit_position, (uint32_t)BlockType::Static, 2);
+						std::vector<int> literal_lengths(MAX_LITERALS, 0);
+						for (int i = 0; i <= 143; ++i) literal_lengths[i] = 8;
+						for (int i = 144; i <= 255; ++i) literal_lengths[i] = 9;
+						for (int i = 256; i <= 279; ++i) literal_lengths[i] = 7;
+						for (int i = 280; i <= 287; ++i) literal_lengths[i] = 8;
 
-					// Skip to the next byte boundary
-					bit_position = (bit_position + 7) & ~7;
+						std::map<int, std::vector<bool>> literal_codes;
+						DeflateHuffmanTree(literal_lengths).generate_codes(literal_lengths, literal_codes);
 
-					uint16_t len = data.size();
-					uint16_t nlen = ~len;
-					write_bits(result, bit_position, len, 16);
-					write_bits(result, bit_position, nlen, 16);
-
-					for (uint8_t byte : data) {
-						write_bits(result, bit_position, byte, 8);
+						for (uint8_t byte : data) {
+							const auto& code = literal_codes[byte];
+							for (bool bit : code) {
+								write_bits(result, bit_position, bit, 1);
+							}
+						}
+						const auto& code = literal_codes[END_OF_BLOCK];
+						for (bool bit : code){
+							write_bits(result, bit_position, bit, 1);
+						}
+					}else{
+						throw std::runtime_error("Error: unsupported compression level");
 					}
+
 
 					return result;
 				}
