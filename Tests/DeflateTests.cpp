@@ -19,3 +19,30 @@ TEST(DeflateTests, DeflateCompressDecompressRoundtrip) {
     std::string result(decompressed_data.begin(), decompressed_data.end());
     ASSERT_EQ(result, original_string);
 }
+
+TEST(DeflateTests, DeflateCompressDecompressSemiRepetitiveRoundtrip) {
+    std::string original_string = "abcabcabcabcabcabcabcabcabcabc";
+    std::vector<uint8_t> original_data(original_string.begin(), original_string.end());
+    std::vector<uint8_t> compressed_data = System::IO::Compression::Deflate::Compress(original_data);
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(compressed_data);
+    std::string result(decompressed_data.begin(), decompressed_data.end());
+    ASSERT_EQ(result, original_string);
+}
+TEST(DeflateTests, DeflateCompressDecompressnonRepetitiveRoundtrip) {
+    std::string original_string = "xqL8v#B9$m&Nf*W@1!ZuJh5rEkPtYs";
+    std::vector<uint8_t> original_data(original_string.begin(), original_string.end());
+    std::vector<uint8_t> compressed_data = System::IO::Compression::Deflate::Compress(original_data);
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(compressed_data);
+    std::string result(decompressed_data.begin(), decompressed_data.end());
+    ASSERT_EQ(result, original_string);
+}
+TEST(DeflateTests, DeflateCompressDecompressRoundtrip) {
+    std::string original_string = "matchmatchmatchXYZmatchmatchmatch123matchmatchmatch! AnotherMatchAnotherMatchAnotherMatch matchmatchmatchXYZmatchmatchmatch123matchmatchmatch!";
+    std::vector<uint8_t> original_data(original_string.begin(), original_string.end());
+    std::vector<uint8_t> compressed_data = System::IO::Compression::Deflate::Compress(original_data);
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(compressed_data);
+    std::string result(decompressed_data.begin(), decompressed_data.end());
+    ASSERT_EQ(result, original_string);
+}
+
+
