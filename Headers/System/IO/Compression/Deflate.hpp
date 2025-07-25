@@ -96,18 +96,22 @@ namespace System {
 					}
 				}
 			};
+			// Deflate class for handling Deflate compression and decompression
 			class Deflate {
 			private:
+				// Enum for block types in Deflate stream
 				enum blocktype {
 					Stored = 0b00,
 					Static = 0b01,
 					Dynamic = 0b10,
 					Reserved = 0b11
 				};
+				// Enum for block markers in Deflate stream
 				enum blockmarker {
 					last = 1,
 					more = 0
 				}; 
+				// Reads a specified number of bits from the data vector
 				static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
 					uint32_t value = 0;
 					for (int i = 0; i < count; ++i) {
@@ -125,6 +129,9 @@ namespace System {
 					return value;
 				}
 
+
+			public:
+				// Enum for compression levels
 				 enum CompressionLevel{
 					 Level0,
 					 Level1,
@@ -138,13 +145,11 @@ namespace System {
 					 Level9,
 
 				 };
-
-			public:
-
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
 
 
 				}
+				// Reads and processes a static block from the compressed data
 				static void ReadStaticBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position){
 					std::vector<int> literal_lengths(288, 0);
 					for (int i = 0; i <= 143; ++i) literal_lengths[i] = 8;
@@ -183,6 +188,7 @@ namespace System {
 						}
 					}
 				}
+				// Decompresses data using the Deflate algorithm
 				static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
 					std::vector<uint8_t> result;
 					int bit_position = 0;
@@ -191,7 +197,7 @@ namespace System {
 						blockmarker marker = (blockmarker)Deflate::read_bits(data, bit_position, 1);
 						blocktype type = (blocktype)Deflate::read_bits(data, bit_position, 2);
 
-						if (type == Stored) {
+						if (type == blocktype::Stored) {
 							std::cout << "Stored" << std::endl;
 							// Skip to the next byte boundary
 							bit_position = (bit_position + 7) & ~7;
@@ -206,11 +212,11 @@ namespace System {
 							for (int i = 0; i < len; ++i) {
 								result.push_back( read_bits(data, bit_position, 8));
 							}
-						}else if (type == Static){
+						}else if (type == blocktype::Static){
 							std::cout << "Static/fixed (pre-agreed Huffman tree defined in the RFC)" << std::endl;
 							ReadStaticBlock(result, data, bit_position);
 							return result;
-						}else if (type == Dynamic){
+						}else if (type == blocktype::Dynamic){
 							std::cout << "Dynamic" << std::endl;
 							uint16_t hlit = read_bits(data, bit_position, 5) + 257;
 							uint16_t hdist = read_bits(data, bit_position, 5) + 1;
