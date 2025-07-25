@@ -188,6 +188,23 @@ namespace System {
 
 					return result;
 				}
+				// Reads and processes a Stored block from the compressed data
+				static void ReadStoredBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position) {
+					// Skip to the next byte boundary
+					bit_position = (bit_position + 7) & ~7;
+					// Read length and negated length
+					uint16_t len = read_bits(data, bit_position, 16);
+					uint16_t nlen = read_bits(data, bit_position, 16);
+					std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
+					// Check if length and negated length are complements
+					if ((len ^ nlen) != 0xFFFF) {
+						throw std::runtime_error("Error: invalid stored block length");
+					}
+					// Copy data
+					for (int i = 0; i < len; ++i) {
+						result.push_back(read_bits(data, bit_position, 8));
+					}
+				}
 				// Reads and processes a static block from the compressed data
 				static void ReadStaticBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position){
 					std::vector<int> literal_lengths(MAX_LITERALS, 0);
@@ -238,21 +255,11 @@ namespace System {
 
 						if (type == BlockType::Stored) {
 							std::cout << "Stored" << std::endl;
-							// Skip to the next byte boundary
-							bit_position = (bit_position + 7) & ~7;
-
-							uint16_t len =  read_bits(data, bit_position, 16);
-							uint16_t nlen =  read_bits(data, bit_position, 16);
-							std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
-							if ((len ^ nlen) != 0xFFFF) {
-								throw std::runtime_error("Error: invalid stored block length");
-							}
-
-							for (int i = 0; i < len; ++i) {
-								result.push_back( read_bits(data, bit_position, 8));
-							}
+							ReadStoredBlock(result, data, bit_position);
+							return result;
 						}else if (type == BlockType::Static){
-							std::cout << "Static/fixed (pre-agreed Huffman tree defined in the RFC)" << std::endl;
+							// Decompress using fixed Huffman codes
+							std::cout << "Decompress using fixed Huffman codes (pre-agreed Huffman tree defined in the RFC)" << std::endl;
 							ReadStaticBlock(result, data, bit_position);
 							return result;
 						}else if (type == BlockType::Dynamic){
