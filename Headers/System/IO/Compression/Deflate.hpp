@@ -125,7 +125,7 @@ namespace System {
 					return value;
 				}
 
-				 enum CompressionLevels{
+				 enum CompressionLevel{
 					 Level0,
 					 Level1,
 					 Level2,
@@ -141,7 +141,7 @@ namespace System {
 
 			public:
 
-				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
+				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
 
 
 				}
