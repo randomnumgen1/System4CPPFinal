@@ -167,6 +167,9 @@ namespace System {
 
 				 };
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
+					if (compressionlevel != CompressionLevel::Level0) {
+						throw std::runtime_error("Error: we currently only support CompressionLevel 0");
+					}
 					std::vector<uint8_t> result;
 					int bit_position = 0;
 
@@ -364,7 +367,7 @@ namespace System {
 							ReadDynamicBlock(result, data, bit_position);
 							return result;
 						}else{
-							throw std::runtime_error("block type, error");
+							throw std::runtime_error("Error, Invalid Deflate block type");
 						}
 						// Check if this is the last block
 						if (marker == BlockMarker::Last) {
