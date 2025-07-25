@@ -145,6 +145,44 @@ namespace System {
 
 
 				}
+				static void ReadStaticBlock(std::vector<uint8_t>& result, const std::vector<uint8_t>& data, int& bit_position){
+					std::vector<int> literal_lengths(288, 0);
+					for (int i = 0; i <= 143; ++i) literal_lengths[i] = 8;
+					for (int i = 144; i <= 255; ++i) literal_lengths[i] = 9;
+					for (int i = 256; i <= 279; ++i) literal_lengths[i] = 7;
+					for (int i = 280; i <= 287; ++i) literal_lengths[i] = 8;
+					DeflateHuffmanTree literal_huffman(literal_lengths);
+
+					std::vector<int> distance_lengths(32, 5);
+					DeflateHuffmanTree distance_huffman(distance_lengths);
+
+					const int length_extra_bits[] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0 };
+					const int length_starts[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258 };
+					const int distance_extra_bits[] = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13 };
+					const int distance_starts[] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577 };
+
+
+					while (true) {
+						int symbol = literal_huffman.decode(data, bit_position);
+						if (symbol < 256) {
+							result.push_back(symbol);
+						}
+						else if (symbol == 256) {
+							break;
+						}
+						else {
+							int length = length_starts[symbol - 257] + read_bits(data, bit_position, length_extra_bits[symbol - 257]);
+
+							int distance_symbol = distance_huffman.decode(data, bit_position);
+							int distance = distance_starts[distance_symbol] + read_bits(data, bit_position, distance_extra_bits[distance_symbol]);
+
+							int start = result.size() - distance;
+							for (int i = 0; i < length; ++i) {
+								result.push_back(result[start + i]);
+							}
+						}
+					}
+				}
 				static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
 					std::vector<uint8_t> result;
 					int bit_position = 0;
@@ -170,43 +208,7 @@ namespace System {
 							}
 						}else if (type == Static){
 							std::cout << "Static/fixed (pre-agreed Huffman tree defined in the RFC)" << std::endl;
-							std::vector<int> literal_lengths(288, 0);
-							for (int i = 0; i <= 143; ++i) literal_lengths[i] = 8;
-							for (int i = 144; i <= 255; ++i) literal_lengths[i] = 9;
-							for (int i = 256; i <= 279; ++i) literal_lengths[i] = 7;
-							for (int i = 280; i <= 287; ++i) literal_lengths[i] = 8;
-							DeflateHuffmanTree literal_huffman(literal_lengths);
-
-							std::vector<int> distance_lengths(32, 5);
-							DeflateHuffmanTree distance_huffman(distance_lengths);
-
-							const int length_extra_bits[] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0 };
-							const int length_starts[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258 };
-							const int distance_extra_bits[] = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13 };
-							const int distance_starts[] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577 };
-									
-
-							while (true) {
-								int symbol = literal_huffman.decode(data, bit_position);
-								if (symbol < 256) {
-									result.push_back(symbol);
-								}
-								else if (symbol == 256) {
-									break;
-								}
-								else {
-								int length = length_starts[symbol - 257] + read_bits(data, bit_position, length_extra_bits[symbol - 257]);
-
-									int distance_symbol = distance_huffman.decode(data, bit_position);
-									int distance = distance_starts[distance_symbol] + read_bits(data, bit_position, distance_extra_bits[distance_symbol]);
-
-									int start = result.size() - distance;
-									for (int i = 0; i < length; ++i) {
-										result.push_back(result[start + i]);
-									}
-								}
-							}
-							
+							ReadStaticBlock(result, data, bit_position);
 							return result;
 						}else if (type == Dynamic){
 							std::cout << "Dynamic" << std::endl;
