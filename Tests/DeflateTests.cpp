@@ -11,7 +11,7 @@ TEST(DeflateTests, DeflateDecompressFile) {
 }
 TEST(DeflateTests, DeflateDecompressFile2) {
     System::IO::Compression::Deflate deflate;
-    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(System::IO::File::ReadAllBytes("compressedwithbom.deflate"));
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(System::IO::File::ReadAllBytes("nobommatchmatch.deflate"));
     std::string decompressed_string(decompressed_data.begin(), decompressed_data.end());
 	ASSERT_EQ(decompressed_string, std::string("matchmatchmatchXYZmatchmatchmatch123matchmatchmatch! AnotherMatchAnotherMatchAnotherMatch matchmatchmatchXYZmatchmatchmatch123matchmatchmatch!"));
 }
@@ -45,7 +45,7 @@ TEST(DeflateTests, DeflateCompressDecompressnonRepetitiveRoundtrip) {
     std::string result(decompressed_data.begin(), decompressed_data.end());
     ASSERT_EQ(result, original_string);
 }
-TEST(DeflateTests, DeflateCompressDecompressRoundtrip) {
+TEST(DeflateTests, DeflateCompressDecompressSemiRepetitiveRoundtrip2) {
     std::string original_string = "matchmatchmatchXYZmatchmatchmatch123matchmatchmatch! AnotherMatchAnotherMatchAnotherMatch matchmatchmatchXYZmatchmatchmatch123matchmatchmatch!";
     std::vector<uint8_t> original_data(original_string.begin(), original_string.end());
     std::vector<uint8_t> compressed_data = System::IO::Compression::Deflate::Compress(original_data, System::IO::Compression::Deflate::CompressionLevel::Level1);
