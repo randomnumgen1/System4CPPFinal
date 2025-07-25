@@ -18,14 +18,14 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Cross-Platform Compatibility**: Works on Linux, Windows, ARM and x64.
 + **Simplifies Development**: Designed to make developing applications and games easier.
 + **Coding Styles for Portability**: Uses coding styles that allow for effortless porting to other programming languages.
-+ **Beginner-Friendly Code**: Ensures the code is easily readable by beginners.
++ **Beginner-Friendly Code**: Strikes a balance between simplicity for beginners and optimized for high performance.
 + **Intuitive Type Structure**: Structures are designed for raw memory copies, while classes encapsulate pointer-based relationships and complex behavior.
 + **Binary Compatibility with Plugin Architectures**: Ensures both the plugin and the application consistently interpret the data type layout being shared.
 + **Hashing Algorithms**: We aim to provide support for all officially recognized hashing algorithms, alongside those employed in reputable cryptocurrencies. These algorithms have been rigorously tested and verified for security, offering reliable options for data integrity verification, digital signatures, and more.
 + **Encryption and Public/Private Key Algorithms**: Our encryption capabilities aim to cover a diverse range of official encryption algorithms, as well as those widely adopted in the cryptocurrency space. This ensures secure data transmission and storage through robust public and private key cryptography, safeguarding sensitive information against unauthorized access.
 + **Compression Algorithms**: Our platform aims to support a full spectrum of compression algorithms, enabling efficient data storage without compromising the integrity or accessibility of the information. This feature enhances performance while minimizing resource usage, making it ideal for both local and cloud storage solutions.
 + **Checksum Algorithms**: Provide a fast, lightweight way to verify data integrity—ideal for validating network packets, though they lack the cryptographic strength needed for security.
-+ **File and Directory helpers**
++ **File and Directory helpers** Makes file and folder operations beginner-friendly without sacrificing control
 + **Text-Based formats** Provides classes to parse CSV, INI, and JSON
 + **TrueType font loading** Enables parsing of TrueType (.ttf) files for text rendering.
 + **Drawing Canvas** provides a HTML Canvas–style interface for 2D drawing.
@@ -34,16 +34,16 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 # Defines
 
-
+General
 
 |         Define         |   Comment     |
 | ---------------------- | ------------- |
-| SYSTEM_PROFILER_ENABLED| Content Cell  |
+| SYSTEM_PROFILER_ENABLED|               |
 
 
+Graphics 
 
 
-|                Graphics                |
 |         Define         |   Comment     |
 | ---------------------- | ------------- |
 | SYSTEM_GRAPHICS_VULKAN |     NA        |
