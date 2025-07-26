@@ -59,6 +59,7 @@ namespace System {
                 };
                 System::Drawing::Size Size;
             };
+
             std::vector<uint8_t> m_pixels;
 			Image(int w, int h) {
 				Width = w;
@@ -217,14 +218,13 @@ namespace System {
 				if (!file) {
 					return;
 				}
-
-				// BMP Header
-				char bmpHeader[14];
-				file.read(bmpHeader, 14);
-
-				if (bmpHeader[0] != 'B' || bmpHeader[1] != 'M') {
-					return;
+				BITMAPFILEHEADER bitmapfileheader = {};
+				file.read(reinterpret_cast<char*>(&bitmapfileheader), sizeof(BITMAPFILEHEADER));
+				if (bitmapfileheader.Magic != BITMAP_MAGIC) {
+					throw std::runtime_error("BITMAP_MAGIC");
 				}
+
+
 
 				// DIB Header
 				char dibHeader[40];
@@ -241,7 +241,7 @@ namespace System {
 				m_pixels.assign(Width * Height * 4, 255);
 
 				// Pixel Data
-				file.seekg(*reinterpret_cast<uint32_t*>(&bmpHeader[10]), std::ios::beg);
+				file.seekg(bitmapfileheader.pixeloffset, std::ios::beg);
 				for (int y = Height - 1; y >= 0; --y) {
 					for (int x = 0; x < Width; ++x) {
 						int idx = (y * Width + x) * 4;
