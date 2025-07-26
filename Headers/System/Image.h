@@ -141,7 +141,7 @@ namespace System {
 				if (magic[0] != (char)0x89 || magic[1] != 'P' || magic[2] != 'N' || magic[3] != 'G' || magic[4] != (char)0x0D || magic[5] != (char)0x0A || magic[6] != (char)0x1A || magic[7] != (char)0x0A) {
 					return;
 				}
-
+				uint32_t calculatedCrc = {};
 				
 
 
@@ -161,20 +161,39 @@ namespace System {
 				Width = ihdr->width;
 				Height = ihdr->height;
 
+				if (ihdr->bitDepth != 8 || ihdr->colorType != 6) {
+					throw std::invalid_argument("Only 8 bpp RGBA (colorType 6) supported.");
+				}
+				if (ihdr->compression != 0) {
+					throw std::invalid_argument("only support deflate compression");
+				}
+				if (ihdr->filter != 0) {
+					throw std::invalid_argument("only support adaptive filtering");
+				}
+				if (ihdr->interlace != 0) {
+					throw std::invalid_argument("we dont support filtering");
+				}
+				std::vector<uint8_t> idat_data;
+				while (true){
+					PNG_CHUNK chunk;
+					chunk.Length = ReadUInt32BigEndian(file);
+					chunk.Type = ReadUInt32BigEndian(file);
+					if (chunk.Length > 0) {
+						chunk.Data.resize(chunk.Length);
+						file.read(reinterpret_cast<char*>(chunk.Data.data()), chunk.Length);
+					}
+					chunk.CRC = ReadUInt32BigEndian(file);
+					if (chunk.Type == 0x49444154) { // IDAT
+						idat_data.insert(idat_data.end(), chunk.Data.begin(), chunk.Data.end());
+					}else if (chunk.Type == 0x49454E44) { // IEND
+						std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(idat_data);
+						Unfilter(decompressed_data, *ihdr);
+						break;
+					}
 
 
+				}
 
-				std::cout << "width" << ihdr->width << std::endl;
-				std::cout << "height" << ihdr->height << std::endl;
-
-				 
-				std::cout << "bitDepth"  << ihdr->bitDepth << std::endl;
-				std::cout << "colorType" << ihdr->colorType << std::endl;
-				std::cout << "compression" << ihdr->compression << std::endl;
-				std::cout << "filter" << ihdr->filter << std::endl;
-				std::cout << "interlace" << ihdr->interlace << std::endl;
-
-			 
 
 
 
