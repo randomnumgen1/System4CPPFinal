@@ -36,9 +36,10 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 General
 
-|         Define         |   Comment     |
-| ---------------------- | ------------- |
-| SYSTEM_PROFILER_ENABLED|               |
+|           Define           |                Comment               |
+| -------------------------- | ------------------------------------ |
+| SYSTEM_PROFILER_ENABLED    |                                      |
+| SYSTEM_EXPERIMENTAL_ENABLED| EXPERIMENTAL code that may have bugs |
 
 
 Graphics 
