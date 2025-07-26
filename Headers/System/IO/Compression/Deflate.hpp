@@ -262,7 +262,6 @@ namespace System {
 					uint16_t nlen = *(uint16_t*)(data.data() + byte_position);
 					byte_position += 2;
 					bit_position += 32;
-					std::cout << "len: " << len << ", nlen: " << nlen << std::endl;
 					// Check if length and negated length are complements
 					if ((len ^ nlen) != 0xFFFF) {
 						throw std::runtime_error("Error: invalid stored block length");
