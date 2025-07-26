@@ -287,10 +287,39 @@ namespace System::Tools{
 
 
 
-			void drawImage(Image img,int x,int y){
-			
+			void drawImage(Image& img,int x,int y){
+				drawImage(img, x, y, img.Width, img.Height);
 			}
+			void drawImage(Image& img, int x, int y, int w, int h) {
+				const auto& state = m_states.top();
 
+				for (int sy = 0; sy < img.Height; ++sy) {
+					for (int sx = 0; sx < img.Width; ++sx) {
+						int dx = x + (sx * w) / img.Width;
+						int dy = y + (sy * h) / img.Height;
+
+						if (dx < 0 || dx >= m_width || dy < 0 || dy >= m_height) {
+							continue;
+						}
+
+						size_t src_idx = (static_cast<size_t>(sy) * img.Width + sx) * 4;
+						Color32 src_color = {
+							img.m_pixels[src_idx + 0],
+							img.m_pixels[src_idx + 1],
+							img.m_pixels[src_idx + 2],
+							img.m_pixels[src_idx + 3]
+						};
+
+						Vector2 p_transformed = transform(state.m_transform, { (float)dx, (float)dy });
+						int final_dx = static_cast<int>(p_transformed.x);
+						int final_dy = static_cast<int>(p_transformed.y);
+
+						if (isPointInPath(state.clippingpath, final_dx, final_dy)) {
+							SetPixelBlend(final_dx, final_dy, src_color);
+						}
+					}
+				}
+			}
 
 	};
 }
