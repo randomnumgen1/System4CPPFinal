@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <string>
 #include <map>
+#include <algorithm>
+#include <cstring>
 namespace System {
 	struct Color32 {
 	private:
@@ -291,6 +293,7 @@ namespace System {
 					return true;
 				}
 			}
+			return false;
 		}
 
         
