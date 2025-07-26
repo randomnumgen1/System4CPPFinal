@@ -6,7 +6,9 @@ namespace System {
     const Color32 Color32::red(255,  0,  0,255);
     const Color32 Color32::green(0, 128, 0, 255);
     const Color32 Color32::blue(0, 0, 255, 255);
-
+    const Color32 Color32::yellow(255, 255, 0, 255);
+    const Color32 Color32::cyan(0, 255, 255, 255);
+    const Color32 Color32::magenta(255, 0, 255, 255);
 
     Color32::Color32(){
         r = 0;
