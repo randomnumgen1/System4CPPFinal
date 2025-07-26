@@ -243,7 +243,24 @@ namespace System::Tools{
 			void quadraticCurveTo(float cpx,float cpy,float x,float y);
 			void rect(float x, float y, float w, float h);
 			void arcTo(float x1,float y1,float x2,float y2,float r);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="x">The x-coordinate of the center of the circle</param>
+			/// <param name="y">The y-coordinate of the center of the circle</param>
+			/// <param name="r">The radius of the circle</param>
+			/// <param name="sAngle">The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)</param>
+			/// <param name="eAngle">The ending angle, in radians</param>
 			void arc(float x,float y,float r,float sAngle,float eAngle);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="x">The x-coordinate of the center of the circle</param>
+			/// <param name="y">The y-coordinate of the center of the circle</param>
+			/// <param name="r">The radius of the circle</param>
+			/// <param name="sAngle">The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)</param>
+			/// <param name="eAngle">The ending angle, in radians</param>
+			/// <param name="counterclockwise"></param>
 			void arc(float x,float y,float r,float sAngle,float eAngle,bool counterclockwise);
 			/// <summary>
 			/// method remaps the (0,0) position.
