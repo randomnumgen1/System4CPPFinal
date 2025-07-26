@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 #include "Security/Cryptography/CRC32.h"
+#include "System/IO/BinaryReader.h"
+#include "System/IO/Compression/Deflate.hpp"
 
 namespace System {
 
@@ -54,7 +56,28 @@ namespace System {
 				uint8_t  imageDescriptor;  // Bit 4-5: origin, Bit 0-3: alpha channel depth
 			};
 #pragma pack(pop)
-
+#pragma pack(push, 1)
+			struct PNG_IHDR {
+				uint32_t width;
+				uint32_t height;
+				uint8_t bitDepth;
+				uint8_t colorType;
+				uint8_t compression;
+				uint8_t filter;
+				uint8_t interlace;
+				void fixendian() {
+					width = _byteswap_ulong(width);
+					height = _byteswap_ulong(height);
+				}
+			};
+#pragma pack(pop)
+			static uint32_t ReadUInt32BigEndian(std::ifstream& stream) {
+				uint32_t value = 0;
+				uint8_t bytes[4];
+				stream.read(reinterpret_cast<char*>(bytes), 4);
+				value = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
+				return value;
+			}
         public:
             union {
                 struct {
@@ -106,21 +129,120 @@ namespace System {
 				std::vector<uint8_t> Data;
 				uint32_t CRC;
 			};
-			struct PNG_IHDR {
-				uint32_t width;
-				uint32_t height;
-				uint8_t bitDepth;
-				uint8_t colorType;
-				uint8_t compression;
-				uint8_t filter;
-				uint8_t interlace;
-			};
-			void LoadFromPNG(const std::string& filename){
+ 
+			void LoadFromPNG(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
 				if (!file) {
 					return;
 				}
 
+				char magic[8];
+				file.read(magic, 8);
+				if (magic[0] != (char)0x89 || magic[1] != 'P' || magic[2] != 'N' || magic[3] != 'G' || magic[4] != (char)0x0D || magic[5] != (char)0x0A || magic[6] != (char)0x1A || magic[7] != (char)0x0A) {
+					return;
+				}
+
+				
+
+
+				PNG_CHUNK hdrchunk;
+				hdrchunk.Length = ReadUInt32BigEndian(file);
+				hdrchunk.Type = ReadUInt32BigEndian(file);
+				if (hdrchunk.Type != 0x49484452) {
+					throw std::invalid_argument("expecting IHDR as first chunk");
+				}
+				if (hdrchunk.Length > 0) {
+					hdrchunk.Data.resize(hdrchunk.Length);
+					file.read(reinterpret_cast<char*>(hdrchunk.Data.data()), hdrchunk.Length);
+				}
+				hdrchunk.CRC = ReadUInt32BigEndian(file);
+				PNG_IHDR* ihdr = reinterpret_cast<PNG_IHDR*>(hdrchunk.Data.data());
+				ihdr->fixendian();
+				Width = ihdr->width;
+				Height = ihdr->height;
+
+
+
+
+				std::cout << "width" << ihdr->width << std::endl;
+				std::cout << "height" << ihdr->height << std::endl;
+
+				 
+				std::cout << "bitDepth"  << ihdr->bitDepth << std::endl;
+				std::cout << "colorType" << ihdr->colorType << std::endl;
+				std::cout << "compression" << ihdr->compression << std::endl;
+				std::cout << "filter" << ihdr->filter << std::endl;
+				std::cout << "interlace" << ihdr->interlace << std::endl;
+
+			 
+
+
+
+				throw std::invalid_argument("");
+				  
+			}
+
+			uint8_t PaethPredictor(uint8_t a, uint8_t b, uint8_t c) {
+				int p = a + b - c;
+				int pa = std::abs(p - a);
+				int pb = std::abs(p - b);
+				int pc = std::abs(p - c);
+				if (pa <= pb && pa <= pc) return a;
+				if (pb <= pc) return b;
+				return c;
+			}
+
+			void Unfilter(const std::vector<uint8_t>& data, PNG_IHDR& ihdr) {
+				int bytesPerPixel = 0;
+				if (ihdr.colorType == 6) { // RGBA
+					bytesPerPixel = 4;
+				}
+				else if (ihdr.colorType == 2) { // RGB
+					bytesPerPixel = 3;
+				}
+				else {
+					// Other color types not supported yet
+					return;
+				}
+
+				int stride = ihdr.width * bytesPerPixel;
+				m_pixels.resize(stride * ihdr.height);
+
+				for (int y = 0; y < ihdr.height; ++y) {
+					uint8_t filterType = data[y * (stride + 1)];
+					int scanlineStart = y * (stride + 1) + 1;
+
+					for (int x = 0; x < stride; ++x) {
+						uint8_t filteredByte = data[scanlineStart + x];
+						uint8_t unfilteredByte = 0;
+
+						uint8_t a = (x >= bytesPerPixel) ? m_pixels[y * stride + x - bytesPerPixel] : 0;
+						uint8_t b = (y > 0) ? m_pixels[(y - 1) * stride + x] : 0;
+						uint8_t c = (x >= bytesPerPixel && y > 0) ? m_pixels[(y - 1) * stride + x - bytesPerPixel] : 0;
+
+						switch (filterType) {
+						case 0: // None
+							unfilteredByte = filteredByte;
+							break;
+						case 1: // Sub
+							unfilteredByte = filteredByte + a;
+							break;
+						case 2: // Up
+							unfilteredByte = filteredByte + b;
+							break;
+						case 3: // Average
+							unfilteredByte = filteredByte + (a + b) / 2;
+							break;
+						case 4: // Paeth
+							unfilteredByte = filteredByte + PaethPredictor(a, b, c);
+							break;
+						default:
+							// Unknown filter type
+							break;
+						}
+						m_pixels[y * stride + x] = unfilteredByte;
+					}
+				}
 			}
 			void SaveAsPNG(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
