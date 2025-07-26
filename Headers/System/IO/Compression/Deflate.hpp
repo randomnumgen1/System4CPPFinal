@@ -203,7 +203,7 @@ namespace System {
 				 struct compressionPreset {
 					 BlockType blockType;
 				 };
-				 constexpr compressionPreset compressionPresetFromFlags(CompressionLevel level) {
+				static compressionPreset compressionPresetFromFlags(CompressionLevel level) {
 					 compressionPreset preset = {};
 					 switch (level) {
 					 case Level0:
@@ -232,6 +232,9 @@ namespace System {
 				 }
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
 					std::vector<uint8_t> result;
+					compressionPreset compressionpreset = compressionPresetFromFlags(compressionlevel);
+
+
 					int bit_position = 0;
 					write_bits(result, bit_position, (uint32_t)BlockMarker::Last, 1);
 					if (compressionlevel & CompressionLevel::Level0){
