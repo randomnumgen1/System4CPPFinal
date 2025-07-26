@@ -66,8 +66,13 @@ namespace System {
 				uint8_t filter;
 				uint8_t interlace;
 				void fixendian() {
+#if defined(_MSC_VER)
 					width = _byteswap_ulong(width);
 					height = _byteswap_ulong(height);
+#else
+					width = __builtin_bswap32(width);
+					height = __builtin_bswap32(height);
+#endif
 				}
 			};
 #pragma pack(pop)
