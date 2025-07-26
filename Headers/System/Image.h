@@ -115,7 +115,13 @@ namespace System {
 				uint8_t filter;
 				uint8_t interlace;
 			};
+			void LoadFromPNG(const std::string& filename){
+				std::ifstream file(filename, std::ios::binary);
+				if (!file) {
+					return;
+				}
 
+			}
 			void SaveAsPNG(const std::string& filename){
 				std::ofstream file(filename, std::ios::binary);
 				if (!file) {
