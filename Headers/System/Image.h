@@ -68,15 +68,17 @@ namespace System {
 			}
 			enum ImageFormat {
 				BMP,
-				TGA
+				TGA,
+				PNG
 			};
 			void Load(const std::string& filename) {
 				std::string ext = filename.substr(filename.find_last_of(".") + 1);
 				if (ext == "bmp") {
 					LoadFromBitmap(filename);
-				}
-				else if (ext == "tga") {
+				}else if (ext == "tga") {
 					LoadFromTGA(filename);
+				}else{
+				
 				}
 			}
 
@@ -87,6 +89,9 @@ namespace System {
 					break;
 				case TGA:
 					SaveAsTGA(filename);
+					break;
+				default:
+					SaveAsPNG(filename);
 					break;
 				}
 			}
