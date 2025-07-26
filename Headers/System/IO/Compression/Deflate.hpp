@@ -186,24 +186,55 @@ namespace System {
 
 			public:
 				// Enum for compression levels
-				 enum CompressionLevel{
-					 Level0,
-					 Level1,
-					 Level2,
-					 Level3,
-					 Level4,
-					 Level5,
-					 Level6,
-					 Level7,
-					 Level8,
-					 Level9,
-
+				 enum CompressionLevel {
+					 Level0 = 1 << 0,
+					 Level1 = 1 << 1,
+					 Level2 = 1 << 2,
+					 Level3 = 1 << 3,
+					 Level4 = 1 << 4,
+					 Level5 = 1 << 5,
+					 Level6 = 1 << 6,
+					 Level7 = 1 << 7,
+					 Level8 = 1 << 8,
+					 Level9 = 1 << 9,
+					 NoCompression = Level0,
+					 SmallestSize = Level9
 				 };
+				 struct compressionPreset {
+					 BlockType blockType;
+				 };
+				 constexpr compressionPreset compressionPresetFromFlags(CompressionLevel level) {
+					 compressionPreset preset = {};
+					 switch (level) {
+					 case Level0:
+						 preset.blockType = BlockType::Stored;
+						 break;
+					 case Level1:
+					 case Level2:
+						 preset.blockType = BlockType::Static; // Fast Huffman
+						 break;
+					 case Level3:
+					 case Level4:
+					 case Level5:
+						 preset.blockType = BlockType::Dynamic; // Balanced
+						 break;
+					 case Level6:
+					 case Level7:
+					 case Level8:
+					 case Level9:
+						 preset.blockType = BlockType::Dynamic; // Aggressive match search, full tree
+						 break;
+					 default:
+						 preset.blockType = BlockType::Static; // Fallback
+						 break;
+					 }
+					 return preset;
+				 }
 				static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data, CompressionLevel compressionlevel) {
 					std::vector<uint8_t> result;
 					int bit_position = 0;
 					write_bits(result, bit_position, (uint32_t)BlockMarker::Last, 1);
-					if (compressionlevel == CompressionLevel::Level0){
+					if (compressionlevel & CompressionLevel::Level0){
 						// Stored block
 						write_bits(result, bit_position, (uint32_t)BlockType::Stored, 2);
 						// Skip to the next byte boundary
@@ -215,7 +246,7 @@ namespace System {
 						for (uint8_t byte : data){
 							write_bits(result, bit_position, byte, 8);
 						}
-					}else if(compressionlevel == CompressionLevel::Level1){
+					}else if(compressionlevel & CompressionLevel::Level1){
 						// Static Huffman block
 						write_bits(result, bit_position, (uint32_t)BlockType::Static, 2);
 						std::vector<int> literal_lengths(MAX_LITERALS, 0);
