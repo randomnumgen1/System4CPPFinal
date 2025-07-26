@@ -22,6 +22,8 @@ namespace System {
 				uint16_t Reserved2; // Reserved; must be 0
 				uint32_t pixeloffset;   // Offset to pixel data from start of file
 			};
+#pragma pack(pop)
+#pragma pack(push, 1)
 			struct BITMAPINFOHEADER {
 				uint32_t ThisHeaderSize;          // Size of this header (40 bytes)
 				int32_t  WidthInPixels;         // Image width in pixels
@@ -35,6 +37,8 @@ namespace System {
 				uint32_t biClrUsed;       // Number of colors in palette
 				uint32_t biClrImportant;  // Important colors
 			};
+#pragma pack(pop)
+#pragma pack(push, 1)
 			struct TGAFILEHEADER {
 				uint8_t  idLength;         // Length of image ID field
 				uint8_t  colorMapType;     // 0 = no color map
@@ -257,14 +261,13 @@ namespace System {
 			void LoadFromTGA(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
 				if (!file) return;
+				TGAFILEHEADER tgafileheader = {};
+				file.read(reinterpret_cast<char*>(&tgafileheader), sizeof(TGAFILEHEADER));
 
-				uint8_t header[18];
-				file.read(reinterpret_cast<char*>(header), sizeof(header));
-
-				if (header[2] == 2) { // Uncompressed true-color
-					Width = (header[13] << 8) | header[12];
-					Height = (header[15] << 8) | header[14];
-					int bpp = header[16];
+				if (tgafileheader.imageType == 2) { // Uncompressed true-color
+					Width = tgafileheader.width;
+					Height = tgafileheader.height;
+					int bpp = tgafileheader.pixelDepth;
 
 					if (bpp == 32) {
 						m_pixels.assign(Width * Height * 4, 255);
@@ -277,7 +280,11 @@ namespace System {
 								file.read(reinterpret_cast<char*>(&m_pixels[idx + 3]), 1); // A
 							}
 						}
+					}else{
+						throw std::runtime_error("unsupported tga image bpp");
 					}
+				}else{
+					throw std::runtime_error("unsupported tga image type");
 				}
 			}
 
