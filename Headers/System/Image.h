@@ -223,19 +223,14 @@ namespace System {
 				if (bitmapfileheader.Magic != BITMAP_MAGIC) {
 					throw std::runtime_error("BITMAP_MAGIC");
 				}
+				BITMAPINFOHEADER bitmapinfoheader = {};
+				file.read(reinterpret_cast<char*>(&bitmapinfoheader), sizeof(BITMAPINFOHEADER));
 
+				Width = bitmapinfoheader.WidthInPixels;
+				Height = bitmapinfoheader.HeightInPixels;
 
-
-				// DIB Header
-				char dibHeader[40];
-				file.read(dibHeader, 40);
-
-				Width = *reinterpret_cast<int32_t*>(&dibHeader[4]);
-				Height = *reinterpret_cast<int32_t*>(&dibHeader[8]);
-				int16_t bpp = *reinterpret_cast<int16_t*>(&dibHeader[14]);
-
-				if (bpp != 32) {
-					return;
+				if (bitmapinfoheader.bpp != 32) {
+					throw std::runtime_error("BITMAP NOT 32 BPP");
 				}
 
 				m_pixels.assign(Width * Height * 4, 255);
@@ -245,11 +240,12 @@ namespace System {
 				for (int y = Height - 1; y >= 0; --y) {
 					for (int x = 0; x < Width; ++x) {
 						int idx = (y * Width + x) * 4;
-						// BMP stores pixels in BGR order
+						// BMP stores pixels in BGRA order
 						file.read(reinterpret_cast<char*>(&m_pixels[idx + 2]), 1);
 						file.read(reinterpret_cast<char*>(&m_pixels[idx + 1]), 1);
 						file.read(reinterpret_cast<char*>(&m_pixels[idx + 0]), 1);
 						file.read(reinterpret_cast<char*>(&m_pixels[idx + 3]), 1);
+
 					}
 				}
 			}
