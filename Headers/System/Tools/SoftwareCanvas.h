@@ -284,6 +284,14 @@ namespace System::Tools{
 			void closePath();
 			void resetTransform();
 			void debug();
+
+
+
+			void drawImage(Image img,int x,int y){
+			
+			}
+
+
 	};
 }
 #endif
