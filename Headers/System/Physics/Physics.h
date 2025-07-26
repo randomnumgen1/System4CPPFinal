@@ -32,6 +32,7 @@ namespace System{
     };
     class Physics{
     private:
+        //TODO: add a friend class for allowing access to private members e.g rigid body
 #if defined(SYSTEM_PHYSICS_BULLET)
         static std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
         static std::unique_ptr<btCollisionDispatcher> dispatcher;
