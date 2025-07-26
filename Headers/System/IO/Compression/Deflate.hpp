@@ -290,6 +290,10 @@ namespace System {
 					// Skip to the next byte boundary
 					bit_position = (bit_position + 7) & ~7;
 					int byte_position = bit_position / 8;
+					// Check if we have enough input data to read the length and negated length
+					if (byte_position + 4 > data.size()) {
+						throw std::runtime_error("Error: invalid stored block length");
+					}
 					// Read length and negated length
 					uint16_t len = *(uint16_t*)(data.data() + byte_position);
 					byte_position += 2;
@@ -302,6 +306,10 @@ namespace System {
 					}
 					// straight copy data as we are on a byte boundary
 					byte_position = bit_position / 8;
+					// Check if we have enough input data to read the content data
+					if (byte_position + len > data.size()) {
+						throw std::runtime_error("Error: invalid stored block length");
+					}
 					result.insert(result.end(), data.begin() + byte_position, data.begin() + byte_position + len);
 					bit_position += len * 8;
 				}
