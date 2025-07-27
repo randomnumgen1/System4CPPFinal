@@ -134,7 +134,6 @@ namespace System {
 				std::vector<uint8_t> Data;
 				uint32_t CRC;
 			};
- 
 			void LoadFromPNG(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
 				if (!file) {
@@ -147,22 +146,24 @@ namespace System {
 					return;
 				}
 				uint32_t calculatedCrc = {};
-				System::Security::Cryptography::HashAlgorithm::CRC32 crc32;
+				System::Security::Cryptography::HashAlgorithm::CRC32 crc32(System::Security::Cryptography::HashAlgorithm::CRC32POLYNOMIAL::ISO_HDLC);
 				//load chunk into chunks and verify crc
 				std::vector<PNG_CHUNK> chunks;
-				while (true) {
+				while (!file.eof()) {
 					PNG_CHUNK chunk;
 					chunk.Length = ReadUInt32BigEndian(file);
-					chunk.Type = ReadUInt32BigEndian(file);
+					file.read(reinterpret_cast<char*>(&chunk.Type), 4);
+					//chunk.Type = ReadUInt32BigEndian(file);
 					if (chunk.Length > 0) {
 						chunk.Data.resize(chunk.Length);
 						file.read(reinterpret_cast<char*>(chunk.Data.data()), chunk.Length);
 					}
-					chunk.CRC = ReadUInt32BigEndian(file);
+					file.read(reinterpret_cast<char*>(&chunk.CRC), 4);
+					//crc is the chunk type + data
 					crc32.update(reinterpret_cast<const uint8_t*>(&chunk.Type), 4);
-					crc32.update(reinterpret_cast<const uint8_t*>(chunk.Data.data()), chunk.Data.size());
-					crc32.finalize(reinterpret_cast<uint8_t*>(&calculatedCrc));
-					if (calculatedCrc != chunk.CRC) {
+					crc32.update(chunk.Data.data(), chunk.Data.size());
+					crc32.finalize(reinterpret_cast< uint8_t*>(&calculatedCrc));
+					if (calculatedCrc != chunk.CRC){
 						throw std::invalid_argument("crc32 mismatch.");
 					}
 					chunks.push_back(chunk);
@@ -203,12 +204,12 @@ namespace System {
 
 
 
-				 
+
 
 
 
 				throw std::invalid_argument("");
-				  
+
 			}
 
 			uint8_t PaethPredictor(uint8_t a, uint8_t b, uint8_t c) {
