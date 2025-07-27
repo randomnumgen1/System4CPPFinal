@@ -36,8 +36,9 @@ namespace System {
         for (int i = 0; i < 3; ++i) {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
             __cpuid((int*)regs, 0x80000002 + i);  // Start from 0x80000002
-#elif defined(__GNUC__) || defined(__clang__)
+#elif (defined(__GNUC__) || defined(__clang__)) && !defined(__aarch64__)
             __get_cpuid(0x80000002 + i, &regs[0], &regs[1], &regs[2], &regs[3]);
+#else
 #endif
             // Append the brand parts
             brand += std::string((const char*)&regs[0], 4);
