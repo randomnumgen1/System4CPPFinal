@@ -1,7 +1,7 @@
 CXX = g++
 INCLUDES = -I../../Headers
 STANDARD = -std=c++17
-SRCS = ImageTests.cpp
+SRCS = $(shell find ../../Sources -name "*.cpp")  ImageTests.cpp   
 OBJS = $(SRCS:.cpp=.o)
 
 # Targets
