@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build_x86:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,3 +19,17 @@ jobs:
 
     - name: Build
       run: make -C Tests/ImageTests
+
+  build_arm:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++-aarch64-linux-gnu make libgtest-dev
+
+    - name: Build
+      run: make -C Tests/ImageTests CXX=aarch64-linux-gnu-g++
