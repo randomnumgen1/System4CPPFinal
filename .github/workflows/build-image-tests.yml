@@ -32,4 +32,4 @@ jobs:
         sudo apt-get install -y g++-aarch64-linux-gnu make libgtest-dev
 
     - name: Build
-      run: make -C Tests/ImageTests CXX=aarch64-linux-gnu-g++
+      run: make -C Tests/ImageTests CXX=aarch64-linux-gnu-g++ -march=armv8-a
