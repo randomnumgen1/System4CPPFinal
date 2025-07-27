@@ -147,25 +147,25 @@ namespace System {
 					return;
 				}
 				uint32_t calculatedCrc = {};
-				
-
-
-				PNG_CHUNK hdrchunk;
-				hdrchunk.Length = ReadUInt32BigEndian(file);
-				hdrchunk.Type = ReadUInt32BigEndian(file);
-				if (hdrchunk.Type != 0x49484452) {
-					throw std::invalid_argument("expecting IHDR as first chunk");
+				std::vector<PNG_CHUNK> chunks;
+				while (true) {
+					PNG_CHUNK chunk;
+					chunk.Length = ReadUInt32BigEndian(file);
+					chunk.Type = ReadUInt32BigEndian(file);
+					if (chunk.Length > 0) {
+						chunk.Data.resize(chunk.Length);
+						file.read(reinterpret_cast<char*>(chunk.Data.data()), chunk.Length);
+					}
+					chunk.CRC = ReadUInt32BigEndian(file);
+					chunks.push_back(chunk);
+					if (chunk.Type == 0x49454E44) {
+						break;
+					}
 				}
-				if (hdrchunk.Length > 0) {
-					hdrchunk.Data.resize(hdrchunk.Length);
-					file.read(reinterpret_cast<char*>(hdrchunk.Data.data()), hdrchunk.Length);
-				}
-				hdrchunk.CRC = ReadUInt32BigEndian(file);
-				PNG_IHDR* ihdr = reinterpret_cast<PNG_IHDR*>(hdrchunk.Data.data());
+				PNG_IHDR* ihdr = reinterpret_cast<PNG_IHDR*>(chunks[0].Data.data());
 				ihdr->fixendian();
 				Width = ihdr->width;
 				Height = ihdr->height;
-
 				if (ihdr->bitDepth != 8 || ihdr->colorType != 6) {
 					throw std::invalid_argument("Only 8 bpp RGBA (colorType 6) supported.");
 				}
@@ -179,26 +179,22 @@ namespace System {
 					throw std::invalid_argument("we dont support filtering");
 				}
 				std::vector<uint8_t> idat_data;
-				while (true){
-					PNG_CHUNK chunk;
-					chunk.Length = ReadUInt32BigEndian(file);
-					chunk.Type = ReadUInt32BigEndian(file);
-					if (chunk.Length > 0) {
-						chunk.Data.resize(chunk.Length);
-						file.read(reinterpret_cast<char*>(chunk.Data.data()), chunk.Length);
-					}
-					chunk.CRC = ReadUInt32BigEndian(file);
+				for (auto chunk : chunks) {
 					if (chunk.Type == 0x49444154) { // IDAT
 						idat_data.insert(idat_data.end(), chunk.Data.begin(), chunk.Data.end());
-					}else if (chunk.Type == 0x49454E44) { // IEND
+					}
+					else if (chunk.Type == 0x49454E44) { // IEND
+						std::cout << "attempting decompress";
 						std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(idat_data);
 						Unfilter(decompressed_data, *ihdr);
 						break;
 					}
-
-
 				}
 
+
+
+
+				 
 
 
 
