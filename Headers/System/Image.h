@@ -377,7 +377,7 @@ namespace System {
 			void LoadFromBitmap(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
 				if (!file) {
-					return;
+					throw std::invalid_argument("couldnt find file");
 				}
 				BITMAPFILEHEADER bitmapfileheader = {};
 				file.read(reinterpret_cast<char*>(&bitmapfileheader), sizeof(BITMAPFILEHEADER));
@@ -412,7 +412,7 @@ namespace System {
 			}
 			void LoadFromTGA(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
-				if (!file) return;
+				if (!file) throw std::invalid_argument("couldnt find file");
 				TGAFILEHEADER tgafileheader = {};
 				file.read(reinterpret_cast<char*>(&tgafileheader), sizeof(TGAFILEHEADER));
 
