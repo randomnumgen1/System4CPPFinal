@@ -11,11 +11,6 @@ RELEASE_TARGET = image_tests_release
 
 
 # Flags
-ifeq ($(UNAME_M),$(shell uname -m))
-  MARCH_FLAG = -march=native
-else
-  MARCH_FLAG =
-endif
 DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG $(MARCH_FLAG)
 RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG $(MARCH_FLAG)
 
