@@ -147,6 +147,8 @@ namespace System {
 					return;
 				}
 				uint32_t calculatedCrc = {};
+				System::Security::Cryptography::HashAlgorithm::CRC32 crc32;
+				//load chunk into chunks and verify crc
 				std::vector<PNG_CHUNK> chunks;
 				while (true) {
 					PNG_CHUNK chunk;
@@ -157,11 +159,18 @@ namespace System {
 						file.read(reinterpret_cast<char*>(chunk.Data.data()), chunk.Length);
 					}
 					chunk.CRC = ReadUInt32BigEndian(file);
+					crc32.update(reinterpret_cast<const uint8_t*>(&chunk.Type), 4);
+					crc32.update(reinterpret_cast<const uint8_t*>(chunk.Data.data()), chunk.Data.size());
+					crc32.finalize(reinterpret_cast<uint8_t*>(&calculatedCrc));
+					if (calculatedCrc != chunk.CRC) {
+						throw std::invalid_argument("crc32 mismatch.");
+					}
 					chunks.push_back(chunk);
 					if (chunk.Type == 0x49454E44) {
 						break;
 					}
 				}
+				//IHDR is the first chunk in chunks
 				PNG_IHDR* ihdr = reinterpret_cast<PNG_IHDR*>(chunks[0].Data.data());
 				ihdr->fixendian();
 				Width = ihdr->width;
