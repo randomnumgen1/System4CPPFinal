@@ -9,8 +9,8 @@ DEBUG_TARGET = softwarecanvas_tests_debug
 RELEASE_TARGET = softwarecanvas_tests_release
 
 # Flags
-DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG 
-RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG
+DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -march=native
+RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG -march=native
 
 LDFLAGS = -lgtest -lpthread -lgtest_main
 
