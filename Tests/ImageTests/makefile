@@ -9,8 +9,8 @@ DEBUG_TARGET = image_tests_debug
 RELEASE_TARGET = image_tests_release
 
 # Flags
-DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -msse4.2
-RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG -msse4.2
+DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG
+RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG
 
 LDFLAGS = -lgtest -lpthread -lgtest_main
 
