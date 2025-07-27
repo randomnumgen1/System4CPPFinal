@@ -20,6 +20,9 @@ LDFLAGS = -lgtest -lpthread -lgtest_main
 # Default target
 all: debug
 
+arm: CXXFLAGS += -march=armv8-a
+arm: debug
+
 debug: CXXFLAGS = $(DEBUG_FLAGS)
 debug: $(DEBUG_TARGET)
 
@@ -37,3 +40,5 @@ $(RELEASE_TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET)
+	
+	
