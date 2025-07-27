@@ -32,7 +32,6 @@
 *.app
 
 # images
-*.png
 *.tga
 *.bmp
 
