@@ -150,7 +150,7 @@ namespace System {
 				char magic[8];
 				file.read(magic, 8);
 				if (magic[0] != (char)0x89 || magic[1] != 'P' || magic[2] != 'N' || magic[3] != 'G' || magic[4] != (char)0x0D || magic[5] != (char)0x0A || magic[6] != (char)0x1A || magic[7] != (char)0x0A) {
-					return;
+					throw std::invalid_argument("invalid png magic");
 				}
 				uint32_t calculatedCrc = {};
 				System::Security::Cryptography::HashAlgorithm::CRC32 crc32(System::Security::Cryptography::HashAlgorithm::CRC32POLYNOMIAL::ISO_HDLC);
@@ -198,8 +198,10 @@ namespace System {
 					throw std::invalid_argument("only support adaptive filtering");
 				}
 				if (ihdr->interlace != 0) {
-					throw std::invalid_argument("we dont support filtering");
+					throw std::invalid_argument("we dont support interlace");
 				}
+				//return early as we don't support zlib compression yet, remember deflate is a compression algorithm, zlib is a file format that uses deflate.
+				return ;
 				std::vector<uint8_t> idat_data;
 				for (auto chunk : chunks) {
 					if (chunk.GetType() == 0x49444154) { // IDAT
