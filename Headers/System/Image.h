@@ -133,6 +133,13 @@ namespace System {
 				uint32_t Type;
 				std::vector<uint8_t> Data;
 				uint32_t CRC;
+				inline uint32_t GetType() const {
+#if defined(_MSC_VER)
+					return _byteswap_ulong(Type);
+#else
+					return __builtin_bswap32(Type);
+#endif
+				}
 			};
 			void LoadFromPNG(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
@@ -167,11 +174,14 @@ namespace System {
 						throw std::invalid_argument("crc32 mismatch.");
 					}
 					chunks.push_back(chunk);
-					if (chunk.Type == 0x49454E44) {
+					if (chunk.GetType() == 0x49454E44) {
 						break;
 					}
 				}
 				//IHDR is the first chunk in chunks
+				if (chunks[0].GetType() != 0x49484452) {
+					throw std::invalid_argument("first chunk not ihdr.");
+				}
 				PNG_IHDR* ihdr = reinterpret_cast<PNG_IHDR*>(chunks[0].Data.data());
 				ihdr->fixendian();
 				Width = ihdr->width;
@@ -190,21 +200,15 @@ namespace System {
 				}
 				std::vector<uint8_t> idat_data;
 				for (auto chunk : chunks) {
-					if (chunk.Type == 0x49444154) { // IDAT
+					if (chunk.GetType() == 0x49444154) { // IDAT
 						idat_data.insert(idat_data.end(), chunk.Data.begin(), chunk.Data.end());
-					}
-					else if (chunk.Type == 0x49454E44) { // IEND
+					}else if (chunk.GetType() == 0x49454E44) { // IEND
 						std::cout << "attempting decompress";
 						std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(idat_data);
 						Unfilter(decompressed_data, *ihdr);
 						break;
 					}
 				}
-
-
-
-
-
 
 
 
