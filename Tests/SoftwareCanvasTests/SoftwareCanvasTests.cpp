@@ -16,6 +16,23 @@ TEST(SoftwareCanvasTests, ConstructorTiming) {
     std::cout << "Constructor timing (1000 iterations): " << elapsed.count() << " ms" << std::endl;
     SUCCEED();
 }
+
+TEST(SoftwareCanvasTests, ImageRectFillSaveTest) {
+	System::Image image = System::Image(1920,1080);
+	System::Tools::SoftwareCanvas ctx(image);
+	
+	ctx.rect(0, 0, 200, 200);
+	ctx.fill();
+	
+	
+	
+	
+	image.Save("testsave.bmp", System::Image::ImageFormat::BMP);
+}
+
+
+
+
 TEST(SoftwareCanvasTests, TimingTest) {
 	System::Image image = System::Image(1920,1080);
     System::Tools::SoftwareCanvas canvas(image);
