@@ -5,7 +5,8 @@
 TEST(ImageTests, LoadFromPNGTiming) {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 10; ++i) {
-        System::Image image = System::Image::LoadFromPNG("workingpng.png");
+        System::Image image(0,0);
+        image.LoadFromPNG("workingpng.png");
     }
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> elapsed = end - start;
