@@ -61,7 +61,7 @@ namespace System {
         const int _edx = 3;
         uint32_t regs[4] = {};
         __cpuid((int*)regs, (int)0);
-       
+
         vendor += std::string((const char*)&regs[_ebx], 4);
         vendor += std::string((const char*)&regs[_edx], 4);
         vendor += std::string((const char*)&regs[_ecx], 4);
@@ -233,7 +233,7 @@ namespace System {
         }
         return 0;
 #else 
-return 0;
+        return 0;
 #endif	
     }
 
