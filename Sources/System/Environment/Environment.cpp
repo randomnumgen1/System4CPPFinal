@@ -233,6 +233,8 @@ namespace System {
 
         }
         return 0;
+#else 
+return 0;
 #endif	
     }
 
