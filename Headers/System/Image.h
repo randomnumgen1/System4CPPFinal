@@ -9,7 +9,7 @@
 #include "Security/Cryptography/CRC32.h"
 #include "System/IO/BinaryReader.h"
 #include "System/IO/Compression/Deflate.hpp"
-
+#include <stdexcept>
 namespace System {
 
         class Image {
