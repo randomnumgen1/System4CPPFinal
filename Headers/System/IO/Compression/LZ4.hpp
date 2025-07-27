@@ -1,13 +1,24 @@
+/*
+
+
+*/
 #ifndef _SYSTEM_IO_COMPRESSION_LZ4_H
 #define _SYSTEM_IO_COMPRESSION_LZ4_H
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
+#include <cstring>
 namespace System {
 namespace IO {
 namespace Compression {
 	//| MagicNb	| F. Descriptor	| Data Block	| (...)	| EndMark	| C. Checksum |
 	//| 4 bytes	| 3-15 bytes	|               |       |4 bytes	|  0-4 bytes  |
+    enum LZ4Level
+    {
+        L00_FAST,
+        L03_HC, L04_HC, L05_HC, L06_HC, L07_HC, L08_HC, L09_HC,
+        L10_OPT, L11_OPT, L12_MAX,
+    };
 	class LZ4{
 		private:
 #pragma pack(push, 1)
@@ -17,6 +28,8 @@ namespace Compression {
                 uint8_t BD;
             };
 #pragma pack(pop)
+            bool ChainBlocks;
+            LZ4Level CompressionLevel;
 
 			// Determine maximum block size from the BD (Block Descriptor) byte.
             size_t getMaxBlockSize(uint8_t BD);
