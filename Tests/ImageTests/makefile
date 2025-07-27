@@ -20,7 +20,7 @@ LDFLAGS = -lgtest -lpthread -lgtest_main
 # Default target
 all: debug
 
-arm: CXXFLAGS += -march=armv8-a
+arm: DEBUG_FLAGS += -march=armv8-a
 arm: debug
 
 debug: CXXFLAGS = $(DEBUG_FLAGS)
