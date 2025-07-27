@@ -39,6 +39,7 @@ namespace System {
 #elif (defined(__GNUC__) || defined(__clang__)) && !defined(__aarch64__)
             __get_cpuid(0x80000002 + i, &regs[0], &regs[1], &regs[2], &regs[3]);
 #else
+#error "uns"
 #endif
             // Append the brand parts
             brand += std::string((const char*)&regs[0], 4);
