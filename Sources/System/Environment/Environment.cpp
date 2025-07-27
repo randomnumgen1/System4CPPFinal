@@ -2,14 +2,13 @@
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
 #include <windows.h> 
 #include <cstdint>
-
-#elif (defined(__GNUC__) || defined(__clang__)) && !defined(__aarch64__)
-#include <cpuid.h>
-#else
+#elif (defined(__GNUC__) || defined(__clang__))
 #include <unistd.h>
 #include <sys/sysinfo.h>
 #include <limits.h>
-
+#endif
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(__aarch64__)
+#include <cpuid.h>
 #endif 
 namespace System {
 
