@@ -9,7 +9,7 @@ DEBUG_TARGET = image_tests_debug
 RELEASE_TARGET = image_tests_release
 
 
-UNAME_M = arm64
+
 # Flags
 ifeq ($(UNAME_M),$(shell uname -m))
   MARCH_FLAG = -march=native
