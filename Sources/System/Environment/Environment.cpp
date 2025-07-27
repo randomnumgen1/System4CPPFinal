@@ -2,10 +2,14 @@
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
 #include <windows.h> 
 #include <cstdint>
+
+#elif (defined(__GNUC__) || defined(__clang__)) && !defined(__aarch64__)
+#include <cpuid.h>
 #else
 #include <unistd.h>
 #include <sys/sysinfo.h>
 #include <limits.h>
+
 #endif 
 namespace System {
 
