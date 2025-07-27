@@ -217,19 +217,43 @@ namespace System::Tools{
 				std::memcpy(&m_image->m_pixels[off], &pix, sizeof(pix));
 			}
 		public:
+			/// <summary>
+			/// Constructs a SoftwareCanvas object that operates on the given image.
+			/// </summary>
+			/// <param name="image"> </param>
 			SoftwareCanvas(System::Image& image);
 			//
 			bool isPointInPath(Path2D path,int x,int y);
+			/// <summary>
+			/// method returns true if the specified point is in the current path, otherwise false.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="y"></param>
+			/// <returns></returns>
 			bool isPointInPath(int x, int y);
-			// save/restore:
+			/// <summary>
+			/// method saves the state of the drawing context with all its attributes:
+			/// </summary>
 			void save();
+			/// <summary>
+			/// method restores the state of a saved drawing context
+			/// </summary>
 			void restore();
+			/// <summary>
+			/// method clips a region of any size from the original context.
+			/// When a region is clipped, future drawing is limited to the clipped region.
+			/// However, you can save the context settings with the save() method before using the clip() method, and use restore() to restore it later.
+			/// </summary>
 			void clip();
 			void clip(Path2D path);
-
+			/// <summary>
+			/// method fills the current path.
+			/// </summary>
 			void fill();
 			void fill(FillRule fillrule);
-
+			/// <summary>
+			/// method draws the current path.
+			/// </summary>
 			void stroke();
 			void fillText(std::string str, float x, float y);
 			void strokeText(std::string str, float x, float y);
@@ -239,12 +263,43 @@ namespace System::Tools{
 			void setFillStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 			void setStrokeStyle(const std::string& cssColor);
 			void setStrokeStyle(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+			/// <summary>
+			/// method adds a curve to the path by using the control points that represent a cubic Bézier curve.
+			/// </summary>
+			/// <param name="cp1x"></param>
+			/// <param name="cp1y"></param>
+			/// <param name="cp2x"></param>
+			/// <param name="cp2y"></param>
+			/// <param name="x"></param>
+			/// <param name="y"></param>
 			void bezierCurveTo(float cp1x,float cp1y,float cp2x,float cp2y,float x,float y);
+			/// <summary>
+			/// method adds a curve to the current path by using the control points that represent a quadratic Bézier curve.
+			/// </summary>
+			/// <param name="cpx">The x-coordinate of the Bézier control point</param>
+			/// <param name="cpy">The y-coordinate of the Bézier control point</param>
+			/// <param name="x">The x-coordinate of the ending point</param>
+			/// <param name="y">The y-coordinate of the ending point</param>
 			void quadraticCurveTo(float cpx,float cpy,float x,float y);
+			/// <summary>
+			/// method adds a rectangle to the path.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="y"></param>
+			/// <param name="w"></param>
+			/// <param name="h"></param>
 			void rect(float x, float y, float w, float h);
+			/// <summary>
+			/// method adds an arc/curve between two tangents to the path.
+			/// </summary>
+			/// <param name="x1"></param>
+			/// <param name="y1"></param>
+			/// <param name="x2"></param>
+			/// <param name="y2"></param>
+			/// <param name="r"></param>
 			void arcTo(float x1,float y1,float x2,float y2,float r);
 			/// <summary>
-			/// 
+			/// method creates a circle or a part of a circle.
 			/// </summary>
 			/// <param name="x">The x-coordinate of the center of the circle</param>
 			/// <param name="y">The y-coordinate of the center of the circle</param>
