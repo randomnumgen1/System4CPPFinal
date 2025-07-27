@@ -55,18 +55,19 @@ namespace System {
 #endif	
     }
     std::string Environment::ProcessorVendor() {
+        std::string vendor;
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
         const int _ebx = 1;
         const int _ecx = 2;
         const int _edx = 3;
         uint32_t regs[4] = {};
         __cpuid((int*)regs, (int)0);
-        std::string vendor;
+       
         vendor += std::string((const char*)&regs[_ebx], 4);
         vendor += std::string((const char*)&regs[_edx], 4);
         vendor += std::string((const char*)&regs[_ecx], 4);
-        return vendor;
 #endif
+        return vendor;
     }
     bool Environment::ProcessorHasFeature(CPUFEATURE ProcessorFeature) {
 #ifdef SYSTEM4CPPX64_WINDOWS_MSVC
