@@ -1,27 +1,21 @@
 CXX = g++
 INCLUDES = -I../../Headers
 STANDARD = -std=c++17
-SRCS = $(shell find ../../Sources -name "*.cpp")  ImageTests.cpp   
+SRCS = $(shell find ../../Sources -name "*.cpp") SoftwareCanvasTests.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Targets
-DEBUG_TARGET = image_tests_debug
-RELEASE_TARGET = image_tests_release
-
-
+DEBUG_TARGET = softwarecanvas_tests_debug
+RELEASE_TARGET = softwarecanvas_tests_release
 
 # Flags
-DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG $(CXXFLAGS)
-RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG $(CXXFLAGS)
-
+DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -march=native
+RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG -march=native
 
 LDFLAGS = -lgtest -lpthread -lgtest_main
 
 # Default target
 all: debug
-
-arm: DEBUG_FLAGS += -march=armv8-a
-arm: debug
 
 debug: CXXFLAGS = $(DEBUG_FLAGS)
 debug: $(DEBUG_TARGET)
@@ -40,5 +34,3 @@ $(RELEASE_TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET)
-	
-	
