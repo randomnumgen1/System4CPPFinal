@@ -168,7 +168,9 @@ namespace System {
 					file.read(reinterpret_cast<char*>(&chunk.CRC), 4);
 					//crc is the chunk type + data
 					crc32.update(reinterpret_cast<const uint8_t*>(&chunk.Type), 4);
-					crc32.update(chunk.Data.data(), chunk.Data.size());
+					if (chunk.Data.size() > 0){
+						crc32.update(chunk.Data.data(), chunk.Data.size());
+					}
 					crc32.finalize(reinterpret_cast< uint8_t*>(&calculatedCrc));
 					if (calculatedCrc != chunk.CRC){
 						throw std::invalid_argument("crc32 mismatch.");
