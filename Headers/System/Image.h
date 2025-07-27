@@ -138,7 +138,7 @@ namespace System {
 			void LoadFromPNG(const std::string& filename) {
 				std::ifstream file(filename, std::ios::binary);
 				if (!file) {
-					return;
+					throw std::invalid_argument("couldnt find file");
 				}
 
 				char magic[8];
