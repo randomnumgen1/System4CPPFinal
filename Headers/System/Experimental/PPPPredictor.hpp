@@ -49,4 +49,30 @@ public:
 
         return dest;
     }
+    std::vector<uint8_t> Decompress(const std::vector<uint8_t>& source) {
+        std::vector<uint8_t> dest;
+        const uint8_t* source_ptr = source.data();
+        size_t len = source.size();
+        size_t src_pos = 0;
+
+        while (src_pos < len) {
+            uint8_t flags = source_ptr[src_pos++];
+
+            for (int i = 0, bitmask = 1; i < 8 && src_pos < len; ++i, bitmask <<= 1) {
+                if ((flags & bitmask)) {
+                    uint8_t value = GuessTable[Hash];
+                    dest.push_back(value);
+                    Hash = (Hash << 4) ^ (value);
+                }
+                else {
+                    uint8_t value = source_ptr[src_pos++];
+                    dest.push_back(value);
+                    GuessTable[Hash] = value;
+                    Hash = (Hash << 4) ^ (value);
+                }
+            }
+        }
+
+        return dest;
+    }
 };
