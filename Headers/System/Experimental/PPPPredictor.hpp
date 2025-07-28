@@ -1,82 +1,50 @@
 #include <cstdint>
 #include <vector>
-#include <iostream>
-//Predictor-1 logic
+#include <cstring> // for memcpy if needed
+
 class PPPPredictor {
 private:
-    // Predictor lookup table for byte guesses
-    uint8_t guessTable[65536] = { 0 };
+    uint8_t GuessTable[1 << 16];
+    uint16_t Hash;
+
 
 public:
-    std::vector<uint8_t>  decompress(const std::vector<uint8_t>& source) {
-        std::vector<uint8_t> dest;
-        size_t len = source.size();      // Total bytes left
-        size_t pos = 0;                  // Current source position
-        uint16_t hash = 0;              // 16-bit rolling hash
-
-        while (pos < len) {
-            uint8_t flags = source[pos++]; // Get flags for the frame
-
-            for (int i = 0, bitmask = 1; i < 8; ++i, bitmask <<= 1) {
-                if (pos >= len && !(flags & bitmask)) break; // Stop if no more data to read
-
-                uint8_t current;
-                if ((flags & bitmask) != 0) {
-                    current = guessTable[hash];    // Prediction was correct
-                }
-                else {
-                    if (pos < len) {
-                        current = source[pos++];       // Prediction was wrong, read byte
-                        guessTable[hash] = current;    // Update guess table
-                    }
-                    else {
-                        break; // Avoid reading past the end of the source vector
-                    }
-                }
-
-                dest.push_back(current);
-                hash = (hash << 4) ^ current;      // Update hash
-            }
-        }
-
-        return dest;
+    PPPPredictor() {
+        std::fill(GuessTable, GuessTable + (1 << 16), 0);
+        Hash = 0;
     }
-    std::vector<uint8_t> compress(const std::vector<uint8_t>& source) {
+    std::vector<uint8_t> Compress(const std::vector<uint8_t>& source) {
         std::vector<uint8_t> dest;
-        size_t len = source.size();      // Total bytes left
-        size_t pos = 0;                  // Current source position
-        uint16_t hash = 0;              // 16-bit rolling hash
+        // Overestimate
+        int estimatedsize = std::max<int>(source.size() / 8 * 9 + 9,((source.size() + 7) / 8) * 9);
+        dest.reserve(estimatedsize);
 
-        // Process in frames of 8 bytes
-        while (len > 0) {
-            uint8_t flags = 0;                     // Bitfield for guesses
-            size_t flagIndex = dest.size();        // Reserve spot for flags
-            dest.push_back(0);                     // Placeholder for flags
+        const uint8_t* source_ptr = source.data();
+        size_t len = source.size();
+        size_t src_pos = 0;
 
-            int count = std::min<int>(8, static_cast<int>(len)); // Bound frame to remaining bytes
+        while (src_pos < len) {
+            size_t flag_pos = dest.size();
+            // Placeholder for flags
+            dest.push_back(0); 
+            uint8_t flags = 0;
 
-            for (int i = 0, bitmask = 1; i < count; ++i, bitmask <<= 1) {
-                uint8_t current = source[pos];     // Current byte to predict
+            for (int i = 0, bitmask = 1; i < 8 && src_pos < len; ++i, bitmask <<= 1) {
+                uint8_t value = source_ptr[src_pos];
 
-                // Check prediction success
-                if (guessTable[hash] == current) {
-                    flags |= bitmask;              // Prediction succeeded
-                    std::cout << "Guess was right at " << pos << std::endl;
+                if (GuessTable[Hash] == value) {
+                    // Correct guess
+                    flags |= bitmask; 
+                }else {
+                    GuessTable[Hash] = value;
+                    // Store mismatched byte
+                    dest.push_back(value); 
                 }
-                else {
-                    guessTable[hash] = current;    // Update guess table
-                    dest.push_back(current);       // Output incorrect prediction
-                    std::cout << "Guess was wrong at " << pos << std::endl;
-                }
-
-                // Update hash with current byte
-                hash = (hash << 4) ^ current;
-
-                ++pos;
-                --len;
+                Hash = (Hash << 4) ^ (value);
+                ++src_pos;
             }
 
-            dest[flagIndex] = flags;               // Fill in flag byte
+            dest[flag_pos] = flags; // Insert flags at reserved slot
         }
 
         return dest;
