@@ -453,10 +453,19 @@ namespace System {
 					throw std::runtime_error("unsupported tga image type");
 				}
 			}
+			void Flip(){
+				for (int y = 0; y < Height; ++y) {
+					for (int x = 0; x < Width / 2; ++x) {
+						int left_idx = (y * Width + x) * 4;
+						int right_idx = (y * Width + (Width - 1 - x)) * 4;
+						for (int i = 0; i < 4; ++i) {
+							std::swap(m_pixels[left_idx + i], m_pixels[right_idx + i]);
+						}
+					}
+				}
+			}
 
-
-
-
+	 
 
 
 
