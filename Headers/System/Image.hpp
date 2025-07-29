@@ -206,6 +206,10 @@ namespace System {
 			void SaveAsTGA(const std::string& filename);
 			void LoadFromBitmap(const std::string& filename);
 			void LoadFromTGA(const std::string& filename);
+			/// <summary>
+			/// Flips the image vertically by exchanging each top row with its corresponding bottom row.
+			/// Uses fast memory block copying for efficient pixel handling.
+			/// </summary>
 			void Flip();
 			~Image();
         };
