@@ -248,15 +248,20 @@ namespace System {
 			throw std::runtime_error("unsupported tga image type");
 		}
 	}
+
 	void Image::Flip() {
+		const int row_bytes = Width * 4;
+		std::vector<uint8_t> temp_row(row_bytes);
+
 		for (int y = 0; y < Height / 2; ++y) {
-			for (int x = 0; x < Width; ++x) {
-				int top_idx = (y * Width + x) * 4;
-				int bottom_idx = ((Height - 1 - y) * Width + x) * 4;
-				for (int i = 0; i < 4; ++i) {
-					std::swap(m_pixels[top_idx + i], m_pixels[bottom_idx + i]);
-				}
-			}
+			uint8_t* top = &m_pixels[y * row_bytes];
+			uint8_t* bottom = &m_pixels[(Height - 1 - y) * row_bytes];
+			// Copy top row to temp
+			std::memcpy(temp_row.data(), top, row_bytes);
+			// Copy bottom row to top
+			std::memcpy(top, bottom, row_bytes);
+			// Copy temp to bottom
+			std::memcpy(bottom, temp_row.data(), row_bytes);
 		}
 	}
 	Image::~Image() {
