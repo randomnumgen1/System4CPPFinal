@@ -9,7 +9,7 @@
 #include <cstring>
 #include <System/Matrix3x3.hpp>
 #include <System/Vector2.hpp>
-#include <System/Image.h>
+#include <System/Image.hpp>
 #include <algorithm>
 #include <System/Color32.hpp>
 
