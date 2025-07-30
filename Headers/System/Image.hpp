@@ -200,11 +200,26 @@ namespace System {
 #endif
 				}
 			};
+			/// <summary>
+			/// Loads PNG image file
+			/// currently supports 8 bpp RGBA (colorType 6).
+			/// </summary>
+			/// <param name="filename"></param>
 			void LoadFromPNG(const std::string& filename);
 			void SaveAsPNG(const std::string& filename);
 			void SaveAsBitmap(const std::string& filename);
 			void SaveAsTGA(const std::string& filename);
+			/// <summary>
+			/// Loads BITMAP image file
+			/// currently supports uncompressed 32 bbp
+			/// </summary>
+			/// <param name="filename"></param>
 			void LoadFromBitmap(const std::string& filename);
+			/// <summary>
+			/// Loads TGA image file
+			/// currently supports uncompressed true-color 32 bbp TGA file format.
+			/// </summary>
+			/// <param name="filename"></param>
 			void LoadFromTGA(const std::string& filename);
 			/// <summary>
 			/// Flips the image vertically by exchanging each top row with its corresponding bottom row.
