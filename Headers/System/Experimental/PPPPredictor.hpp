@@ -57,14 +57,16 @@ public:
 
         while (src_pos < len) {
             uint8_t flags = source_ptr[src_pos++];
-
+            // Process up to 8 bytes at a time
             for (int i = 0, bitmask = 1; i < 8 && src_pos < len; ++i, bitmask <<= 1) {
+                // If the flag bit is set, the guess was correct
                 if ((flags & bitmask)) {
                     uint8_t value = GuessTable[Hash];
                     dest.push_back(value);
                     Hash = (Hash << 4) ^ (value);
                 }
                 else {
+                    // The guess was incorrect, so read the mismatched byte
                     uint8_t value = source_ptr[src_pos++];
                     dest.push_back(value);
                     GuessTable[Hash] = value;
