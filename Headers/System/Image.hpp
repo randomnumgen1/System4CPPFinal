@@ -200,6 +200,9 @@ namespace System {
 #endif
 				}
 			};
+			void LoadFromDDS(const std::string& filename){
+			
+			}
 			/// <summary>
 			/// Loads PNG image file
 			/// currently supports 8 bpp RGBA (colorType 6).
