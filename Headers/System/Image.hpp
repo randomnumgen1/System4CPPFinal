@@ -200,7 +200,19 @@ namespace System {
 #endif
 				}
 			};
+#if defined(SYSTEM_EXPERIMENTAL_ENABLED)
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="filename"></param>
 			void LoadFromDDS(const std::string& filename){
+			
+			}
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="filename"></param>
+			void LoadFromJPEG(const std::string& filename){
 			
 			}
 			/// <summary>
@@ -209,7 +221,13 @@ namespace System {
 			/// </summary>
 			/// <param name="filename"></param>
 			void LoadFromPNG(const std::string& filename);
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="filename"></param>
 			void SaveAsPNG(const std::string& filename);
+#endif
+
 			void SaveAsBitmap(const std::string& filename);
 			void SaveAsTGA(const std::string& filename);
 			/// <summary>

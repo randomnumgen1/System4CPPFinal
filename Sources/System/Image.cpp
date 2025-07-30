@@ -7,7 +7,7 @@ namespace System {
 	}
  
 
-
+#if defined(SYSTEM_EXPERIMENTAL_ENABLED)
 	void Image::LoadFromPNG(const std::string& filename) {
 		std::ifstream file(filename, std::ios::binary);
 		if (!file) {
@@ -120,6 +120,9 @@ namespace System {
 		}
 
 	}
+#endif
+
+
 	void Image::SaveAsBitmap(const std::string& filename) {
 		std::ofstream file(filename, std::ios::binary);
 		if (!file) {
