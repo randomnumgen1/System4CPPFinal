@@ -22,7 +22,7 @@ System::Tools::SoftwareCanvas::SoftwareCanvas(System::Image& image) {
 	state.clippingpath.rect(0, 0, m_width, m_height);
 }
 
-bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
+bool System::Tools::SoftwareCanvas::isPointInPath(const Path2D& path, int x, int y) {
 	const auto& state = m_states.top();
 
 	// Transform the path first
@@ -121,7 +121,7 @@ void System::Tools::SoftwareCanvas::clip() {
 	st.clippingpath.m_path = m_path;
 	m_path.clear();
 }
-void System::Tools::SoftwareCanvas::clip(Path2D path) {
+void System::Tools::SoftwareCanvas::clip(const Path2D& path) {
 	auto& st = m_states.top();
 	st.clippingpath = path;
 }

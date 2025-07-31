@@ -223,7 +223,7 @@ namespace System::Tools{
 			/// <param name="image"> </param>
 			SoftwareCanvas(System::Image& image);
 			//
-			bool isPointInPath(Path2D path,int x,int y);
+			bool isPointInPath(const Path2D& path,int x,int y);
 			/// <summary>
 			/// method returns true if the specified point is in the current path, otherwise false.
 			/// </summary>
@@ -245,7 +245,7 @@ namespace System::Tools{
 			/// However, you can save the context settings with the save() method before using the clip() method, and use restore() to restore it later.
 			/// </summary>
 			void clip();
-			void clip(Path2D path);
+			void clip(const Path2D& path);
 			/// <summary>
 			/// method fills the current path.
 			/// </summary>
