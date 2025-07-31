@@ -12,7 +12,7 @@
 #include <cctype>
 #include <cstring>
 #include <iostream>
-System::Tools::SoftwareCanvas::SoftwareCanvas(System::Image& image){
+System::Tools::SoftwareCanvas::SoftwareCanvas(System::Image& image) {
 	m_width = image.Width;
 	m_height = image.Height;
 	m_image = &image;
@@ -24,24 +24,55 @@ System::Tools::SoftwareCanvas::SoftwareCanvas(System::Image& image){
 
 bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
 	const auto& state = m_states.top();
+
+	// Transform the path first
+	Path2D transformed_path;
+	transformed_path.m_path.reserve(path.m_path.size());
+	for (const auto& cmd : path.m_path) {
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			transformed_path.m_path.push_back({ cmd.type, transform(state.m_transform, cmd.p) });
+		}
+		else {
+			transformed_path.m_path.push_back(cmd);
+		}
+	}
+
+	// Bounding box check
+	float minX = std::numeric_limits<float>::max();
+	float minY = std::numeric_limits<float>::max();
+	float maxX = std::numeric_limits<float>::min();
+	float maxY = std::numeric_limits<float>::min();
+
+	for (const auto& cmd : transformed_path.m_path) {
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			minX = std::min(minX, cmd.p.x);
+			maxX = std::max(maxX, cmd.p.x);
+			minY = std::min(minY, cmd.p.y);
+			maxY = std::max(maxY, cmd.p.y);
+		}
+	}
+
+	if (x < minX || x > maxX || y < minY || y > maxY) {
+		return false;
+	}
+
 	int winding_number = 0;
 	float fy = static_cast<float>(y) + 0.5f;
 
 	Vector2 start, prev;
 	bool hasStart = false;
 
-	for (const auto& cmd : path.m_path) {
-		Vector2 p_transformed = transform(state.m_transform, cmd.p);
+	for (const auto& cmd : transformed_path.m_path) {
 		switch (cmd.type) {
 		case PathCommand::Type::MoveTo:
-			start = prev = p_transformed;
+			start = prev = cmd.p;
 			hasStart = true;
 			break;
 		case PathCommand::Type::LineTo:
 		{
 			if (!hasStart) break;
 			Vector2 a = prev;
-			Vector2 b = p_transformed;
+			Vector2 b = cmd.p;
 			if (a.y != b.y) {
 				if ((a.y <= fy && b.y > fy) || (b.y <= fy && a.y > fy)) {
 					float x_intersect = a.x + (fy - a.y) * (b.x - a.x) / (b.y - a.y);
@@ -73,56 +104,11 @@ bool System::Tools::SoftwareCanvas::isPointInPath(Path2D path, int x, int y) {
 
 	return winding_number != 0;
 }
+
 bool System::Tools::SoftwareCanvas::isPointInPath(int x, int y) {
-	const auto& state = m_states.top();
-	int winding_number = 0;
-	float fy = static_cast<float>(y) + 0.5f;
-
-	Vector2 start, prev;
-	bool hasStart = false;
-
-	for (const auto& cmd : m_path) {
-		Vector2 p_transformed = transform(state.m_transform, cmd.p);
-		switch (cmd.type) {
-		case PathCommand::Type::MoveTo:
-			start = prev = p_transformed;
-			hasStart = true;
-			break;
-		case PathCommand::Type::LineTo:
-		{
-			if (!hasStart) break;
-			Vector2 a = prev;
-			Vector2 b = p_transformed;
-			if (a.y != b.y) {
-				if ((a.y <= fy && b.y > fy) || (b.y <= fy && a.y > fy)) {
-					float x_intersect = a.x + (fy - a.y) * (b.x - a.x) / (b.y - a.y);
-					if (x_intersect <= x) {
-						winding_number += (a.y < b.y) ? 1 : -1;
-					}
-				}
-			}
-			prev = b;
-			break;
-		}
-		case PathCommand::Type::ClosePath:
-			if (hasStart) {
-				Vector2 a = prev;
-				Vector2 b = start;
-				if (a.y != b.y) {
-					if ((a.y <= fy && b.y > fy) || (b.y <= fy && a.y > fy)) {
-						float x_intersect = a.x + (fy - a.y) * (b.x - a.x) / (b.y - a.y);
-						if (x_intersect <= x) {
-							winding_number += (a.y < b.y) ? 1 : -1;
-						}
-					}
-				}
-				prev = start;
-			}
-			break;
-		}
-	}
-
-	return winding_number != 0;
+	Path2D path;
+	path.m_path = m_path;
+	return isPointInPath(path, x, y);
 }
 void System::Tools::SoftwareCanvas::save() {
 	m_states.push(m_states.top());
@@ -139,86 +125,87 @@ void System::Tools::SoftwareCanvas::clip(Path2D path) {
 	auto& st = m_states.top();
 	st.clippingpath = path;
 }
-void System::Tools::SoftwareCanvas::fill(){
+void System::Tools::SoftwareCanvas::fill() {
 	fill(FillRule::nonzero);
 }
 void System::Tools::SoftwareCanvas::fill(FillRule fillrule) {
-    const auto& state = m_states.top();
-    if (m_path.empty()) return;
+	const auto& state = m_states.top();
+	if (m_path.empty()) return;
 
-    // Transform path
-    std::vector<PathCommand> transformed_path;
-    for (const auto& cmd : m_path) {
-        if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
-            transformed_path.push_back({cmd.type, transform(state.m_transform, cmd.p)});
-        } else {
-            transformed_path.push_back(cmd);
-        }
-    }
+	// Transform path
+	std::vector<PathCommand> transformed_path;
+	for (const auto& cmd : m_path) {
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			transformed_path.push_back({ cmd.type, transform(state.m_transform, cmd.p) });
+		}
+		else {
+			transformed_path.push_back(cmd);
+		}
+	}
 
-    // Bounding box for the path
-    float minX = std::numeric_limits<float>::max();
-    float minY = std::numeric_limits<float>::max();
-    float maxX = std::numeric_limits<float>::min();
-    float maxY = std::numeric_limits<float>::min();
+	// Bounding box for the path
+	float minX = std::numeric_limits<float>::max();
+	float minY = std::numeric_limits<float>::max();
+	float maxX = std::numeric_limits<float>::min();
+	float maxY = std::numeric_limits<float>::min();
 
-    for (const auto& cmd : transformed_path) {
-        if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
-            minX = std::min(minX, cmd.p.x);
-            maxX = std::max(maxX, cmd.p.x);
-            minY = std::min(minY, cmd.p.y);
-            maxY = std::max(maxY, cmd.p.y);
-        }
-    }
+	for (const auto& cmd : transformed_path) {
+		if (cmd.type == PathCommand::Type::MoveTo || cmd.type == PathCommand::Type::LineTo) {
+			minX = std::min(minX, cmd.p.x);
+			maxX = std::max(maxX, cmd.p.x);
+			minY = std::min(minY, cmd.p.y);
+			maxY = std::max(maxY, cmd.p.y);
+		}
+	}
 
-    int startY = std::max(0, static_cast<int>(minY));
-    int endY = std::min(m_height, static_cast<int>(std::ceil(maxY)));
+	int startY = std::max(0, static_cast<int>(minY));
+	int endY = std::min(m_height, static_cast<int>(std::ceil(maxY)));
 
-    for (int y = startY; y < endY; ++y) {
-        std::vector<float> intersections;
-        Vector2 start, prev;
-        bool hasStart = false;
+	for (int y = startY; y < endY; ++y) {
+		std::vector<float> intersections;
+		Vector2 start, prev;
+		bool hasStart = false;
 
-        for (const auto& cmd : transformed_path) {
-            switch (cmd.type) {
-            case PathCommand::Type::MoveTo:
-                start = prev = cmd.p;
-                hasStart = true;
-                break;
-            case PathCommand::Type::LineTo:
-                if (hasStart) {
-                    if ((prev.y <= y && cmd.p.y > y) || (cmd.p.y <= y && prev.y > y)) {
-                        float x_intersect = (y - prev.y) * (cmd.p.x - prev.x) / (cmd.p.y - prev.y) + prev.x;
-                        intersections.push_back(x_intersect);
-                    }
-                    prev = cmd.p;
-                }
-                break;
-            case PathCommand::Type::ClosePath:
-                if (hasStart) {
-                    if ((prev.y <= y && start.y > y) || (start.y <= y && prev.y > y)) {
-                        float x_intersect = (y - prev.y) * (start.x - prev.x) / (start.y - prev.y) + prev.x;
-                        intersections.push_back(x_intersect);
-                    }
-                    prev = start; // End of subpath
-                }
-                break;
-            }
-        }
+		for (const auto& cmd : transformed_path) {
+			switch (cmd.type) {
+			case PathCommand::Type::MoveTo:
+				start = prev = cmd.p;
+				hasStart = true;
+				break;
+			case PathCommand::Type::LineTo:
+				if (hasStart) {
+					if ((prev.y <= y && cmd.p.y > y) || (cmd.p.y <= y && prev.y > y)) {
+						float x_intersect = (y - prev.y) * (cmd.p.x - prev.x) / (cmd.p.y - prev.y) + prev.x;
+						intersections.push_back(x_intersect);
+					}
+					prev = cmd.p;
+				}
+				break;
+			case PathCommand::Type::ClosePath:
+				if (hasStart) {
+					if ((prev.y <= y && start.y > y) || (start.y <= y && prev.y > y)) {
+						float x_intersect = (y - prev.y) * (start.x - prev.x) / (start.y - prev.y) + prev.x;
+						intersections.push_back(x_intersect);
+					}
+					prev = start; // End of subpath
+				}
+				break;
+			}
+		}
 
-        std::sort(intersections.begin(), intersections.end());
+		std::sort(intersections.begin(), intersections.end());
 
-        for (size_t i = 0; i + 1 < intersections.size(); i += 2) {
-            int x_start = std::max(0, static_cast<int>(std::ceil(intersections[i])));
-            int x_end = std::min(m_width, static_cast<int>(std::ceil(intersections[i + 1])));
-            for (int x = x_start; x < x_end; ++x) {
-                if (isPointInPath(state.clippingpath, x, y)) {
-                    SetPixelBlend(x, y, state.m_fill);
-                }
-            }
-        }
-    }
-    m_path.clear();
+		for (size_t i = 0; i + 1 < intersections.size(); i += 2) {
+			int x_start = std::max(0, static_cast<int>(std::ceil(intersections[i])));
+			int x_end = std::min(m_width, static_cast<int>(std::ceil(intersections[i + 1])));
+			for (int x = x_start; x < x_end; ++x) {
+				if (isPointInPath(state.clippingpath, x, y)) {
+					SetPixelBlend(x, y, state.m_fill);
+				}
+			}
+		}
+	}
+	m_path.clear();
 }
 
 void System::Tools::SoftwareCanvas::stroke() {
@@ -317,7 +304,7 @@ void System::Tools::SoftwareCanvas::setlineWidth(float width) {
 	}
 }
 
-void System::Tools::SoftwareCanvas::setFillStyle(const std::string& cssColor){
+void System::Tools::SoftwareCanvas::setFillStyle(const std::string& cssColor) {
 	auto& st = m_states.top();
 	Color32::TryGetColor32(cssColor, st.m_fill);
 }
@@ -326,7 +313,7 @@ void System::Tools::SoftwareCanvas::setStrokeStyle(const std::string& cssColor) 
 	Color32::TryGetColor32(cssColor, st.m_stroke);
 }
 
- 
+
 
 
 
@@ -449,11 +436,11 @@ void System::Tools::SoftwareCanvas::debug() {
 #endif
 }
 
-void System::Tools::SoftwareCanvas::drawImage(Image& img, int x, int y){
+void System::Tools::SoftwareCanvas::drawImage(Image& img, int x, int y) {
 	drawImage(img, x, y, img.Width, img.Height);
 }
 
-void System::Tools::SoftwareCanvas::drawImage(Image& img, int x, int y, int w, int h){
+void System::Tools::SoftwareCanvas::drawImage(Image& img, int x, int y, int w, int h) {
 	const auto& state = m_states.top();
 
 	for (int sy = 0; sy < img.Height; ++sy) {
