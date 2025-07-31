@@ -181,8 +181,15 @@ namespace System {
 				case TGA:
 					SaveAsTGA(filename);
 					break;
-				default:
+				case PNG:
+#if defined(SYSTEM_EXPERIMENTAL_ENABLED)
 					SaveAsPNG(filename);
+#else
+					throw std::runtime_error("Unsupported image save format");
+#endif
+					break;
+				default:
+					throw std::runtime_error("Unsupported image save format");
 					break;
 				}
 			}
