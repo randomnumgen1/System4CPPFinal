@@ -1,4 +1,6 @@
 #include <System/Image.hpp>
+#include <cstring>
+
 namespace System {
 	Image::Image(int w, int h) {
 		Width = w;
