@@ -172,7 +172,24 @@ namespace System {
 				
 				}
 			}
-
+			void Load(const std::string& filename) {
+				std::string ext = filename.substr(filename.find_last_of(".") + 1);
+				if (ext == "bmp") {
+					LoadFromBitmap(filename);
+				}
+				else if (ext == "tga") {
+					LoadFromTGA(filename);
+				}
+				else if (ext == "png") {
+#if defined(SYSTEM_EXPERIMENTAL_ENABLED)
+					LoadFromPNG(filename);
+#else
+					throw std::runtime_error("Unsupported image load format");
+#endif
+				}else{
+					throw std::runtime_error("Unsupported image load format");
+				}
+			}
 			void Save(const std::string& filename, ImageFormat format) {
 				switch (format) {
 				case BMP:
