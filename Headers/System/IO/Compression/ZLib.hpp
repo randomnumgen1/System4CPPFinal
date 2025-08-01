@@ -70,12 +70,36 @@ namespace System::IO::Compression {
 			size_t compressed_len = data.size() - 6; // 2 for header, 4 for footer
 			return Deflate::Decompress(compressed_ptr, compressed_len);
 		}
-		static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
-			std::vector<uint8_t> result;
 
 
+		static uint32_t adler32(const std::vector<uint8_t>& data) {
+			uint32_t a = 1, b = 0;
+			for (uint8_t byte : data) {
+				a = (a + byte) % 65521;
+				b = (b + a) % 65521;
+			}
+			return (b << 16) | a;
 		}
 
+		static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
+			std::vector<uint8_t> result;
+			// ZLib header
+			result.push_back(0x78); // CMF
+			result.push_back(0x01); // FLG - No preset dictionary, fastest algorithm
+
+			// Deflate compressed data
+			std::vector<uint8_t> compressed_data = Deflate::Compress(data, Deflate::CompressionLevel::Level1);
+			result.insert(result.end(), compressed_data.begin(), compressed_data.end());
+
+			// Adler32 checksum
+			uint32_t checksum = adler32(data);
+			result.push_back((checksum >> 24) & 0xFF);
+			result.push_back((checksum >> 16) & 0xFF);
+			result.push_back((checksum >> 8) & 0xFF);
+			result.push_back(checksum & 0xFF);
+
+			return result;
+		}
 
 
 
