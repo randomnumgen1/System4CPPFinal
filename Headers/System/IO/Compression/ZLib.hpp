@@ -5,7 +5,7 @@
 #define _SYSTEM_IO_COMPRESSION_ZLIB_H
 
 namespace System::IO::Compression {
-    class ZLib {
+	class ZLib {
 	private:
 #pragma pack(push, 1)
 		struct ZlibHeader {
@@ -14,13 +14,13 @@ namespace System::IO::Compression {
 
 				struct {
 					// CMF byte
-					uint8_t compressionMethod : 4; // Bits 0�3 (usually 8 for DEFLATE)
-					uint8_t compressionInfo : 4; // Bits 4�7 (e.g. window size)
+					uint8_t compressionMethod : 4; // Bits 0â3 (usually 8 for DEFLATE)
+					uint8_t compressionInfo : 4; // Bits 4â7 (e.g. window size)
 
 					// FLG byte
-					uint8_t fcheck : 5; // Bits 0�4 (header checksum)
+					uint8_t fcheck : 5; // Bits 0â4 (header checksum)
 					uint8_t fdict : 1; // Bit 5 (preset dictionary flag)
-					uint8_t flevel : 2; // Bits 6�7 (compression level)
+					uint8_t flevel : 2; // Bits 6â7 (compression level)
 				};
 			};
 		};
@@ -44,18 +44,18 @@ namespace System::IO::Compression {
 			bit_position += count;
 			return value;
 		}
-        static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
-            std::vector<uint8_t> result;
+		static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
+			std::vector<uint8_t> result;
 			int bit_position = 0;
 			ZlibHeader* header = reinterpret_cast<ZlibHeader*>(const_cast<uint8_t*>(data.data()));
 			std::cout << "compressionMethod[" << header->compressionMethod << "] " << std::endl;
-			 
-        }
-        static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
-            std::vector<uint8_t> result;
-            result.push_back(0x78);
 
-        }
-    };
+		}
+		static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
+			std::vector<uint8_t> result;
+			result.push_back(0x78);
+
+		}
+	};
 }
 #endif
