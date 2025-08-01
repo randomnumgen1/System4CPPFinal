@@ -4,13 +4,13 @@
 
 TEST(ZLibTests, ZLibDecompressFile) {
     // Assuming the test will be run from a subdirectory in Tests, like Tests/Compression
-    std::vector<uint8_t> decompressed_data = System::IO::Compression::ZLib::Decompress(System::IO::File::ReadAllBytes("hello.zlib"));
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::ZLib::Decompress(System::IO::File::ReadAllBytes("max_compressed1.zlib"));
     std::string decompressed_string(decompressed_data.begin(), decompressed_data.end());
 	ASSERT_EQ(decompressed_string, std::string("Hello ZLib!"));
 }
 //decompresses the data generated from generate_zlib2.py
 TEST(ZLibTests, ZLibDecompressMaxCompressedFile) {
-    std::vector<uint8_t> decompressed_data = System::IO::Compression::ZLib::Decompress(System::IO::File::ReadAllBytes("hello.zlib"));
+    std::vector<uint8_t> decompressed_data = System::IO::Compression::ZLib::Decompress(System::IO::File::ReadAllBytes("max_compressed2.zlib"));
     std::string decompressed_string(decompressed_data.begin(), decompressed_data.end());
     std::string expected_string;
     for (int i = 0; i < 100; ++i) {

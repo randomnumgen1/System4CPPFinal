@@ -7,7 +7,7 @@ original_data = b'A' * 100000
 compressed_data = zlib.compress(original_data, level=9)
 
 # Write the compressed data to a file
-with open('Tests/Compression/max_compressed.zlib', 'wb') as f:
+with open('max_compressed1.zlib', 'wb') as f:
     f.write(compressed_data)
 
 print("Successfully generated 'max_compressed.zlib'")
