@@ -22,11 +22,9 @@ namespace System {
                     throw std::runtime_error("ReadByte: Out of bounds");
                 return m_data[m_position++];
             }
-
             int8_t ReadSByte() {
                 return static_cast<int8_t>(ReadByte());
             }
-
             uint16_t ReadUInt16() {
                 if (m_position + 1 >= m_length)
                     throw std::runtime_error("ReadUInt16: Out of bounds");
@@ -90,7 +88,6 @@ namespace System {
                 } while ((byte & 0x80) != 0);
                 return result;
             }
-
             int64_t Read7BitEncodedInt64() {
                 int64_t result = 0;
                 int shift = 0;
