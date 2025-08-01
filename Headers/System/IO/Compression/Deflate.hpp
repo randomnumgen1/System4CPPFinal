@@ -407,13 +407,15 @@ namespace System {
 				/// <param name="data"></param>
 				/// <param name="bit_position"></param>
 				static void ReadDynamicBlock(std::vector<uint8_t>& result, const uint8_t* data, size_t data_len, int& bit_position) {
+					//5 bits: HLIT — number of literal/length codes minus 257 (range: 0–286)
 					uint16_t hlit = read_bits(data, data_len, bit_position, 5) + 257;
+					//5 bits: HDIST — number of distance codes minus 1 (range: 0–32)
 					uint16_t hdist = read_bits(data, data_len, bit_position, 5) + 1;
+					//4 bits: HCLEN — number of code length codes minus 4 (range: 0–19)
 					uint16_t hclen = read_bits(data, data_len, bit_position, 4) + 4;
 
 					std::vector<int> code_lengths_lengths(19, 0);
-					int
-						code_lengths_order[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+					int code_lengths_order[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
 					for (int i = 0; i < hclen; ++i) {
 						code_lengths_lengths[code_lengths_order[i]] = read_bits(data, data_len, bit_position, 3);
