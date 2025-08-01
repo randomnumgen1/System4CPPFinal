@@ -59,10 +59,6 @@ namespace System::IO::Compression {
 			zlibheader.CMF = memorystream.ReadByte();
 			zlibheader.FLG = memorystream.ReadByte();
 
-
-			//zlibheader.CMF = data[0];
-			//zlibheader.FLG = data[1];
-
 			if (zlibheader.GetCompressionMethod() != 8) {
 				throw std::runtime_error("Invalid ZLib data: unsupported compression method");
 			}
@@ -70,17 +66,20 @@ namespace System::IO::Compression {
 				throw std::runtime_error("Invalid ZLib data: preset dictionary not supported");
 			}
 			// The zlib header is 2 bytes, the adler32 checksum is 4 bytes at the end
-			std::vector<uint8_t> compressed_data(data.begin() + 2, data.end() - 4);
-			return Deflate::Decompress(compressed_data);
-
-
-
+			const uint8_t* compressed_ptr = data.data() + 2;
+			size_t compressed_len = data.size() - 6; // 2 for header, 4 for footer
+			return Deflate::Decompress(compressed_ptr, compressed_len);
 		}
 		static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
 			std::vector<uint8_t> result;
 
 
 		}
+
+
+
+
+
 	};
 }
 #endif
