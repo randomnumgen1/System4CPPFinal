@@ -166,16 +166,6 @@ namespace System {
 				std::string ext = filename.substr(filename.find_last_of(".") + 1);
 				if (ext == "bmp") {
 					LoadFromBitmap(filename);
-				}else if (ext == "tga") {
-					LoadFromTGA(filename);
-				}else{
-				
-				}
-			}
-			void Load(const std::string& filename) {
-				std::string ext = filename.substr(filename.find_last_of(".") + 1);
-				if (ext == "bmp") {
-					LoadFromBitmap(filename);
 				}
 				else if (ext == "tga") {
 					LoadFromTGA(filename);
