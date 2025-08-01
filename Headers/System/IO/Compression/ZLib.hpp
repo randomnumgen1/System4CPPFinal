@@ -7,24 +7,27 @@
 namespace System::IO::Compression {
 	class ZLib {
 	private:
-#pragma pack(push, 1)
-		struct ZlibHeader {
-			union {
-				uint16_t raw;
-
-				struct {
-					// CMF byte
-					uint8_t compressionMethod : 4; // Bits 0-3 (usually 8 for DEFLATE)
-					uint8_t compressionInfo : 4; // Bits 4-7 (e.g. window size)
-
-					// FLG byte
-					uint8_t fcheck : 5; // Bits 0-4 (header checksum)
-					uint8_t fdict : 1; // Bit 5 (preset dictionary flag)
-					uint8_t flevel : 2; // Bits 6-7 (compression level)
-				};
-			};
+		struct ZLIBHEADER{
+			uint8_t CMF;
+			uint8_t FLG;
+			// CMF byte
+			uint8_t GetCompressionMethod() const{
+				return CMF & 0x0F;
+			}
+			uint8_t GetCompressionInfo() const{
+				return (CMF >> 4) & 0x0F;
+			}
+			// FLG byte
+			uint8_t GetFcheck() const{
+				return FLG & 0x1F;
+			}
+			uint8_t GetFdict() const{
+				return (FLG >> 5) & 1;			
+			}
+			uint8_t GetFlevel() const{
+				return (FLG >> 6) & 0x03;
+			}
 		};
-#pragma pack(pop)
 	public:
 		// Reads a specified number of bits from the data vector
 		static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
@@ -47,13 +50,24 @@ namespace System::IO::Compression {
 		static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
 			std::vector<uint8_t> result;
 			int bit_position = 0;
-			ZlibHeader* header = reinterpret_cast<ZlibHeader*>(const_cast<uint8_t*>(data.data()));
-			std::cout << "compressionMethod[" << header->compressionMethod << "] " << std::endl;
+			ZLIBHEADER zlibheader = {};
+			zlibheader.CMF = data[0];
+			zlibheader.FLG = data[1];
+
+			if (zlibheader.GetCompressionMethod() != 8) {
+				throw std::runtime_error("Invalid ZLib data: unsupported compression method");
+			}
+			if (zlibheader.GetFdict()) {
+				throw std::runtime_error("Invalid ZLib data: preset dictionary not supported");
+			}
+
+
+
 
 		}
 		static std::vector<uint8_t> Compress(const std::vector<uint8_t>& data) {
 			std::vector<uint8_t> result;
-			result.push_back(0x78);
+
 
 		}
 	};
