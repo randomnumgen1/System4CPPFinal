@@ -5,11 +5,6 @@
 #include <cstdint>
 #include <stdexcept>
 
-#pragma once
-#include <cstdint>
-#include <vector>
-#include <stdexcept>
-
 namespace System {
     namespace IO {
         class MemoryBinaryReader {
@@ -45,12 +40,14 @@ namespace System {
             }
 
             uint32_t ReadUInt32() {
-                if (m_position + 3 >= m_length)
+                if (m_position + 4 > m_length) {
                     throw std::runtime_error("ReadUInt32: Out of bounds");
-                uint32_t val = 0;
-                for (int i = 0; i < 4; ++i) {
-                    val |= (static_cast<uint32_t>(m_data[m_position++]) << (8 * i));
                 }
+                uint32_t val = (uint32_t)m_data[m_position] |
+                    ((uint32_t)m_data[m_position + 1] << 8) |
+                    ((uint32_t)m_data[m_position + 2] << 16) |
+                    ((uint32_t)m_data[m_position + 3] << 24);
+                m_position += 4;
                 return val;
             }
 
@@ -79,11 +76,34 @@ namespace System {
                     throw std::runtime_error("Seek: Out of bounds");
                 m_position = offset;
             }
-            int32_t Read7BitEncodedInt(){
-            
+            int32_t Read7BitEncodedInt() {
+                int32_t result = 0;
+                int shift = 0;
+                uint8_t byte;
+                do {
+                    if (shift == 35) { // 5 bytes * 7 bits, indicates overflow
+                        throw std::runtime_error("Invalid 7-bit encoded integer.");
+                    }
+                    byte = ReadByte();
+                    result |= (int32_t)(byte & 0x7F) << shift;
+                    shift += 7;
+                } while ((byte & 0x80) != 0);
+                return result;
             }
-            int64_t Read7BitEncodedInt64(){
-            
+
+            int64_t Read7BitEncodedInt64() {
+                int64_t result = 0;
+                int shift = 0;
+                uint8_t byte;
+                do {
+                    if (shift == 70) { // 10 bytes * 7 bits, indicates overflow
+                        throw std::runtime_error("Invalid 7-bit encoded long.");
+                    }
+                    byte = ReadByte();
+                    result |= (int64_t)(byte & 0x7F) << shift;
+                    shift += 7;
+                } while ((byte & 0x80) != 0);
+                return result;
             }
         };
     }
