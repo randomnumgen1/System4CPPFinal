@@ -479,6 +479,9 @@ namespace System {
 						}
 					}
 				}
+				static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
+					return Decompress(data.data(), data.size());
+				}
 				// Decompresses data using the Deflate algorithm
 				static std::vector<uint8_t> Decompress(const uint8_t* data, size_t data_len) {
 					std::vector<uint8_t> result;
