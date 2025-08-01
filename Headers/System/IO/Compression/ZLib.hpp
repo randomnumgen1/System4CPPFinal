@@ -16,20 +16,20 @@ namespace System::IO::Compression {
 			uint8_t CMF;
 			uint8_t FLG;
 			// CMF byte
-			uint8_t GetCompressionMethod() const{
+			inline uint8_t GetCompressionMethod() const{
 				return CMF & 0x0F;
 			}
-			uint8_t GetCompressionInfo() const{
+			inline uint8_t GetCompressionInfo() const{
 				return (CMF >> 4) & 0x0F;
 			}
 			// FLG byte
-			uint8_t GetFcheck() const{
+			inline uint8_t GetFcheck() const{
 				return FLG & 0x1F;
 			}
-			uint8_t GetFdict() const{
+			inline uint8_t GetFdict() const{
 				return (FLG >> 5) & 1;			
 			}
-			uint8_t GetFlevel() const{
+			inline uint8_t GetFlevel() const{
 				return (FLG >> 6) & 0x03;
 			}
 		};
