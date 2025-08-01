@@ -93,22 +93,23 @@ namespace System {
 				}
 				int decode(const std::vector<uint8_t>& data, int& bit_position) const {
 					int currentNode = 0;
-					int current_byte = data[bit_position / 8];
-					int bit_offset = bit_position % 8;
 
 					while (tree[currentNode].Left != -1) {
-						int bit = (current_byte >> bit_offset) & 1;
-						bit_offset++;
-						if (bit_offset == 8) {
-							bit_offset = 0;
-							current_byte = data[bit_position / 8 + 1];
+						int byte_index = bit_position / 8;
+						if (byte_index >= data.size()) {
+							throw std::runtime_error("Error: decode reading past file");
 						}
+						int bit = (data[byte_index] >> (bit_position % 8)) & 1;
 						bit_position++;
+
 						if (bit) {
 							currentNode = tree[currentNode].Right;
 						}
 						else {
 							currentNode = tree[currentNode].Left;
+						}
+						if (currentNode == -1) {
+							throw std::runtime_error("Error: invalid huffman code");
 						}
 					}
 					return tree[currentNode].Symbol;
@@ -331,7 +332,7 @@ namespace System {
 					int byte_position = bit_position / 8;
 					// Check if we have enough input data to read the length and negated length
 					if (byte_position + 4 > data_len) {
-						throw std::runtime_error("Error: invalid stored block length");
+						throw std::runtime_error("Error: not enough data for stored block length");
 					}
 					// Read length and negated length safely
 					uint16_t len = (uint16_t)data[byte_position] | ((uint16_t)data[byte_position + 1] << 8);
@@ -341,13 +342,13 @@ namespace System {
 					bit_position += 32;
 					// Check if length and negated length are complements
 					if ((len ^ nlen) != 0xFFFF) {
-						throw std::runtime_error("Error: invalid stored block length");
+						throw std::runtime_error("Error: stored block length mismatch");
 					}
 					// straight copy data as we are on a byte boundary
 					byte_position = bit_position / 8;
 					// Check if we have enough input data to read the content data
 					if (byte_position + len > data_len) {
-						throw std::runtime_error("Error: invalid stored block length");
+						throw std::runtime_error("Error: not enough data for stored block content");
 					}
 					result.insert(result.end(), data + byte_position, data + byte_position + len);
 					bit_position += len * 8;
