@@ -4,6 +4,11 @@
 #ifndef _SYSTEM_IO_COMPRESSION_ZLIB_H
 #define _SYSTEM_IO_COMPRESSION_ZLIB_H
 
+#include "Deflate.hpp"
+#include <System/IO/MemoryBinaryReader.hpp>
+
+
+
 namespace System::IO::Compression {
 	class ZLib {
 	private:
@@ -48,11 +53,15 @@ namespace System::IO::Compression {
 			return value;
 		}
 		static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
+			System::IO::MemoryBinaryReader memorystream(data.data(), data.size());
 			std::vector<uint8_t> result;
-			int bit_position = 0;
 			ZLIBHEADER zlibheader = {};
-			zlibheader.CMF = data[0];
-			zlibheader.FLG = data[1];
+			zlibheader.CMF = memorystream.ReadByte();
+			zlibheader.FLG = memorystream.ReadByte();
+
+
+			//zlibheader.CMF = data[0];
+			//zlibheader.FLG = data[1];
 
 			if (zlibheader.GetCompressionMethod() != 8) {
 				throw std::runtime_error("Invalid ZLib data: unsupported compression method");
@@ -60,7 +69,9 @@ namespace System::IO::Compression {
 			if (zlibheader.GetFdict()) {
 				throw std::runtime_error("Invalid ZLib data: preset dictionary not supported");
 			}
-
+			// The zlib header is 2 bytes, the adler32 checksum is 4 bytes at the end
+			std::vector<uint8_t> compressed_data(data.begin() + 2, data.end() - 4);
+			return Deflate::Decompress(compressed_data);
 
 
 
