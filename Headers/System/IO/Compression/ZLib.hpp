@@ -58,7 +58,9 @@ namespace System::IO::Compression {
 			ZLIBHEADER zlibheader = {};
 			zlibheader.CMF = memorystream.ReadByte();
 			zlibheader.FLG = memorystream.ReadByte();
-
+			if (((zlibheader.CMF * 256 + zlibheader.FLG) % 31) != 0) {
+				throw std::runtime_error("Invalid ZLib data: header checksum failed");
+			}
 			if (zlibheader.GetCompressionMethod() != 8) {
 				throw std::runtime_error("Invalid ZLib data: unsupported compression method");
 			}
