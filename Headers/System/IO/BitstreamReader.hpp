@@ -23,7 +23,37 @@ namespace System {
             void SetBitOrder(BitOrder newOrder) {
                 order = newOrder;
             }
-            uint32_t ReadBits(int count) {
+            uint32_t ReadBits(size_t count) {
+                // 1) Validate count and available bits in one shot
+                if (count == 0 || count > 32)
+                    throw std::invalid_argument("BitstreamReader [ReadBits]: count must be between 1 and 32");
+                if (bitPos + count > dataSize * 8)
+                    throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
+
+                uint32_t value = 0;
+                // 2) Branch on bit-order once, then loop
+                if (order == BitOrder::LSB0) {
+                    for (size_t i = 0; i < count; ++i) {
+                        size_t byteIndex = bitPos >> 3;
+                        size_t bitIndex = bitPos & 7;
+                        const auto shift = bitIndex;                // LSB0
+                        uint8_t  bit = (data[byteIndex] >> shift) & 1;
+                        value |= (bit << i);
+                        ++bitPos;
+                    }
+                }else{ // MSB0
+                    for (size_t i = 0; i < count; ++i) {
+                        size_t byteIndex = bitPos >> 3;
+                        size_t bitIndex = bitPos & 7;
+                        const auto shift = 7 - bitIndex;            // MSB0
+                        uint8_t  bit = (data[byteIndex] >> shift) & 1;
+                        value = (value << 1) | bit;
+                        ++bitPos;
+                    }
+                }
+                return value;
+            }
+            uint32_t ReadBits2(int count) {
                 if (count <= 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [ReadBits]: Bit count must be between 1 and 32");
 
