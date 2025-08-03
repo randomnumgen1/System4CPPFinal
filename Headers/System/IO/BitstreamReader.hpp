@@ -79,31 +79,52 @@ namespace System {
                 return value;
             }
             uint32_t ReadUInt32() {
-                if ((bitPos + 32) > (dataSize * 8)) {
+                const size_t maxBits = dataSize * 8;
+                if (bitPos + 32 > maxBits) {
                     throw std::out_of_range("BitstreamReader [ReadUInt32]: reading past buffer");
                 }
 
                 size_t byteIndex = bitPos >> 3;
-                int bitOffset = bitPos & 7;
+                size_t bitOffset = bitPos & 7;
+                uint32_t ret = 0;
 
-                uint32_t ret;
-                if (bitOffset == 0){
-                    // Aligned read
-                    ret = (uint32_t)data[byteIndex];
-                    ret |= (uint32_t)data[byteIndex + 1] << 8;
-                    ret |= (uint32_t)data[byteIndex + 2] << 16;
-                    ret |= (uint32_t)data[byteIndex + 3] << 24;
+                if (order == BitOrder::LSB0) {
+                    if (bitOffset == 0) {
+                        // Aligned little-endian
+                        ret = uint32_t(data[byteIndex]);
+                        ret |= uint32_t(data[byteIndex + 1]) << 8;
+                        ret |= uint32_t(data[byteIndex + 2]) << 16;
+                        ret |= uint32_t(data[byteIndex + 3]) << 24;
+                    }else{
+                        // Unaligned LSB0: 5-byte pack, then shift right
+                        uint64_t tmp = 0;
+                        tmp |= uint64_t(data[byteIndex]);
+                        tmp |= uint64_t(data[byteIndex + 1]) << 8;
+                        tmp |= uint64_t(data[byteIndex + 2]) << 16;
+                        tmp |= uint64_t(data[byteIndex + 3]) << 24;
+                        tmp |= uint64_t(data[byteIndex + 4]) << 32;
+                        ret = uint32_t(tmp >> bitOffset);
+                    }
                 }else{
-                    // Unaligned read
-                    uint64_t temp = 0;
-                    temp |= (uint64_t)data[byteIndex];
-                    temp |= (uint64_t)data[byteIndex + 1] << 8;
-                    temp |= (uint64_t)data[byteIndex + 2] << 16;
-                    temp |= (uint64_t)data[byteIndex + 3] << 24;
-                    temp |= (uint64_t)data[byteIndex + 4] << 32;
-                    temp >>= bitOffset;
-                    ret = (uint32_t)temp;
+                    if (bitOffset == 0) {
+                        // Aligned big-endian
+                        ret = uint32_t(data[byteIndex]) << 24;
+                        ret |= uint32_t(data[byteIndex + 1]) << 16;
+                        ret |= uint32_t(data[byteIndex + 2]) << 8;
+                        ret |= uint32_t(data[byteIndex + 3]);
+                    }else{
+                        // Unaligned MSB0: 5-byte pack into high bits, shift to extract 32 bits
+                        uint64_t tmp = 0;
+                        tmp |= uint64_t(data[byteIndex]) << 56;
+                        tmp |= uint64_t(data[byteIndex + 1]) << 48;
+                        tmp |= uint64_t(data[byteIndex + 2]) << 40;
+                        tmp |= uint64_t(data[byteIndex + 3]) << 32;
+                        tmp |= uint64_t(data[byteIndex + 4]) << 24;
+                        // Shift left to drop the 'bitOffset' MSBs, then right to isolate 32 bits
+                        ret = uint32_t((tmp << bitOffset) >> 32);
+                    }
                 }
+
                 bitPos += 32;
                 return ret;
             }
