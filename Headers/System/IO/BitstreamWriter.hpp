@@ -100,7 +100,7 @@ namespace System {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
                 if (byteIndex >= dataSize) {
-                    throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
+                    throw std::out_of_range("BitstreamWriter [WriteBool]: writing past buffer");
                 }
                 const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                 if (value) {
@@ -127,7 +127,7 @@ namespace System {
 
             void SkipBits(int count) {
                 if (count < 0 || (bitPos + count) > (dataSize * 8)) {
-                    throw std::out_of_range("BitstreamReader [SkipBits] beyond EOF");
+                    throw std::out_of_range("BitstreamWriter [SkipBits] beyond EOF");
                 }
                 bitPos += count;
             }
