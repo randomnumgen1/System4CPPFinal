@@ -26,15 +26,6 @@ namespace System {
                 order = newOrder;
             }
             void WriteUInt32(uint32_t value) {
-                size_t byteIndex = bitPos >> 3;
-                size_t bitOffset = bitPos & 7;
-                if (bitOffset == 0) {
-
-                }else{
-                
-                }
-            }
-            void WriteUInt32(uint32_t value) {
                 const size_t maxBits = dataSize * 8;
                 if (bitPos + 32 > maxBits) {
                     throw std::out_of_range("BitstreamWriter [WriteUInt32]: writing past buffer");
@@ -49,8 +40,7 @@ namespace System {
                         data[byteIndex + 1] = (value >> 8) & 0xFF;
                         data[byteIndex + 2] = (value >> 16) & 0xFF;
                         data[byteIndex + 3] = (value >> 24) & 0xFF;
-                    }
-                    else { // MSB0
+                    }else{ // MSB0
                         data[byteIndex] = (value >> 24) & 0xFF;
                         data[byteIndex + 1] = (value >> 16) & 0xFF;
                         data[byteIndex + 2] = (value >> 8) & 0xFF;
@@ -86,6 +76,37 @@ namespace System {
             bool IsEOF() const {
                 return bitPos >= dataSize * 8;
             }
+
+            void SkipBits(int count) {
+                if (count < 0 || (bitPos + count) > (dataSize * 8)) {
+                    throw std::out_of_range("BitstreamReader [SkipBits] beyond EOF");
+                }
+                bitPos += count;
+            }
+            void SkipBitsUnchecked(int count) {
+                bitPos += count;
+            }
+            void SkipBytesUnchecked(int count) {
+                bitPos += static_cast<size_t>(count) << 3;
+            }
+            void AlignToByte() {
+                bitPos = (bitPos + 7) & ~7;
+            }
+            void AlignToInt16() {
+                bitPos = (bitPos + 15) & ~15;
+            }
+            void AlignToInt32() {
+                bitPos = (bitPos + 31) & ~31;
+            }
+            void AlignToInt64() {
+                bitPos = (bitPos + 63) & ~63;
+            }
+
+
+
+
+
+
 
         };
     }
