@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
-
+#include <algorithm> 
 namespace System {
     namespace IO {
         class BitstreamWriter {
