@@ -78,25 +78,34 @@ namespace System {
                 }
                 return value;
             }
-            uint32_t ReadUInt32(){
-                uint32_t ret = 0;
+            uint32_t ReadUInt32() {
+                if ((bitPos + 32) > (dataSize * 8)) {
+                    throw std::out_of_range("BitstreamReader [ReadUInt32]: reading past buffer");
+                }
+
                 size_t byteIndex = bitPos >> 3;
                 int bitOffset = bitPos & 7;
-                // easy copy if aligned
-                if (bitOffset == 0) {
-                    ret = uint32_t(data[byteIndex]);
-                    ret |= uint32_t(data[byteIndex + 1]) << 8;
-                    ret |= uint32_t(data[byteIndex + 2]) << 16;
-                    ret |= uint32_t(data[byteIndex + 3]) << 24;
-                    bitPos += 32;
-                    return ret;
+
+                uint32_t ret;
+                if (bitOffset == 0){
+                    // Aligned read
+                    ret = (uint32_t)data[byteIndex];
+                    ret |= (uint32_t)data[byteIndex + 1] << 8;
+                    ret |= (uint32_t)data[byteIndex + 2] << 16;
+                    ret |= (uint32_t)data[byteIndex + 3] << 24;
                 }else{
-
-
-                    bitPos += 32;
-                    return ret;
+                    // Unaligned read
+                    uint64_t temp = 0;
+                    temp |= (uint64_t)data[byteIndex];
+                    temp |= (uint64_t)data[byteIndex + 1] << 8;
+                    temp |= (uint64_t)data[byteIndex + 2] << 16;
+                    temp |= (uint64_t)data[byteIndex + 3] << 24;
+                    temp |= (uint64_t)data[byteIndex + 4] << 32;
+                    temp >>= bitOffset;
+                    ret = (uint32_t)temp;
                 }
-                
+                bitPos += 32;
+                return ret;
             }
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
