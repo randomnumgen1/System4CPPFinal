@@ -33,7 +33,6 @@ namespace System {
 
                     if (byteIndex >= dataSize)
                         throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
-
                     uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
                     value |= (bit << i);
                     ++bitPos;
@@ -51,21 +50,11 @@ namespace System {
                 ++bitPos;
                 return b;
             }
-
-            bool ReadBoolAlt() {
-                size_t byteIndex = bitPos / 8;
-                size_t bitIndex = bitPos % 8;
-                if (byteIndex >= dataSize) {
-                    throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
-                }
-                uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
-                ++bitPos;
-                return bit;
-            }
             bool ReadBoolUnchecked() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
-                uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
+                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                uint8_t bit = ((data[byteIndex] >> shift) & 1) != 0;
                 ++bitPos;
                 return bit;
             }
