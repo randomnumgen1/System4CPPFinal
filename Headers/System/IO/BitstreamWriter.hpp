@@ -18,10 +18,8 @@ namespace System {
             BitOrder order;
         public:
             BitstreamWriter( std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {
-                std::fill(buffer.begin(), buffer.end(), 0);
             }
             BitstreamWriter( uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0), order(BitOrder::LSB0) {
-                std::fill(buffer, buffer + size, 0);
             }
 
             void SetBitOrder(BitOrder newOrder) {
@@ -72,15 +70,15 @@ namespace System {
                 }
                 if (value) {
                     const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
-                    data[byteIndex] = 1 << shift;
+                    data[byteIndex] |= 1 << shift;
                 }
-                ++bitPos;
+                bitPos += 1;
             }
             void WriteBoolUnchecked(bool value){
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
                 const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
-                data[byteIndex] = 1 << shift;
+                data[byteIndex] |= 1 << shift;
                 bitPos += 1;
             }
 
