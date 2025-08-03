@@ -10,4 +10,4 @@ compressed_data = zlib.compress(original_data, level=9)
 with open('max_compressed2.zlib', 'wb') as f:
     f.write(compressed_data)
 
-print("Successfully generated 'max_compressed.zlib' with complex data.")
+print("Successfully generated 'max_compressed2.zlib' with complex data.")
