@@ -115,7 +115,17 @@ TEST(BitstreamReaderTests, EdgeCase_Read7BitsThenByteLE2) {
 
     EXPECT_EQ(reader.GetBitPosition(), 15);
 }
+TEST(BitstreamReaderTests, EdgeCase_Read7BitsThenByteLE3) {
+    std::vector<uint8_t> buffer = {0b01111111, 0b10000001};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
 
+    // Read 7 bits
+    EXPECT_EQ(reader.ReadBits(7), 0b1111111);
+	EXPECT_EQ(reader.ReadBits(8), 2);
+
+    EXPECT_EQ(reader.GetBitPosition(), 15);
+}
 TEST(BitstreamReaderTests, EdgeCase_Read1BitsThenByteLE3) {
     std::vector<uint8_t> buffer = {0b00000001, 0b10000000};
     System::IO::BitstreamReader reader(buffer);
