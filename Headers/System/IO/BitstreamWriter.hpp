@@ -102,18 +102,22 @@ namespace System {
                 if (byteIndex >= dataSize) {
                     throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
                 }
+                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                 if (value) {
-                    const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                     data[byteIndex] |= 1 << shift;
+                }else{
+                    data[byteIndex] &= ~(1 << shift);
                 }
                 ++bitPos;
             }
             void WriteBoolUnchecked(bool value) {
                 size_t byteIndex = bitPos >> 3;
                 size_t bitIndex = bitPos & 7;
+                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                 if (value) {
-                    const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                     data[byteIndex] |= (1 << shift);
+                }else {
+                    data[byteIndex] &= ~(1 << shift);
                 }
                 ++bitPos;
             }
