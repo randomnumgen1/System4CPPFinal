@@ -19,6 +19,62 @@ TEST(BitstreamReaderTests, ReadBitsSimpleLE) {
     ASSERT_TRUE(reader.IsEOF());
 }
 
+TEST(BitstreamReaderTests, ReadAcrossByteBoundaryLE) {
+    std::vector<uint8_t> buffer = {0b10101010, 0b11001100};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
+
+    reader.SkipBits(4); // Move to the middle of the first byte
+    // Reads 8 bits, 4 from first byte (1010) and 4 from second (1100)
+    // Expected: 11001010 -> 202
+    EXPECT_EQ(reader.ReadBits(8), 202);
+    EXPECT_EQ(reader.GetBitPosition(), 12);
+}
+
+TEST(BitstreamReaderTests, ReadAcrossByteBoundaryBE) {
+    std::vector<uint8_t> buffer = {0b10101010, 0b11001100};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::MSB0);
+
+    reader.SkipBits(4); // Move to the middle of the first byte
+    // Reads 8 bits, 4 from first byte (1010) and 4 from second (1100)
+    // Expected: 10101100 -> 172
+    EXPECT_EQ(reader.ReadBits(8), 172);
+    EXPECT_EQ(reader.GetBitPosition(), 12);
+}
+
+TEST(BitstreamReaderTests, ReadFullByte) {
+    std::vector<uint8_t> buffer = {0x42}; // 'B'
+    System::IO::BitstreamReader reader(buffer);
+    EXPECT_EQ(reader.ReadBits(8), 0x42);
+}
+
+TEST(BitstreamReaderTests, ReadVaryingBitCountLE) {
+    std::vector<uint8_t> buffer = {0b11010101};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
+
+    EXPECT_EQ(reader.ReadBits(3), 5); // 101
+    EXPECT_EQ(reader.ReadBits(5), 26); // 11010
+}
+
+TEST(BitstreamReaderTests, ReadVaryingBitCountBE) {
+    std::vector<uint8_t> buffer = {0b11010101};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::MSB0);
+
+    EXPECT_EQ(reader.ReadBits(3), 6); // 110
+    EXPECT_EQ(reader.ReadBits(5), 21); // 10101
+}
+
+TEST(BitstreamReaderTests, ReadBitsInvalidCount) {
+    std::vector<uint8_t> buffer = {0x00};
+    System::IO::BitstreamReader reader(buffer);
+
+    EXPECT_THROW(reader.ReadBits(0), std::invalid_argument);
+    EXPECT_THROW(reader.ReadBits(33), std::invalid_argument);
+}
+
 TEST(BitstreamReaderTests, ReadBitsSimpleBE) {
     std::vector<uint8_t> buffer = {0b11010101}; // 213
     System::IO::BitstreamReader reader(buffer);

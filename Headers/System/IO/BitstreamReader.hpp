@@ -8,6 +8,7 @@
 namespace System {
     namespace IO {
         class BitstreamReader {
+        public:
             enum class BitOrder { LSB0, MSB0 };
         private:
             const uint8_t* data;
@@ -33,8 +34,16 @@ namespace System {
 
                     if (byteIndex >= dataSize)
                         throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
-                    uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
-                    value |= (bit << i);
+
+                    const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                    uint8_t bit = (data[byteIndex] >> shift) & 1;
+
+                    if (order == BitOrder::LSB0) {
+                        value |= (bit << i);
+                    }
+                    else { // MSB0
+                        value = (value << 1) | bit;
+                    }
                     ++bitPos;
                 }
                 return value;
