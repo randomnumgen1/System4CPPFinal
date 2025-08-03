@@ -129,3 +129,16 @@ TEST(BitstreamReaderTests, EdgeCase_Read1BitsThenByteLE3) {
     EXPECT_EQ(reader.GetBitPosition(), 9);
 }
 
+TEST(BitstreamReaderTests, EdgeCase_Read1BitsThenByteLE4) {
+    std::vector<uint8_t> buffer = {0b00000011, 0b10000000};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
+
+    // Read 1 bit
+    EXPECT_EQ(reader.ReadBits(1), 0b1);
+	//Read Byte
+	EXPECT_EQ(reader.ReadBits(8), 0b00000001);
+
+    EXPECT_EQ(reader.GetBitPosition(), 9);
+}
+
