@@ -72,16 +72,17 @@ namespace System {
                     const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
                     data[byteIndex] |= 1 << shift;
                 }
-                bitPos += 1;
+                ++bitPos;
             }
-            void WriteBoolUnchecked(bool value){
-                size_t byteIndex = bitPos / 8;
-                size_t bitIndex = bitPos % 8;
-                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
-                data[byteIndex] |= 1 << shift;
-                bitPos += 1;
+            void WriteBoolUnchecked(bool value) {
+                size_t byteIndex = bitPos >> 3;
+                size_t bitIndex = bitPos & 7;
+                if (value) {
+                    const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                    data[byteIndex] |= (1 << shift);
+                }
+                ++bitPos;
             }
-
             bool IsEOF() const {
                 return bitPos >= dataSize * 8;
             }
