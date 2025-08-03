@@ -91,9 +91,16 @@ namespace System {
                         data[byteIndex + 3] = value & 0xFF;
                     }
                     bitPos += 32;
-                }
-                else { // Unaligned write
-                    throw std::runtime_error("");
+                }else{ // Unaligned write
+                    if (order == BitOrder::LSB0) {
+                        for (int i = 0; i < 32; ++i) {
+                            WriteBool((value >> i) & 1);
+                        }
+                    }else{ // MSB0
+                        for (int i = 0; i < 32; ++i) {
+                            WriteBool((value >> (31 - i)) & 1);
+                        }
+                    }
                 }
             }
             void WriteBool(bool value) {
