@@ -6,7 +6,7 @@ TEST(BitstreamReaderTests, ReadBitsSimpleLE) {
     std::vector<uint8_t> buffer = {0b11010101}; // 213
     System::IO::BitstreamReader reader(buffer);
 	
-	reader.SetBitOrder();
+	reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
 	
 	
     // Reads 4 bits: 0101 -> 5
@@ -23,16 +23,15 @@ TEST(BitstreamReaderTests, ReadBitsSimpleBE) {
     std::vector<uint8_t> buffer = {0b11010101}; // 213
     System::IO::BitstreamReader reader(buffer);
 	
-	reader.SetBitOrder();
+	reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::MSB0);
 	
 	
-    // Reads 4 bits: 0101 -> 5
-    EXPECT_EQ(reader.ReadBits(4), 5);
+    // Reads 4 bits: 1101 -> 13
+    EXPECT_EQ(reader.ReadBits(4), 13);
     EXPECT_EQ(reader.GetBitPosition(), 4);
 
-    // Reads next 4 bits: 1101 -> 13
-    EXPECT_EQ(reader.ReadBits(4), 13);
+    // Reads next 4 bits: 0101 -> 5
+    EXPECT_EQ(reader.ReadBits(4), 5);
     EXPECT_EQ(reader.GetBitPosition(), 8);
     ASSERT_TRUE(reader.IsEOF());
 }
-
