@@ -91,3 +91,28 @@ TEST(BitstreamReaderTests, ReadBitsSimpleBE) {
     EXPECT_EQ(reader.GetBitPosition(), 8);
     ASSERT_TRUE(reader.IsEOF());
 }
+
+
+TEST(BitstreamReaderTests, Read7BitsThenByteLE) {
+    std::vector<uint8_t> buffer = {0b10101010, 0b11001100};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
+
+    // Read 7 bits: 0101010
+    EXPECT_EQ(reader.ReadBits(7), 0b0101010);
+    // Read 8 bits: 10011001
+    EXPECT_EQ(reader.ReadBits(8), 153);
+    EXPECT_EQ(reader.GetBitPosition(), 15);
+}
+TEST(BitstreamReaderTests, Read7BitsThenByteLE) {
+    std::vector<uint8_t> buffer = {0b01111111, 0b10000000};
+    System::IO::BitstreamReader reader(buffer);
+    reader.SetBitOrder(System::IO::BitstreamReader::BitOrder::LSB0);
+
+    // Read 7 bits
+    EXPECT_EQ(reader.ReadBits(7), 0b1111111);
+	EXPECT_EQ(reader.ReadBits(8), 0b00000000);
+
+    EXPECT_EQ(reader.GetBitPosition(), 15);
+}
+
