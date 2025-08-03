@@ -8,17 +8,20 @@
 namespace System {
     namespace IO {
         class BitstreamReader {
+            enum class BitOrder { LSB0, MSB0 };
         private:
             const uint8_t* data;
             size_t dataSize;
             size_t bitPos;
-            enum class BitOrder { LSB0, MSB0 };
+            
             BitOrder order;
         public:
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {}
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0), order(BitOrder::LSB0) {}
 
-
+            void SetBitOrder(BitOrder newOrder) {
+                order = newOrder;
+            }
             uint32_t ReadBits(int count) {
                 if (count <= 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [ReadBits]: Bit count must be between 1 and 32");
@@ -37,19 +40,34 @@ namespace System {
                 }
                 return value;
             }
-
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
                 if (byteIndex >= dataSize) {
                     throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
                 }
-                return (data[byteIndex] >> bitIndex) & 1;
+                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                bool b = ((data[byteIndex] >> shift) & 1) != 0;
+                ++bitPos;
+                return b;
+            }
+
+            bool ReadBoolAlt() {
+                size_t byteIndex = bitPos / 8;
+                size_t bitIndex = bitPos % 8;
+                if (byteIndex >= dataSize) {
+                    throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
+                }
+                uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
+                ++bitPos;
+                return bit;
             }
             bool ReadBoolUnchecked() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
-                return (data[byteIndex] >> bitIndex) & 1;
+                uint8_t bit = (data[byteIndex] >> bitIndex) & 1;
+                ++bitPos;
+                return bit;
             }
             uint32_t PeekBits(int count) {
                 if (count <= 0 || count > 32)
