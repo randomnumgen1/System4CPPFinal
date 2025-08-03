@@ -25,6 +25,50 @@ namespace System {
             void SetBitOrder(BitOrder newOrder) {
                 order = newOrder;
             }
+            void Clear(){
+                std::fill(data, data + dataSize, 0);
+                bitPos = 0;
+            }
+            void WriteBits(uint32_t value, size_t count) {
+                if (count == 0 || count > 32)
+                    throw std::invalid_argument("BitstreamWriter [WriteBits]: count must be between 1 and 32");
+                if (bitPos + count > dataSize * 8)
+                    throw std::out_of_range("BitstreamWriter [WriteBits]: writing past buffer");
+
+                if (order == BitOrder::LSB0) {
+                    for (size_t i = 0; i < count; ++i) {
+                        size_t byteIndex = bitPos >> 3;
+                        size_t bitIndex = bitPos & 7;
+
+                        uint8_t bit = (value >> i) & 1;
+
+                        if (bit) {
+                            data[byteIndex] |= (1 << bitIndex);
+                        }
+                        else {
+                            data[byteIndex] &= ~(1 << bitIndex);
+                        }
+
+                        ++bitPos;
+                    }
+                }else{ // MSB0
+                    for (size_t i = 0; i < count; ++i) {
+                        size_t byteIndex = bitPos >> 3;
+                        size_t bitIndex = bitPos & 7;
+
+                        uint8_t bit = (value >> (count - 1 - i)) & 1;
+
+                        if (bit) {
+                            data[byteIndex] |= (1 << (7 - bitIndex));
+                        }
+                        else {
+                            data[byteIndex] &= ~(1 << (7 - bitIndex));
+                        }
+
+                        ++bitPos;
+                    }
+                }
+            }
             void WriteUInt32(uint32_t value) {
                 const size_t maxBits = dataSize * 8;
                 if (bitPos + 32 > maxBits) {
