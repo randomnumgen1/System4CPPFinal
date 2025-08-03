@@ -78,6 +78,26 @@ namespace System {
                 }
                 return value;
             }
+            uint32_t ReadUInt32(){
+                uint32_t ret = 0;
+                size_t byteIndex = bitPos >> 3;
+                int bitOffset = bitPos & 7;
+                // easy copy if aligned
+                if (bitOffset == 0) {
+                    ret = uint32_t(data[byteIndex]);
+                    ret |= uint32_t(data[byteIndex + 1]) << 8;
+                    ret |= uint32_t(data[byteIndex + 2]) << 16;
+                    ret |= uint32_t(data[byteIndex + 3]) << 24;
+                    bitPos += 32;
+                    return ret;
+                }else{
+
+
+                    bitPos += 32;
+                    return ret;
+                }
+                
+            }
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
