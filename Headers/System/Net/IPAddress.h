@@ -108,6 +108,12 @@ namespace System::Net {
 
             throw std::runtime_error("Invalid IP address format.");
         }
+        static const IPAddress Any;
+        static const IPAddress Loopback;
+        static const IPAddress Broadcast;
     };
+    const IPAddress IPAddress::Any = IPAddress({ 0, 0, 0, 0 });
+    const IPAddress IPAddress::Loopback = IPAddress({ 127, 0, 0, 1 });
+    const IPAddress IPAddress::Broadcast = IPAddress({ 255, 255, 255, 255 });
 }
 #endif

@@ -12,9 +12,7 @@ int main() {
     try {
         Socket serverSocket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
 
-        std::vector<unsigned char> any_address_bytes = {0, 0, 0, 0};
-        IPAddress any_address(any_address_bytes);
-        IPEndPoint localEndPoint(any_address, 8080);
+        IPEndPoint localEndPoint(IPAddress::Any, 8080);
 
         serverSocket.Bind(localEndPoint);
         std::cout << "Server listening on port 8080..." << std::endl;
