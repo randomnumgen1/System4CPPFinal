@@ -89,7 +89,17 @@ namespace System::Net::Sockets{
         ProtocolType _protocolType;
         bool _isBlocking = true;
         bool _connected = false;
+
+        Socket(socket_t socket, AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType, bool connected)
+            : _socket(socket), _addressFamily(addressFamily), _socketType(socketType), _protocolType(protocolType), _connected(connected) {}
     public:
+        Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+            : _addressFamily(addressFamily), _socketType(socketType), _protocolType(protocolType) {
+            _socket = ::socket((int)addressFamily, (int)socketType, (int)protocolType);
+            if (_socket == INVALID_SOCKET) {
+                throw std::runtime_error("Socket creation failed.");
+            }
+        }
         void Bind(const IPEndPoint& localEP){
             if (localEP.AddressFamily() == AddressFamily::InterNetwork) {
                 sockaddr_in addr;
