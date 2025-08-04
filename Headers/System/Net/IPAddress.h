@@ -16,6 +16,48 @@
 #include <cstring>
 
 namespace System::Net {
+    namespace Sockets {
+        enum class AddressFamily {
+            InterNetwork = 2,
+            InterNetworkV6 = 23,
+        };
+
+        enum class SocketType {
+            Stream = 1,
+            Dgram = 2,
+        };
+
+        enum class ProtocolType {
+            Tcp = 6,
+            Udp = 17,
+        };
+
+        enum class SocketShutdown {
+            Receive = 0,
+            Send = 1,
+            Both = 2,
+        };
+
+        enum class SocketOptionLevel {
+            Socket = 1,
+            IP = 0,
+            IPv6 = 41,
+            Tcp = 6,
+            Udp = 17,
+        };
+
+        enum class SocketOptionName {
+            Broadcast = 32,
+            DontLinger = -129,
+            DontRoute = 16,
+            Linger = 128,
+            NoDelay = 1,
+            ReceiveBuffer = 4098,
+            ReceiveTimeout = 4102,
+            SendBuffer = 4097,
+            SendTimeout = 4101,
+        };
+    }
 
     class IPAddress {
     private:
@@ -40,7 +82,7 @@ namespace System::Net {
             return _address;
         }
 
-        AddressFamily GetAddressFamily() const {
+        Sockets::AddressFamily GetAddressFamily() const {
             return _family;
         }
 

@@ -23,6 +23,8 @@ typedef int socket_t;
 #include <cstddef>
 #include <stdexcept>
 
+#include "IPEndPoint.h"
+
 #ifdef _WIN32
 class WinsockInitializer {
 public:
@@ -39,48 +41,7 @@ public:
 static WinsockInitializer wsInitializer;
 #endif
 
-namespace System::Net::Sockets{
-    enum class AddressFamily {
-        InterNetwork = 2,
-        InterNetworkV6 = 23,
-    };
-
-    enum class SocketType {
-        Stream = 1,
-        Dgram = 2,
-    };
-
-    enum class ProtocolType {
-        Tcp = 6,
-        Udp = 17,
-    };
-
-    enum class SocketShutdown {
-        Receive = 0,
-        Send = 1,
-        Both = 2,
-    };
-
-    enum class SocketOptionLevel {
-        Socket = 1,
-        IP = 0,
-        IPv6 = 41,
-        Tcp = 6,
-        Udp = 17,
-    };
-
-    enum class SocketOptionName {
-        Broadcast = 32,
-        DontLinger = -129,
-        DontRoute = 16,
-        Linger = 128,
-        NoDelay = 1,
-        ReceiveBuffer = 4098,
-        ReceiveTimeout = 4102,
-        SendBuffer = 4097,
-        SendTimeout = 4101,
-    };
-
+namespace System::Net::Sockets {
     class Socket {
     private:
         socket_t _socket;
@@ -100,7 +61,43 @@ namespace System::Net::Sockets{
                 throw std::runtime_error("Socket creation failed.");
             }
         }
-        void Bind(const IPEndPoint& localEP){
+
+        ~Socket() {
+            Close();
+        }
+
+        Socket(const Socket&) = delete;
+        Socket& operator=(const Socket&) = delete;
+
+        Socket(Socket&& other) noexcept
+            : _socket(other._socket),
+            _addressFamily(other._addressFamily),
+            _socketType(other._socketType),
+            _protocolType(other._protocolType),
+            _isBlocking(other._isBlocking),
+            _connected(other._connected) {
+            other._socket = INVALID_SOCKET;
+            other._connected = false;
+        }
+
+        Socket& operator=(Socket&& other) noexcept {
+            if (this != &other) {
+                Close();
+
+                _socket = other._socket;
+                _addressFamily = other._addressFamily;
+                _socketType = other._socketType;
+                _protocolType = other._protocolType;
+                _isBlocking = other._isBlocking;
+                _connected = other._connected;
+
+                other._socket = INVALID_SOCKET;
+                other._connected = false;
+            }
+            return *this;
+        }
+
+        void Bind(const IPEndPoint& localEP) {
             if (localEP.AddressFamily() == AddressFamily::InterNetwork) {
                 sockaddr_in addr;
                 memset(&addr, 0, sizeof(addr));
@@ -171,7 +168,7 @@ namespace System::Net::Sockets{
         int Receive(std::vector<unsigned char>& buffer) {
             return Receive(buffer, buffer.size(), 0);
         }
-        int Receive(std::vector<unsigned char>& buffer, int size, int socketFlags){
+        int Receive(std::vector<unsigned char>& buffer, int size, int socketFlags) {
             int bytesReceived = ::recv(_socket, (char*)buffer.data(), size, socketFlags);
             if (bytesReceived < 0) {
                 throw std::runtime_error("Receive failed.");
@@ -225,8 +222,8 @@ namespace System::Net::Sockets{
                 throw std::runtime_error("Failed to get available bytes.");
             }
             return count;
-        }
-    };
+            }
+        };
 
 
 
@@ -259,6 +256,6 @@ namespace System::Net::Sockets{
 
 
 
- 
-}
+
+    }
 #endif
