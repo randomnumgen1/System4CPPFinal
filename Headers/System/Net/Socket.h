@@ -175,6 +175,69 @@ namespace System::Net::Sockets {
             }
             return bytesReceived;
         }
+
+        int SendTo(const std::vector<unsigned char>& buffer, const IPEndPoint& remoteEP) {
+            return SendTo(buffer, buffer.size(), 0, remoteEP);
+        }
+
+        int SendTo(const std::vector<unsigned char>& buffer, int size, int socketFlags, const IPEndPoint& remoteEP) {
+            int bytesSent;
+            if (remoteEP.AddressFamily() == AddressFamily::InterNetwork) {
+                sockaddr_in addr;
+                memset(&addr, 0, sizeof(addr));
+                addr.sin_family = AF_INET;
+                addr.sin_port = htons(remoteEP.Port());
+                memcpy(&addr.sin_addr, remoteEP.Address().GetAddressBytes().data(), 4);
+                bytesSent = ::sendto(_socket, (const char*)buffer.data(), size, socketFlags, (struct sockaddr*)&addr, sizeof(addr));
+            }
+            else { // IPv6
+                sockaddr_in6 addr;
+                memset(&addr, 0, sizeof(addr));
+                addr.sin6_family = AF_INET6;
+                addr.sin6_port = htons(remoteEP.Port());
+                memcpy(&addr.sin6_addr, remoteEP.Address().GetAddressBytes().data(), 16);
+                bytesSent = ::sendto(_socket, (const char*)buffer.data(), size, socketFlags, (struct sockaddr*)&addr, sizeof(addr));
+            }
+            if (bytesSent < 0) {
+                throw std::runtime_error("SendTo failed.");
+            }
+            return bytesSent;
+        }
+
+        int ReceiveFrom(std::vector<unsigned char>& buffer, IPEndPoint& remoteEP) {
+            return ReceiveFrom(buffer, buffer.size(), 0, remoteEP);
+        }
+
+        int ReceiveFrom(std::vector<unsigned char>& buffer, int size, int socketFlags, IPEndPoint& remoteEP) {
+            int bytesReceived;
+            if (_addressFamily == AddressFamily::InterNetwork) {
+                sockaddr_in addr;
+                socklen_t addrLen = sizeof(addr);
+                memset(&addr, 0, sizeof(addr));
+                bytesReceived = ::recvfrom(_socket, (char*)buffer.data(), size, socketFlags, (struct sockaddr*)&addr, &addrLen);
+                if (bytesReceived >= 0) {
+                    std::vector<unsigned char> ipBytes(4);
+                    memcpy(ipBytes.data(), &addr.sin_addr, 4);
+                    remoteEP = IPEndPoint(IPAddress(ipBytes), ntohs(addr.sin_port));
+                }
+            }
+            else { // IPv6
+                sockaddr_in6 addr;
+                socklen_t addrLen = sizeof(addr);
+                memset(&addr, 0, sizeof(addr));
+                bytesReceived = ::recvfrom(_socket, (char*)buffer.data(), size, socketFlags, (struct sockaddr*)&addr, &addrLen);
+                if (bytesReceived >= 0) {
+                    std::vector<unsigned char> ipBytes(16);
+                    memcpy(ipBytes.data(), &addr.sin6_addr, 16);
+                    remoteEP = IPEndPoint(IPAddress(ipBytes), ntohs(addr.sin6_port));
+                }
+            }
+
+            if (bytesReceived < 0) {
+                throw std::runtime_error("ReceiveFrom failed.");
+            }
+            return bytesReceived;
+        }
         void Close() {
             if (_socket != INVALID_SOCKET) {
 #ifdef _WIN32
@@ -224,36 +287,6 @@ namespace System::Net::Sockets {
             return count;
             }
         };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
