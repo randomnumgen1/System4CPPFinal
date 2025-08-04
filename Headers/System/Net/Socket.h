@@ -23,6 +23,21 @@ typedef int socket_t;
 #include <cstddef>
 #include <stdexcept>
 
+#ifdef _WIN32
+class WinsockInitializer {
+public:
+    WinsockInitializer() {
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+            throw std::runtime_error("WSAStartup failed.");
+        }
+    }
+    ~WinsockInitializer() {
+        WSACleanup();
+    }
+};
+static WinsockInitializer wsInitializer;
+#endif
 
 namespace System::Net::Sockets{
     enum class AddressFamily {
