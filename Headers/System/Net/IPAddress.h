@@ -78,6 +78,11 @@ namespace System::Net {
             _address = address;
         }
 
+        IPAddress(const IPAddress& other) = default;
+        IPAddress& operator=(const IPAddress& other) = default;
+        IPAddress(IPAddress&& other) noexcept = default;
+        IPAddress& operator=(IPAddress&& other) noexcept = default;
+
         const std::vector<unsigned char>& GetAddressBytes() const {
             return _address;
         }

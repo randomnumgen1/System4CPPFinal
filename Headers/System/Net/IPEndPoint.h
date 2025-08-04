@@ -10,8 +10,8 @@ namespace System::Net {
         int _port;
 
     public:
-        IPEndPoint(const IPAddress& address, int port)
-            : _address(address), _port(port) {}
+        IPEndPoint(IPAddress address, int port)
+            : _address(std::move(address)), _port(port) {}
 
         const IPAddress& Address() const {
             return _address;
