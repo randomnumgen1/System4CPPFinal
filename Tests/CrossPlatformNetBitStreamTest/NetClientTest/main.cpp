@@ -6,6 +6,7 @@
 #include <Headers/System/Net/Socket.h>
 #include <Headers/System/Net/IPEndPoint.h>
 #include <Headers/System/Net/IPAddress.h>
+#include <Headers/System/IO/BitstreamWriter.hpp>
 
 using namespace System::Net;
 using namespace System::Net::Sockets;

@@ -30,7 +30,7 @@ int main() {
             if (bytesReceived > 0) {
                 std::string receivedMsg(buffer.begin(), buffer.begin() + bytesReceived);
                 std::cout << "Client : " << receivedMsg << std::endl;
-				std::cout << "Client (decoded opcode): " << reader.readbits(16) << std::endl;
+				std::cout << "Client (decoded opcode): " << reader.ReadBits(2) << std::endl;
 				
 				
 				
