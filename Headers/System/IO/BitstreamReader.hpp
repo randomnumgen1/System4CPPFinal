@@ -82,7 +82,49 @@ namespace System {
 
             }
             uint16_t ReadUInt16() {
+                const size_t maxBits = dataSize * 8;
+                if (bitPos + 16 > maxBits) {
+                    throw std::out_of_range("BitstreamReader [ReadUInt16]: reading past buffer");
+                }
 
+                size_t byteIndex = bitPos >> 3;
+                size_t bitOffset = bitPos & 7;
+                uint16_t ret = 0;
+
+                if (order == BitOrder::LSB0) {
+                    if (bitOffset == 0) {
+                        // Aligned little-endian
+                        ret = uint16_t(data[byteIndex]);
+                        ret |= uint16_t(data[byteIndex + 1]) << 8;
+                    }
+                    else {
+                        // Unaligned LSB0: 3-byte pack, then shift right
+                        uint32_t tmp = 0;
+                        tmp |= uint32_t(data[byteIndex]);
+                        tmp |= uint32_t(data[byteIndex + 1]) << 8;
+                        tmp |= uint32_t(data[byteIndex + 2]) << 16;
+                        ret = uint16_t(tmp >> bitOffset);
+                    }
+                }
+                else {
+                    if (bitOffset == 0) {
+                        // Aligned big-endian
+                        ret = uint16_t(data[byteIndex]) << 8;
+                        ret |= uint16_t(data[byteIndex + 1]);
+                    }
+                    else {
+                        // Unaligned MSB0: 3-byte pack into high bits, shift to extract 16 bits
+                        uint32_t tmp = 0;
+                        tmp |= uint32_t(data[byteIndex]) << 24;
+                        tmp |= uint32_t(data[byteIndex + 1]) << 16;
+                        tmp |= uint32_t(data[byteIndex + 2]) << 8;
+                        // Shift left to drop the 'bitOffset' MSBs, then right to isolate 16 bits
+                        ret = uint16_t((tmp << bitOffset) >> 16);
+                    }
+                }
+
+                bitPos += 16;
+                return ret;
             }
             int32_t ReadInt32(){
             
