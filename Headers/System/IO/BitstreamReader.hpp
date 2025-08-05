@@ -147,6 +147,16 @@ namespace System {
                 ++bitPos;
                 return bit;
             }
+            void ReadNullTerminatedString(std::string& str,size_t max_len){
+                AlignToByte();
+                
+
+            }
+            void ReadLengthPrefixedString(std::string& str, size_t max_len){
+                AlignToByte();
+                size_t length = ReadUInt32();
+
+            }
             uint32_t PeekBits(int count) {
                 if (count <= 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [PeekBits]: count 1–32");
