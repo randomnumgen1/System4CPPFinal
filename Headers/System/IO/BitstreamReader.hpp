@@ -147,16 +147,48 @@ namespace System {
                 ++bitPos;
                 return bit;
             }
-            void ReadNullTerminatedString(std::string& str,size_t max_len){
+            void ReadStringNullTerminated(std::string& str,size_t max_len){
                 AlignToByte();
-                
-
+                str.clear();
+                while (str.length() < max_len && !IsEOF()) {
+                    char c = (char)ReadBits(8);
+                    if (c == '\0') {
+                        break;
+                    }
+                    str += c;
+                }
             }
-            void ReadLengthPrefixedString(std::string& str, size_t max_len){
+            void ReadStringLengthPrefixed32(std::string& str, size_t max_len) {
                 AlignToByte();
                 size_t length = ReadUInt32();
-
+                if (length > max_len) {
+                    throw std::runtime_error("BitstreamReader [ReadLengthPrefixedString]: String length exceeds max_len.");
+                }
+                if (RemainingBits() < length * 8) {
+                    throw std::out_of_range("BitstreamReader [ReadLengthPrefixedString]: Not enough data in buffer to read string.");
+                }
+                str.clear();
+                str.reserve(length);
+                for (uint32_t i = 0; i < length; ++i) {
+                    str += (char)ReadBits(8);
+                }
             }
+            void ReadStringLengthPrefixed8(std::string& str, size_t max_len) {
+                AlignToByte();
+                size_t length = ReadBits(8);
+                if (length > max_len) {
+                    throw std::runtime_error("BitstreamReader [ReadLengthPrefixedString]: String length exceeds max_len.");
+                }
+                if (RemainingBits() < length * 8) {
+                    throw std::out_of_range("BitstreamReader [ReadLengthPrefixedString]: Not enough data in buffer to read string.");
+                }
+                str.clear();
+                str.reserve(length);
+                for (uint32_t i = 0; i < length; ++i) {
+                    str += (char)ReadBits(8);
+                }
+            }
+
             uint32_t PeekBits(int count) {
                 if (count <= 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [PeekBits]: count 1–32");
