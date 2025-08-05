@@ -78,6 +78,15 @@ namespace System {
                 }
                 return value;
             }
+            int16_t ReadInt16() {
+
+            }
+            uint16_t ReadUInt16() {
+
+            }
+            int32_t ReadInt32(){
+            
+            }
             uint32_t ReadUInt32() {
                 const size_t maxBits = dataSize * 8;
                 if (bitPos + 32 > maxBits) {
