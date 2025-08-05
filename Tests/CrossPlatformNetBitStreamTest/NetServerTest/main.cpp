@@ -28,6 +28,7 @@ int main() {
 
             int bytesReceived = serverSocket.ReceiveFrom(buffer, clientEndPoint);
             if (bytesReceived > 0) {
+				std::cout << "[Server recieved client message]" << std::endl;
                 std::string receivedMsg(buffer.begin(), buffer.begin() + bytesReceived);
                 std::cout << "Client : " << receivedMsg << std::endl;
 				std::cout << "Client (decoded opcode): " << reader.ReadBits(2) << std::endl;

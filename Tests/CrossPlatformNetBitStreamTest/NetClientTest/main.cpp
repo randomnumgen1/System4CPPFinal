@@ -18,8 +18,9 @@ int main() {
         IPAddress serverAddress = IPAddress::Parse("127.0.0.1");
         IPEndPoint serverEndPoint(serverAddress, 8080);
 		
-		std::vector<unsigned char> sendBuffer(1024);
+		
         while (true) {
+			std::vector<unsigned char> sendBuffer(1024);
 			 System::IO::BitstreamWriter writer(sendBuffer);
 			 writer.Clear();
 			 writer.WriteBits(3, 2);
