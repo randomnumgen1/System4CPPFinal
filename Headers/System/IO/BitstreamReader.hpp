@@ -78,6 +78,12 @@ namespace System {
                 }
                 return value;
             }
+            int8_t ReadInt8() {
+
+            }
+            uint8_t ReadUInt8(){
+            
+            }
             int16_t ReadInt16() {
 
             }
