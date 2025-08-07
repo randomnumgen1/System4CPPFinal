@@ -186,6 +186,14 @@ namespace System {
                 bitPos += 32;
                 return ret;
             }
+            std::vector<uint8_t> ReadBytesAligned(int count){
+                std::vector<uint8_t> output;
+                output.reserve(count);
+                for (int i = 0; i < count; ++i) {
+                    output.push_back(ReadBits(8));
+                }
+                return output;
+            }
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
