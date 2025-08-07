@@ -58,8 +58,9 @@ namespace System::IO::Compression {
 			BitstreamReader bitstream(data);
 			std::vector<uint8_t> result;
 			ZLIBHEADER zlibheader = {};
-			zlibheader.CMF = (uint8_t)bitstream.ReadBits(8);
-			zlibheader.FLG = (uint8_t)bitstream.ReadBits(8);
+			zlibheader.CMF = (uint8_t)bitstream.ReadUInt8();
+			zlibheader.FLG = (uint8_t)bitstream.ReadUInt8();
+
 			if (((zlibheader.CMF * 256 + zlibheader.FLG) % 31) != 0) {
 				throw std::runtime_error("Invalid ZLib data: header checksum failed");
 			}
@@ -71,6 +72,8 @@ namespace System::IO::Compression {
 			}
 			std::vector<uint8_t> decompressed = DeflateStream::DecompressBlock(bitstream);
 			uint32_t adler32_checksum  = bitstream.ReadBits(32);
+
+
 			return decompressed;
 		}
 
