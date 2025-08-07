@@ -7,7 +7,11 @@
 
 namespace System {
     namespace IO {
-        //bitreader that uses least significant bit first.
+        /// <summary>
+        /// bitreader that uses least significant bit first.
+        /// For example, if a byte is 0b10110010, the bits are processed in this order:
+        /// 0, 1, 0, 0, 1, 1, 0, 1
+        /// </summary>
         class BitstreamReader {
         public:
         private:
@@ -26,15 +30,19 @@ namespace System {
             const uint8_t* data;
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0) {}
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  {}
-
-       
+            /// <summary>
+            /// Reads the specified number of bits from the stream.
+            /// </summary>
+            /// <param name="count"></param>
+            /// <returns></returns>
             uint32_t ReadBits(size_t count) {
-                // 1) Validate count and available bits in one shot
                 if (count == 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [ReadBits]: count must be between 1 and 32");
                 if (bitPos + count > dataSize * 8)
                     throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
-
+                return ReadBitsUnchecked(count);
+            }
+            uint32_t ReadBitsUnchecked(size_t count) {
                 uint32_t value = 0;
                 // 2) Branch on bit-order once, then loop
                 for (size_t i = 0; i < count; ++i) {
@@ -44,7 +52,7 @@ namespace System {
                     uint8_t  bit = (data[byteIndex] >> shift) & 1;
                     value |= (bit << i);
                     ++bitPos;
-                    }
+                }
                 return value;
             }
             uint32_t ReadBits2(int count) {
