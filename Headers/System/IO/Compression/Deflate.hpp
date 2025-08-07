@@ -493,7 +493,7 @@ namespace System {
 					}
 					//
 					result.insert(result.end(), bsr.data + bsr.GetBytePosition(), bsr.data + bsr.GetBytePosition() + len);
-					
+					bsr.SkipBytesUnchecked(len);
 				}
 				static std::vector<uint8_t> DecompressBlock(BitstreamReader &bsr) {
 					std::vector<uint8_t> result;
