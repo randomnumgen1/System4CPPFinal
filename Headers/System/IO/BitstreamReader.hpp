@@ -16,6 +16,13 @@ namespace System {
             size_t bitPos;
             
             BitOrder order;
+
+            uint8_t ReverseBits(uint8_t b) {
+                b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+                b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+                b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+                return b;
+            }
         public:
             const uint8_t* data;
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {}
