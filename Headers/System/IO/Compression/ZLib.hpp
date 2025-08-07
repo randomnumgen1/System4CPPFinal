@@ -70,7 +70,7 @@ namespace System::IO::Compression {
 			// The zlib header is 2 bytes, the adler32 checksum is 4 bytes at the end
 			const uint8_t* compressed_ptr = data.data() + 2;
 			size_t compressed_len = data.size() - 6; // 2 for header, 4 for footer
-			return Deflate::Decompress(compressed_ptr, compressed_len);
+			return DeflateStream::Decompress(compressed_ptr, compressed_len);
 		}
 
 
@@ -90,7 +90,7 @@ namespace System::IO::Compression {
 			result.push_back(0x01); // FLG - No preset dictionary, fastest algorithm
 
 			// Deflate compressed data
-			std::vector<uint8_t> compressed_data = Deflate::Compress(data, Deflate::CompressionLevel::Level1);
+			std::vector<uint8_t> compressed_data = DeflateStream::Compress(data, DeflateStream::CompressionLevel::Level1);
 			result.insert(result.end(), compressed_data.begin(), compressed_data.end());
 
 			// Adler32 checksum

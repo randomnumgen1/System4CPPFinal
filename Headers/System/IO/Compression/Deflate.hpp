@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include "Huffman.hpp"
+#include <System/IO/BitstreamReader.hpp>
 namespace System {
 	namespace IO {
 		namespace Compression {
@@ -153,7 +154,7 @@ namespace System {
 
 			};
 			// Deflate class for handling Deflate compression and decompression
-			class Deflate {
+			class DeflateStream {
 			private:
 				// Constants for Deflate algorithm
 				static constexpr int MAX_LITERALS = 288;
@@ -482,6 +483,37 @@ namespace System {
 						}
 					}
 				}
+				static void ReadStoredBlock(std::vector<uint8_t>& result, BitstreamReader &bsr) {
+					bsr.AlignToByte();
+					uint16_t len = (uint16_t)bsr.ReadBits(16);
+					uint16_t nlen = (uint16_t)bsr.ReadBits(16);
+					// Check if length and negated length are complements
+					if ((len ^ nlen) != 0xFFFF) {
+						throw std::runtime_error("Error: stored block length mismatch");
+					}
+					//
+					result.insert(result.end(), bsr.data + bsr.GetBytePosition(), bsr.data + bsr.GetBytePosition() + len);
+					
+				}
+				static std::vector<uint8_t> DecompressBlock(BitstreamReader &bsr) {
+					std::vector<uint8_t> result;
+					BlockMarker marker = (BlockMarker)bsr.ReadBits(1);
+					BlockType type = (BlockType)bsr.ReadBits(2);
+					if (type == BlockType::Stored) {
+						ReadStoredBlock(result, bsr);
+						return result;
+					}else if (type == BlockType::Static) {
+						throw std::runtime_error("Error, Invalid Deflate block type");
+					}else if (type == BlockType::Dynamic) {
+						throw std::runtime_error("Error, Invalid Deflate block type");
+					}else{
+						throw std::runtime_error("Error, Invalid Deflate block type");
+					}
+					// Check if this is the last block
+					if (marker == BlockMarker::Last) {
+						return { 0 };
+					}
+				}
 				static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
 					return Decompress(data.data(), data.size());
 				}
@@ -491,8 +523,8 @@ namespace System {
 					int bit_position = 0;
 
 					while (true) {
-						BlockMarker marker = (BlockMarker)Deflate::read_bits(data, data_len, bit_position, 1);
-						BlockType type = (BlockType)Deflate::read_bits(data, data_len, bit_position, 2);
+						BlockMarker marker = (BlockMarker)DeflateStream::read_bits(data, data_len, bit_position, 1);
+						BlockType type = (BlockType)DeflateStream::read_bits(data, data_len, bit_position, 2);
 
 						if (type == BlockType::Stored) {
 							ReadStoredBlock(result, data, data_len, bit_position);

@@ -11,12 +11,13 @@ namespace System {
         public:
             enum class BitOrder { LSB0, MSB0 };
         private:
-            const uint8_t* data;
+            
             size_t dataSize;
             size_t bitPos;
             
             BitOrder order;
         public:
+            const uint8_t* data;
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {}
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0), order(BitOrder::LSB0) {}
 
