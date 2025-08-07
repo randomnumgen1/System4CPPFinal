@@ -187,6 +187,7 @@ namespace System {
                 return ret;
             }
             std::vector<uint8_t> ReadBytesAligned(int count){
+                if (!IsByteAligned()){throw std::out_of_range("BitstreamReader [ReadBytesAligned]: bytes not aligned");}
                 std::vector<uint8_t> output;
                 output.reserve(count);
                 for (int i = 0; i < count; ++i) {
@@ -285,6 +286,9 @@ namespace System {
             }
             void SkipBytesUnchecked(int count) {
                 bitPos += static_cast<size_t>(count) << 3;
+            }
+            bool IsByteAligned() const {
+                return (bitPos & 7) == 0;
             }
             void AlignToByte() {
                 bitPos = (bitPos + 7) & ~7;
