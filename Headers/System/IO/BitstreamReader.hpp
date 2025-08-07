@@ -83,6 +83,11 @@ namespace System {
                 return 0;
             }
             uint8_t ReadUInt8(){
+                if (IsByteAligned()) {
+                    return ReadBits(8);
+                }else {
+                    throw std::out_of_range("BitstreamReader [ReadUInt8]: dont support unaligned ReadUInt8 yet");
+                }
                 return 0;
             }
             int16_t ReadInt16() {
