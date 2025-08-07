@@ -7,15 +7,14 @@
 
 namespace System {
     namespace IO {
+        //bitreader that uses least significant bit first.
         class BitstreamReader {
         public:
-            enum class BitOrder { LSB0, MSB0 };
         private:
             
             size_t dataSize;
             size_t bitPos;
             
-            BitOrder order;
 
             uint8_t ReverseBits(uint8_t b) {
                 b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
@@ -25,12 +24,10 @@ namespace System {
             }
         public:
             const uint8_t* data;
-            BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {}
-            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0), order(BitOrder::LSB0) {}
+            BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0) {}
+            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  {}
 
-            void SetBitOrder(BitOrder newOrder) {
-                order = newOrder;
-            }
+       
             uint32_t ReadBits(size_t count) {
                 // 1) Validate count and available bits in one shot
                 if (count == 0 || count > 32)
@@ -40,25 +37,14 @@ namespace System {
 
                 uint32_t value = 0;
                 // 2) Branch on bit-order once, then loop
-                if (order == BitOrder::LSB0) {
-                    for (size_t i = 0; i < count; ++i) {
-                        size_t byteIndex = bitPos >> 3;
-                        size_t bitIndex = bitPos & 7;
-                        const auto shift = bitIndex;                // LSB0
-                        uint8_t  bit = (data[byteIndex] >> shift) & 1;
-                        value |= (bit << i);
-                        ++bitPos;
+                for (size_t i = 0; i < count; ++i) {
+                    size_t byteIndex = bitPos >> 3;
+                    size_t bitIndex = bitPos & 7;
+                    const auto shift = bitIndex;                // LSB0
+                    uint8_t  bit = (data[byteIndex] >> shift) & 1;
+                    value |= (bit << i);
+                    ++bitPos;
                     }
-                }else{ // MSB0
-                    for (size_t i = 0; i < count; ++i) {
-                        size_t byteIndex = bitPos >> 3;
-                        size_t bitIndex = bitPos & 7;
-                        const auto shift = 7 - bitIndex;            // MSB0
-                        uint8_t  bit = (data[byteIndex] >> shift) & 1;
-                        value = (value << 1) | bit;
-                        ++bitPos;
-                    }
-                }
                 return value;
             }
             uint32_t ReadBits2(int count) {
@@ -73,15 +59,11 @@ namespace System {
                     if (byteIndex >= dataSize)
                         throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
 
-                    const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                    const auto shift = bitIndex ;
                     uint8_t bit = (data[byteIndex] >> shift) & 1;
 
-                    if (order == BitOrder::LSB0) {
-                        value |= (bit << i);
-                    }
-                    else { // MSB0
-                        value = (value << 1) | bit;
-                    }
+                  value |= (bit << i);
+                   
                     ++bitPos;
                 }
                 return value;
@@ -102,13 +84,8 @@ namespace System {
                 if (bitOffset == 0) { // Aligned
                     ret = data[byteIndex];
                 }else{ // Unaligned
-                    if (order == BitOrder::LSB0) {
                         uint16_t tmp = (uint16_t(data[byteIndex + 1]) << 8) | data[byteIndex];
                         ret = (uint8_t)(tmp >> bitOffset);
-                    }else{ // MSB0
-                        uint16_t tmp = (uint16_t(data[byteIndex]) << 8) | data[byteIndex + 1];
-                        ret = (uint8_t)(tmp >> (8 - bitOffset));
-                    }
                 }
                 bitPos += 8;
                 return ret;
@@ -126,7 +103,6 @@ namespace System {
                 size_t bitOffset = bitPos & 7;
                 uint16_t ret = 0;
 
-                if (order == BitOrder::LSB0) {
                     if (bitOffset == 0) {
                         // Aligned little-endian
                         ret = uint16_t(data[byteIndex]);
@@ -140,23 +116,6 @@ namespace System {
                         tmp |= uint32_t(data[byteIndex + 2]) << 16;
                         ret = uint16_t(tmp >> bitOffset);
                     }
-                }
-                else {
-                    if (bitOffset == 0) {
-                        // Aligned big-endian
-                        ret = uint16_t(data[byteIndex]) << 8;
-                        ret |= uint16_t(data[byteIndex + 1]);
-                    }
-                    else {
-                        // Unaligned MSB0: 3-byte pack into high bits, shift to extract 16 bits
-                        uint32_t tmp = 0;
-                        tmp |= uint32_t(data[byteIndex]) << 24;
-                        tmp |= uint32_t(data[byteIndex + 1]) << 16;
-                        tmp |= uint32_t(data[byteIndex + 2]) << 8;
-                        // Shift left to drop the 'bitOffset' MSBs, then right to isolate 16 bits
-                        ret = uint16_t((tmp << bitOffset) >> 16);
-                    }
-                }
 
                 bitPos += 16;
                 return ret;
@@ -175,7 +134,6 @@ namespace System {
                 size_t bitOffset = bitPos & 7;
                 uint32_t ret = 0;
 
-                if (order == BitOrder::LSB0) {
                     if (bitOffset == 0) {
                         // Aligned little-endian
                         ret = uint32_t(data[byteIndex]);
@@ -192,25 +150,6 @@ namespace System {
                         tmp |= uint64_t(data[byteIndex + 4]) << 32;
                         ret = uint32_t(tmp >> bitOffset);
                     }
-                }else{
-                    if (bitOffset == 0) {
-                        // Aligned big-endian
-                        ret = uint32_t(data[byteIndex]) << 24;
-                        ret |= uint32_t(data[byteIndex + 1]) << 16;
-                        ret |= uint32_t(data[byteIndex + 2]) << 8;
-                        ret |= uint32_t(data[byteIndex + 3]);
-                    }else{
-                        // Unaligned MSB0: 5-byte pack into high bits, shift to extract 32 bits
-                        uint64_t tmp = 0;
-                        tmp |= uint64_t(data[byteIndex]) << 56;
-                        tmp |= uint64_t(data[byteIndex + 1]) << 48;
-                        tmp |= uint64_t(data[byteIndex + 2]) << 40;
-                        tmp |= uint64_t(data[byteIndex + 3]) << 32;
-                        tmp |= uint64_t(data[byteIndex + 4]) << 24;
-                        // Shift left to drop the 'bitOffset' MSBs, then right to isolate 32 bits
-                        ret = uint32_t((tmp << bitOffset) >> 32);
-                    }
-                }
 
                 bitPos += 32;
                 return ret;
@@ -230,7 +169,7 @@ namespace System {
                 if (byteIndex >= dataSize) {
                     throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
                 }
-                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                const auto shift = bitIndex;
                 bool b = ((data[byteIndex] >> shift) & 1) != 0;
                 ++bitPos;
                 return b;
@@ -238,7 +177,7 @@ namespace System {
             bool ReadBoolUnchecked() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
-                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                const auto shift =  bitIndex;
                 uint8_t bit = ((data[byteIndex] >> shift) & 1) != 0;
                 ++bitPos;
                 return bit;
