@@ -162,7 +162,8 @@ namespace System {
                 return ret;
             }
             int32_t ReadInt32(){
-            
+                throw std::out_of_range("BitstreamReader [ReadInt32]: not implemented");
+                return 0;
             }
             uint32_t ReadUInt32() {
                 const size_t maxBits = dataSize * 8;
