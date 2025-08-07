@@ -80,13 +80,13 @@ namespace System {
                 return value;
             }
             int8_t ReadInt8() {
-
+                return 0;
             }
             uint8_t ReadUInt8(){
-            
+                return 0;
             }
             int16_t ReadInt16() {
-
+                return 0;
             }
             uint16_t ReadUInt16() {
                 const size_t maxBits = dataSize * 8;
@@ -287,7 +287,7 @@ namespace System {
             void SkipBytesUnchecked(int count) {
                 bitPos += static_cast<size_t>(count) << 3;
             }
-            bool IsByteAligned() const {
+            inline bool IsByteAligned() const {
                 return (bitPos & 7) == 0;
             }
             void AlignToByte() {
