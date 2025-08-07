@@ -83,23 +83,28 @@ namespace System {
                 return 0;
             }
             uint8_t ReadUInt8() {
+                const size_t maxBits = dataSize * 8;
+                if (bitPos + 8 > maxBits) {
+                    throw std::out_of_range("BitstreamReader [ReadUInt8]: reading past buffer");
+                }
+
                 size_t byteIndex = bitPos >> 3;
                 size_t bitOffset = bitPos & 7;
+                uint8_t ret = 0;
 
-                if (IsByteAligned()) {
-                    uint8_t result =  data[byteIndex];
-                    bitPos += 8; // Advance bit position
-                    return result;
-                }else{
-                    //we know we need to read 2 bytes as we are not byte aligned
-                    uint8_t byte1 = data[byteIndex];
-                    uint8_t byte2 = data[byteIndex + 1];
-                    // Combine bits from byte1 and byte2
-                    uint16_t combined = (static_cast<uint16_t>(byte1) << 8) | byte2;
-                    uint8_t result = (combined >> (8 - bitOffset)) & 0xFF;
-                    bitPos += 8; // Advance bit position
-                    return result;
+                if (bitOffset == 0) { // Aligned
+                    ret = data[byteIndex];
+                }else{ // Unaligned
+                    if (order == BitOrder::LSB0) {
+                        uint16_t tmp = (uint16_t(data[byteIndex + 1]) << 8) | data[byteIndex];
+                        ret = (uint8_t)(tmp >> bitOffset);
+                    }else{ // MSB0
+                        uint16_t tmp = (uint16_t(data[byteIndex]) << 8) | data[byteIndex + 1];
+                        ret = (uint8_t)(tmp >> (8 - bitOffset));
+                    }
                 }
+                bitPos += 8;
+                return ret;
             }
             int16_t ReadInt16() {
                 return 0;
