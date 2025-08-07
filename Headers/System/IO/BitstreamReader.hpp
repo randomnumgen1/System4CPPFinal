@@ -236,15 +236,24 @@ namespace System {
             bool EnsureBytes(int count) const {
                 return ((bitPos + (count * 8)) <= (dataSize * 8));
             }
+            /// <summary>
+            /// Advances the bit position by the specified number of bits.
+            /// </summary>
+            /// <param name="count"></param>
             void SkipBits(int count) {
                 if (count < 0 || (bitPos + count) >(dataSize * 8)) {
                     throw std::out_of_range("BitstreamReader [SkipBits] beyond EOF");
                 }
-                bitPos += count;
+                SkipBitsUnchecked(count);
             }
+            /// <summary>
+            /// Advances the bit position by the specified number of bits without checking if it goes beyond the end of the data.
+            /// </summary>
+            /// <param name="count"></param>
             void SkipBitsUnchecked(int count) {
                 bitPos += count;
             }
+
             void SkipBytes(int count) {
                 if (count < 0) {
                     throw std::invalid_argument("BitstreamReader [SkipBytes]: count must be non-negative");
