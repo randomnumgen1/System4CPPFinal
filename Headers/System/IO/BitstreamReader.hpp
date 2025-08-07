@@ -8,7 +8,7 @@
 namespace System {
     namespace IO {
         /// <summary>
-        /// bitreader that uses least significant bit first.
+        /// BitstreamReader that uses least significant bit first.
         /// For example, if a byte is 0b10110010, the bits are processed in this order:
         /// 0, 1, 0, 0, 1, 1, 0, 1
         /// </summary>
@@ -51,27 +51,6 @@ namespace System {
                     const auto shift = bitIndex;                // LSB0
                     uint8_t  bit = (data[byteIndex] >> shift) & 1;
                     value |= (bit << i);
-                    ++bitPos;
-                }
-                return value;
-            }
-            uint32_t ReadBits2(int count) {
-                if (count <= 0 || count > 32)
-                    throw std::invalid_argument("BitstreamReader [ReadBits]: Bit count must be between 1 and 32");
-
-                uint32_t value = 0;
-                for (int i = 0; i < count; ++i) {
-                    size_t byteIndex = bitPos / 8;
-                    size_t bitIndex = bitPos % 8;
-
-                    if (byteIndex >= dataSize)
-                        throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
-
-                    const auto shift = bitIndex ;
-                    uint8_t bit = (data[byteIndex] >> shift) & 1;
-
-                  value |= (bit << i);
-                   
                     ++bitPos;
                 }
                 return value;
@@ -240,6 +219,22 @@ namespace System {
                 uint32_t v = ReadBits(count);
                 bitPos = origPos;
                 return v;
+            }
+            /// <summary>
+            /// Checks if there is enough data to read the specified number of bits.
+            /// </summary>
+            /// <param name="count"></param>
+            /// <returns></returns>
+            bool EnsureBits(int count) const{
+                return ((bitPos + count) <= (dataSize * 8));
+            }
+            /// <summary>
+            /// Checks if there is enough data to read the specified number of bytes.
+            /// </summary>
+            /// <param name="count">Number of bytes to check for</param>
+            /// <returns>True if enough data is available, false otherwise</returns>
+            bool EnsureBytes(int count) const {
+                return ((bitPos + (count * 8)) <= (dataSize * 8));
             }
             void SkipBits(int count) {
                 if (count < 0 || (bitPos + count) >(dataSize * 8)) {
