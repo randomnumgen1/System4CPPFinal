@@ -72,7 +72,10 @@ namespace System::IO::Compression {
 			}
 			std::vector<uint8_t> decompressed = DeflateStream::DecompressBlock(bitstream);
 			uint32_t adler32_checksum  = bitstream.ReadBits(32);
-
+			uint32_t adler32_checksum_tocheck = adler32(decompressed);
+			if(adler32_checksum != adler32_checksum_tocheck){
+				throw std::runtime_error("Invalid ZLib data: data checksum missmatch");
+			}
 
 			return decompressed;
 		}
