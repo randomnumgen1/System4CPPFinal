@@ -31,18 +31,18 @@ namespace System {
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0) {}
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  {}
             /// <summary>
-            /// Reads the specified number of bits from the stream.
+            /// Reads the specified number of bits up to 32 bits from the stream.
             /// </summary>
-            /// <param name="count"></param>
+            /// <param name="count">number of bits to read</param>
             /// <returns></returns>
-            uint32_t ReadBits(size_t count) {
+            uint32_t ReadBits32(size_t count) {
                 if (count == 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [ReadBits]: count must be between 1 and 32");
                 if (bitPos + count > dataSize * 8)
                     throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
-                return ReadBitsUnchecked(count);
+                return ReadBits32Unchecked(count);
             }
-            uint32_t ReadBitsUnchecked(size_t count) {
+            uint32_t ReadBits32Unchecked(size_t count) {
                 uint32_t value = 0;
                 // 2) Branch on bit-order once, then loop
                 for (size_t i = 0; i < count; ++i) {
