@@ -7,23 +7,21 @@
 #include <algorithm> 
 namespace System {
     namespace IO {
+        /// <summary>
+        /// BitstreamWriter that uses least significant bit first.
+        /// For example, if a byte is 0b10110010, the bits are processed in this order:
+        /// 0, 1, 0, 0, 1, 1, 0, 1
+        /// </summary>
         class BitstreamWriter {
         public:
-            enum class BitOrder { LSB0, MSB0 };
         private:
             uint8_t* data;
             size_t dataSize;
             size_t bitPos;
-
-            BitOrder order;
         public:
-            BitstreamWriter( std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0), order(BitOrder::LSB0) {
+            BitstreamWriter( std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0)  {
             }
-            BitstreamWriter( uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0), order(BitOrder::LSB0) {
-            }
-
-            void SetBitOrder(BitOrder newOrder) {
-                order = newOrder;
+            BitstreamWriter( uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0) {
             }
             void Clear(){
                 std::fill(data, data + dataSize, 0);
@@ -35,7 +33,6 @@ namespace System {
                 if (bitPos + count > dataSize * 8)
                     throw std::out_of_range("BitstreamWriter [WriteBits]: writing past buffer");
 
-                if (order == BitOrder::LSB0) {
                     for (size_t i = 0; i < count; ++i) {
                         size_t byteIndex = bitPos >> 3;
                         size_t bitIndex = bitPos & 7;
@@ -51,23 +48,6 @@ namespace System {
 
                         ++bitPos;
                     }
-                }else{ // MSB0
-                    for (size_t i = 0; i < count; ++i) {
-                        size_t byteIndex = bitPos >> 3;
-                        size_t bitIndex = bitPos & 7;
-
-                        uint8_t bit = (value >> (count - 1 - i)) & 1;
-
-                        if (bit) {
-                            data[byteIndex] |= (1 << (7 - bitIndex));
-                        }
-                        else {
-                            data[byteIndex] &= ~(1 << (7 - bitIndex));
-                        }
-
-                        ++bitPos;
-                    }
-                }
             }
             void WriteUInt32(uint32_t value) {
                 const size_t maxBits = dataSize * 8;
@@ -79,27 +59,14 @@ namespace System {
                 size_t bitOffset = bitPos & 7;
 
                 if (bitOffset == 0) { // Aligned write
-                    if (order == BitOrder::LSB0) {
-                        data[byteIndex] = value & 0xFF;
-                        data[byteIndex + 1] = (value >> 8) & 0xFF;
-                        data[byteIndex + 2] = (value >> 16) & 0xFF;
-                        data[byteIndex + 3] = (value >> 24) & 0xFF;
-                    }else{ // MSB0
-                        data[byteIndex] = (value >> 24) & 0xFF;
-                        data[byteIndex + 1] = (value >> 16) & 0xFF;
-                        data[byteIndex + 2] = (value >> 8) & 0xFF;
-                        data[byteIndex + 3] = value & 0xFF;
-                    }
+                    data[byteIndex] = value & 0xFF;
+                    data[byteIndex + 1] = (value >> 8) & 0xFF;
+                    data[byteIndex + 2] = (value >> 16) & 0xFF;
+                    data[byteIndex + 3] = (value >> 24) & 0xFF;
                     bitPos += 32;
                 }else{ // Unaligned write
-                    if (order == BitOrder::LSB0) {
-                        for (int i = 0; i < 32; ++i) {
-                            WriteBool((value >> i) & 1);
-                        }
-                    }else{ // MSB0
-                        for (int i = 0; i < 32; ++i) {
-                            WriteBool((value >> (31 - i)) & 1);
-                        }
+                    for (int i = 0; i < 32; ++i) {
+                        WriteBool((value >> i) & 1);
                     }
                 }
             }
@@ -109,7 +76,7 @@ namespace System {
                 if (byteIndex >= dataSize) {
                     throw std::out_of_range("BitstreamWriter [WriteBool]: writing past buffer");
                 }
-                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                const auto shift = bitIndex;
                 if (value) {
                     data[byteIndex] |= 1 << shift;
                 }else{
@@ -120,7 +87,7 @@ namespace System {
             void WriteBoolUnchecked(bool value) {
                 size_t byteIndex = bitPos >> 3;
                 size_t bitIndex = bitPos & 7;
-                const auto shift = (order == BitOrder::LSB0 ? bitIndex : (7 - bitIndex));
+                const auto shift =  bitIndex;
                 if (value) {
                     data[byteIndex] |= (1 << shift);
                 }else {
