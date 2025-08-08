@@ -169,6 +169,12 @@ namespace System {
                 ++bitPos;
                 return bit;
             }
+            /// <summary>
+            /// Reads a null-terminated string from the bitstream, up to a maximum of 'max_len' bytes.
+            /// Stops reading when a null character is encountered or the limit is reached.
+            /// </summary>
+            /// <param name="str"></param>
+            /// <param name="max_len"></param>
             void ReadStringNullTerminated(std::string& str,size_t max_len){
                 AlignToByte();
                 str.clear();
@@ -180,6 +186,12 @@ namespace System {
                     str += c;
                 }
             }
+            /// <summary>
+            /// Reads a string from the bitstream, the string is prefixed by an 32-bit length field.
+            /// Limits the output to a maximum of 'max_len' bytes.
+            /// </summary>
+            /// <param name="str"></param>
+            /// <param name="max_len"></param>
             void ReadStringLengthPrefixed32(std::string& str, size_t max_len) {
                 AlignToByte();
                 size_t length = ReadUInt32();
@@ -195,6 +207,12 @@ namespace System {
                     str += (char)ReadBits(8);
                 }
             }
+            /// <summary>
+            /// Reads a string from the bitstream, the string is prefixed by an 8-bit length field.
+            /// Limits the output to a maximum of 'max_len' bytes.
+            /// </summary>
+            /// <param name="str"></param>
+            /// <param name="max_len"></param>
             void ReadStringLengthPrefixed8(std::string& str, size_t max_len) {
                 AlignToByte();
                 size_t length = ReadBits(8);
@@ -210,7 +228,11 @@ namespace System {
                     str += (char)ReadBits(8);
                 }
             }
-
+            /// <summary>
+            /// Reads the specified number of bits from the stream without changing the position.
+            /// </summary>
+            /// <param name="count"></param>
+            /// <returns></returns>
             uint32_t PeekBits(int count) {
                 if (count <= 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [PeekBits]: count 1–32");
@@ -253,7 +275,10 @@ namespace System {
             void SkipBitsUnchecked(int count) {
                 bitPos += count;
             }
-
+            /// <summary>
+            /// Advances the bit position by the specified number of bytes.
+            /// </summary>
+            /// <param name="count"></param>
             void SkipBytes(int count) {
                 if (count < 0) {
                     throw std::invalid_argument("BitstreamReader [SkipBytes]: count must be non-negative");
@@ -300,7 +325,10 @@ namespace System {
                 size_t maxBits = dataSize * 8;
                 return (bitPos < maxBits ? maxBits - bitPos : 0);
             }
-
+            /// <summary>
+            /// Are we at the end of the data?
+            /// </summary>
+            /// <returns></returns>
             bool IsEOF() const {
                 return bitPos >= dataSize * 8;
             }
