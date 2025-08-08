@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _SYSTEM_IO_BITSTREAMREADER_H
+#define _SYSTEM_IO_BITSTREAMREADER_H
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -149,6 +151,10 @@ namespace System {
                 }
                 return output;
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
@@ -160,6 +166,10 @@ namespace System {
                 ++bitPos;
                 return b;
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
             bool ReadBoolUnchecked() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
@@ -348,3 +358,4 @@ namespace System {
         };
     }
 }
+#endif
