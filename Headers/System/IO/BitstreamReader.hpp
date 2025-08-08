@@ -320,9 +320,20 @@ namespace System {
             size_t GetBytePosition() const {
                 return bitPos >> 3;
             }
+            /// <summary>
+            /// Get remaining bits left.
+            /// </summary>
+            /// <returns></returns>
             size_t RemainingBits() const {
                 size_t maxBits = dataSize * 8;
                 return (bitPos < maxBits ? maxBits - bitPos : 0);
+            }
+            /// <summary>
+            /// Get remaining bytes left.
+            /// </summary>
+            /// <returns></returns>
+            size_t RemainingBytes() const {
+            
             }
             /// <summary>
             /// Are we at the end of the data?
