@@ -23,11 +23,19 @@ namespace System {
             }
             BitstreamWriter( uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0) {
             }
+            /// <summary>
+            /// Clears the data in the buffer and resets the bit position to 0.
+            /// </summary>
             void Clear(){
                 std::fill(data, data + dataSize, 0);
                 bitPos = 0;
             }
-            void WriteBits(uint32_t value, size_t count) {
+            /// <summary>
+            /// Writes the specified number of bits up to 32 bits to the stream.
+            /// </summary>
+            /// <param name="value">the value to write</param>
+            /// <param name="count">number of bits to write</param>
+            void WriteBits32(uint32_t value, size_t count) {
                 if (count == 0 || count > 32)
                     throw std::invalid_argument("BitstreamWriter [WriteBits]: count must be between 1 and 32");
                 if (bitPos + count > dataSize * 8)
