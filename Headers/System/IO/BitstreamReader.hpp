@@ -56,8 +56,7 @@ namespace System {
                 return value;
             }
             int8_t ReadInt8() {
-                throw std::out_of_range("BitstreamReader [ReadInt8]: not implemented");
-                return 0;
+                return (int8_t)ReadUInt8();
             }
             uint8_t ReadUInt8() {
                 const size_t maxBits = dataSize * 8;
@@ -79,8 +78,7 @@ namespace System {
                 return ret;
             }
             int16_t ReadInt16() {
-                throw std::out_of_range("BitstreamReader [ReadInt16]: not implemented");
-                return 0;
+                return (int16_t)ReadUInt16();
             }
             uint16_t ReadUInt16() {
                 const size_t maxBits = dataSize * 8;
@@ -110,8 +108,7 @@ namespace System {
                 return ret;
             }
             int32_t ReadInt32(){
-                throw std::out_of_range("BitstreamReader [ReadInt32]: not implemented");
-                return 0;
+                return (int32_t)ReadUInt32();
             }
             uint32_t ReadUInt32() {
                 const size_t maxBits = dataSize * 8;
@@ -148,7 +145,7 @@ namespace System {
                 std::vector<uint8_t> output;
                 output.reserve(count);
                 for (int i = 0; i < count; ++i) {
-                    output.push_back(ReadBits(8));
+                    output.push_back(ReadBits32(8));
                 }
                 return output;
             }
@@ -181,7 +178,7 @@ namespace System {
                 AlignToByte();
                 str.clear();
                 while (str.length() < max_len && !IsEOF()) {
-                    char c = (char)ReadBits(8);
+                    char c = (char)ReadBits32(8);
                     if (c == '\0') {
                         break;
                     }
@@ -206,7 +203,7 @@ namespace System {
                 str.clear();
                 str.reserve(length);
                 for (uint32_t i = 0; i < length; ++i) {
-                    str += (char)ReadBits(8);
+                    str += (char)ReadBits32(8);
                 }
             }
             /// <summary>
@@ -217,7 +214,7 @@ namespace System {
             /// <param name="max_len"></param>
             void ReadStringLengthPrefixed8(std::string& str, size_t max_len) {
                 AlignToByte();
-                size_t length = ReadBits(8);
+                size_t length = ReadBits32(8);
                 if (length > max_len) {
                     throw std::runtime_error("BitstreamReader [ReadLengthPrefixedString]: String length exceeds max_len.");
                 }
@@ -227,7 +224,7 @@ namespace System {
                 str.clear();
                 str.reserve(length);
                 for (uint32_t i = 0; i < length; ++i) {
-                    str += (char)ReadBits(8);
+                    str += (char)ReadBits32(8);
                 }
             }
             /// <summary>
@@ -240,7 +237,7 @@ namespace System {
                     throw std::invalid_argument("BitstreamReader [PeekBits]: count 1–32");
 
                 size_t origPos = bitPos;
-                uint32_t v = ReadBits(count);
+                uint32_t v = ReadBits32(count);
                 bitPos = origPos;
                 return v;
             }
