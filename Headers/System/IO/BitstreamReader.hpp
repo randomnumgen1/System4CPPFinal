@@ -56,6 +56,7 @@ namespace System {
                 return value;
             }
             int8_t ReadInt8() {
+                throw std::out_of_range("BitstreamReader [ReadInt8]: not implemented");
                 return 0;
             }
             uint8_t ReadUInt8() {
@@ -78,6 +79,7 @@ namespace System {
                 return ret;
             }
             int16_t ReadInt16() {
+                throw std::out_of_range("BitstreamReader [ReadInt16]: not implemented");
                 return 0;
             }
             uint16_t ReadUInt16() {
