@@ -159,7 +159,28 @@ TEST(BitstreamReaderTests, SkipBytes) {
     reader.SkipBytes(2);
     EXPECT_EQ(reader.GetBitPosition(), 16);
 }
+TEST(BitstreamReaderTests, RemainingBits_EdgeCases) {
+    // Test with an empty buffer
+    std::vector<uint8_t> empty_buffer;
+    System::IO::BitstreamReader empty_reader(empty_buffer);
+    EXPECT_EQ(empty_reader.RemainingBits(), 0);
 
+    // Test with a buffer where all bits have been read
+    std::vector<uint8_t> buffer = {0, 0};
+    System::IO::BitstreamReader reader(buffer);
+    EXPECT_EQ(reader.RemainingBits(), 16);
+    reader.ReadBits32(16);
+    EXPECT_EQ(reader.RemainingBits(), 0);
+
+    // Test with a buffer, read some bits, then all bits
+    std::vector<uint8_t> buffer2 = {0, 0, 0};
+    System::IO::BitstreamReader reader2(buffer2);
+    EXPECT_EQ(reader2.RemainingBits(), 24);
+    reader2.ReadBits32(10);
+    EXPECT_EQ(reader2.RemainingBits(), 14);
+    reader2.ReadBits32(14);
+    EXPECT_EQ(reader2.RemainingBits(), 0);
+}
 TEST(BitstreamReaderTests, PeekSkipEdgeCases) {
     std::vector<uint8_t> buffer = {0xAA, 0xCC, 0xF0, 0x33};
     System::IO::BitstreamReader reader(buffer);
