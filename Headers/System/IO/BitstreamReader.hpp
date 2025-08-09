@@ -399,14 +399,15 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBits() const {
+                // Convert byte size to bit size using a left shift (x8)
                 size_t bitLimit = dataSizeInBytes << 3;
+                // Compute how many bits remain, assuming bitPos is within bounds
                 size_t delta = bitLimit - bitPos;
-                return delta & -(bitPos <= bitLimit);
-            }
-            size_t RemainingBits2() const {
-                size_t bitLimit = dataSizeInBytes << 3;
-                size_t delta = bitLimit - bitPos;
-                size_t mask = ~(delta >> (sizeof(size_t) * 8 - 1)); // ~0 if delta >= 0, 0 if underflow
+                // Create a mask: ~0 (all bits set) if bitPos <= bitLimit, 0 otherwise
+                // This avoids branching by converting the boolean result into a bitmask
+                size_t mask = -(bitPos <= bitLimit);
+                // Apply the mask: returns delta if valid, 0 if overflow
+                // This is branchless because it uses bitwise AND instead of an if-statement
                 return delta & mask;
             }
             /// <summary>
