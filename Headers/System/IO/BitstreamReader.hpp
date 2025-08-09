@@ -31,7 +31,7 @@ namespace System {
         public:
             const uint8_t* data;
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0) {}
-            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  {}
+            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  { assert(buffer != nullptr && size > 0); }
             /// <summary>
             /// Reads the specified number of bits up to 32 bits from the stream.
             /// </summary>
@@ -56,6 +56,65 @@ namespace System {
                     ++bitPos;
                 }
                 return value;
+            }
+            uint32_t ReadBits32Unchecked2(uint8_t count) {
+                size_t byteOffset = bitPos / 8;
+                uint8_t bitOffset = bitPos % 8;
+                int bytesToRead = (bitOffset + count + 7) / 8;
+
+
+
+
+                uint32_t lo =
+                    (static_cast<uint32_t>(data[byteOffset])) |
+                    (static_cast<uint32_t>(data[byteOffset + 1]) << 8) |
+                    (static_cast<uint32_t>(data[byteOffset + 2]) << 16) |
+                    (static_cast<uint32_t>(data[byteOffset + 3]) << 24);
+
+                uint32_t hi = static_cast<uint32_t>(data[byteOffset + 4]);
+
+                uint32_t combined = (hi << 24) | lo;
+                // Create a mask to isolate 'n' bits.
+                uint32_t mask = ~0u >> ((32 - count) & 31);
+
+                uint32_t result = (combined >> bitOffset) & mask;
+
+                bitPos += count;
+                return result;
+            }
+            uint32_t ReadBits32Unchecked3(size_t count) {
+                size_t byteIndex = bitPos >> 3;
+                uint8_t bitOffset = bitPos & 7;
+
+                // Safely copy required bytes into a local buffer to avoid out-of-bounds reads,
+                // then use the blending technique for a fast, branchless read.
+                uint8_t buffer[5] = { 0 };
+                int bytesToRead = (bitOffset + count + 7) / 8;
+                for (int i = 0; i < bytesToRead && i < 5; ++i) {
+                    if (byteIndex + i < dataSize) {
+                        buffer[i] = data[byteIndex + i];
+                    }
+                }
+
+                uint32_t lo =
+                    static_cast<uint32_t>(buffer[0]) |
+                    (static_cast<uint32_t>(buffer[1]) << 8) |
+                    (static_cast<uint32_t>(buffer[2]) << 16) |
+                    (static_cast<uint32_t>(buffer[3]) << 24);
+
+                uint32_t hi =
+                    static_cast<uint32_t>(buffer[1]) |
+                    (static_cast<uint32_t>(buffer[2]) << 8) |
+                    (static_cast<uint32_t>(buffer[3]) << 16) |
+                    (static_cast<uint32_t>(buffer[4]) << 24);
+
+                uint32_t result = (lo >> bitOffset) | (hi << (32 - bitOffset));
+
+                uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
+                result &= mask;
+
+                bitPos += count;
+                return result;
             }
             int8_t ReadInt8() {
                 return (int8_t)ReadUInt8();
