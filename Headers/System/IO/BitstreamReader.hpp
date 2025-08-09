@@ -321,7 +321,7 @@ namespace System {
             /// <param name="count"></param>
             /// <returns></returns>
             bool EnsureBits(int count) const{
-                return ((bitPos + count) <= (dataSizeInBytes * 8));
+                return ((bitPos + count) <= (dataSizeInBytes << 3));
             }
             /// <summary>
             /// Checks if there is enough data to read the specified number of bytes.
@@ -329,7 +329,7 @@ namespace System {
             /// <param name="count">Number of bytes to check for</param>
             /// <returns>True if enough data is available, false otherwise</returns>
             bool EnsureBytes(int count) const {
-                return ((bitPos + (count * 8)) <= (dataSizeInBytes * 8));
+                return bitPos + (static_cast<size_t>(count) << 3) <= (dataSizeInBytes << 3);
             }
             /// <summary>
             /// Advances the bit position by the specified number of bits.
@@ -415,7 +415,7 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBytes() const {
-                return RemainingBits() / 8;
+                return RemainingBits() >> 3;
             }
             /// <summary>
             /// Are we at the end of the data?
