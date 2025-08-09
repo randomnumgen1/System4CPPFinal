@@ -399,8 +399,9 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBits() const {
-                size_t maxBits = dataSizeInBytes * 8;
-                return (bitPos < maxBits ? maxBits - bitPos : 0);
+                size_t bitLimit = dataSizeInBytes << 3;
+                size_t delta = bitLimit - bitPos;
+                return delta & -(bitPos <= bitLimit);
             }
             /// <summary>
             /// Get remaining bytes left.
