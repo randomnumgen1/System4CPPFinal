@@ -407,11 +407,7 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBytes() const {
-                size_t totalBits = dataSizeInBytes * 8;
-                size_t delta = totalBits - bitPos;
-                size_t mask = -(bitPos <= totalBits); // 0 if overflow, ~0 otherwise
-                size_t remainingBits = delta & mask;
-                return (remainingBits + 7) / 8;
+                return RemainingBits() / 8;
             }
             /// <summary>
             /// Are we at the end of the data?
