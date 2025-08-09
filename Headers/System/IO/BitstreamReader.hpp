@@ -403,6 +403,12 @@ namespace System {
                 size_t delta = bitLimit - bitPos;
                 return delta & -(bitPos <= bitLimit);
             }
+            size_t RemainingBits2() const {
+                size_t bitLimit = dataSizeInBytes << 3;
+                size_t delta = bitLimit - bitPos;
+                size_t mask = ~(delta >> (sizeof(size_t) * 8 - 1)); // ~0 if delta >= 0, 0 if underflow
+                return delta & mask;
+            }
             /// <summary>
             /// Get remaining bytes left.
             /// </summary>
