@@ -18,7 +18,7 @@ namespace System {
         public:
         private:
             
-            size_t dataSize;
+            size_t dataSizeInBytes;
             size_t bitPos;
             
 
@@ -30,8 +30,13 @@ namespace System {
             }
         public:
             const uint8_t* data;
-            BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0) {}
-            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSize(size), bitPos(0)  { assert(buffer != nullptr && size > 0); }
+            BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSizeInBytes(buffer.size()), bitPos(0) {}
+            /// <summary>
+            /// Initializes a new instance of the <c>BitstreamReader</c> with the given buffer.
+            /// </summary>
+            /// <param name="buffer">Pointer to the bitstream data.</param>
+            /// <param name="size">Size of the buffer in bytes.</param>
+            BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSizeInBytes(size), bitPos(0)  { assert(buffer != nullptr && size > 0); }
             /// <summary>
             /// Reads the specified number of bits up to 32 bits from the stream.
             /// </summary>
@@ -40,7 +45,7 @@ namespace System {
             uint32_t ReadBits32(size_t count) {
                 if (count == 0 || count > 32)
                     throw std::invalid_argument("BitstreamReader [ReadBits]: count must be between 1 and 32");
-                if (bitPos + count > dataSize * 8)
+                if (bitPos + count > dataSizeInBytes * 8)
                     throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
                 return ReadBits32Unchecked(count);
             }
@@ -91,7 +96,7 @@ namespace System {
                 uint8_t buffer[5] = { 0 };
                 int bytesToRead = (bitOffset + count + 7) / 8;
                 for (int i = 0; i < bytesToRead && i < 5; ++i) {
-                    if (byteIndex + i < dataSize) {
+                    if (byteIndex + i < dataSizeInBytes) {
                         buffer[i] = data[byteIndex + i];
                     }
                 }
@@ -120,7 +125,7 @@ namespace System {
                 return (int8_t)ReadUInt8();
             }
             uint8_t ReadUInt8() {
-                const size_t maxBits = dataSize * 8;
+                const size_t maxBits = dataSizeInBytes * 8;
                 if (bitPos + 8 > maxBits) {
                     throw std::out_of_range("BitstreamReader [ReadUInt8]: reading past buffer");
                 }
@@ -142,7 +147,7 @@ namespace System {
                 return (int16_t)ReadUInt16();
             }
             uint16_t ReadUInt16() {
-                const size_t maxBits = dataSize * 8;
+                const size_t maxBits = dataSizeInBytes * 8;
                 if (bitPos + 16 > maxBits) {
                     throw std::out_of_range("BitstreamReader [ReadUInt16]: reading past buffer");
                 }
@@ -172,7 +177,7 @@ namespace System {
                 return (int32_t)ReadUInt32();
             }
             uint32_t ReadUInt32() {
-                const size_t maxBits = dataSize * 8;
+                const size_t maxBits = dataSizeInBytes * 8;
                 if (bitPos + 32 > maxBits) {
                     throw std::out_of_range("BitstreamReader [ReadUInt32]: reading past buffer");
                 }
@@ -217,7 +222,7 @@ namespace System {
             bool ReadBool() {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
-                if (byteIndex >= dataSize) {
+                if (byteIndex >= dataSizeInBytes) {
                     throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
                 }
                 const auto shift = bitIndex;
@@ -316,7 +321,7 @@ namespace System {
             /// <param name="count"></param>
             /// <returns></returns>
             bool EnsureBits(int count) const{
-                return ((bitPos + count) <= (dataSize * 8));
+                return ((bitPos + count) <= (dataSizeInBytes * 8));
             }
             /// <summary>
             /// Checks if there is enough data to read the specified number of bytes.
@@ -324,14 +329,14 @@ namespace System {
             /// <param name="count">Number of bytes to check for</param>
             /// <returns>True if enough data is available, false otherwise</returns>
             bool EnsureBytes(int count) const {
-                return ((bitPos + (count * 8)) <= (dataSize * 8));
+                return ((bitPos + (count * 8)) <= (dataSizeInBytes * 8));
             }
             /// <summary>
             /// Advances the bit position by the specified number of bits.
             /// </summary>
             /// <param name="count"></param>
             void SkipBits(int count) {
-                if (count < 0 || (bitPos + count) >(dataSize * 8)) {
+                if (count < 0 || (bitPos + count) >(dataSizeInBytes * 8)) {
                     throw std::out_of_range("BitstreamReader [SkipBits] beyond EOF");
                 }
                 SkipBitsUnchecked(count);
@@ -352,7 +357,7 @@ namespace System {
                     throw std::invalid_argument("BitstreamReader [SkipBytes]: count must be non-negative");
                 }
                 size_t bitsToSkip = static_cast<size_t>(count) << 3;
-                if (bitPos + bitsToSkip > dataSize * 8) {
+                if (bitPos + bitsToSkip > dataSizeInBytes * 8) {
                     throw std::out_of_range("BitstreamReader [SkipBytes]: beyond EOF");
                 }
                 bitPos += bitsToSkip;
@@ -394,7 +399,7 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBits() const {
-                size_t maxBits = dataSize * 8;
+                size_t maxBits = dataSizeInBytes * 8;
                 return (bitPos < maxBits ? maxBits - bitPos : 0);
             }
             /// <summary>
@@ -402,14 +407,18 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             size_t RemainingBytes() const {
-            
+                size_t totalBits = dataSizeInBytes * 8;
+                size_t delta = totalBits - bitPos;
+                size_t mask = -(bitPos <= totalBits); // 0 if overflow, ~0 otherwise
+                size_t remainingBits = delta & mask;
+                return (remainingBits + 7) / 8;
             }
             /// <summary>
             /// Are we at the end of the data?
             /// </summary>
             /// <returns></returns>
             bool IsEOF() const {
-                return bitPos >= dataSize * 8;
+                return bitPos >= dataSizeInBytes * 8;
             }
 
 
