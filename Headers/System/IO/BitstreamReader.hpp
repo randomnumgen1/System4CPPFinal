@@ -6,7 +6,7 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
-
+//int numbytesaffected = (bitOffset + count + 7) / 8;
 namespace System {
     namespace IO {
         /// <summary>
@@ -81,92 +81,41 @@ namespace System {
                 }
                 return value;
             }
-            uint32_t ReadBits32Unchecked2(uint8_t count) {
-                size_t byteOffset = bitPos / 8;
-                uint8_t bitOffset = bitPos % 8;
-                //the number of bytes that will be effected by the read operation.
-                int numbytesaffected = (bitOffset + count + 7) / 8;
-
-
-
-
-                uint32_t lo =
-                    (static_cast<uint32_t>(data[byteOffset])) |
-                    (static_cast<uint32_t>(data[byteOffset + 1]) << 8) |
-                    (static_cast<uint32_t>(data[byteOffset + 2]) << 16) |
-                    (static_cast<uint32_t>(data[byteOffset + 3]) << 24);
-
-                uint32_t hi = static_cast<uint32_t>(data[byteOffset + 4]);
-
-                uint32_t combined = (hi << 24) | lo;
-                // Create a mask to isolate 'n' bits.
-                uint32_t mask = ~0u >> ((32 - count) & 31);
-
-                uint32_t result = (combined >> bitOffset) & mask;
-
-                bitPos += count;
-                return result;
-            }
-            uint32_t ReadBits32Unchecked3(size_t count) {
+            uint32_t ReadBits32Uncheckedv1(size_t count) {
                 size_t byteIndex = bitPos >> 3;
                 uint8_t bitOffset = bitPos & 7;
 
-                // Safely copy required bytes into a local buffer to avoid out-of-bounds reads,
-                // then use the blending technique for a fast, branchless read.
-                uint8_t buffer[5] = { 0 };
-                int bytesToRead = (bitOffset + count + 7) / 8;
-                for (int i = 0; i < bytesToRead && i < 5; ++i) {
-                    if (byteIndex + i < dataSizeInBytes) {
-                        buffer[i] = data[byteIndex + i];
-                    }
+                // The caller guarantees that bitPos + count is within the buffer's bit size.
+                // This ensures that any byte access needed for the read is within the buffer's byte size.
+                // The maximum number of bytes needed for a 32-bit read is 5.
+                const int bytesToRead = (bitOffset + count + 7) / 8;
+                uint64_t temp = 0;
+
+                // This switch statement is highly efficient and avoids branching.
+                // It reads all necessary bytes in a single, unrolled sequence.
+                switch (bytesToRead) {
+                case 5:
+                    temp |= (uint64_t)data[byteIndex + 4] << 32;
+                    [[fallthrough]];
+                case 4:
+                    temp |= (uint64_t)data[byteIndex + 3] << 24;
+                    [[fallthrough]];
+                case 3:
+                    temp |= (uint64_t)data[byteIndex + 2] << 16;
+                    [[fallthrough]];
+                case 2:
+                    temp |= (uint64_t)data[byteIndex + 1] << 8;
+                    [[fallthrough]];
+                case 1:
+                    temp |= (uint64_t)data[byteIndex];
                 }
 
-                uint32_t lo =
-                    static_cast<uint32_t>(buffer[0]) |
-                    (static_cast<uint32_t>(buffer[1]) << 8) |
-                    (static_cast<uint32_t>(buffer[2]) << 16) |
-                    (static_cast<uint32_t>(buffer[3]) << 24);
-
-                uint32_t hi =
-                    static_cast<uint32_t>(buffer[1]) |
-                    (static_cast<uint32_t>(buffer[2]) << 8) |
-                    (static_cast<uint32_t>(buffer[3]) << 16) |
-                    (static_cast<uint32_t>(buffer[4]) << 24);
-
-                uint32_t result = (lo >> bitOffset) | (hi << (32 - bitOffset));
-
-                uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
-                result &= mask;
-
+                uint32_t result = static_cast<uint32_t>(temp >> bitOffset);
                 bitPos += count;
-                return result;
-            }
-            uint32_t ReadBits32Unchecked4(size_t count) {
-                size_t byteIndex = bitPos >> 3;
-                uint8_t bitOffset = bitPos & 7;
 
-                uint8_t buffer[5] = { 0 };
-                int bytesToRead = (bitOffset + count + 7) / 8;
-                for (int i = 0; i < bytesToRead && i < 5; ++i) {
-                    if (byteIndex + i < dataSizeInBytes) {
-                        buffer[i] = data[byteIndex + i];
-                    }
-                }
-
-                uint32_t lo = static_cast<uint32_t>(buffer[0]) |
-                    (static_cast<uint32_t>(buffer[1]) << 8) |
-                    (static_cast<uint32_t>(buffer[2]) << 16) |
-                    (static_cast<uint32_t>(buffer[3]) << 24);
-
-                uint32_t hi = static_cast<uint32_t>(buffer[4]);
-
-                uint32_t result = (lo >> bitOffset) | (hi << (32 - bitOffset));
-
+                // Create a mask to isolate the desired number of bits.
                 uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
-                result &= mask;
-
-                bitPos += count;
-                return result;
+                return result & mask;
             }
             int8_t ReadInt8() {
                 return (int8_t)ReadUInt8();
