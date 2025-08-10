@@ -244,6 +244,11 @@ namespace System {
             int32_t ReadInt32(){
                 return (int32_t)ReadUInt32();
             }
+            /// <summary>
+            /// Reads an unsigned 32-bit integer from the bitstream while checking for buffer limits/overflows.
+            /// Due to the checking, this is slower than ReadUint32Unchecked.
+            /// </summary>
+            /// <returns></returns>
             uint32_t ReadUInt32() {
                 const size_t maxBits = dataSizeInBytes * 8;
                 if (bitPos + 32 > maxBits) [[unlikely]] {
