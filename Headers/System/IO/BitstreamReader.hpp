@@ -22,12 +22,7 @@ namespace System {
             size_t bitPos;
             
 
-            uint8_t ReverseBits(uint8_t b) {
-                b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
-                b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
-                b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
-                return b;
-            }
+
         public:
             const uint8_t* data;
             BitstreamReader(const std::vector<uint8_t>& buffer) : data(buffer.data()), dataSizeInBytes(buffer.size()), bitPos(0) {}
@@ -37,6 +32,12 @@ namespace System {
             /// <param name="buffer">Pointer to the bitstream data.</param>
             /// <param name="size">Size of the buffer in bytes.</param>
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSizeInBytes(size), bitPos(0)  { assert(buffer != nullptr && size > 0); }
+            uint8_t ReverseBits(uint8_t b) {
+                b = (b & 0xF0) >> 4 | (b & 0x0F) << 4;
+                b = (b & 0xCC) >> 2 | (b & 0x33) << 2;
+                b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
+                return b;
+            }
             /// <summary>
             /// Reads the specified number of bits up to 64 bits from the stream.
             /// </summary>
@@ -260,13 +261,13 @@ namespace System {
 
                 uint32_t ret;
                 if (bitOffset == 0) {
-                    // Aligned read — little-endian
+                    // Aligned read - little-endian
                     ret = uint32_t(data[byteIndex]) |
                         (uint32_t(data[byteIndex + 1]) << 8) |
                         (uint32_t(data[byteIndex + 2]) << 16) |
                         (uint32_t(data[byteIndex + 3]) << 24);
                 }else{
-                    // Unaligned read — need 5 bytes
+                    // Unaligned read - requires 5 bytes
                     if (byteIndex + 4 >= dataSizeInBytes) [[unlikely]] {
                         throw std::out_of_range("BitstreamReader [ReadUInt32]: unaligned read over buffer edge");
                     }
