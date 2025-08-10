@@ -248,27 +248,26 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             bool ReadBool() {
-                size_t byteIndex = bitPos / 8;
-                size_t bitIndex = bitPos % 8;
+                // Faster than division
+                const size_t byteIndex = bitPos >> 3;         
+                // Faster than modulo
+                const size_t bitIndex = bitPos & 7;          
+                // Increment early to enable tail-call optimization
+                bitPos++;                                     
+                // Bounds check — keep it but consider moving it out if you batch reads
                 if (byteIndex >= dataSizeInBytes) {
                     throw std::out_of_range("BitstreamReader [ReadBool]: reading past buffer");
                 }
-                const auto shift = bitIndex;
-                bool b = ((data[byteIndex] >> shift) & 1) != 0;
-                ++bitPos;
-                return b;
+                return (data[byteIndex] >> bitIndex) & 1;
             }
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
             bool ReadBoolUnchecked() {
-                size_t byteIndex = bitPos / 8;
-                size_t bitIndex = bitPos % 8;
-                const auto shift =  bitIndex;
-                uint8_t bit = ((data[byteIndex] >> shift) & 1) != 0;
-                ++bitPos;
-                return bit;
+                const size_t byteIndex = bitPos >> 3;
+                const size_t bitIndex = bitPos++ & 7;
+                return (data[byteIndex] >> bitIndex) & 1;
             }
             /// <summary>
             /// Reads a null-terminated string from the bitstream, up to a maximum of 'max_len' bytes.
