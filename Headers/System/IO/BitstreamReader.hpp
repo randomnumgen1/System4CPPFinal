@@ -38,6 +38,24 @@ namespace System {
             /// <param name="size">Size of the buffer in bytes.</param>
             BitstreamReader(const uint8_t* buffer, size_t size) : data(buffer), dataSizeInBytes(size), bitPos(0)  { assert(buffer != nullptr && size > 0); }
             /// <summary>
+            /// Reads the specified number of bits up to 64 bits from the stream.
+            /// </summary>
+            /// <param name="count"></param>
+            /// <returns></returns>
+            uint64_t ReadBits64Unchecked(size_t count) {
+                uint64_t value = 0;
+                // 2) Branch on bit-order once, then loop
+                for (size_t i = 0; i < count; ++i) {
+                    size_t byteIndex = bitPos >> 3;
+                    size_t bitIndex = bitPos & 7;
+                    const auto shift = bitIndex;                // LSB0
+                    uint8_t  bit = (data[byteIndex] >> shift) & 1;
+                    value |= (bit << i);
+                    ++bitPos;
+                }
+                return value;
+            }
+            /// <summary>
             /// Reads the specified number of bits up to 32 bits from the stream.
             /// </summary>
             /// <param name="count">number of bits to read</param>
@@ -228,30 +246,35 @@ namespace System {
             }
             uint32_t ReadUInt32() {
                 const size_t maxBits = dataSizeInBytes * 8;
-                if (bitPos + 32 > maxBits) {
+                if (bitPos + 32 > maxBits) [[unlikely]] {
                     throw std::out_of_range("BitstreamReader [ReadUInt32]: reading past buffer");
                 }
 
-                size_t byteIndex = bitPos >> 3;
-                size_t bitOffset = bitPos & 7;
-                uint32_t ret = 0;
+                const size_t byteIndex = bitPos >> 3;
+                const size_t bitOffset = bitPos & 7;
 
-                    if (bitOffset == 0) {
-                        // Aligned little-endian
-                        ret = uint32_t(data[byteIndex]);
-                        ret |= uint32_t(data[byteIndex + 1]) << 8;
-                        ret |= uint32_t(data[byteIndex + 2]) << 16;
-                        ret |= uint32_t(data[byteIndex + 3]) << 24;
-                    }else{
-                        // Unaligned LSB0: 5-byte pack, then shift right
-                        uint64_t tmp = 0;
-                        tmp |= uint64_t(data[byteIndex]);
-                        tmp |= uint64_t(data[byteIndex + 1]) << 8;
-                        tmp |= uint64_t(data[byteIndex + 2]) << 16;
-                        tmp |= uint64_t(data[byteIndex + 3]) << 24;
-                        tmp |= uint64_t(data[byteIndex + 4]) << 32;
-                        ret = uint32_t(tmp >> bitOffset);
+                uint32_t ret;
+                if (bitOffset == 0) {
+                    // Aligned read — little-endian
+                    ret = uint32_t(data[byteIndex]) |
+                        (uint32_t(data[byteIndex + 1]) << 8) |
+                        (uint32_t(data[byteIndex + 2]) << 16) |
+                        (uint32_t(data[byteIndex + 3]) << 24);
+                }else{
+                    // Unaligned read — need 5 bytes
+                    if (byteIndex + 4 >= dataSizeInBytes) [[unlikely]] {
+                        throw std::out_of_range("BitstreamReader [ReadUInt32]: unaligned read over buffer edge");
                     }
+
+                    const uint64_t word =
+                        (uint64_t(data[byteIndex])) |
+                        (uint64_t(data[byteIndex + 1]) << 8) |
+                        (uint64_t(data[byteIndex + 2]) << 16) |
+                        (uint64_t(data[byteIndex + 3]) << 24) |
+                        (uint64_t(data[byteIndex + 4]) << 32);
+
+                    ret = static_cast<uint32_t>(word >> bitOffset);
+                }
 
                 bitPos += 32;
                 return ret;
