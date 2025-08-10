@@ -152,6 +152,10 @@ namespace System {
             int8_t ReadInt8() {
                 return (int8_t)ReadUInt8();
             }
+            /// <summary>
+            /// Reads an unsigned 8-bit integer from the bitstream without checking for buffer limits/overflows.
+            /// </summary>
+            /// <returns></returns>
             uint8_t ReadUInt8Unchecked() {
                 const size_t byteIndex = bitPos >> 3;
                 const size_t bitOffset = bitPos & 7;
@@ -163,7 +167,7 @@ namespace System {
                 return ret;
             }
             /// <summary>
-            /// Reads an unsigned 8-bit ineger from the bitstream.
+            /// Reads an unsigned 8-bit integer from the bitstream.
             /// </summary>
             /// <returns></returns>
             uint8_t ReadUInt8() {
@@ -179,7 +183,7 @@ namespace System {
                 if (bitOffset == 0) {
                     ret = data[byteIndex];
                 }else{
-                    // Ensure we don't read past buffer as the second byte might not exist
+                    // since we are not aligned we need to read the extra byte that contains the needed data that may not exist
                     if (byteIndex + 1 >= dataSizeInBytes) [[unlikely]] {
                         throw std::out_of_range("BitstreamReader [ReadUInt8]: unaligned read over buffer edge");
                     }
