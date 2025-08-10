@@ -152,21 +152,39 @@ namespace System {
             int8_t ReadInt8() {
                 return (int8_t)ReadUInt8();
             }
+            uint8_t ReadUInt8Unchecked() {
+                const size_t byteIndex = bitPos >> 3;
+                const size_t bitOffset = bitPos & 7;
+
+                const uint16_t word = (uint16_t(data[byteIndex + 1]) << 8) | data[byteIndex];
+                const uint8_t ret = static_cast<uint8_t>(word >> bitOffset);
+
+                bitPos += 8;
+                return ret;
+            }
+            /// <summary>
+            /// Reads an unsigned 8-bit ineger from the bitstream.
+            /// </summary>
+            /// <returns></returns>
             uint8_t ReadUInt8() {
                 const size_t maxBits = dataSizeInBytes * 8;
-                if (bitPos + 8 > maxBits) {
+                if (bitPos + 8 > maxBits) [[unlikely]] {
                     throw std::out_of_range("BitstreamReader [ReadUInt8]: reading past buffer");
                 }
 
-                size_t byteIndex = bitPos >> 3;
-                size_t bitOffset = bitPos & 7;
-                uint8_t ret = 0;
+                const size_t byteIndex = bitPos >> 3;
+                const size_t bitOffset = bitPos & 7;
 
-                if (bitOffset == 0) { // Aligned
+                uint8_t ret;
+                if (bitOffset == 0) {
                     ret = data[byteIndex];
-                }else{ // Unaligned
-                        uint16_t tmp = (uint16_t(data[byteIndex + 1]) << 8) | data[byteIndex];
-                        ret = (uint8_t)(tmp >> bitOffset);
+                }else{
+                    // Ensure we don't read past buffer as the second byte might not exist
+                    if (byteIndex + 1 >= dataSizeInBytes) [[unlikely]] {
+                        throw std::out_of_range("BitstreamReader [ReadUInt8]: unaligned read over buffer edge");
+                    }
+                    const uint16_t word = (uint16_t(data[byteIndex + 1]) << 8) | data[byteIndex];
+                    ret = static_cast<uint8_t>(word >> bitOffset);
                 }
                 bitPos += 8;
                 return ret;
@@ -451,8 +469,6 @@ namespace System {
             bool IsEOF() const {
                 return bitPos >= dataSizeInBytes * 8;
             }
-
-
 
         };
     }
