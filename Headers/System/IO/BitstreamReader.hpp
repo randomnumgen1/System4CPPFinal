@@ -65,7 +65,8 @@ namespace System {
             uint32_t ReadBits32Unchecked2(uint8_t count) {
                 size_t byteOffset = bitPos / 8;
                 uint8_t bitOffset = bitPos % 8;
-                int bytesToRead = (bitOffset + count + 7) / 8;
+                //the number of bytes that will be effected by the read operation.
+                int numbytesaffected = (bitOffset + count + 7) / 8;
 
 
 
@@ -112,6 +113,33 @@ namespace System {
                     (static_cast<uint32_t>(buffer[2]) << 8) |
                     (static_cast<uint32_t>(buffer[3]) << 16) |
                     (static_cast<uint32_t>(buffer[4]) << 24);
+
+                uint32_t result = (lo >> bitOffset) | (hi << (32 - bitOffset));
+
+                uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
+                result &= mask;
+
+                bitPos += count;
+                return result;
+            }
+            uint32_t ReadBits32Unchecked4(size_t count) {
+                size_t byteIndex = bitPos >> 3;
+                uint8_t bitOffset = bitPos & 7;
+
+                uint8_t buffer[5] = { 0 };
+                int bytesToRead = (bitOffset + count + 7) / 8;
+                for (int i = 0; i < bytesToRead && i < 5; ++i) {
+                    if (byteIndex + i < dataSizeInBytes) {
+                        buffer[i] = data[byteIndex + i];
+                    }
+                }
+
+                uint32_t lo = static_cast<uint32_t>(buffer[0]) |
+                    (static_cast<uint32_t>(buffer[1]) << 8) |
+                    (static_cast<uint32_t>(buffer[2]) << 16) |
+                    (static_cast<uint32_t>(buffer[3]) << 24);
+
+                uint32_t hi = static_cast<uint32_t>(buffer[4]);
 
                 uint32_t result = (lo >> bitOffset) | (hi << (32 - bitOffset));
 
