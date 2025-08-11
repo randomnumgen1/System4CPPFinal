@@ -276,7 +276,7 @@ namespace System {
                 std::vector<uint8_t> output;
                 output.reserve(count);
                 for (int i = 0; i < count; ++i) {
-                    output.push_back(ReadBits32(8));
+                    output.push_back(ReadUInt8());
                 }
                 return output;
             }
@@ -316,7 +316,7 @@ namespace System {
                 AlignToByte();
                 str.clear();
                 while (str.length() < max_len && !IsEOF()) {
-                    char c = (char)ReadBits32(8);
+                    char c = (char)ReadUInt8();
                     if (c == '\0') {
                         break;
                     }
@@ -341,7 +341,7 @@ namespace System {
                 str.clear();
                 str.reserve(length);
                 for (uint32_t i = 0; i < length; ++i) {
-                    str += (char)ReadBits32(8);
+                    str += (char)ReadUInt8();
                 }
             }
             /// <summary>
@@ -352,7 +352,7 @@ namespace System {
             /// <param name="max_len"></param>
             void ReadStringLengthPrefixed8(std::string& str, size_t max_len) {
                 AlignToByte();
-                size_t length = ReadBits32(8);
+                size_t length = ReadUInt8();
                 if (length > max_len) {
                     throw std::runtime_error("BitstreamReader [ReadLengthPrefixedString]: String length exceeds max_len.");
                 }
@@ -362,7 +362,7 @@ namespace System {
                 str.clear();
                 str.reserve(length);
                 for (uint32_t i = 0; i < length; ++i) {
-                    str += (char)ReadBits32(8);
+                    str += (char)ReadUInt8();
                 }
             }
             /// <summary>
