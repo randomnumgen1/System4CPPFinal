@@ -68,6 +68,7 @@ namespace System {
                     throw std::out_of_range("BitstreamReader [ReadBits]: reading past buffer");
                 return ReadBits32Unchecked(count);
             }
+#ifdef NAIVE
             uint32_t ReadBits32Unchecked(size_t count) {
                 uint32_t value = 0;
                 // 2) Branch on bit-order once, then loop
@@ -81,43 +82,8 @@ namespace System {
                 }
                 return value;
             }
-            uint32_t ReadBits32Uncheckedv1(size_t count) {
-                size_t byteIndex = bitPos >> 3;
-                uint8_t bitOffset = bitPos & 7;
-
-                // The caller guarantees that bitPos + count is within the buffer's bit size.
-                // This ensures that any byte access needed for the read is within the buffer's byte size.
-                // The maximum number of bytes needed for a 32-bit read is 5.
-                const int bytesToRead = (bitOffset + count + 7) / 8;
-                uint64_t temp = 0;
-
-                // This switch statement is highly efficient and avoids branching.
-                // It reads all necessary bytes in a single, unrolled sequence.
-                switch (bytesToRead) {
-                case 5:
-                    temp |= (uint64_t)data[byteIndex + 4] << 32;
-                    [[fallthrough]];
-                case 4:
-                    temp |= (uint64_t)data[byteIndex + 3] << 24;
-                    [[fallthrough]];
-                case 3:
-                    temp |= (uint64_t)data[byteIndex + 2] << 16;
-                    [[fallthrough]];
-                case 2:
-                    temp |= (uint64_t)data[byteIndex + 1] << 8;
-                    [[fallthrough]];
-                case 1:
-                    temp |= (uint64_t)data[byteIndex];
-                }
-
-                uint32_t result = static_cast<uint32_t>(temp >> bitOffset);
-                bitPos += count;
-
-                // Create a mask to isolate the desired number of bits.
-                uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
-                return result & mask;
-            }
-            uint32_t ReadBits32Uncheckedv2(size_t count) {
+#else
+            uint32_t ReadBits32Unchecked(size_t count) {
                 size_t byteIndex = bitPos >> 3;
                 uint8_t bitOffset = bitPos & 7;
 
@@ -151,9 +117,17 @@ namespace System {
 
                 // Create a mask to isolate the desired number of bits.
                 // This is a branchless way to handle count == 32 correctly.
-                uint32_t mask = (uint32_t)((1ULL << count) - 1);
+                //uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
+                uint32_t mask = ((1u << count) - 1) | -(uint32_t)(count >> 5);
                 return result & mask;
             }
+#endif // NAIVE
+
+
+
+          
+
+
             int8_t ReadInt8() {
                 return (int8_t)ReadUInt8();
             }
