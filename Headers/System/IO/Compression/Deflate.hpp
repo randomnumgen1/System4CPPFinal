@@ -543,7 +543,9 @@ namespace System {
 
 							int distance_symbol = distance_huffman.decode(bsr);
 							int distance = distance_starts[distance_symbol] + bsr.ReadBits32(distance_extra_bits[distance_symbol]);
-
+							if (distance > result.size()) {
+								throw std::runtime_error("Error: invalid back-reference distance");
+							}
 							int start = result.size() - distance;
 							for (int i = 0; i < length; ++i) {
 								result.push_back(result[start + i]);
@@ -619,6 +621,10 @@ namespace System {
 							int distance_starts[] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577 };
 							int distance = distance_starts[distance_symbol] + bsr.ReadBits32(distance_extra_bits[distance_symbol]);
 
+
+							if (distance > result.size()) {
+								throw std::runtime_error("Error: invalid back-reference distance");
+							}
 							int start = result.size() - distance;
 							for (int i = 0; i < length; ++i) {
 								result.push_back(result[start + i]);
