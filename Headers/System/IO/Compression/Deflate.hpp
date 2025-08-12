@@ -96,7 +96,7 @@ namespace System {
 					int currentNode = 0;
 
 					while (tree[currentNode].Left != -1) {
-						int bit = bsr.ReadBits(1);
+						int bit = bsr.ReadBits32(1);
 
 						if (bit) {
 							currentNode = tree[currentNode].Right;
@@ -503,8 +503,8 @@ namespace System {
 				}
 				static void ReadStoredBlock(std::vector<uint8_t>& result, BitstreamReader &bsr) {
 					bsr.AlignToByte();
-					uint16_t len = (uint16_t)bsr.ReadBits(16);
-					uint16_t nlen = (uint16_t)bsr.ReadBits(16);
+					uint16_t len = (uint16_t)bsr.ReadBits32(16);
+					uint16_t nlen = (uint16_t)bsr.ReadBits32(16);
 					// Check if length and negated length are complements
 					if ((len ^ nlen) != 0xFFFF) {
 						throw std::runtime_error("Error: stored block length mismatch");
@@ -539,10 +539,10 @@ namespace System {
 							break;
 						}
 						else {
-							int length = length_starts[symbol - LENGTH_CODES_START] + bsr.ReadBits(length_extra_bits[symbol - LENGTH_CODES_START]);
+							int length = length_starts[symbol - LENGTH_CODES_START] + bsr.ReadBits32(length_extra_bits[symbol - LENGTH_CODES_START]);
 
 							int distance_symbol = distance_huffman.decode(bsr);
-							int distance = distance_starts[distance_symbol] + bsr.ReadBits(distance_extra_bits[distance_symbol]);
+							int distance = distance_starts[distance_symbol] + bsr.ReadBits32(distance_extra_bits[distance_symbol]);
 
 							int start = result.size() - distance;
 							for (int i = 0; i < length; ++i) {
@@ -553,17 +553,17 @@ namespace System {
 				}
 				static void ReadDynamicBlock(std::vector<uint8_t>& result, BitstreamReader& bsr) {
 					//5 bits: HLIT - number of literal/length codes
-					uint16_t hlit = bsr.ReadBits(5) + 257;
+					uint16_t hlit = bsr.ReadBits32(5) + 257;
 					//5 bits: HDIST - number of distance codes
-					uint16_t hdist = bsr.ReadBits(5) + 1;
+					uint16_t hdist = bsr.ReadBits32(5) + 1;
 					//4 bits: HCLEN - number of code length codes
-					uint16_t hclen = bsr.ReadBits(4) + 4;
+					uint16_t hclen = bsr.ReadBits32(4) + 4;
 
 					std::vector<int> code_lengths_lengths(19, 0);
 					int code_lengths_order[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
 					for (int i = 0; i < hclen; ++i) {
-						code_lengths_lengths[code_lengths_order[i]] = bsr.ReadBits(3);
+						code_lengths_lengths[code_lengths_order[i]] = bsr.ReadBits32(3);
 					}
 
 					DeflateHuffmanTree code_lengths_huffman(code_lengths_lengths);
@@ -575,20 +575,20 @@ namespace System {
 							literal_lengths.push_back(symbol);
 						}
 						else if (symbol == 16) {
-							int repeat_count = bsr.ReadBits(2) + 3;
+							int repeat_count = bsr.ReadBits32(2) + 3;
 							int previous_length = literal_lengths.back();
 							for (int i = 0; i < repeat_count; ++i) {
 								literal_lengths.push_back(previous_length);
 							}
 						}
 						else if (symbol == 17) {
-							int repeat_count = bsr.ReadBits(3) + 3;
+							int repeat_count = bsr.ReadBits32(3) + 3;
 							for (int i = 0; i < repeat_count; ++i) {
 								literal_lengths.push_back(0);
 							}
 						}
 						else if (symbol == 18) {
-							int repeat_count = bsr.ReadBits(7) + 11;
+							int repeat_count = bsr.ReadBits32(7) + 11;
 							for (int i = 0; i < repeat_count; ++i) {
 								literal_lengths.push_back(0);
 							}
@@ -612,12 +612,12 @@ namespace System {
 						else {
 							int length_extra_bits[] = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0 };
 							int length_starts[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258 };
-							int length = length_starts[symbol - 257] + bsr.ReadBits(length_extra_bits[symbol - 257]);
+							int length = length_starts[symbol - 257] + bsr.ReadBits32(length_extra_bits[symbol - 257]);
 
 							int distance_symbol = distance_huffman.decode(bsr);
 							int distance_extra_bits[] = { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13 };
 							int distance_starts[] = { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577 };
-							int distance = distance_starts[distance_symbol] + bsr.ReadBits(distance_extra_bits[distance_symbol]);
+							int distance = distance_starts[distance_symbol] + bsr.ReadBits32(distance_extra_bits[distance_symbol]);
 
 							int start = result.size() - distance;
 							for (int i = 0; i < length; ++i) {
@@ -628,8 +628,8 @@ namespace System {
 				}
 				static std::vector<uint8_t> DecompressBlock(BitstreamReader &bsr) {
 					std::vector<uint8_t> result;
-					BlockMarker marker = (BlockMarker)bsr.ReadBits(1);
-					BlockType type = (BlockType)bsr.ReadBits(2);
+					BlockMarker marker = (BlockMarker)bsr.ReadBits32(1);
+					BlockType type = (BlockType)bsr.ReadBits32(2);
 					if (type == BlockType::Stored) {
 						ReadStoredBlock(result, bsr);
 					}else if (type == BlockType::Static) {
