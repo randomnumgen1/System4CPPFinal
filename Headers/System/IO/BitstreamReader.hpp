@@ -125,7 +125,13 @@ namespace System {
                 // This is a branchless way to handle count == 32 correctly.
                 //uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
                 //uint32_t mask = ((1u << count) - 1) | -(uint32_t)(count >> 5);//supports count == 0, 
+#if defined(__arch__)
+                uint32_t mask = x ^ (x - 1);
+#elif defined(__BMI__) || (defined(_WIN32) || defined(_WIN64))
+                uint32_t mask = _blsmsk_u32(1u << (count - 1));
+#else
                 uint32_t mask = ~(uint32_t)0 >> ((32 - count) & 31);//doesnt support count == 0
+#endif
                 return result & mask;
             }
 #endif // NAIVE
@@ -184,7 +190,7 @@ namespace System {
             }
             uint16_t ReadUInt16() {
                 const size_t maxBits = dataSizeInBytes * 8;
-                if (bitPos + 16 > maxBits) {
+                if (bitPos + 16 > maxBits) [[unlikely]] {
                     throw std::out_of_range("BitstreamReader [ReadUInt16]: reading past buffer");
                 }
 
