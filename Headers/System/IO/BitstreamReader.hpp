@@ -83,6 +83,12 @@ namespace System {
                 return value;
             }
 #else
+            /// <summary>
+            /// Reads up to unsigned 32-bit integer from the bitstream without checking for buffer limits/overflows.
+            /// does not check if count is between 1 and 32.
+            /// </summary>
+            /// <param name="count"></param>
+            /// <returns></returns>
             uint32_t ReadBits32Unchecked(size_t count) {
                 size_t byteIndex = bitPos >> 3;
                 uint8_t bitOffset = bitPos & 7;
@@ -118,7 +124,8 @@ namespace System {
                 // Create a mask to isolate the desired number of bits.
                 // This is a branchless way to handle count == 32 correctly.
                 //uint32_t mask = (count == 32) ? ~0u : ((1u << count) - 1);
-                uint32_t mask = ((1u << count) - 1) | -(uint32_t)(count >> 5);
+                //uint32_t mask = ((1u << count) - 1) | -(uint32_t)(count >> 5);//supports count == 0, 
+                uint32_t mask = ~(uint32_t)0 >> ((32 - count) & 31);//doesnt support count == 0
                 return result & mask;
             }
 #endif // NAIVE
