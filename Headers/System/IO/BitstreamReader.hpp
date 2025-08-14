@@ -250,7 +250,6 @@ namespace System {
                         (uint32_t(data[byteIndex + 3]) << 24);
 #else
                     memcpy(&ret, &data[byteIndex], sizeof(ret));
-                    ret = __builtin_bswap32(ret);                              // one BSWAP
 #endif
 
                 }else{
