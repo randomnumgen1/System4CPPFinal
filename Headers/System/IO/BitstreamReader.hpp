@@ -243,10 +243,17 @@ namespace System {
                 uint32_t ret;
                 if (bitOffset == 0) {
                     // Aligned read - little-endian
+#if defined(_MSC_VER)
                     ret = uint32_t(data[byteIndex]) |
                         (uint32_t(data[byteIndex + 1]) << 8) |
                         (uint32_t(data[byteIndex + 2]) << 16) |
                         (uint32_t(data[byteIndex + 3]) << 24);
+#else
+                    uint32_t tmp;
+                    std::memcpy(&tmp, data + byteIndex, sizeof(ret));          // one memcpy - one load
+                    ret = __builtin_bswap32(tmp);                              // one BSWAP
+#endif
+
                 }else{
                     // Unaligned read - requires 5 bytes
                     if (byteIndex + 4 >= dataSizeInBytes) [[unlikely]] {
