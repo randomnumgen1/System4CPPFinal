@@ -1,4 +1,8 @@
-#pragma once
+#ifndef _SYSTEM_IO_BITSTREAMWRITER_H
+#define _SYSTEM_IO_BITSTREAMWRITER_H
+
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -132,12 +136,43 @@ namespace System {
                 bitPos = (bitPos + 63) & ~63;
             }
 
+            void WriteStringLengthPrefixed8(const std::string& str) {
+                AlignToByte();
+                WriteUInt8(str.length());
+                for (char c : str) {
+                    WriteUInt8(c);
+                }
+            }
+            void WriteStringLengthPrefixed32(const std::string& str) {
+                AlignToByte();
+                WriteUInt32(str.length());
+                for (char c : str) {
+                    WriteUInt8(c);
+                }
+            }
+            void WriteUInt8(uint8_t value) {
+                const size_t maxBits = dataSize * 8;
+                if (bitPos + 8 > maxBits) {
+                    throw std::out_of_range("BitstreamWriter [WriteUInt8]: writing past buffer");
+                }
 
+                size_t byteIndex = bitPos >> 3;
+                size_t bitOffset = bitPos & 7;
 
-
+                if (bitOffset == 0) { // Aligned write
+                    data[byteIndex] = value;
+                    bitPos += 8;
+                }else{ // Unaligned write
+                    for (int i = 0; i < 8; ++i) {
+                        WriteBool((value >> i) & 1);
+                    }
+                }
+            }
 
 
 
         };
     }
 }
+
+#endif
