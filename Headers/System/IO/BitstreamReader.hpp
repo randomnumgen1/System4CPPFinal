@@ -249,9 +249,8 @@ namespace System {
                         (uint32_t(data[byteIndex + 2]) << 16) |
                         (uint32_t(data[byteIndex + 3]) << 24);
 #else
-                    uint32_t tmp;
-                    std::memcpy(&tmp, data + byteIndex, sizeof(ret));          // one memcpy - one load
-                    ret = __builtin_bswap32(tmp);                              // one BSWAP
+                    memcpy(&ret, &data[byteIndex], sizeof(ret));
+                    ret = __builtin_bswap32(ret);                              // one BSWAP
 #endif
 
                 }else{
