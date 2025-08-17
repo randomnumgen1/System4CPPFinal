@@ -37,6 +37,17 @@ namespace System {
                 return static_cast<uint32_t>((n >> 31) ^ (n << 1));
 #endif
             }
+            inline int64_t ToZigZagDecode64(uint64_t n) {
+#ifdef NAIVE
+                if ((n & 1) == 1) {
+                    return -static_cast<int64_t>(n / 2);
+                }else{
+                    return static_cast<int64_t>(n / 2);
+                }
+#else
+                return static_cast<int64_t>((n >> 1) ^ -static_cast<int64_t>(n & 1));
+#endif
+            }
             inline int32_t ToZigZagDecode32(uint32_t n) {
 #ifdef NAIVE
                 if ((n & 1) == 1) {
