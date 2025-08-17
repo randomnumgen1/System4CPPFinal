@@ -29,7 +29,8 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Text-Based formats** Provides classes to parse CSV, INI, and JSON
 + **TrueType font loading** Enables parsing of TrueType (.ttf) files for text rendering.
 + **Drawing Canvas** provides a HTML Canvas–style interface for 2D drawing.
-+ **Vector2 and various others**
++ **Game Math** Vector2, Vector3, Matrix4x4 etc...
+
 
 
 # Defines
