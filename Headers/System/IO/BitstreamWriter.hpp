@@ -66,7 +66,7 @@ namespace System {
             }
             void WriteUInt32(uint32_t value) {
                 const size_t maxBits = dataSize * 8;
-                if (bitPos + 32 > maxBits) {
+                if (bitPos + 32 > maxBits) [[unlikely]] {
                     throw std::out_of_range("BitstreamWriter [WriteUInt32]: writing past buffer");
                 }
 
@@ -88,7 +88,7 @@ namespace System {
             void WriteBool(bool value) {
                 size_t byteIndex = bitPos / 8;
                 size_t bitIndex = bitPos % 8;
-                if (byteIndex >= dataSize) {
+                if (byteIndex >= dataSize) [[unlikely]] {
                     throw std::out_of_range("BitstreamWriter [WriteBool]: writing past buffer");
                 }
                 const auto shift = bitIndex;
@@ -115,7 +115,7 @@ namespace System {
             }
 
             void SkipBits(int count) {
-                if (count < 0 || (bitPos + count) > (dataSize * 8)) {
+                if (count < 0 || (bitPos + count) > (dataSize * 8)) [[unlikely]] {
                     throw std::out_of_range("BitstreamWriter [SkipBits] beyond EOF");
                 }
                 bitPos += count;
@@ -140,6 +140,9 @@ namespace System {
             }
 
             void WriteStringLengthPrefixed8(const std::string& str) {
+                if (str.length() > 255) [[unlikely]] {
+                    throw std::length_error("BitstreamWriter [WriteStringLengthPrefixed8]: string length exceeds 255");
+                }
                 AlignToByte();
                 WriteUInt8(str.length());
                 for (char c : str) {
@@ -155,7 +158,7 @@ namespace System {
             }
             void WriteUInt8(uint8_t value) {
                 const size_t maxBits = dataSize * 8;
-                if (bitPos + 8 > maxBits) {
+                if (bitPos + 8 > maxBits) [[unlikely]] {
                     throw std::out_of_range("BitstreamWriter [WriteUInt8]: writing past buffer");
                 }
 
