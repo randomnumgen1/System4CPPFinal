@@ -61,6 +61,9 @@ namespace System {
                         ++bitPos;
                     }
             }
+            void WriteUInt32(uint32_t value, size_t count){
+                WriteBits32(value,count);
+            }
             void WriteUInt32(uint32_t value) {
                 const size_t maxBits = dataSize * 8;
                 if (bitPos + 32 > maxBits) {
