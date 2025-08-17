@@ -30,7 +30,7 @@ namespace System {
             /// <summary>
             /// Clears the data in the buffer and resets the bit position to 0.
             /// </summary>
-            void Clear(){
+            inline void Clear(){
                 std::fill(data, data + dataSize, 0);
                 bitPos = 0;
             }
@@ -164,7 +164,7 @@ namespace System {
                 return bitPos >= dataSize * 8;
             }
 
-            void SkipBits(int count) {
+            inline void SkipBits(int count) {
                 if (count < 0 || (bitPos + count) > (dataSize * 8)) [[unlikely]] {
                     throw std::out_of_range("BitstreamWriter [SkipBits] beyond EOF");
                 }
