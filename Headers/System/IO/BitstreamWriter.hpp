@@ -23,6 +23,13 @@ namespace System {
             size_t dataSize;
             size_t bitPos;
 
+            inline uint64_t ToZigZagEncode64(int64_t n) {
+#ifdef NAIVE    
+                return (n < 0) ? static_cast<uint64_t>(-2 * n - 1) : static_cast<uint64_t>(2 * n);
+#else
+                return static_cast<uint64_t>((n >> 63) ^ (n << 1));
+#endif
+            }
             inline uint32_t ToZigZagEncode32(int32_t n) {
 #ifdef NAIVE    
                 return (n < 0) ? static_cast<uint32_t>(-2 * n - 1) : static_cast<uint32_t>(2 * n);
