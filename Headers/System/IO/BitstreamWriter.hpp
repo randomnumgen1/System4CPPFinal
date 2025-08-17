@@ -192,7 +192,25 @@ namespace System {
             inline void AlignToInt64() {
                 bitPos = (bitPos + 63) & ~63;
             }
+            void Write7BitEncodedInt(int32_t value) {
+                AlignToByte();
+                uint32_t val = (uint32_t)value;
+                while (val >= 0x80) {
+                    WriteUInt8((uint8_t)(val | 0x80));
+                    val >>= 7;
+                }
+                WriteUInt8((uint8_t)val);
+            }
 
+            void Write7BitEncodedInt64(int64_t value) {
+                AlignToByte();
+                uint64_t val = (uint64_t)value;
+                while (val >= 0x80) {
+                    WriteUInt8((uint8_t)(val | 0x80));
+                    val >>= 7;
+                }
+                WriteUInt8((uint8_t)val);
+            }
             void WriteStringLengthPrefixed8(const std::string& str) {
                 if (str.length() > 255) [[unlikely]] {
                     throw std::length_error("BitstreamWriter [WriteStringLengthPrefixed8]: string length exceeds 255");
