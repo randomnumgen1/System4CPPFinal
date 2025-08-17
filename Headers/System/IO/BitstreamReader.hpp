@@ -307,6 +307,43 @@ namespace System {
                 return (data[byteIndex] >> bitIndex) & 1;
             }
             /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            int32_t Read7BitEncodedInt(){
+                int32_t result = 0;
+                int shift = 0;
+                uint8_t byte = 0;;
+
+                AlignToByte();
+                while (true) {
+                    result |= (byte & 0x7F) << shift;
+                    if ((byte & 0x80) == 0) {
+                        break;
+                    }
+
+                    shift += 7;
+                    if (shift >= 35) { // 5 bytes max for int32
+                        throw std::runtime_error("7-bit encoded int is too large");
+                    }
+
+                }
+                return result;
+
+            }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            int64_t Read7BitEncodedInt64(){
+                AlignToByte();
+                while (true) {
+
+                }
+            }
+
+
+            /// <summary>
             /// Reads a null-terminated string from the bitstream, up to a maximum of 'max_len' bytes.
             /// Stops reading when a null character is encountered or the limit is reached.
             /// </summary>
