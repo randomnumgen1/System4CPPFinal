@@ -22,6 +22,26 @@ namespace System {
             uint8_t* data;
             size_t dataSize;
             size_t bitPos;
+
+            uint32_t ToZigZagEncode32(int32_t n) {
+#ifdef NAIVE    
+                return (n < 0) ? static_cast<uint32_t>(-2 * n - 1) : static_cast<uint32_t>(2 * n);
+#else
+                return static_cast<uint32_t>((n >> 31) ^ (n << 1));
+#endif
+            }
+            int32_t ToZigZagDecode32(uint32_t n) {
+#ifdef NAIVE
+                if ((n & 1) == 1) {
+                    return -static_cast<int32_t>(n / 2);
+                }else{
+                    return static_cast<int32_t>(n / 2);
+                }
+#else
+                return static_cast<int32_t>((n >> 1) ^ -static_cast<int32_t>(n & 1));
+#endif
+            }
+
         public:
             BitstreamWriter( std::vector<uint8_t>& buffer) : data(buffer.data()), dataSize(buffer.size()), bitPos(0)  {
             }
