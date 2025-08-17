@@ -311,13 +311,15 @@ namespace System {
             /// </summary>
             /// <returns></returns>
             int32_t Read7BitEncodedInt(){
-                int32_t result = 0;
+                uint32_t result = 0;
                 int shift = 0;
-                uint8_t byte = 0;;
+                uint8_t byte;
 
                 AlignToByte();
                 while (true) {
-                    result |= (byte & 0x7F) << shift;
+                    byte = ReadUInt8();
+                    result |= (uint32_t)(byte & 0x7F) << shift;
+
                     if ((byte & 0x80) == 0) {
                         break;
                     }
@@ -326,20 +328,33 @@ namespace System {
                     if (shift >= 35) { // 5 bytes max for int32
                         throw std::runtime_error("7-bit encoded int is too large");
                     }
-
                 }
-                return result;
-
+                return (int32_t)result;
             }
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
             int64_t Read7BitEncodedInt64(){
+                uint64_t result = 0;
+                int shift = 0;
+                uint8_t byte;
+
                 AlignToByte();
                 while (true) {
+                    byte = ReadUInt8();
+                    result |= (uint64_t)(byte & 0x7F) << shift;
 
+                    if ((byte & 0x80) == 0) {
+                        break;
+                    }
+
+                    shift += 7;
+                    if (shift >= 70) { // 10 bytes max for int64
+                        throw std::runtime_error("7-bit encoded int is too large");
+                    }
                 }
+                return (int64_t)result;
             }
 
 
