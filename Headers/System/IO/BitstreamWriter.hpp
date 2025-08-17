@@ -61,6 +61,56 @@ namespace System {
                         ++bitPos;
                     }
             }
+#ifdef NAIVE    
+            void WriteBits32Unchecked(uint32_t value, size_t count) {
+                for (size_t i = 0; i < count; ++i) {
+                    size_t byteIndex = bitPos >> 3;
+                    size_t bitIndex = bitPos & 7;
+
+                    uint8_t bit = (value >> i) & 1;
+
+                    if (bit) {
+                        data[byteIndex] |= (1 << bitIndex);
+                    }else {
+                        data[byteIndex] &= ~(1 << bitIndex);
+                    }
+                    ++bitPos;
+                }
+            }
+#else
+            void WriteBits32Unchecked(uint32_t value, size_t count) {
+                size_t byteIndex = bitPos >> 3;
+                size_t bitOffset = bitPos & 7;
+
+                // Combine value with existing bits in the first byte
+                if (bitOffset != 0 || count < 8) {
+                    size_t bitsInFirstByte = std::min(count, 8 - bitOffset);
+                    uint8_t mask = ((1u << bitsInFirstByte) - 1) << bitOffset;
+                    data[byteIndex] = (data[byteIndex] & ~mask) | ((value << bitOffset) & mask);
+                    bitPos += bitsInFirstByte;
+                    value >>= bitsInFirstByte;
+                    count -= bitsInFirstByte;
+                    ++byteIndex;
+                }
+
+                // Write full bytes
+                while (count >= 8) {
+                    data[byteIndex++] = static_cast<uint8_t>(value);
+                    value >>= 8;
+                    bitPos += 8;
+                    count -= 8;
+                }
+
+                // Write remaining bits
+                if (count > 0) {
+                    uint8_t mask = (1u << count) - 1;
+                    data[byteIndex] = (data[byteIndex] & ~mask) | (value & mask);
+                    bitPos += count;
+                }
+            }
+#endif
+
+
             void WriteUInt32(uint32_t value, size_t count){
                 WriteBits32(value,count);
             }
