@@ -110,7 +110,7 @@ namespace System {
                 }
                 ++bitPos;
             }
-            bool IsEOF() const {
+            inline bool IsEOF() const {
                 return bitPos >= dataSize * 8;
             }
 
@@ -120,22 +120,26 @@ namespace System {
                 }
                 bitPos += count;
             }
-            void SkipBitsUnchecked(int count) {
+            inline void SkipBitsUnchecked(int count) {
                 bitPos += count;
             }
-            void SkipBytesUnchecked(int count) {
+            inline void SkipBytesUnchecked(int count) {
                 bitPos += static_cast<size_t>(count) << 3;
             }
-            void AlignToByte() {
+            inline void AlignToBits(uint32_t alignment) {
+                size_t mask = static_cast<size_t>(alignment - 1);
+                bitPos = (bitPos + mask) & ~mask;
+            }
+            inline void AlignToByte() {
                 bitPos = (bitPos + 7) & ~7;
             }
-            void AlignToInt16() {
+            inline void AlignToInt16() {
                 bitPos = (bitPos + 15) & ~15;
             }
-            void AlignToInt32() {
+            inline void AlignToInt32() {
                 bitPos = (bitPos + 31) & ~31;
             }
-            void AlignToInt64() {
+            inline void AlignToInt64() {
                 bitPos = (bitPos + 63) & ~63;
             }
 
