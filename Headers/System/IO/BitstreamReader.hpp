@@ -25,7 +25,44 @@ namespace System {
             
             size_t dataSizeInBytes;
             size_t bitPos;
-            
+            inline uint64_t ToZigZagEncode64(int64_t n) {
+#ifdef NAIVE    
+                return (n < 0) ? static_cast<uint64_t>(-2 * n - 1) : static_cast<uint64_t>(2 * n);
+#else
+                return static_cast<uint64_t>((n >> 63) ^ (n << 1));
+#endif
+            }
+            inline uint32_t ToZigZagEncode32(int32_t n) {
+#ifdef NAIVE    
+                return (n < 0) ? static_cast<uint32_t>(-2 * n - 1) : static_cast<uint32_t>(2 * n);
+#else
+                return static_cast<uint32_t>((n >> 31) ^ (n << 1));
+#endif
+            }
+            inline int64_t ToZigZagDecode64(uint64_t n) {
+#ifdef NAIVE
+                if ((n & 1) == 1) {
+                    return -static_cast<int64_t>(n / 2);
+                }
+                else {
+                    return static_cast<int64_t>(n / 2);
+                }
+#else
+                return static_cast<int64_t>((n >> 1) ^ -static_cast<int64_t>(n & 1));
+#endif
+            }
+            inline int32_t ToZigZagDecode32(uint32_t n) {
+#ifdef NAIVE
+                if ((n & 1) == 1) {
+                    return -static_cast<int32_t>(n / 2);
+                }
+                else {
+                    return static_cast<int32_t>(n / 2);
+                }
+#else
+                return static_cast<int32_t>((n >> 1) ^ -static_cast<int32_t>(n & 1));
+#endif
+            }
 
 
         public:
@@ -310,7 +347,7 @@ namespace System {
             /// 
             /// </summary>
             /// <returns></returns>
-            int32_t Read7BitEncodedInt(){
+            uint32_t Read7BitEncodedUInt32(){
                 uint32_t result = 0;
                 int shift = 0;
                 uint8_t byte;
@@ -329,13 +366,20 @@ namespace System {
                         throw std::runtime_error("7-bit encoded int is too large");
                     }
                 }
-                return (int32_t)result;
+                return (uint32_t)result;
             }
             /// <summary>
             /// 
             /// </summary>
             /// <returns></returns>
-            int64_t Read7BitEncodedInt64(){
+            int32_t Read7BitEncodedInt32(){
+                return ToZigZagDecode32(Read7BitEncodedUInt32());
+            }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            uint64_t Read7BitEncodedUInt64(){
                 uint64_t result = 0;
                 int shift = 0;
                 uint8_t byte;
@@ -354,9 +398,11 @@ namespace System {
                         throw std::runtime_error("7-bit encoded int is too large");
                     }
                 }
-                return (int64_t)result;
+                return (uint64_t)result;
             }
-
+            int64_t Read7BitEncodedInt64() {
+                return ToZigZagDecode64(Read7BitEncodedUInt64());
+            }
 
             /// <summary>
             /// Reads a null-terminated string from the bitstream, up to a maximum of 'max_len' bytes.
