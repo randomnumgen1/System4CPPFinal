@@ -396,7 +396,7 @@ namespace System {
 
                 return result;
             }
-            uint64_t Read7BitEncodedUInt64(){
+            uint64_t Read7BitEncodedUInt64Alt(){
                 uint64_t result = 0;
                 int shift = 0;
                 uint8_t byte;
