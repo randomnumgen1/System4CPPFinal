@@ -230,24 +230,29 @@ namespace System {
             inline void AlignToInt64() {
                 bitPos = (bitPos + 63) & ~63;
             }
-            void Write7BitEncodedInt(int32_t value) {
+            void Write7BitEncodedUInt32(uint32_t value) {
                 AlignToByte();
-                uint32_t val = (uint32_t)value;
+                uint32_t val = value;
                 while (val >= 0x80) {
                     WriteUInt8((uint8_t)(val | 0x80));
                     val >>= 7;
                 }
                 WriteUInt8((uint8_t)val);
             }
-
-            void Write7BitEncodedInt64(int64_t value) {
+            void Write7BitEncodedInt32(int32_t value) {
+                Write7BitEncodedUInt32(ToZigZagEncode32(value));
+            }
+            void Write7BitEncodedUInt64(uint64_t value) {
                 AlignToByte();
-                uint64_t val = (uint64_t)value;
+                uint64_t val = value;
                 while (val >= 0x80) {
                     WriteUInt8((uint8_t)(val | 0x80));
                     val >>= 7;
                 }
                 WriteUInt8((uint8_t)val);
+            }
+            void Write7BitEncodedInt64(int64_t value) {
+                Write7BitEncodedUInt64(ToZigZagEncode64(value));
             }
             void WriteStringLengthPrefixed8(const std::string& str) {
                 if (str.length() > 255) [[unlikely]] {
