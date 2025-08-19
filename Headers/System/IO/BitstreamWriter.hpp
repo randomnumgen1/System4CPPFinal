@@ -230,6 +230,10 @@ namespace System {
             inline void AlignToInt64() {
                 bitPos = (bitPos + 63) & ~63;
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value"></param>
             void Write7BitEncodedUInt32(uint32_t value) {
                 AlignToByte();
                 uint32_t val = value;
@@ -239,9 +243,17 @@ namespace System {
                 }
                 WriteUInt8((uint8_t)val);
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value"></param>
             void Write7BitEncodedInt32(int32_t value) {
                 Write7BitEncodedUInt32(ToZigZagEncode32(value));
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value"></param>
             void Write7BitEncodedUInt64(uint64_t value) {
                 AlignToByte();
                 uint64_t val = value;
@@ -251,6 +263,10 @@ namespace System {
                 }
                 WriteUInt8((uint8_t)val);
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value"></param>
             void Write7BitEncodedInt64(int64_t value) {
                 Write7BitEncodedUInt64(ToZigZagEncode64(value));
             }
