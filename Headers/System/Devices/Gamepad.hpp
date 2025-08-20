@@ -76,7 +76,7 @@ private:
         struct dirent* entry;
         while ((entry = readdir(dir))) {
             std::string path = "/dev/input/" + std::string(entry->d_name);
-            if (path.find("event") != std::string::npos && isSonyController(path)) {
+            if (path.find("event") != std::string::npos && isKnownController(path)) {
                 fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                 if (fd >= 0) break;
             }
@@ -94,7 +94,7 @@ private:
 
         return evbits[EV_KEY / 8] & (1 << (EV_KEY % 8)) && evbits[EV_ABS / 8] & (1 << (EV_ABS % 8));
     }
-    bool isSonyController(const std::string& devicePath) {
+    bool isKnownController(const std::string& devicePath) {
         int localFd = open(devicePath.c_str(), O_RDONLY);
         if (localFd < 0) return false;
 
@@ -102,19 +102,24 @@ private:
         bool result = false;
 
         if (ioctl(localFd, EVIOCGID, &id) != -1) {
-            constexpr unsigned short sonyVendorId = 0x054c;
-            constexpr unsigned short sonyProducts[] = {
-                0x0ce6, // PS5 DualSense
-                0x05c4, // PS4 DualShock 4 (original)
-                0x09cc  // PS4 DualShock 4 (revised)
+            struct ControllerID {
+                unsigned short vendor;
+                unsigned short product;
             };
 
-            if (id.vendor == sonyVendorId) {
-                for (unsigned short pid : sonyProducts) {
-                    if (id.product == pid) {
-                        result = true;
-                        break;
-                    }
+            constexpr ControllerID knownControllers[] = {
+                {0x054c, 0x0ce6}, // PS5
+                {0x054c, 0x05c4}, // PS4 original
+                {0x054c, 0x09cc}, // PS4 revised
+                {0x045e, 0x028e}, // Xbox 360
+                {0x045e, 0x02d1}, // Xbox One
+                {0x045e, 0x0b12}  // Xbox Series X
+            };
+
+            for (const auto& c : knownControllers) {
+                if (id.vendor == c.vendor && id.product == c.product) {
+                    result = true;
+                    break;
                 }
             }
         }
