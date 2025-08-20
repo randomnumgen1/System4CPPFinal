@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <immintrin.h>
 #include <cassert>
+#include <cstring>
 #if defined(__aarch64__) || defined(__arm__)
 #include <arm_acle.h> // For ARM intrinsics
 #endif
