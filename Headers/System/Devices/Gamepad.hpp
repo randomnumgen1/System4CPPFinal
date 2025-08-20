@@ -51,6 +51,11 @@ public:
         BTN_PS_TRIANGLE = BTN_XBOX_Y,  // Triangle
         BTN_PS_L3 = 317, // Left stick click
         BTN_PS_R3 = 318, // Right stick click
+
+        BTN_DPAD_UP = 544,
+        BTN_DPAD_DOWN = 545,
+        BTN_DPAD_LEFT = 546,
+        BTN_DPAD_RIGHT = 547
     };
     GamePad() {
         inotifyFd = inotify_init1(IN_NONBLOCK);
