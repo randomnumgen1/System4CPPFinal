@@ -15,6 +15,16 @@ int main() {
 		if (pad.wasPressedThisFrame(static_cast<int>(GamePad::ButtonCode::BTN_XBOX_A))) {
 			std::cout << "A button was just pressed\n";
 		}
+		if (pad.wasPressedThisFrame(static_cast<int>(GamePad::ButtonCode::BTN_XBOX_B))) {
+			std::cout << "B button was just pressed\n";
+		}
+		if (pad.wasPressedThisFrame(static_cast<int>(GamePad::ButtonCode::BTN_XBOX_X))) {
+			std::cout << "X button was just pressed\n";
+		}
+		if (pad.wasPressedThisFrame(static_cast<int>(GamePad::ButtonCode::BTN_XBOX_Y))) {
+			std::cout << "Y button was just pressed\n";
+		}
+		
         int lx = pad.getAxis(0);
         int ly = pad.getAxis(1);
         std::cout << "Left stick: (" << lx << ", " << ly << ")\n";
