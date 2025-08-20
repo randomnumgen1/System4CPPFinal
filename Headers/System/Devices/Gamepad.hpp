@@ -34,11 +34,13 @@ int main() {
 
 */
 class GamePad {
+    bool isDebug = false;
+public:
     enum class ButtonCode {
         // Xbox layout (evdev codes)
         BTN_XBOX_A = 304,  // A button
         BTN_XBOX_B = 305,  // B button
-        BTN_XBOX_X = 306,  // X button
+        BTN_XBOX_X = 308,  // X button
         BTN_XBOX_Y = 307,  // Y button
         BTN_XBOX_L3 = 317, // Left stick click
         BTN_XBOX_R3 = 318, // Right stick click
@@ -50,13 +52,14 @@ class GamePad {
         BTN_PS_L3 = 317, // Left stick click
         BTN_PS_R3 = 318, // Right stick click
     };
-public:
     GamePad() {
         inotifyFd = inotify_init1(IN_NONBLOCK);
         watchFd = inotify_add_watch(inotifyFd, "/dev/input", IN_CREATE | IN_DELETE);
         scanDevices();
     }
-
+    void setDebug(bool debug) {
+        isDebug = debug;
+    }
     ~GamePad() {
         if (fd >= 0) close(fd);
         if (watchFd >= 0) inotify_rm_watch(inotifyFd, watchFd);
@@ -167,7 +170,9 @@ private:
             if (ev.type == EV_KEY) {
                 int prev = buttons[ev.code];
                 buttons[ev.code] = ev.value;
-
+                if (isDebug){
+                    std::cout << "Code: " << ev.code << ", Value: " << ev.value << std::endl;
+                }
                 // Detect rising edge: released -> pressed
                 if (ev.value == 1 && prev == 0) {
                     buttonsPressedThisFrame[ev.code] = true;
