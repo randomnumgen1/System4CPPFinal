@@ -34,6 +34,22 @@ int main() {
 
 */
 class GamePad {
+    enum class ButtonCode {
+        // Xbox layout (evdev codes)
+        BTN_XBOX_A = 304,  // A button
+        BTN_XBOX_B = 305,  // B button
+        BTN_XBOX_X = 306,  // X button
+        BTN_XBOX_Y = 307,  // Y button
+        BTN_XBOX_L3 = 317, // Left stick click
+        BTN_XBOX_R3 = 318, // Right stick click
+        // PlayStation aliases (mapped to same evdev codes)
+        BTN_PS_CROSS = BTN_XBOX_A, // Cross (X)
+        BTN_PS_CIRCLE = BTN_XBOX_B, // Circle
+        BTN_PS_SQUARE = BTN_XBOX_X, // Square
+        BTN_PS_TRIANGLE = BTN_XBOX_Y,  // Triangle
+        BTN_PS_L3 = 317, // Left stick click
+        BTN_PS_R3 = 318, // Right stick click
+    };
 public:
     GamePad() {
         inotifyFd = inotify_init1(IN_NONBLOCK);
@@ -51,7 +67,10 @@ public:
         checkHotplug();
         pollEvents();
     }
-
+    bool wasPressedThisFrame(int code) const {
+        auto it = buttonsPressedThisFrame.find(code);
+        return it != buttonsPressedThisFrame.end() && it->second;
+    }
     bool isButtonPressed(int code) const {
         auto it = buttons.find(code);
         return it != buttons.end() && it->second;
@@ -68,6 +87,8 @@ private:
     int watchFd = -1;
     std::map<int, int> buttons;
     std::map<int, int> axes;
+    std::map<int, bool> buttonsPressedThisFrame;
+
 
     void scanDevices() {
         DIR* dir = opendir("/dev/input");
@@ -139,10 +160,22 @@ private:
     void pollEvents() {
         if (fd < 0) return;
 
+        buttonsPressedThisFrame.clear(); // Reset per-frame state
+
         input_event ev;
         while (read(fd, &ev, sizeof(ev)) > 0) {
-            if (ev.type == EV_KEY) buttons[ev.code] = ev.value;
-            else if (ev.type == EV_ABS) axes[ev.code] = ev.value;
+            if (ev.type == EV_KEY) {
+                int prev = buttons[ev.code];
+                buttons[ev.code] = ev.value;
+
+                // Detect rising edge: released -> pressed
+                if (ev.value == 1 && prev == 0) {
+                    buttonsPressedThisFrame[ev.code] = true;
+                }
+            }
+            else if (ev.type == EV_ABS) {
+                axes[ev.code] = ev.value;
+            }
         }
     }
 };
