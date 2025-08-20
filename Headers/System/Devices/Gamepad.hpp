@@ -52,10 +52,10 @@ public:
         BTN_PS_L3 = 317, // Left stick click
         BTN_PS_R3 = 318, // Right stick click
 
-        BTN_DPAD_UP = 544,
-        BTN_DPAD_DOWN = 545,
-        BTN_DPAD_LEFT = 546,
-        BTN_DPAD_RIGHT = 547
+        BTN_XBOX_DPAD_UP = 544,
+        BTN_XBOX_DPAD_DOWN = 545,
+        BTN_XBOX_DPAD_LEFT = 546,
+        BTN_XBOX_DPAD_RIGHT = 547
     };
     GamePad() {
         inotifyFd = inotify_init1(IN_NONBLOCK);
@@ -64,6 +64,9 @@ public:
     }
     void setDebug(bool debug) {
         isDebug = debug;
+    }
+    void setDeadZone() {
+    
     }
     ~GamePad() {
         if (fd >= 0) close(fd);
@@ -78,6 +81,9 @@ public:
     bool wasPressedThisFrame(int code) const {
         auto it = buttonsPressedThisFrame.find(code);
         return it != buttonsPressedThisFrame.end() && it->second;
+    }
+    bool wasReleasedThisFrame(int code) const {
+    
     }
     bool isButtonPressed(int code) const {
         auto it = buttons.find(code);
