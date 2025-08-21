@@ -36,6 +36,21 @@ int main() {
 namespace System::Devices {
     class GamePad {
         bool isDebug = false;
+
+        struct Gamepad_Type {
+            char name[256];//Human-readable device name (EVIOCGNAME)
+            char serial[256];// Unique identifier (EVIOCGUNIQ)
+            float ChargeLevel;// Battery percentage (0.0f to 1.0f)
+            uint16_t vendorId;
+            uint16_t productId;
+            //state
+            bool isWireless;
+            bool isConnected;
+
+        } ; 
+        Gamepad_Type gamepads[4];
+
+
     public:
         enum class ButtonCode {
             // Xbox layout (evdev codes)
