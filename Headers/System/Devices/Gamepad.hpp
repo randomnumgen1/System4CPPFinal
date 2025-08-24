@@ -34,6 +34,20 @@ int main() {
 
 */
 namespace System::Devices {
+
+
+
+#ifdef _WIN32
+    class GamePad {
+
+    };
+
+
+#else
+
+
+
+
     class GamePad {
         bool isDebug = false;
 
@@ -92,6 +106,9 @@ namespace System::Devices {
             BTN_KEYBOARD_S = 31,
             BTN_KEYBOARD_D = 32,
             BTN_KEYBOARD_W = 17,
+
+            AXIS_PS_LEFT_X = 0,
+
 
         };
         GamePad() {
@@ -238,4 +255,14 @@ namespace System::Devices {
             }
         }
     };
+
+#endif
+
+
+
+
+
+
+
+
 }
