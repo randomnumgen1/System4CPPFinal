@@ -409,6 +409,30 @@ namespace System {
             uint64_t Read7BitEncodedUInt64() {
                 uint64_t result = 0;
                 int shift = 0;
+
+                AlignToByte();
+
+                for (int i = 0; i < 9; ++i) {
+                    uint8_t byte = ReadUInt8();
+                    result |= static_cast<uint64_t>(byte & 0x7F) << shift;
+                    if ((byte & 0x80) == 0) {
+                        return result;
+                    }
+                    shift += 7;
+                }
+
+                // 10th byte: validate before shifting
+                uint8_t byte = ReadUInt8();
+                if ((byte & 0xFE) != 0) [[unlikely]] {
+                    throw std::runtime_error("7-bit encoded int is too large");
+                }
+
+                result |= static_cast<uint64_t>(byte) << 63;
+                return result;
+            }
+            uint64_t Read7BitEncodedUInt64Alt3() {
+                uint64_t result = 0;
+                int shift = 0;
                 uint8_t byte;
 
                 AlignToByte();
