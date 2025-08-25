@@ -388,7 +388,7 @@ namespace System {
                 byte = ReadUInt8();
                // if ((byte & 0x80) != 0 || byte > 0x0F) [[unlikely]]{
                   if ((byte & 0xF0) != 0) [[unlikely]] {
-                    throw std::runtime_error("7-bit encoded int is too large");
+                    throw std::runtime_error("Read7BitEncodedUInt32: 7-bit encoded int is too large");
                 }
 
                 result |= static_cast<uint32_t>(byte) << 28;
@@ -424,7 +424,7 @@ namespace System {
                 // 10th byte: validate before shifting
                 uint8_t byte = ReadUInt8();
                 if ((byte & 0xFE) != 0) [[unlikely]] {
-                    throw std::runtime_error("7-bit encoded int is too large");
+                    throw std::runtime_error("Read7BitEncodedUInt64: 7-bit encoded int is too large");
                 }
 
                 result |= static_cast<uint64_t>(byte) << 63;
