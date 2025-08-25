@@ -348,7 +348,7 @@ namespace System {
             /// 
             /// </summary>
             /// <returns></returns>
-            uint32_t Read7BitEncodedUInt32(){
+            uint32_t Read7BitEncodedUInt32Orig(){
                 uint32_t result = 0;
                 int shift = 0;
                 uint8_t byte;
@@ -368,6 +368,31 @@ namespace System {
                     }
                 }
                 return (uint32_t)result;
+            }
+            uint32_t Read7BitEncodedUInt32() {
+                uint32_t result = 0;
+                int shift = 0;
+                uint8_t byte  = 0;
+                AlignToByte();
+
+                for (int i = 0; i < 4; ++i) {
+                    byte = ReadUInt8();
+                    result |= static_cast<uint32_t>(byte & 0x7F) << shift;
+                    if ((byte & 0x80) == 0) {
+                        return result;
+                    }
+                    shift += 7;
+                }
+
+                // 5th byte: validate before shifting
+                byte = ReadUInt8();
+               // if ((byte & 0x80) != 0 || byte > 0x0F) [[unlikely]]{
+                  if ((byte & 0xF0) != 0) [[unlikely]] {
+                    throw std::runtime_error("7-bit encoded int is too large");
+                }
+
+                result |= static_cast<uint32_t>(byte) << 28;
+                return result;
             }
             /// <summary>
             /// 
