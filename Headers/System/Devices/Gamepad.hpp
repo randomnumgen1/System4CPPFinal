@@ -166,7 +166,7 @@ namespace System::Devices {
             struct dirent* entry;
             while ((entry = readdir(dir))) {
                 std::string path = "/dev/input/" + std::string(entry->d_name);
-                if (path.find("event") != std::string::npos && isKnownController(path)) {
+                if (path.find("event") != std::string::npos && isKnownController(path) && isGamepad(path)) {
                     fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                     if (fd >= 0) break;
                 }
