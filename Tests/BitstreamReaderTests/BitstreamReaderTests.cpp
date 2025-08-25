@@ -330,3 +330,71 @@ TEST(BitstreamReaderTests, OutOfBounds) {
     EXPECT_THROW(reader.ReadBits32(17), std::out_of_range);
 }
 
+
+TEST(BitstreamReaderTests, Read7BitEncodedUInt32) {
+    // Test case 1: Single-byte value
+    std::vector<uint8_t> buffer1 = {100};
+    System::IO::BitstreamReader reader1(buffer1);
+    EXPECT_EQ(reader1.Read7BitEncodedUInt32(), 100);
+    EXPECT_EQ(reader1.GetBitPosition(), 8);
+
+    // Test case 2: Multi-byte value (300)
+    std::vector<uint8_t> buffer2 = {0xAC, 0x02};
+    System::IO::BitstreamReader reader2(buffer2);
+    EXPECT_EQ(reader2.Read7BitEncodedUInt32(), 300);
+    EXPECT_EQ(reader2.GetBitPosition(), 16);
+
+    // Test case 3: Maximum value (UINT32_MAX)
+    std::vector<uint8_t> buffer3 = {0xFF, 0xFF, 0xFF, 0xFF, 0x0F};
+    System::IO::BitstreamReader reader3(buffer3);
+    EXPECT_EQ(reader3.Read7BitEncodedUInt32(), UINT32_MAX);
+    EXPECT_EQ(reader3.GetBitPosition(), 40);
+
+    // Test case 4: Unaligned stream
+    std::vector<uint8_t> buffer4 = {0x00, 0xAC, 0x02}; // Some padding byte
+    System::IO::BitstreamReader reader4(buffer4);
+    reader4.ReadBits32(4); // Read 4 bits to unalign the stream
+    EXPECT_EQ(reader4.Read7BitEncodedUInt32(), 300);
+    // Position should be 8 (for alignment) + 16 (for the read) = 24
+    EXPECT_EQ(reader4.GetBitPosition(), 24);
+
+    // Test case 5: Oversized value
+    std::vector<uint8_t> buffer5 = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01}; // Too large
+    System::IO::BitstreamReader reader5(buffer5);
+    EXPECT_THROW(reader5.Read7BitEncodedUInt32(), std::runtime_error);
+
+    // Test case 6: Another oversized value (5th byte > 0x0F)
+    std::vector<uint8_t> buffer6 = {0xFF, 0xFF, 0xFF, 0xFF, 0x10};
+    System::IO::BitstreamReader reader6(buffer6);
+    EXPECT_THROW(reader6.Read7BitEncodedUInt32(), std::runtime_error);
+}
+
+TEST(BitstreamReaderTests, Read7BitEncodedUInt64) {
+    // Test case 1: Single-byte value
+    std::vector<uint8_t> buffer1 = {120};
+    System::IO::BitstreamReader reader1(buffer1);
+    EXPECT_EQ(reader1.Read7BitEncodedUInt64(), 120);
+    EXPECT_EQ(reader1.GetBitPosition(), 8);
+
+    // Test case 2: Multi-byte value (100000)
+    std::vector<uint8_t> buffer2 = {0xA0, 0x8D, 0x06};
+    System::IO::BitstreamReader reader2(buffer2);
+    EXPECT_EQ(reader2.Read7BitEncodedUInt64(), 100000);
+    EXPECT_EQ(reader2.GetBitPosition(), 24);
+
+    // Test case 3: Maximum value (UINT64_MAX)
+    std::vector<uint8_t> buffer3 = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01};
+    System::IO::BitstreamReader reader3(buffer3);
+    EXPECT_EQ(reader3.Read7BitEncodedUInt64(), UINT64_MAX);
+    EXPECT_EQ(reader3.GetBitPosition(), 80);
+
+    // Test case 4: Oversized value
+    std::vector<uint8_t> buffer4 = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x81, 0x01}; // Too large
+    System::IO::BitstreamReader reader4(buffer4);
+    EXPECT_THROW(reader4.Read7BitEncodedUInt64(), std::runtime_error);
+
+    // Test case 5: Another oversized value (10th byte > 0x01)
+    std::vector<uint8_t> buffer5 = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x02};
+    System::IO::BitstreamReader reader5(buffer5);
+    EXPECT_THROW(reader5.Read7BitEncodedUInt64(), std::runtime_error);
+}
