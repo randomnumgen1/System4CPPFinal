@@ -172,18 +172,26 @@ namespace System::Devices {
                 }
                 std::string path = "/dev/input/" + std::string(entry->d_name);
 
-                if (isDebug) {
-                    std::cout << "isGamepad: " << isGamepad(path) << std::endl;
-                    std::cout << "isGamepad2: " << isGamepad2(path) << std::endl;
-                    std::cout << "isKnownController: " << isKnownController(path) << std::endl;
-                    std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
 
 
-                }
+                if (path.find("event") != std::string::npos) {
 
-                if (path.find("event") != std::string::npos && isGamepad(path)) {
-                    fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
-                    if (fd >= 0) break;
+
+                    if (isDebug) {
+                        std::cout << "isGamepad: " << isGamepad(path) << std::endl;
+                        std::cout << "isGamepad2: " << isGamepad2(path) << std::endl;
+                        std::cout << "isKnownController: " << isKnownController(path) << std::endl;
+                        std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
+                    }
+
+
+                    if (isGamepad(path)) {
+                        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
+                        if (fd >= 0) break;
+                    }
+
+
+
                 }
             }
             if (isDebug) {
