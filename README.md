@@ -55,6 +55,17 @@ Graphics
 
 
 
+
+Gamepad not working?
+
+```
+sudo usermod -a -G input $USER
+```
+
+
+
+
+
 # Credits
 
 BigInt - Author: Syed Faheel Ahmad (faheel@live.in)
