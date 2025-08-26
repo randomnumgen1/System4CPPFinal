@@ -62,9 +62,50 @@ namespace System::Devices {
             bool isConnected;
 
         } ; 
-        Gamepad_Type gamepads[4];
+        Gamepad_Type gamepads[4]; 
+        struct Device_t {
+        public:
+            uint8_t classBitmask[(EV_MAX + 1) / 8];
+            uint8_t keyBitmask[(KEY_MAX + 1) / 8];
+            uint8_t absBitmask[(ABS_MAX + 1) / 8];
+            uint8_t relBitmask[(REL_MAX + 1) / 8];
+            uint8_t swBitmask[(SW_MAX + 1) / 8];
+            bool getDeviceCapabilities(const std::string& devicePath) {
+                int fd = open(devicePath.c_str(), O_RDONLY);
+                if (fd < 0) return false;
 
+                ioctl(fd, EVIOCGBIT(0, sizeof(classBitmask)), classBitmask);
+                ioctl(fd, EVIOCGBIT(EV_KEY, sizeof(keyBitmask)), keyBitmask);
+                ioctl(fd, EVIOCGBIT(EV_ABS, sizeof(absBitmask)), absBitmask);
+                ioctl(fd, EVIOCGBIT(EV_REL, sizeof(relBitmask)), relBitmask);
+                ioctl(fd, EVIOCGBIT(EV_SW, sizeof(swBitmask)), swBitmask);
 
+                close(fd);
+                return true;
+            }
+            void print() {
+                std::cout << "Device Capabilities:" << std::endl;
+                std::cout << "  EV_KEY: " << bittest(classBitmask, EV_KEY) << std::endl;
+                std::cout << "  EV_ABS: " << bittest(classBitmask, EV_ABS) << std::endl;
+                std::cout << "  EV_REL: " << bittest(classBitmask, EV_REL) << std::endl;
+                std::cout << "  EV_SW: " << bittest(classBitmask, EV_SW) << std::endl;
+
+                if (bittest(classBitmask, EV_KEY)) {
+                    std::cout << "[Keys are Supported]" << std::endl;
+                    std::cout << "Supported Keys:" << std::endl;
+                    for (int i = 0; i < KEY_MAX; ++i) {
+                        if (bittest(keyBitmask, i)) {
+                            std::cout << "    Key " << i << std::endl;
+                        }
+                    }
+                }
+                if (bittest(classBitmask, EV_ABS)) {
+                    std::cout << "[axes are Supported]" << std::endl;
+
+                }
+
+            }
+        };
     public:
         enum class ButtonCode {
             // Xbox layout (evdev codes)
@@ -203,25 +244,11 @@ namespace System::Devices {
             return bits[bit / (sizeof(unsigned long) * 8)] & (1UL << (bit % (sizeof(unsigned long) * 8)));
         }
         bool isLikelyGamepad(const std::string& devicePath) {
-            int fd = open(devicePath.c_str(), O_RDONLY);
-            if (fd < 0) return false;
+            Device_t Device = {};
+            Device.getDeviceCapabilities(devicePath);
+            Device.print(); 
 
-            unsigned long evbits[(EV_MAX + 1) / (sizeof(unsigned long) * 8)] = {};
-            unsigned long keybits[(KEY_MAX + 1) / (sizeof(unsigned long) * 8)] = {};
-
-            ioctl(fd, EVIOCGBIT(0, sizeof(evbits)), evbits);
-            ioctl(fd, EVIOCGBIT(EV_KEY, sizeof(keybits)), keybits);
-            close(fd);
-
-            bool hasKey = bittest(evbits, EV_KEY);
-            bool hasAbs = bittest(evbits, EV_ABS);
-            bool hasGamepadButton = bittest(keybits, BTN_GAMEPAD);
-            for (int i = 0; i < KEY_MAX; ++i) {
-                if (bittest(keybits, i)) {
-                    std::cout << "Key supported: " << i << std::endl;
-                }
-            }
-            return hasKey && hasAbs && hasGamepadButton;
+   
         }
         bool isGamepad(const std::string& devicePath) {
             int testFd = open(devicePath.c_str(), O_RDONLY);
