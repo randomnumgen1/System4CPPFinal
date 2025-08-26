@@ -62,8 +62,12 @@ Gamepad not working?
 sudo usermod -a -G input $USER
 ```
 
+dependancies for Tests
 
 
+```
+sudo apt-get update && sudo apt-get install -y libgtest-dev libglm-dev
+```
 
 
 # Credits
