@@ -65,6 +65,11 @@ namespace System::Devices {
         Gamepad_Type gamepads[4]; 
         struct Device_t {
         public:
+
+            inline bool bittest8(const uint8_t* bits, int bit) {
+                return bits[bit / 8] & (1 << (bit % 8));
+            }
+
             uint8_t classBitmask[(EV_MAX + 1) / 8];
             uint8_t keyBitmask[(KEY_MAX + 1) / 8];
             uint8_t absBitmask[(ABS_MAX + 1) / 8];
