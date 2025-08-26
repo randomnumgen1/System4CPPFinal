@@ -231,7 +231,7 @@ namespace System::Devices {
                     }
 
 
-                    if (isGamepad(path)) {
+                    if (isGamepad(path) && isKnownController(path)) {
                         fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                         if (fd >= 0) break;
                     }
@@ -258,19 +258,8 @@ namespace System::Devices {
             Device.print(); 
 
    
-        }
+        } 
         bool isGamepad(const std::string& devicePath) {
-            int testFd = open(devicePath.c_str(), O_RDONLY);
-            if (testFd < 0) return false;
-
-            unsigned long keyBits[(KEY_MAX + 1) / (sizeof(unsigned long) * 8)] = {};
-            ioctl(testFd, EVIOCGBIT(EV_KEY, sizeof(keyBits)), keyBits);
-            close(testFd);
-
-            bool hasGamepadButton = keyBits[BTN_GAMEPAD / 8] & (1 << (BTN_GAMEPAD % 8));
-            return hasGamepadButton;
-        }
-        bool isGamepad2(const std::string& devicePath) {
             int testFd = open(devicePath.c_str(), O_RDONLY);
             if (testFd < 0) return false;
 
