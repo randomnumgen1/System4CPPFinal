@@ -60,9 +60,14 @@ int main() {
 		}			
 		
 		
-        int lx = pad.getAxis(0);
-        int ly = pad.getAxis(1);
-        //std::cout << "Left stick: (" << lx << ", " << ly << ")\n";
+        int lx = pad.getAxis(System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
+        int ly = pad.getAxis(System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
+		
+	    int rx = pad.getAxis(System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
+        int ry = pad.getAxis(System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
+
+		
+        std::cout << "Left stick: (" << lx << ", " << ly << ") " << "Right stick: (" << rx << ", " << ry << ")\n";
 
         usleep(16000); // ~60Hz
     }
