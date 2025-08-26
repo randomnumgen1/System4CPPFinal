@@ -1,4 +1,5 @@
-
+#ifndef _SYSTEM_DEVICES_GAMEPAD_H 
+#define _SYSTEM_DEVICES_GAMEPAD_H
 
 #ifdef _WIN32
 #else
@@ -52,6 +53,7 @@ namespace System::Devices {
         bool isDebug = false;
 
         struct Gamepad_Type {
+            int playerIndex;
             char name[256];//Human-readable device name (EVIOCGNAME)
             char serial[256];// Unique identifier (EVIOCGUNIQ)
             float ChargeLevel;// Battery percentage (0.0f to 1.0f)
@@ -200,8 +202,13 @@ namespace System::Devices {
             BTN_KEYBOARD_S = 31,
             BTN_KEYBOARD_D = 32,
             BTN_KEYBOARD_W = 17,
+             
 
-            AXIS_PS_LEFT_X = 0,
+            AXIS_CONTROLLER_LEFT_X = 0,
+            AXIS_CONTROLLER_LEFT_Y = 1,
+
+            AXIS_CONTROLLER_RIGHT_X = 3,
+            AXIS_CONTROLLER_RIGHT_Y = 4,
 
 
         };
@@ -398,3 +405,6 @@ namespace System::Devices {
 
 
 }
+
+
+#endif
