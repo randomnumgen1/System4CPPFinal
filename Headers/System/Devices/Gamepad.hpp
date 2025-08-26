@@ -116,40 +116,85 @@ namespace System::Devices {
         };
     public:
         enum class ButtonCode {
+            // *****FACE BUTTONS*****
+            
             // Xbox layout (evdev codes)
             BTN_XBOX_A = 304,  // A button
             BTN_XBOX_B = 305,  // B button
-            BTN_XBOX_X = 308,  // X button
-            BTN_XBOX_Y = 307,  // Y button
-            BTN_XBOX_L3 = 317, // Left stick click
-            BTN_XBOX_R3 = 318, // Right stick click
-            // PlayStation aliases (mapped to same evdev codes)
+            BTN_XBOX_X = 307,  // X button
+            BTN_XBOX_Y = 308,  // Y button
+            // Playstation layout
             BTN_PS_CROSS = BTN_XBOX_A, // Cross (X)
             BTN_PS_CIRCLE = BTN_XBOX_B, // Circle
             BTN_PS_SQUARE = BTN_XBOX_X, // Square
             BTN_PS_TRIANGLE = BTN_XBOX_Y,  // Triangle
-            BTN_PS_L3 = 317, // Left stick click
-            BTN_PS_R3 = 318, // Right stick click
+            // Generic layout
+            BTN_CONTROLLER_NORTH = BTN_XBOX_Y,// Y (Xbox), Triangle (PS)
+            BTN_CONTROLLER_EAST = BTN_XBOX_B,// B (Xbox), Circle (PS)
+            BTN_CONTROLLER_SOUTH = BTN_XBOX_A,// A (Xbox), Cross (PS)
+            BTN_CONTROLLER_WEST = BTN_XBOX_X,// X (Xbox), Square (PS)
 
+            // *****D-PAD BUTTONS*****
+
+            // Xbox layout (evdev codes)
             BTN_XBOX_DPAD_UP = 544,
             BTN_XBOX_DPAD_DOWN = 545,
             BTN_XBOX_DPAD_LEFT = 546,
             BTN_XBOX_DPAD_RIGHT = 547,
+            // Playstation layout
+            BTN_PS_DPAD_UP = 544,
+            BTN_PS_DPAD_DOWN = 545,
+            BTN_PS_DPAD_LEFT = 546,
+            BTN_PS_DPAD_RIGHT = 547,
+            // Generic layout
+            BTN_CONTROLLER_DPAD_UP = 544,
+            BTN_CONTROLLER_DPAD_DOWN = 545,
+            BTN_CONTROLLER_DPAD_LEFT = 546,
+            BTN_CONTROLLER_DPAD_RIGHT = 547,
+
+            // *****STICK BUTTONS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_STICK_LEFTCLICK = 317,
+            BTN_XBOX_STICK_RIGHTCLICK = 318,
+            // Playstation layout
+            BTN_PS_STICK_LEFTCLICK = 317,
+            BTN_PS_STICK_RIGHTCLICK = 318,
+            // Generic layout
+            BTN_CONTROLLER_STICK_LEFTCLICK = 317,
+            BTN_CONTROLLER_STICK_RIGHTCLICK = 318,
+            // *****TRIGGERS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_LT = 312,  // Left Trigger
+            BTN_XBOX_RT = 313,  // Right Trigger
+
+            // Playstation layout
+            BTN_PS_L2 = BTN_XBOX_LT,  // L2
+            BTN_PS_R2 = BTN_XBOX_RT,  // R2
+
+            // Generic layout
+            BTN_CONTROLLER_TRIGGER_LEFT = BTN_XBOX_LT,
+            BTN_CONTROLLER_TRIGGER_RIGHT = BTN_XBOX_RT,
+
+            // *****SHOULDER BUTTONS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_LB = 310,  // Left Bumper
+            BTN_XBOX_RB = 311,  // Right Bumper
+
+            // Playstation layout
+            BTN_PS_L1 = BTN_XBOX_LB,  // L1
+            BTN_PS_R1 = BTN_XBOX_RB,  // R1
+
+            // Generic layout
+            BTN_CONTROLLER_SHOULDER_LEFT = BTN_XBOX_LB,
+            BTN_CONTROLLER_SHOULDER_RIGHT = BTN_XBOX_RB,
 
 
-            //face buttons
-            BTN_CONTROLLER_NORTH = 0,// Y (Xbox), Triangle (PS)
-            BTN_CONTROLLER_EAST = 0,// B (Xbox), Circle (PS)
-            BTN_CONTROLLER_SOUTH = 0,// A (Xbox), Cross (PS)
-            BTN_CONTROLLER_WEST = 0,// X (Xbox), Square (PS)
-            //D-Pad directions
-            BTN_CONTROLLER_DPAD_UP = 0,
-            BTN_CONTROLLER_DPAD_DOWN = 0,
-            BTN_CONTROLLER_DPAD_LEFT = 0,
-            BTN_CONTROLLER_DPAD_RIGHT = 0,
-            //Stick Clicks
-            BTN_CONTROLLER_STICK_LEFTCLICK = 0, //L3
-            BTN_CONTROLLER_STICK_RIGHTCLICK = 0,//R3
+
+     
+             
 
             BTN_KEYBOARD_A = 30,
             BTN_KEYBOARD_S = 31,
