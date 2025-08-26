@@ -162,16 +162,54 @@ namespace System::Devices {
         void scanDevices() {
             DIR* dir = opendir("/dev/input");
             if (!dir) return;
-
+            if (isDebug) {
+                std::cout << "---devices---" << std::endl;
+            }
             struct dirent* entry;
             while ((entry = readdir(dir))) {
+                if (isDebug) {
+                    std::cout << "found device: " << std::string(entry->d_name) << std::endl;
+                }
                 std::string path = "/dev/input/" + std::string(entry->d_name);
+
+                if (isDebug) {
+                    std::cout << "isGamepad: " << isGamepad(path) << std::endl;
+                    std::cout << "isGamepad2: " << isGamepad2(path) << std::endl;
+                    std::cout << "isKnownController: " << isKnownController(path) << std::endl;
+                    std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
+
+
+                }
+
                 if (path.find("event") != std::string::npos && isGamepad(path)) {
                     fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                     if (fd >= 0) break;
                 }
             }
+            if (isDebug) {
+                std::cout << "---end devices---" << std::endl;
+            }
             closedir(dir);
+        }
+        inline bool bittest(const unsigned long* bits, int bit) {
+            return bits[bit / (sizeof(unsigned long) * 8)] & (1UL << (bit % (sizeof(unsigned long) * 8)));
+        }
+        bool isLikelyGamepad(const std::string& devicePath) {
+            int fd = open(devicePath.c_str(), O_RDONLY);
+            if (fd < 0) return false;
+
+            unsigned long evbits[(EV_MAX + 1) / (sizeof(unsigned long) * 8)] = {};
+            unsigned long keybits[(KEY_MAX + 1) / (sizeof(unsigned long) * 8)] = {};
+
+            ioctl(fd, EVIOCGBIT(0, sizeof(evbits)), evbits);
+            ioctl(fd, EVIOCGBIT(EV_KEY, sizeof(keybits)), keybits);
+            close(fd);
+
+            bool hasKey = bittest(evbits, EV_KEY);
+            bool hasAbs = bittest(evbits, EV_ABS);
+            bool hasGamepadButton = bittest(keybits, BTN_GAMEPAD);
+
+            return hasKey && hasAbs && hasGamepadButton;
         }
         bool isGamepad(const std::string& devicePath) {
             int testFd = open(devicePath.c_str(), O_RDONLY);
@@ -249,7 +287,7 @@ namespace System::Devices {
                     buttons[ev.code] = ev.value;
 
                     if (isDebug) {
-                        std::cout << "Code: " << ev.code << ", Value: " << ev.value << std::endl;
+                        std::cout << "polling: Code: " << ev.code << ", Value: " << ev.value << std::endl;
                     }
 
                     if (ev.value == 1 && prev == 0) {
