@@ -1,6 +1,6 @@
 #ifndef _SYSTEM_DEVICES_GAMEPAD_H 
 #define _SYSTEM_DEVICES_GAMEPAD_H
-
+#define USE_MULTIPAD 1
 #ifdef _WIN32
 #else
 #include <linux/input.h>
@@ -332,7 +332,68 @@ namespace System::Devices {
         std::map<int, int> axes;
         std::map<int, bool> buttonsPressedThisFrame;
         std::map<int, bool> buttonsReleasedThisFrame;
+#if USE_MULTIPAD
 
+        void scanDevices() {
+            std::vector<std::string> presentDevicePaths;
+            DIR* dir = opendir("/dev/input");
+            if (!dir) return;
+
+            struct dirent* entry;
+            while ((entry = readdir(dir))) {
+                std::string path = "/dev/input/" + std::string(entry->d_name);
+                if (path.find("event") != std::string::npos) {
+                    if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
+                        presentDevicePaths.push_back(path);
+                    }
+                }
+            }
+            closedir(dir);
+
+            // Handle disconnections
+            for (int i = 0; i < 4; ++i) {
+                if (joysticks[i].isConnected()) {
+                    bool found = false;
+                    for (const auto& path : presentDevicePaths) {
+                        if (joysticks[i].path == path) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        close(joysticks[i].fd);
+                        joysticks[i] = {}; // Reset the struct
+                    }
+                }
+            }
+
+            // Handle connections
+            for (const auto& path : presentDevicePaths) {
+                bool alreadyConnected = false;
+                for (int i = 0; i < 4; ++i) {
+                    if (joysticks[i].path == path) {
+                        alreadyConnected = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyConnected) {
+                    for (int i = 0; i < 4; ++i) {
+                        if (joysticks[i].isSlotFree()) {
+                            int tempFd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
+                            if (tempFd >= 0) {
+                                joysticks[i].fd = tempFd;
+                                joysticks[i].path = path;
+                                ioctl(tempFd, EVIOCGID, &joysticks[i].id);
+                                // You might want to populate more joystick info here
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+#else
         void scanDevices() {
             DIR* dir = opendir("/dev/input");
             if (!dir) return;
@@ -372,7 +433,7 @@ namespace System::Devices {
             }
             closedir(dir);
         }
-    
+#endif
         inline bool bittest8(const uint8_t* bits, int bit) {
             return bits[bit / 8] & (1 << (bit % 8));
         }
