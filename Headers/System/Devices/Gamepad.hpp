@@ -208,7 +208,11 @@ namespace System::Devices {
             bool hasKey = bittest(evbits, EV_KEY);
             bool hasAbs = bittest(evbits, EV_ABS);
             bool hasGamepadButton = bittest(keybits, BTN_GAMEPAD);
-
+            for (int i = 0; i < KEY_MAX; ++i) {
+                if (bittest(keybits, i)) {
+                    std::cout << "Key supported: " << i << std::endl;
+                }
+            }
             return hasKey && hasAbs && hasGamepadButton;
         }
         bool isGamepad(const std::string& devicePath) {
