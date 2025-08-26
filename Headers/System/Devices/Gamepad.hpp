@@ -223,12 +223,25 @@ namespace System::Devices {
         void setDeadZone() {
 
         }
+#if USE_MULTIPAD
+        ~GamePad() {
+            for (size_t i = 0; i < 4; ++i) {
+                if (joysticks[i].fd >= 0) {
+                    close(joysticks[i].fd);
+                }
+            }
+            if (watchFd >= 0) inotify_rm_watch(inotifyFd, watchFd);
+            if (inotifyFd >= 0) close(inotifyFd);
+        }
+
+#else
+
         ~GamePad() {
             if (fd >= 0) close(fd);
             if (watchFd >= 0) inotify_rm_watch(inotifyFd, watchFd);
             if (inotifyFd >= 0) close(inotifyFd);
         }
-
+#endif
         void update() {
             checkHotplug();
             pollEvents();
@@ -251,7 +264,67 @@ namespace System::Devices {
             return it != axes.end() ? it->second : 0;
         }
 
+
+
+
+        bool wasPressedThisFrame(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            const auto& pad = joysticks[playerIndex];
+            auto it = pad.buttonsPressedThisFrame.find(static_cast<int>(code));
+            return it != pad.buttonsPressedThisFrame.end() && it->second;
+        }
+        bool wasReleasedThisFrame(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            const auto& pad = joysticks[playerIndex];
+            auto it = pad.buttonsReleasedThisFrame.find(static_cast<int>(code));
+            return it != pad.buttonsReleasedThisFrame.end() && it->second;
+        }
+        bool isButtonPressed(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            const auto& pad = joysticks[playerIndex];
+            auto it = pad.buttons.find(static_cast<int>(code));
+            return it != pad.buttons.end() && it->second;
+        }
+
+        int getAxis(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= joysticks.size()) return 0;
+            const auto& pad = joysticks[playerIndex];
+            auto it = pad.axes.find(static_cast<int>(code));
+            return it != pad.axes.end() ? it->second : 0;
+        }
+
+
+
+
+
     private:
+        struct Joystick {
+            int fd = -1;
+            std::string path;
+            input_id id;
+            std::map<int, int> buttons;
+            std::map<int, int> axes;
+            std::map<int, bool> buttonsPressedThisFrame;
+            std::map<int, bool> buttonsReleasedThisFrame;
+
+            bool isSlotFree() const {
+                return fd < 0;
+            }
+            bool isConnected() const {
+                return fd >= 0;
+            }
+        };
+        Joystick joysticks[4];
+
+
+
+
+
+
+
+
+
+
         int fd = -1;
         int inotifyFd = -1;
         int watchFd = -1;
@@ -356,6 +429,15 @@ namespace System::Devices {
             close(localFd);
             return result;
         }
+#if USE_MULTIPAD
+        void checkHotplug() {
+            char buffer[4096];
+            int len = read(inotifyFd, buffer, sizeof(buffer));
+            if (len > 0) {
+                scanDevices();
+            }
+        }
+#else
         void checkHotplug() {
             char buffer[4096];
             int len = read(inotifyFd, buffer, sizeof(buffer));
@@ -364,7 +446,40 @@ namespace System::Devices {
                 scanDevices();
             }
         }
+#endif
 
+
+#if USE_MULTIPAD
+        void pollEvents(){
+            for (size_t i = 0; i < 4; ++i) {
+                Joystick& joy = joysticks[i];
+                //JoyStick doesnt exist so skip it
+                if (joy.fd < 0) continue;
+                joy.buttonsPressedThisFrame.clear();
+                joy.buttonsReleasedThisFrame.clear();
+
+                input_event ev;
+                while (read(joy.fd, &ev, sizeof(ev)) > 0) {
+                    if (ev.type == EV_KEY){
+                        int prev = joy.buttons[ev.code];
+                        joy.buttons[ev.code] = ev.value;
+
+                        if (isDebug) {
+                            std::cout << "polling: Player " << i << ", Code: " << ev.code << ", Value: " << ev.value << std::endl;
+                        }
+
+                        if (ev.value == 1 && prev == 0) {
+                            joy.buttonsPressedThisFrame[ev.code] = true;
+                        }else if (ev.value == 0 && prev == 1) {
+                            joy.buttonsReleasedThisFrame[ev.code] = true;
+                        }
+                    }else if (ev.type == EV_ABS) {
+                        joy.axes[ev.code] = ev.value;
+                    }
+                }
+            }
+        }
+#else
         void pollEvents() {
             if (fd < 0) return;
 
@@ -393,6 +508,8 @@ namespace System::Devices {
                 }
             }
         }
+#endif
+
     };
 
 #endif
