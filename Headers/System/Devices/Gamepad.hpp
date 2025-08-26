@@ -110,6 +110,9 @@ namespace System::Devices {
                 }
 
             }
+            bool hasgamepad(){
+                return bittest8(keyBitmask, 304);
+            }
         };
     public:
         enum class ButtonCode {
@@ -225,13 +228,12 @@ namespace System::Devices {
 
                     if (isDebug) {
                         std::cout << "isGamepad: " << isGamepad(path) << std::endl;
-                        std::cout << "isGamepad2: " << isGamepad2(path) << std::endl;
                         std::cout << "isKnownController: " << isKnownController(path) << std::endl;
                         std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
                     }
 
 
-                    if (isGamepad(path) && isKnownController(path)) {
+                    if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
                         fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                         if (fd >= 0) break;
                     }
@@ -257,7 +259,7 @@ namespace System::Devices {
             Device.getDeviceCapabilities(devicePath);
             Device.print(); 
 
-   
+            return Device.hasgamepad();
         } 
         bool isGamepad(const std::string& devicePath) {
             int testFd = open(devicePath.c_str(), O_RDONLY);
