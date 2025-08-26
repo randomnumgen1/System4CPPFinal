@@ -26,19 +26,7 @@ int main() {
 		}
 		
 		
-		if (pad.wasPressedThisFrame(static_cast<int>(System::Devices::GamePad::ButtonCode::BTN_DPAD_UP))) {
-			std::cout << "BTN_DPAD_UP button was just pressed\n";
-		}
-		if (pad.wasPressedThisFrame(static_cast<int>(System::Devices::GamePad::ButtonCode::BTN_DPAD_DOWN))) {
-			std::cout << "BTN_DPAD_DOWN button was just pressed\n";
-		}
-		if (pad.wasPressedThisFrame(static_cast<int>(System::Devices::GamePad::ButtonCode::BTN_DPAD_LEFT))) {
-			std::cout << "BTN_DPAD_LEFT button was just pressed\n";
-		}
-		if (pad.wasPressedThisFrame(static_cast<int>(System::Devices::GamePad::ButtonCode::BTN_DPAD_RIGHT))) {
-			std::cout << "BTN_DPAD_RIGHT button was just pressed\n";
-		}
-		
+ 
 		
 		
 		
