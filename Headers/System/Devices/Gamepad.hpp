@@ -85,21 +85,21 @@ namespace System::Devices {
             }
             void print() {
                 std::cout << "Device Capabilities:" << std::endl;
-                std::cout << "  EV_KEY: " << bittest(classBitmask, EV_KEY) << std::endl;
-                std::cout << "  EV_ABS: " << bittest(classBitmask, EV_ABS) << std::endl;
-                std::cout << "  EV_REL: " << bittest(classBitmask, EV_REL) << std::endl;
-                std::cout << "  EV_SW: " << bittest(classBitmask, EV_SW) << std::endl;
+                std::cout << "  EV_KEY: " << bittest8(classBitmask, EV_KEY) << std::endl;
+                std::cout << "  EV_ABS: " << bittest8(classBitmask, EV_ABS) << std::endl;
+                std::cout << "  EV_REL: " << bittest8(classBitmask, EV_REL) << std::endl;
+                std::cout << "  EV_SW: " << bittest8(classBitmask, EV_SW) << std::endl;
 
-                if (bittest(classBitmask, EV_KEY)) {
+                if (bittest8(classBitmask, EV_KEY)) {
                     std::cout << "[Keys are Supported]" << std::endl;
                     std::cout << "Supported Keys:" << std::endl;
                     for (int i = 0; i < KEY_MAX; ++i) {
-                        if (bittest(keyBitmask, i)) {
+                        if (bittest8(keyBitmask, i)) {
                             std::cout << "    Key " << i << std::endl;
                         }
                     }
                 }
-                if (bittest(classBitmask, EV_ABS)) {
+                if (bittest8(classBitmask, EV_ABS)) {
                     std::cout << "[axes are Supported]" << std::endl;
 
                 }
@@ -240,7 +240,11 @@ namespace System::Devices {
             }
             closedir(dir);
         }
-        inline bool bittest(const unsigned long* bits, int bit) {
+    
+        inline bool bittest8(const uint8_t* bits, int bit) {
+            return bits[bit / 8] & (1 << (bit % 8));
+        }
+        inline bool bittest32(const unsigned long* bits, int bit) {
             return bits[bit / (sizeof(unsigned long) * 8)] & (1UL << (bit % (sizeof(unsigned long) * 8)));
         }
         bool isLikelyGamepad(const std::string& devicePath) {
