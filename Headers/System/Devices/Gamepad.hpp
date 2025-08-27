@@ -67,16 +67,18 @@ namespace System::Devices {
         Gamepad_Type gamepads[4]; 
         struct Device_t {
         public:
-
-            inline bool bittest8(const uint8_t* bits, int bit) {
-                return bits[bit / 8] & (1 << (bit % 8));
-            }
-
             uint8_t classBitmask[(EV_MAX + 1) / 8];
             uint8_t keyBitmask[(KEY_MAX + 1) / 8];
             uint8_t absBitmask[(ABS_MAX + 1) / 8];
             uint8_t relBitmask[(REL_MAX + 1) / 8];
             uint8_t swBitmask[(SW_MAX + 1) / 8];
+            input_id id;
+
+
+
+            inline bool bittest8(const uint8_t* bits, int bit) {
+                return bits[bit / 8] & (1 << (bit % 8));
+            }
             bool getDeviceCapabilities(const std::string& devicePath) {
                 int fd = open(devicePath.c_str(), O_RDONLY);
                 if (fd < 0) return false;
@@ -86,6 +88,9 @@ namespace System::Devices {
                 ioctl(fd, EVIOCGBIT(EV_ABS, sizeof(absBitmask)), absBitmask);
                 ioctl(fd, EVIOCGBIT(EV_REL, sizeof(relBitmask)), relBitmask);
                 ioctl(fd, EVIOCGBIT(EV_SW, sizeof(swBitmask)), swBitmask);
+
+                ioctl(fd, EVIOCGID, &id);
+
 
                 close(fd);
                 return true;
@@ -112,8 +117,29 @@ namespace System::Devices {
                 }
 
             }
-            bool hasgamepad(){
+            bool hasgamepadkey(){
                 return bittest8(keyBitmask, 304);
+            }
+            bool isKnownController(){
+                struct ControllerID {
+                    unsigned short vendor;
+                    unsigned short product;
+                };
+                constexpr ControllerID knownControllers[] = {
+        {0x054c, 0x0ce6}, // PS5
+        {0x054c, 0x05c4}, // PS4 original
+        {0x054c, 0x09cc}, // PS4 revised
+        {0x045e, 0x028e}, // Xbox 360
+        {0x045e, 0x02d1}, // Xbox One
+        {0x045e, 0x0b12}  // Xbox Series X
+                };
+
+                for (const auto& c : knownControllers) {
+                    if (id.vendor == c.vendor && id.product == c.product) {
+                        return true;
+                    }
+                }
+                return false;
             }
         };
     public:
@@ -343,9 +369,16 @@ namespace System::Devices {
             while ((entry = readdir(dir))) {
                 std::string path = "/dev/input/" + std::string(entry->d_name);
                 if (path.find("event") != std::string::npos) {
-                    if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
+
+                    Device_t Device = {}
+                    Device.getDeviceCapabilities(path);
+                    if (Device.hasgamepadkey() && Device.isKnownController()){
                         presentDevicePaths.push_back(path);
                     }
+
+                    //if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
+                    //    presentDevicePaths.push_back(path);
+                    //}
                 }
             }
             closedir(dir);
@@ -418,11 +451,20 @@ namespace System::Devices {
                         std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
                     }
 
-
-                    if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
+                    Device_t Device = {}
+                    Device.getDeviceCapabilities(path);
+                    if (Device.hasgamepadkey() && Device.isKnownController()) {
                         fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
                         if (fd >= 0) break;
                     }
+
+
+
+
+                   // if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
+                   //     fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
+                    //    if (fd >= 0) break;
+                    //}
 
 
 
@@ -445,7 +487,7 @@ namespace System::Devices {
             Device.getDeviceCapabilities(devicePath);
             Device.print(); 
 
-            return Device.hasgamepad();
+            return Device.hasgamepadkey();
         } 
         bool isGamepad(const std::string& devicePath) {
             int testFd = open(devicePath.c_str(), O_RDONLY);
