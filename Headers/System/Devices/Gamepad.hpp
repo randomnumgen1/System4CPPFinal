@@ -249,7 +249,6 @@ namespace System::Devices {
         void setDeadZone() {
 
         }
-#if USE_MULTIPAD
         ~GamePad() {
             for (size_t i = 0; i < 4; ++i) {
                 if (joysticks[i].fd >= 0) {
@@ -260,35 +259,12 @@ namespace System::Devices {
             if (inotifyFd >= 0) close(inotifyFd);
         }
 
-#else
 
-        ~GamePad() {
-            if (fd >= 0) close(fd);
-            if (watchFd >= 0) inotify_rm_watch(inotifyFd, watchFd);
-            if (inotifyFd >= 0) close(inotifyFd);
-        }
-#endif
         void update() {
             checkHotplug();
             pollEvents();
         }
-        bool wasPressedThisFrame(int code) const {
-            auto it = buttonsPressedThisFrame.find(code);
-            return it != buttonsPressedThisFrame.end() && it->second;
-        }
-        bool wasReleasedThisFrame(int code) const {
-            auto it = buttonsReleasedThisFrame.find(code);
-            return it != buttonsReleasedThisFrame.end() && it->second;
-        }
-        bool isButtonPressed(int code) const {
-            auto it = buttons.find(code);
-            return it != buttons.end() && it->second;
-        }
-
-        int getAxis(int code) const {
-            auto it = axes.find(code);
-            return it != axes.end() ? it->second : 0;
-        }
+ 
 
 
 
@@ -354,11 +330,8 @@ namespace System::Devices {
         int fd = -1;
         int inotifyFd = -1;
         int watchFd = -1;
-        std::map<int, int> buttons;
-        std::map<int, int> axes;
-        std::map<int, bool> buttonsPressedThisFrame;
-        std::map<int, bool> buttonsReleasedThisFrame;
-#if USE_MULTIPAD
+      
+
 
         void scanDevices() {
             std::vector<std::string> presentDevicePaths;
@@ -426,56 +399,7 @@ namespace System::Devices {
                 }
             }
         }
-#else
-        void scanDevices() {
-            DIR* dir = opendir("/dev/input");
-            if (!dir) return;
-            if (isDebug) {
-                std::cout << "---devices---" << std::endl;
-            }
-            struct dirent* entry;
-            while ((entry = readdir(dir))) {
-                if (isDebug) {
-                    std::cout << "found device: " << std::string(entry->d_name) << std::endl;
-                }
-                std::string path = "/dev/input/" + std::string(entry->d_name);
 
-
-
-                if (path.find("event") != std::string::npos) {
-
-
-                    if (isDebug) {
-                        std::cout << "isGamepad: " << isGamepad(path) << std::endl;
-                        std::cout << "isKnownController: " << isKnownController(path) << std::endl;
-                        std::cout << "isLikelyGamepad: " << isLikelyGamepad(path) << std::endl;
-                    }
-
-                    Device_t Device = {}
-                    Device.getDeviceCapabilities(path);
-                    if (Device.hasgamepadkey() && Device.isKnownController()) {
-                        fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
-                        if (fd >= 0) break;
-                    }
-
-
-
-
-                   // if (isGamepad(path) && isKnownController(path) && isLikelyGamepad(path)) {
-                   //     fd = open(path.c_str(), O_RDONLY | O_NONBLOCK);
-                    //    if (fd >= 0) break;
-                    //}
-
-
-
-                }
-            }
-            if (isDebug) {
-                std::cout << "---end devices---" << std::endl;
-            }
-            closedir(dir);
-        }
-#endif
         inline bool bittest8(const uint8_t* bits, int bit) {
             return bits[bit / 8] & (1 << (bit % 8));
         }
@@ -532,7 +456,7 @@ namespace System::Devices {
             close(localFd);
             return result;
         }
-#if USE_MULTIPAD
+
         void checkHotplug() {
             char buffer[4096];
             int len = read(inotifyFd, buffer, sizeof(buffer));
@@ -540,19 +464,9 @@ namespace System::Devices {
                 scanDevices();
             }
         }
-#else
-        void checkHotplug() {
-            char buffer[4096];
-            int len = read(inotifyFd, buffer, sizeof(buffer));
-            if (len > 0) {
-                if (fd >= 0) close(fd);
-                scanDevices();
-            }
-        }
-#endif
 
 
-#if USE_MULTIPAD
+
         void pollEvents(){
             for (size_t i = 0; i < 4; ++i) {
                 Joystick& joy = joysticks[i];
@@ -582,36 +496,7 @@ namespace System::Devices {
                 }
             }
         }
-#else
-        void pollEvents() {
-            if (fd < 0) return;
 
-            buttonsPressedThisFrame.clear();
-            buttonsReleasedThisFrame.clear();
-
-            input_event ev;
-            while (read(fd, &ev, sizeof(ev)) > 0) {
-                if (ev.type == EV_KEY) {
-                    int prev = buttons[ev.code];
-                    buttons[ev.code] = ev.value;
-
-                    if (isDebug) {
-                        std::cout << "polling: Code: " << ev.code << ", Value: " << ev.value << std::endl;
-                    }
-
-                    if (ev.value == 1 && prev == 0) {
-                        buttonsPressedThisFrame[ev.code] = true;
-                    }
-                    else if (ev.value == 0 && prev == 1) {
-                        buttonsReleasedThisFrame[ev.code] = true;
-                    }
-                }
-                else if (ev.type == EV_ABS) {
-                    axes[ev.code] = ev.value;
-                }
-            }
-        }
-#endif
 
     };
 
