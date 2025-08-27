@@ -294,26 +294,26 @@ namespace System::Devices {
 
 
         bool wasPressedThisFrame(int playerIndex, ButtonCode code) const {
-            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            if (playerIndex < 0 || playerIndex >= 4) return false;
             const auto& pad = joysticks[playerIndex];
             auto it = pad.buttonsPressedThisFrame.find(static_cast<int>(code));
             return it != pad.buttonsPressedThisFrame.end() && it->second;
         }
         bool wasReleasedThisFrame(int playerIndex, ButtonCode code) const {
-            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            if (playerIndex < 0 || playerIndex >= 4) return false;
             const auto& pad = joysticks[playerIndex];
             auto it = pad.buttonsReleasedThisFrame.find(static_cast<int>(code));
             return it != pad.buttonsReleasedThisFrame.end() && it->second;
         }
         bool isButtonPressed(int playerIndex, ButtonCode code) const {
-            if (playerIndex < 0 || playerIndex >= joysticks.size()) return false;
+            if (playerIndex < 0 || playerIndex >= 4) return false;
             const auto& pad = joysticks[playerIndex];
             auto it = pad.buttons.find(static_cast<int>(code));
             return it != pad.buttons.end() && it->second;
         }
 
         int getAxis(int playerIndex, ButtonCode code) const {
-            if (playerIndex < 0 || playerIndex >= joysticks.size()) return 0;
+            if (playerIndex < 0 || playerIndex >= 4) return 0;
             const auto& pad = joysticks[playerIndex];
             auto it = pad.axes.find(static_cast<int>(code));
             return it != pad.axes.end() ? it->second : 0;
