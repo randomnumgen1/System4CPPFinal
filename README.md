@@ -32,7 +32,12 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Image Formats** in progress support for loading various image formats.
 + **3D model Formats** in progress support for loading various 3d models.
 + **Game Math** Vector2, Vector3, Matrix4x4 etc...
-+ **Controller Support** in progress cross platform support for PS, XBOX and 8bitduo controllers.
++ **Controller Support** Planned cross-platform support for PS, Xbox, and 8bitdo controllers.
++ **Networking** Planned cross-platform support for TCP/UDP sockets, HTTP clients, and WebSocket.
++ **Audio** Planned cross-platform support for audio.
++ **Animation System** Planned cross-platform support for Animation System.
+
+
 
 
 
