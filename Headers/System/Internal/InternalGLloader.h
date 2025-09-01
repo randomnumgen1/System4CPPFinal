@@ -7,6 +7,8 @@
 
 #if (defined(__x86_64__) || defined(_M_X64)) && defined(_WIN32)
 #include <wtypes.h>
+#else
+#include <dlfcn.h>
 #endif
 
 
@@ -67,41 +69,8 @@ typedef struct __GLsync* GLsync;
 #define GL_MAJOR_VERSION                  0x821B
 
 
-/*
-struct OpenGLFunctionTable {
-    PFNGLCULLFACEPROC glCullFace;
-    PFNGLFRONTFACEPROC glFrontFace;
-    PFNGLHINTPROC glHint;
-    PFNGLLINEWIDTHPROC glLineWidth;
-    PFNGLPOINTSIZEPROC glPointSize;
-    PFNGLPOLYGONMODEPROC glPolygonMode;
-};
-extern OpenGLFunctionTable glFunctions;
-struct OpenGLFunctionInfo {
-    const char* name;
-    void** functionPointer;
-};
-
-OpenGLFunctionInfo functionList[] = {
-    {"glCullFace", (void**)&glFunctions.glCullFace},
-    {"glFrontFace", (void**)&glFunctions.glFrontFace},
-    {"glHint", (void**)&glFunctions.glHint},
-    {"glLineWidth", (void**)&glFunctions.glLineWidth},
-    {"glPointSize", (void**)&glFunctions.glPointSize},
-    {"glPolygonMode", (void**)&glFunctions.glPolygonMode}
-};
-
-void LoadOpenGLFunctions() {
-    for (auto& entry : functionList) {
-        *entry.functionPointer = wglGetProcAddress(entry.name); // Adjust for other platforms
-    }
-    glFunctions.glCullFace(0x1,0x1);
-}
-*/
-
  
-
-
+  
 
 
 
@@ -1517,18 +1486,39 @@ typedef void (*OpenGLProc)(void);
 
 #ifdef _WIN32
 static HMODULE OpenGLHandle;
-static void LoadOpenGL()
-{
+#else
+static void* OpenGLHandle;
+#endif
+
+
+
+
+
+
+static void UnloadOpenGL(){
+    if (OpenGLHandle){
+#ifdef _WIN32
+        FreeLibrary(OpenGLHandle);
+#else
+        dlclose(OpenGLHandle);
+#endif
+        OpenGLHandle = nullptr;
+    }
+    
+}
+
+
+
+#ifdef _WIN32
+static void LoadOpenGL(){
+    if (OpenGLHandle) return; // Already loaded
     OpenGLHandle = LoadLibraryA("opengl32.dll");
     if (!OpenGLHandle) {
         std::cerr << "Failed to load OpenGL library.\n";
         return;
     }
 }
-static void UnloadOpenGL()
-{
-    FreeLibrary(OpenGLHandle);
-}
+
 static OpenGLProc OpenGLGetProc(const char* proc)
 {
     OpenGLProc Result = (OpenGLProc)wglGetProcAddress(proc);
@@ -1539,9 +1529,7 @@ static OpenGLProc OpenGLGetProc(const char* proc)
 }
 
 #else
-#include <dlfcn.h>
 
-static void* OpenGLHandle;
 typedef void (*__GLXextproc)(void);
 typedef __GLXextproc(*PFNGLXGETPROCADDRESSPROC) (const GLubyte* procName);
 static PFNGLXGETPROCADDRESSPROC glx_get_proc_address;
@@ -1549,11 +1537,7 @@ static void LoadOpenGL()
 {
     OpenGLHandle = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
     glx_get_proc_address = (PFNGLXGETPROCADDRESSPROC)dlsym(OpenGLHandle, "glXGetProcAddressARB");
-}
-static void UnloadOpenGL()
-{
-    dlclose(OpenGLHandle);
-}
+} 
 static OpenGLProc OpenGLGetProc(const char* proc)
 {
     OpenGLProc Result = (OpenGLProc)glx_get_proc_address((const GLubyte*)proc);
@@ -1567,6 +1551,727 @@ static OpenGLProc OpenGLGetProc(const char* proc)
 void OpenGLInit(OpenGLVersion* Version)
 {
     LoadOpenGL();
+#define LOAD_GL_FUNCTION(typedefName, symbolName) \
+    SYSTEM_INTERNAL_##symbolName = (PFN##typedefName##PROC)OpenGLGetProc(#symbolName); \
+    if(SYSTEM_INTERNAL_##symbolName == nullptr) { \
+        std::cerr << "Failed to load " << #symbolName << std::endl; \
+    }
+
+ 
+
+    LOAD_GL_FUNCTION(GLCULLFACE, glCullFace);
+    LOAD_GL_FUNCTION(GLFRONTFACE, glFrontFace);
+    LOAD_GL_FUNCTION(GLHINT, glHint);
+    LOAD_GL_FUNCTION(GLLINEWIDTH, glLineWidth);
+    LOAD_GL_FUNCTION(glPointSize);
+    LOAD_GL_FUNCTION(glPolygonMode);
+    LOAD_GL_FUNCTION(glScissor);
+    LOAD_GL_FUNCTION(glTexParameterf);
+    LOAD_GL_FUNCTION(glTexParameterfv);
+    LOAD_GL_FUNCTION(glTexParameteri);
+    LOAD_GL_FUNCTION(glTexParameteriv);
+    LOAD_GL_FUNCTION(glTexImage1D);
+    LOAD_GL_FUNCTION(glTexImage2D);
+    LOAD_GL_FUNCTION(glDrawBuffer);
+    LOAD_GL_FUNCTION(glClear);
+    LOAD_GL_FUNCTION(glClearColor);
+    LOAD_GL_FUNCTION(glClearStencil);
+    LOAD_GL_FUNCTION(glClearDepth);
+    LOAD_GL_FUNCTION(glStencilMask);
+    LOAD_GL_FUNCTION(glColorMask);
+    LOAD_GL_FUNCTION(glDepthMask);
+    LOAD_GL_FUNCTION(glDisable);
+    LOAD_GL_FUNCTION(glEnable);
+    LOAD_GL_FUNCTION(glFinish);
+    LOAD_GL_FUNCTION(glFlush);
+    LOAD_GL_FUNCTION(glBlendFunc);
+    LOAD_GL_FUNCTION(glLogicOp);
+    LOAD_GL_FUNCTION(glStencilFunc);
+    LOAD_GL_FUNCTION(glStencilOp);
+    LOAD_GL_FUNCTION(glDepthFunc);
+    LOAD_GL_FUNCTION(glPixelStoref);
+    LOAD_GL_FUNCTION(glPixelStorei);
+    LOAD_GL_FUNCTION(glReadBuffer);
+    LOAD_GL_FUNCTION(glReadPixels);
+    LOAD_GL_FUNCTION(glGetBooleanv);
+    LOAD_GL_FUNCTION(glGetDoublev);
+    LOAD_GL_FUNCTION(glGetError);
+    LOAD_GL_FUNCTION(glGetFloatv);
+    LOAD_GL_FUNCTION(glGetIntegerv);
+    LOAD_GL_FUNCTION(glGetString);
+    LOAD_GL_FUNCTION(glGetTexImage);
+    LOAD_GL_FUNCTION(glGetTexParameterfv);
+    LOAD_GL_FUNCTION(glGetTexParameteriv);
+    LOAD_GL_FUNCTION(glGetTexLevelParameterfv);
+    LOAD_GL_FUNCTION(glGetTexLevelParameteriv);
+    LOAD_GL_FUNCTION(glIsEnabled);
+    LOAD_GL_FUNCTION(glDepthRange);
+    LOAD_GL_FUNCTION(glViewport);
+    LOAD_GL_FUNCTION(glDrawArrays);
+    LOAD_GL_FUNCTION(glDrawElements);
+    LOAD_GL_FUNCTION(glPolygonOffset);
+    LOAD_GL_FUNCTION(glCopyTexImage1D);
+    LOAD_GL_FUNCTION(glCopyTexImage2D);
+    LOAD_GL_FUNCTION(glCopyTexSubImage1D);
+    LOAD_GL_FUNCTION(glCopyTexSubImage2D);
+    LOAD_GL_FUNCTION(glTexSubImage1D);
+    LOAD_GL_FUNCTION(glTexSubImage2D);
+    LOAD_GL_FUNCTION(glBindTexture);
+    LOAD_GL_FUNCTION(glDeleteTextures);
+    LOAD_GL_FUNCTION(glGenTextures);
+    LOAD_GL_FUNCTION(glIsTexture);
+    LOAD_GL_FUNCTION(glDrawRangeElements);
+    LOAD_GL_FUNCTION(glTexImage3D);
+    LOAD_GL_FUNCTION(glTexSubImage3D);
+    LOAD_GL_FUNCTION(glCopyTexSubImage3D);
+    LOAD_GL_FUNCTION(glActiveTexture);
+    LOAD_GL_FUNCTION(glSampleCoverage);
+    LOAD_GL_FUNCTION(glCompressedTexImage3D);
+    LOAD_GL_FUNCTION(glCompressedTexImage2D);
+    LOAD_GL_FUNCTION(glCompressedTexImage1D);
+    LOAD_GL_FUNCTION(glCompressedTexSubImage3D);
+    LOAD_GL_FUNCTION(glCompressedTexSubImage2D);
+    LOAD_GL_FUNCTION(glCompressedTexSubImage1D);
+    LOAD_GL_FUNCTION(glGetCompressedTexImage);
+    LOAD_GL_FUNCTION(glBlendFuncSeparate);
+    LOAD_GL_FUNCTION(glMultiDrawArrays);
+    LOAD_GL_FUNCTION(glMultiDrawElements);
+    LOAD_GL_FUNCTION(glPointParameterf);
+    LOAD_GL_FUNCTION(glPointParameterfv);
+    LOAD_GL_FUNCTION(glPointParameteri);
+    LOAD_GL_FUNCTION(glPointParameteriv);
+    LOAD_GL_FUNCTION(glBlendColor);
+    LOAD_GL_FUNCTION(glBlendEquation);
+    LOAD_GL_FUNCTION(glGenQueries);
+    LOAD_GL_FUNCTION(glDeleteQueries);
+    LOAD_GL_FUNCTION(glIsQuery);
+    LOAD_GL_FUNCTION(glBeginQuery);
+    LOAD_GL_FUNCTION(glEndQuery);
+    LOAD_GL_FUNCTION(glGetQueryiv);
+    LOAD_GL_FUNCTION(glGetQueryObjectiv);
+    LOAD_GL_FUNCTION(glGetQueryObjectuiv);
+    LOAD_GL_FUNCTION(glBindBuffer);
+    LOAD_GL_FUNCTION(glDeleteBuffers);
+    LOAD_GL_FUNCTION(glGenBuffers);
+    LOAD_GL_FUNCTION(glIsBuffer);
+    LOAD_GL_FUNCTION(glBufferData);
+    LOAD_GL_FUNCTION(glBufferSubData);
+    LOAD_GL_FUNCTION(glGetBufferSubData);
+    LOAD_GL_FUNCTION(glMapBuffer);
+    LOAD_GL_FUNCTION(glUnmapBuffer);
+    LOAD_GL_FUNCTION(glGetBufferParameteriv);
+    LOAD_GL_FUNCTION(glGetBufferPointerv);
+    LOAD_GL_FUNCTION(glBlendEquationSeparate);
+    LOAD_GL_FUNCTION(glDrawBuffers);
+    LOAD_GL_FUNCTION(glStencilOpSeparate);
+    LOAD_GL_FUNCTION(glStencilFuncSeparate);
+    LOAD_GL_FUNCTION(glStencilMaskSeparate);
+    LOAD_GL_FUNCTION(glAttachShader);
+    LOAD_GL_FUNCTION(glBindAttribLocation);
+    LOAD_GL_FUNCTION(glCompileShader);
+    LOAD_GL_FUNCTION(glCreateProgram);
+    LOAD_GL_FUNCTION(glCreateShader);
+    LOAD_GL_FUNCTION(glDeleteProgram);
+    LOAD_GL_FUNCTION(glDeleteShader);
+    LOAD_GL_FUNCTION(glDetachShader);
+    LOAD_GL_FUNCTION(glDisableVertexAttribArray);
+    LOAD_GL_FUNCTION(glEnableVertexAttribArray);
+    LOAD_GL_FUNCTION(glGetActiveAttrib);
+    LOAD_GL_FUNCTION(glGetActiveUniform);
+    LOAD_GL_FUNCTION(glGetAttachedShaders);
+    LOAD_GL_FUNCTION(glGetAttribLocation);
+    LOAD_GL_FUNCTION(glGetProgramiv);
+    LOAD_GL_FUNCTION(glGetProgramInfoLog);
+    LOAD_GL_FUNCTION(glGetShaderiv);
+    LOAD_GL_FUNCTION(glGetShaderInfoLog);
+    LOAD_GL_FUNCTION(glGetShaderSource);
+    LOAD_GL_FUNCTION(glGetUniformLocation);
+    LOAD_GL_FUNCTION(glGetUniformfv);
+    LOAD_GL_FUNCTION(glGetUniformiv);
+    LOAD_GL_FUNCTION(glGetVertexAttribdv);
+    LOAD_GL_FUNCTION(glGetVertexAttribfv);
+    LOAD_GL_FUNCTION(glGetVertexAttribiv);
+    LOAD_GL_FUNCTION(glGetVertexAttribPointerv);
+    LOAD_GL_FUNCTION(glIsProgram);
+    LOAD_GL_FUNCTION(glIsShader);
+    LOAD_GL_FUNCTION(glLinkProgram);
+    LOAD_GL_FUNCTION(glShaderSource);
+    LOAD_GL_FUNCTION(glUseProgram);
+    LOAD_GL_FUNCTION(glUniform1f);
+    LOAD_GL_FUNCTION(glUniform2f);
+    LOAD_GL_FUNCTION(glUniform3f);
+    LOAD_GL_FUNCTION(glUniform4f);
+    LOAD_GL_FUNCTION(glUniform1i);
+    LOAD_GL_FUNCTION(glUniform2i);
+    LOAD_GL_FUNCTION(glUniform3i);
+    LOAD_GL_FUNCTION(glUniform4i);
+    LOAD_GL_FUNCTION(glUniform1fv);
+    LOAD_GL_FUNCTION(glUniform2fv);
+    LOAD_GL_FUNCTION(glUniform3fv);
+    LOAD_GL_FUNCTION(glUniform4fv);
+    LOAD_GL_FUNCTION(glUniform1iv);
+    LOAD_GL_FUNCTION(glUniform2iv);
+    LOAD_GL_FUNCTION(glUniform3iv);
+    LOAD_GL_FUNCTION(glUniform4iv);
+    LOAD_GL_FUNCTION(glUniformMatrix2fv);
+    LOAD_GL_FUNCTION(glUniformMatrix3fv);
+    LOAD_GL_FUNCTION(glUniformMatrix4fv);
+    LOAD_GL_FUNCTION(glValidateProgram);
+    LOAD_GL_FUNCTION(glVertexAttrib1d);
+    LOAD_GL_FUNCTION(glVertexAttrib1dv);
+    LOAD_GL_FUNCTION(glVertexAttrib1f);
+    LOAD_GL_FUNCTION(glVertexAttrib1fv);
+    LOAD_GL_FUNCTION(glVertexAttrib1s);
+    LOAD_GL_FUNCTION(glVertexAttrib1sv);
+    LOAD_GL_FUNCTION(glVertexAttrib2d);
+    LOAD_GL_FUNCTION(glVertexAttrib2dv);
+    LOAD_GL_FUNCTION(glVertexAttrib2f);
+    LOAD_GL_FUNCTION(glVertexAttrib2fv);
+    LOAD_GL_FUNCTION(glVertexAttrib2s);
+    LOAD_GL_FUNCTION(glVertexAttrib2sv);
+    LOAD_GL_FUNCTION(glVertexAttrib3d);
+    LOAD_GL_FUNCTION(glVertexAttrib3dv);
+    LOAD_GL_FUNCTION(glVertexAttrib3f);
+    LOAD_GL_FUNCTION(glVertexAttrib3fv);
+    LOAD_GL_FUNCTION(glVertexAttrib3s);
+    LOAD_GL_FUNCTION(glVertexAttrib3sv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nbv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Niv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nsv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nub);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nubv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nuiv);
+    LOAD_GL_FUNCTION(glVertexAttrib4Nusv);
+    LOAD_GL_FUNCTION(glVertexAttrib4bv);
+    LOAD_GL_FUNCTION(glVertexAttrib4d);
+    LOAD_GL_FUNCTION(glVertexAttrib4dv);
+    LOAD_GL_FUNCTION(glVertexAttrib4f);
+    LOAD_GL_FUNCTION(glVertexAttrib4fv);
+    LOAD_GL_FUNCTION(glVertexAttrib4iv);
+    LOAD_GL_FUNCTION(glVertexAttrib4s);
+    LOAD_GL_FUNCTION(glVertexAttrib4sv);
+    LOAD_GL_FUNCTION(glVertexAttrib4ubv);
+    LOAD_GL_FUNCTION(glVertexAttrib4uiv);
+    LOAD_GL_FUNCTION(glVertexAttrib4usv);
+    LOAD_GL_FUNCTION(glVertexAttribPointer);
+    LOAD_GL_FUNCTION(glUniformMatrix2x3fv);
+    LOAD_GL_FUNCTION(glUniformMatrix3x2fv);
+    LOAD_GL_FUNCTION(glUniformMatrix2x4fv);
+    LOAD_GL_FUNCTION(glUniformMatrix4x2fv);
+    LOAD_GL_FUNCTION(glUniformMatrix3x4fv);
+    LOAD_GL_FUNCTION(glUniformMatrix4x3fv);
+    LOAD_GL_FUNCTION(glColorMaski);
+    LOAD_GL_FUNCTION(glGetBooleani_v);
+    LOAD_GL_FUNCTION(glGetIntegeri_v);
+    LOAD_GL_FUNCTION(glEnablei);
+    LOAD_GL_FUNCTION(glDisablei);
+    LOAD_GL_FUNCTION(glIsEnabledi);
+    LOAD_GL_FUNCTION(glBeginTransformFeedback);
+    LOAD_GL_FUNCTION(glEndTransformFeedback);
+    LOAD_GL_FUNCTION(glBindBufferRange);
+    LOAD_GL_FUNCTION(glBindBufferBase);
+    LOAD_GL_FUNCTION(glTransformFeedbackVaryings);
+    LOAD_GL_FUNCTION(glGetTransformFeedbackVarying);
+    LOAD_GL_FUNCTION(glClampColor);
+    LOAD_GL_FUNCTION(glBeginConditionalRender);
+    LOAD_GL_FUNCTION(glEndConditionalRender);
+    LOAD_GL_FUNCTION(glVertexAttribIPointer);
+    LOAD_GL_FUNCTION(glGetVertexAttribIiv);
+    LOAD_GL_FUNCTION(glGetVertexAttribIuiv);
+    LOAD_GL_FUNCTION(glVertexAttribI1i);
+    LOAD_GL_FUNCTION(glVertexAttribI2i);
+    LOAD_GL_FUNCTION(glVertexAttribI3i);
+    LOAD_GL_FUNCTION(glVertexAttribI4i);
+    LOAD_GL_FUNCTION(glVertexAttribI1ui);
+    LOAD_GL_FUNCTION(glVertexAttribI2ui);
+    LOAD_GL_FUNCTION(glVertexAttribI3ui);
+    LOAD_GL_FUNCTION(glVertexAttribI4ui);
+    LOAD_GL_FUNCTION(glVertexAttribI1iv);
+    LOAD_GL_FUNCTION(glVertexAttribI2iv);
+    LOAD_GL_FUNCTION(glVertexAttribI3iv);
+    LOAD_GL_FUNCTION(glVertexAttribI4iv);
+    LOAD_GL_FUNCTION(glVertexAttribI1uiv);
+    LOAD_GL_FUNCTION(glVertexAttribI2uiv);
+    LOAD_GL_FUNCTION(glVertexAttribI3uiv);
+    LOAD_GL_FUNCTION(glVertexAttribI4uiv);
+    LOAD_GL_FUNCTION(glVertexAttribI4bv);
+    LOAD_GL_FUNCTION(glVertexAttribI4sv);
+    LOAD_GL_FUNCTION(glVertexAttribI4ubv);
+    LOAD_GL_FUNCTION(glVertexAttribI4usv);
+    LOAD_GL_FUNCTION(glGetUniformuiv);
+    LOAD_GL_FUNCTION(glBindFragDataLocation);
+    LOAD_GL_FUNCTION(glGetFragDataLocation);
+    LOAD_GL_FUNCTION(glUniform1ui);
+    LOAD_GL_FUNCTION(glUniform2ui);
+    LOAD_GL_FUNCTION(glUniform3ui);
+    LOAD_GL_FUNCTION(glUniform4ui);
+    LOAD_GL_FUNCTION(glUniform1uiv);
+    LOAD_GL_FUNCTION(glUniform2uiv);
+    LOAD_GL_FUNCTION(glUniform3uiv);
+    LOAD_GL_FUNCTION(glUniform4uiv);
+    LOAD_GL_FUNCTION(glTexParameterIiv);
+    LOAD_GL_FUNCTION(glTexParameterIuiv);
+    LOAD_GL_FUNCTION(glGetTexParameterIiv);
+    LOAD_GL_FUNCTION(glGetTexParameterIuiv);
+    LOAD_GL_FUNCTION(glClearBufferiv);
+    LOAD_GL_FUNCTION(glClearBufferuiv);
+    LOAD_GL_FUNCTION(glClearBufferfv);
+    LOAD_GL_FUNCTION(glClearBufferfi);
+    LOAD_GL_FUNCTION(glGetStringi);
+    LOAD_GL_FUNCTION(glIsRenderbuffer);
+    LOAD_GL_FUNCTION(glBindRenderbuffer);
+    LOAD_GL_FUNCTION(glDeleteRenderbuffers);
+    LOAD_GL_FUNCTION(glGenRenderbuffers);
+    LOAD_GL_FUNCTION(glRenderbufferStorage);
+    LOAD_GL_FUNCTION(glGetRenderbufferParameteriv);
+    LOAD_GL_FUNCTION(glIsFramebuffer);
+    LOAD_GL_FUNCTION(glBindFramebuffer);
+    LOAD_GL_FUNCTION(glDeleteFramebuffers);
+    LOAD_GL_FUNCTION(glGenFramebuffers);
+    LOAD_GL_FUNCTION(glCheckFramebufferStatus);
+    LOAD_GL_FUNCTION(glFramebufferTexture1D);
+    LOAD_GL_FUNCTION(glFramebufferTexture2D);
+    LOAD_GL_FUNCTION(glFramebufferTexture3D);
+    LOAD_GL_FUNCTION(glFramebufferRenderbuffer);
+    LOAD_GL_FUNCTION(glGetFramebufferAttachmentParameteriv);
+    LOAD_GL_FUNCTION(glGenerateMipmap);
+    LOAD_GL_FUNCTION(glBlitFramebuffer);
+    LOAD_GL_FUNCTION(glRenderbufferStorageMultisample);
+    LOAD_GL_FUNCTION(glFramebufferTextureLayer);
+    LOAD_GL_FUNCTION(glMapBufferRange);
+    LOAD_GL_FUNCTION(glFlushMappedBufferRange);
+    LOAD_GL_FUNCTION(glBindVertexArray);
+    LOAD_GL_FUNCTION(glDeleteVertexArrays);
+    LOAD_GL_FUNCTION(glGenVertexArrays);
+    LOAD_GL_FUNCTION(glIsVertexArray);
+    LOAD_GL_FUNCTION(glDrawArraysInstanced);
+    LOAD_GL_FUNCTION(glDrawElementsInstanced);
+    LOAD_GL_FUNCTION(glTexBuffer);
+    LOAD_GL_FUNCTION(glPrimitiveRestartIndex);
+    LOAD_GL_FUNCTION(glCopyBufferSubData);
+    LOAD_GL_FUNCTION(glGetUniformIndices);
+    LOAD_GL_FUNCTION(glGetActiveUniformsiv);
+    LOAD_GL_FUNCTION(glGetActiveUniformName);
+    LOAD_GL_FUNCTION(glGetUniformBlockIndex);
+    LOAD_GL_FUNCTION(glGetActiveUniformBlockiv);
+    LOAD_GL_FUNCTION(glGetActiveUniformBlockName);
+    LOAD_GL_FUNCTION(glUniformBlockBinding);
+    LOAD_GL_FUNCTION(glDrawElementsBaseVertex);
+    LOAD_GL_FUNCTION(glDrawRangeElementsBaseVertex);
+    LOAD_GL_FUNCTION(glDrawElementsInstancedBaseVertex);
+    LOAD_GL_FUNCTION(glMultiDrawElementsBaseVertex);
+    LOAD_GL_FUNCTION(glProvokingVertex);
+    LOAD_GL_FUNCTION(glFenceSync);
+    LOAD_GL_FUNCTION(glIsSync);
+    LOAD_GL_FUNCTION(glDeleteSync);
+    LOAD_GL_FUNCTION(glClientWaitSync);
+    LOAD_GL_FUNCTION(glWaitSync);
+    LOAD_GL_FUNCTION(glGetInteger64v);
+    LOAD_GL_FUNCTION(glGetSynciv);
+    LOAD_GL_FUNCTION(glGetInteger64i_v);
+    LOAD_GL_FUNCTION(glGetBufferParameteri64v);
+    LOAD_GL_FUNCTION(glFramebufferTexture);
+    LOAD_GL_FUNCTION(glTexImage2DMultisample);
+    LOAD_GL_FUNCTION(glTexImage3DMultisample);
+    LOAD_GL_FUNCTION(glGetMultisamplefv);
+    LOAD_GL_FUNCTION(glSampleMaski);
+    LOAD_GL_FUNCTION(glBindFragDataLocationIndexed);
+    LOAD_GL_FUNCTION(glGetFragDataIndex);
+    LOAD_GL_FUNCTION(glGenSamplers);
+    LOAD_GL_FUNCTION(glDeleteSamplers);
+    LOAD_GL_FUNCTION(glIsSampler);
+    LOAD_GL_FUNCTION(glBindSampler);
+    LOAD_GL_FUNCTION(glSamplerParameteri);
+    LOAD_GL_FUNCTION(glSamplerParameteriv);
+    LOAD_GL_FUNCTION(glSamplerParameterf);
+    LOAD_GL_FUNCTION(glSamplerParameterfv);
+    LOAD_GL_FUNCTION(glSamplerParameterIiv);
+    LOAD_GL_FUNCTION(glSamplerParameterIuiv);
+    LOAD_GL_FUNCTION(glGetSamplerParameteriv);
+    LOAD_GL_FUNCTION(glGetSamplerParameterIiv);
+    LOAD_GL_FUNCTION(glGetSamplerParameterfv);
+    LOAD_GL_FUNCTION(glGetSamplerParameterIuiv);
+    LOAD_GL_FUNCTION(glQueryCounter);
+    LOAD_GL_FUNCTION(glGetQueryObjecti64v);
+    LOAD_GL_FUNCTION(glGetQueryObjectui64v);
+    LOAD_GL_FUNCTION(glVertexAttribDivisor);
+    LOAD_GL_FUNCTION(glVertexAttribP1ui);
+    LOAD_GL_FUNCTION(glVertexAttribP1uiv);
+    LOAD_GL_FUNCTION(glVertexAttribP2ui);
+    LOAD_GL_FUNCTION(glVertexAttribP2uiv);
+    LOAD_GL_FUNCTION(glVertexAttribP3ui);
+    LOAD_GL_FUNCTION(glVertexAttribP3uiv);
+    LOAD_GL_FUNCTION(glVertexAttribP4ui);
+    LOAD_GL_FUNCTION(glVertexAttribP4uiv);
+    LOAD_GL_FUNCTION(glVertexP2ui);
+    LOAD_GL_FUNCTION(glVertexP2uiv);
+    LOAD_GL_FUNCTION(glVertexP3ui);
+    LOAD_GL_FUNCTION(glVertexP3uiv);
+    LOAD_GL_FUNCTION(glVertexP4ui);
+    LOAD_GL_FUNCTION(glVertexP4uiv);
+    LOAD_GL_FUNCTION(glTexCoordP1ui);
+    LOAD_GL_FUNCTION(glTexCoordP1uiv);
+    LOAD_GL_FUNCTION(glTexCoordP2ui);
+    LOAD_GL_FUNCTION(glTexCoordP2uiv);
+    LOAD_GL_FUNCTION(glTexCoordP3ui);
+    LOAD_GL_FUNCTION(glTexCoordP3uiv);
+    LOAD_GL_FUNCTION(glTexCoordP4ui);
+    LOAD_GL_FUNCTION(glTexCoordP4uiv);
+    LOAD_GL_FUNCTION(glMultiTexCoordP1ui);
+    LOAD_GL_FUNCTION(glMultiTexCoordP1uiv);
+    LOAD_GL_FUNCTION(glMultiTexCoordP2ui);
+    LOAD_GL_FUNCTION(glMultiTexCoordP2uiv);
+    LOAD_GL_FUNCTION(glMultiTexCoordP3ui);
+    LOAD_GL_FUNCTION(glMultiTexCoordP3uiv);
+    LOAD_GL_FUNCTION(glMultiTexCoordP4ui);
+    LOAD_GL_FUNCTION(glMultiTexCoordP4uiv);
+    LOAD_GL_FUNCTION(glNormalP3ui);
+    LOAD_GL_FUNCTION(glNormalP3uiv);
+    LOAD_GL_FUNCTION(glColorP3ui);
+    LOAD_GL_FUNCTION(glColorP3uiv);
+    LOAD_GL_FUNCTION(glColorP4ui);
+    LOAD_GL_FUNCTION(glColorP4uiv);
+    LOAD_GL_FUNCTION(glSecondaryColorP3ui);
+    LOAD_GL_FUNCTION(glSecondaryColorP3uiv);
+    LOAD_GL_FUNCTION(glMinSampleShading);
+    LOAD_GL_FUNCTION(glBlendEquationi);
+    LOAD_GL_FUNCTION(glBlendEquationSeparatei);
+    LOAD_GL_FUNCTION(glBlendFunci);
+    LOAD_GL_FUNCTION(glBlendFuncSeparatei);
+    LOAD_GL_FUNCTION(glDrawArraysIndirect);
+    LOAD_GL_FUNCTION(glDrawElementsIndirect);
+    LOAD_GL_FUNCTION(glUniform1d);
+    LOAD_GL_FUNCTION(glUniform2d);
+    LOAD_GL_FUNCTION(glUniform3d);
+    LOAD_GL_FUNCTION(glUniform4d);
+    LOAD_GL_FUNCTION(glUniform1dv);
+    LOAD_GL_FUNCTION(glUniform2dv);
+    LOAD_GL_FUNCTION(glUniform3dv);
+    LOAD_GL_FUNCTION(glUniform4dv);
+    LOAD_GL_FUNCTION(glUniformMatrix2dv);
+    LOAD_GL_FUNCTION(glUniformMatrix3dv);
+    LOAD_GL_FUNCTION(glUniformMatrix4dv);
+    LOAD_GL_FUNCTION(glUniformMatrix2x3dv);
+    LOAD_GL_FUNCTION(glUniformMatrix2x4dv);
+    LOAD_GL_FUNCTION(glUniformMatrix3x2dv);
+    LOAD_GL_FUNCTION(glUniformMatrix3x4dv);
+    LOAD_GL_FUNCTION(glUniformMatrix4x2dv);
+    LOAD_GL_FUNCTION(glUniformMatrix4x3dv);
+    LOAD_GL_FUNCTION(glGetUniformdv);
+    LOAD_GL_FUNCTION(glGetSubroutineUniformLocation);
+    LOAD_GL_FUNCTION(glGetSubroutineIndex);
+    LOAD_GL_FUNCTION(glGetActiveSubroutineUniformiv);
+    LOAD_GL_FUNCTION(glGetActiveSubroutineUniformName);
+    LOAD_GL_FUNCTION(glGetActiveSubroutineName);
+    LOAD_GL_FUNCTION(glUniformSubroutinesuiv);
+    LOAD_GL_FUNCTION(glGetUniformSubroutineuiv);
+    LOAD_GL_FUNCTION(glGetProgramStageiv);
+    LOAD_GL_FUNCTION(glPatchParameteri);
+    LOAD_GL_FUNCTION(glPatchParameterfv);
+    LOAD_GL_FUNCTION(glBindTransformFeedback);
+    LOAD_GL_FUNCTION(glDeleteTransformFeedbacks);
+    LOAD_GL_FUNCTION(glGenTransformFeedbacks);
+    LOAD_GL_FUNCTION(glIsTransformFeedback);
+    LOAD_GL_FUNCTION(glPauseTransformFeedback);
+    LOAD_GL_FUNCTION(glResumeTransformFeedback);
+    LOAD_GL_FUNCTION(glDrawTransformFeedback);
+    LOAD_GL_FUNCTION(glDrawTransformFeedbackStream);
+    LOAD_GL_FUNCTION(glBeginQueryIndexed);
+    LOAD_GL_FUNCTION(glEndQueryIndexed);
+    LOAD_GL_FUNCTION(glGetQueryIndexediv);
+    LOAD_GL_FUNCTION(glReleaseShaderCompiler);
+    LOAD_GL_FUNCTION(glShaderBinary);
+    LOAD_GL_FUNCTION(glGetShaderPrecisionFormat);
+    LOAD_GL_FUNCTION(glDepthRangef);
+    LOAD_GL_FUNCTION(glClearDepthf);
+    LOAD_GL_FUNCTION(glGetProgramBinary);
+    LOAD_GL_FUNCTION(glProgramBinary);
+    LOAD_GL_FUNCTION(glProgramParameteri);
+    LOAD_GL_FUNCTION(glUseProgramStages);
+    LOAD_GL_FUNCTION(glActiveShaderProgram);
+    LOAD_GL_FUNCTION(glCreateShaderProgramv);
+    LOAD_GL_FUNCTION(glBindProgramPipeline);
+    LOAD_GL_FUNCTION(glDeleteProgramPipelines);
+    LOAD_GL_FUNCTION(glGenProgramPipelines);
+    LOAD_GL_FUNCTION(glIsProgramPipeline);
+    LOAD_GL_FUNCTION(glGetProgramPipelineiv);
+    LOAD_GL_FUNCTION(glProgramUniform1i);
+    LOAD_GL_FUNCTION(glProgramUniform1iv);
+    LOAD_GL_FUNCTION(glProgramUniform1f);
+    LOAD_GL_FUNCTION(glProgramUniform1fv);
+    LOAD_GL_FUNCTION(glProgramUniform1d);
+    LOAD_GL_FUNCTION(glProgramUniform1dv);
+    LOAD_GL_FUNCTION(glProgramUniform1ui);
+    LOAD_GL_FUNCTION(glProgramUniform1uiv);
+    LOAD_GL_FUNCTION(glProgramUniform2i);
+    LOAD_GL_FUNCTION(glProgramUniform2iv);
+    LOAD_GL_FUNCTION(glProgramUniform2f);
+    LOAD_GL_FUNCTION(glProgramUniform2fv);
+    LOAD_GL_FUNCTION(glProgramUniform2d);
+    LOAD_GL_FUNCTION(glProgramUniform2dv);
+    LOAD_GL_FUNCTION(glProgramUniform2ui);
+    LOAD_GL_FUNCTION(glProgramUniform2uiv);
+    LOAD_GL_FUNCTION(glProgramUniform3i);
+    LOAD_GL_FUNCTION(glProgramUniform3iv);
+    LOAD_GL_FUNCTION(glProgramUniform3f);
+    LOAD_GL_FUNCTION(glProgramUniform3fv);
+    LOAD_GL_FUNCTION(glProgramUniform3d);
+    LOAD_GL_FUNCTION(glProgramUniform3dv);
+    LOAD_GL_FUNCTION(glProgramUniform3ui);
+    LOAD_GL_FUNCTION(glProgramUniform3uiv);
+    LOAD_GL_FUNCTION(glProgramUniform4i);
+    LOAD_GL_FUNCTION(glProgramUniform4iv);
+    LOAD_GL_FUNCTION(glProgramUniform4f);
+    LOAD_GL_FUNCTION(glProgramUniform4fv);
+    LOAD_GL_FUNCTION(glProgramUniform4d);
+    LOAD_GL_FUNCTION(glProgramUniform4dv);
+    LOAD_GL_FUNCTION(glProgramUniform4ui);
+    LOAD_GL_FUNCTION(glProgramUniform4uiv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2x3fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3x2fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2x4fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4x2fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3x4fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4x3fv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2x3dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3x2dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix2x4dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4x2dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix3x4dv);
+    LOAD_GL_FUNCTION(glProgramUniformMatrix4x3dv);
+    LOAD_GL_FUNCTION(glValidateProgramPipeline);
+    LOAD_GL_FUNCTION(glGetProgramPipelineInfoLog);
+    LOAD_GL_FUNCTION(glVertexAttribL1d);
+    LOAD_GL_FUNCTION(glVertexAttribL2d);
+    LOAD_GL_FUNCTION(glVertexAttribL3d);
+    LOAD_GL_FUNCTION(glVertexAttribL4d);
+    LOAD_GL_FUNCTION(glVertexAttribL1dv);
+    LOAD_GL_FUNCTION(glVertexAttribL2dv);
+    LOAD_GL_FUNCTION(glVertexAttribL3dv);
+    LOAD_GL_FUNCTION(glVertexAttribL4dv);
+    LOAD_GL_FUNCTION(glVertexAttribLPointer);
+    LOAD_GL_FUNCTION(glGetVertexAttribLdv);
+    LOAD_GL_FUNCTION(glViewportArrayv);
+    LOAD_GL_FUNCTION(glViewportIndexedf);
+    LOAD_GL_FUNCTION(glViewportIndexedfv);
+    LOAD_GL_FUNCTION(glScissorArrayv);
+    LOAD_GL_FUNCTION(glScissorIndexed);
+    LOAD_GL_FUNCTION(glScissorIndexedv);
+    LOAD_GL_FUNCTION(glDepthRangeArrayv);
+    LOAD_GL_FUNCTION(glDepthRangeIndexed);
+    LOAD_GL_FUNCTION(glGetFloati_v);
+    LOAD_GL_FUNCTION(glGetDoublei_v);
+    LOAD_GL_FUNCTION(glDrawArraysInstancedBaseInstance);
+    LOAD_GL_FUNCTION(glDrawElementsInstancedBaseInstance);
+    LOAD_GL_FUNCTION(glDrawElementsInstancedBaseVertexBaseInstance);
+    LOAD_GL_FUNCTION(glGetInternalformativ);
+    LOAD_GL_FUNCTION(glGetActiveAtomicCounterBufferiv);
+    LOAD_GL_FUNCTION(glBindImageTexture);
+    LOAD_GL_FUNCTION(glMemoryBarrier);
+    LOAD_GL_FUNCTION(glTexStorage1D);
+    LOAD_GL_FUNCTION(glTexStorage2D);
+    LOAD_GL_FUNCTION(glTexStorage3D);
+    LOAD_GL_FUNCTION(glDrawTransformFeedbackInstanced);
+    LOAD_GL_FUNCTION(glDrawTransformFeedbackStreamInstanced);
+    LOAD_GL_FUNCTION(glClearBufferData);
+    LOAD_GL_FUNCTION(glClearBufferSubData);
+    LOAD_GL_FUNCTION(glDispatchCompute);
+    LOAD_GL_FUNCTION(glDispatchComputeIndirect);
+    LOAD_GL_FUNCTION(glCopyImageSubData);
+    LOAD_GL_FUNCTION(glFramebufferParameteri);
+    LOAD_GL_FUNCTION(glGetFramebufferParameteriv);
+    LOAD_GL_FUNCTION(glGetInternalformati64v);
+    LOAD_GL_FUNCTION(glInvalidateTexSubImage);
+    LOAD_GL_FUNCTION(glInvalidateTexImage);
+    LOAD_GL_FUNCTION(glInvalidateBufferSubData);
+    LOAD_GL_FUNCTION(glInvalidateBufferData);
+    LOAD_GL_FUNCTION(glInvalidateFramebuffer);
+    LOAD_GL_FUNCTION(glInvalidateSubFramebuffer);
+    LOAD_GL_FUNCTION(glMultiDrawArraysIndirect);
+    LOAD_GL_FUNCTION(glMultiDrawElementsIndirect);
+    LOAD_GL_FUNCTION(glGetProgramInterfaceiv);
+    LOAD_GL_FUNCTION(glGetProgramResourceIndex);
+    LOAD_GL_FUNCTION(glGetProgramResourceName);
+    LOAD_GL_FUNCTION(glGetProgramResourceiv);
+    LOAD_GL_FUNCTION(glGetProgramResourceLocation);
+    LOAD_GL_FUNCTION(glGetProgramResourceLocationIndex);
+    LOAD_GL_FUNCTION(glShaderStorageBlockBinding);
+    LOAD_GL_FUNCTION(glTexBufferRange);
+    LOAD_GL_FUNCTION(glTexStorage2DMultisample);
+    LOAD_GL_FUNCTION(glTexStorage3DMultisample);
+    LOAD_GL_FUNCTION(glTextureView);
+    LOAD_GL_FUNCTION(glBindVertexBuffer);
+    LOAD_GL_FUNCTION(glVertexAttribFormat);
+    LOAD_GL_FUNCTION(glVertexAttribIFormat);
+    LOAD_GL_FUNCTION(glVertexAttribLFormat);
+    LOAD_GL_FUNCTION(glVertexAttribBinding);
+    LOAD_GL_FUNCTION(glVertexBindingDivisor);
+    LOAD_GL_FUNCTION(glDebugMessageControl);
+    LOAD_GL_FUNCTION(glDebugMessageInsert);
+    LOAD_GL_FUNCTION(glDebugMessageCallback);
+    LOAD_GL_FUNCTION(glGetDebugMessageLog);
+    LOAD_GL_FUNCTION(glPushDebugGroup);
+    LOAD_GL_FUNCTION(glPopDebugGroup);
+    LOAD_GL_FUNCTION(glObjectLabel);
+    LOAD_GL_FUNCTION(glGetObjectLabel);
+    LOAD_GL_FUNCTION(glObjectPtrLabel);
+    LOAD_GL_FUNCTION(glGetObjectPtrLabel);
+    LOAD_GL_FUNCTION(glGetPointerv);
+    LOAD_GL_FUNCTION(glBufferStorage);
+    LOAD_GL_FUNCTION(glClearTexImage);
+    LOAD_GL_FUNCTION(glClearTexSubImage);
+    LOAD_GL_FUNCTION(glBindBuffersBase);
+    LOAD_GL_FUNCTION(glBindBuffersRange);
+    LOAD_GL_FUNCTION(glBindTextures);
+    LOAD_GL_FUNCTION(glBindSamplers);
+    LOAD_GL_FUNCTION(glBindImageTextures);
+    LOAD_GL_FUNCTION(glBindVertexBuffers);
+    LOAD_GL_FUNCTION(glClipControl);
+    LOAD_GL_FUNCTION(glCreateTransformFeedbacks);
+    LOAD_GL_FUNCTION(glTransformFeedbackBufferBase);
+    LOAD_GL_FUNCTION(glTransformFeedbackBufferRange);
+    LOAD_GL_FUNCTION(glGetTransformFeedbackiv);
+    LOAD_GL_FUNCTION(glGetTransformFeedbacki_v);
+    LOAD_GL_FUNCTION(glGetTransformFeedbacki64_v);
+    LOAD_GL_FUNCTION(glCreateBuffers);
+    LOAD_GL_FUNCTION(glNamedBufferStorage);
+    LOAD_GL_FUNCTION(glNamedBufferData);
+    LOAD_GL_FUNCTION(glNamedBufferSubData);
+    LOAD_GL_FUNCTION(glCopyNamedBufferSubData);
+    LOAD_GL_FUNCTION(glClearNamedBufferData);
+    LOAD_GL_FUNCTION(glClearNamedBufferSubData);
+    LOAD_GL_FUNCTION(glMapNamedBuffer);
+    LOAD_GL_FUNCTION(glMapNamedBufferRange);
+    LOAD_GL_FUNCTION(glUnmapNamedBuffer);
+    LOAD_GL_FUNCTION(glFlushMappedNamedBufferRange);
+    LOAD_GL_FUNCTION(glGetNamedBufferParameteriv);
+    LOAD_GL_FUNCTION(glGetNamedBufferParameteri64v);
+    LOAD_GL_FUNCTION(glGetNamedBufferPointerv);
+    LOAD_GL_FUNCTION(glGetNamedBufferSubData);
+    LOAD_GL_FUNCTION(glCreateFramebuffers);
+    LOAD_GL_FUNCTION(glNamedFramebufferRenderbuffer);
+    LOAD_GL_FUNCTION(glNamedFramebufferParameteri);
+    LOAD_GL_FUNCTION(glNamedFramebufferTexture);
+    LOAD_GL_FUNCTION(glNamedFramebufferTextureLayer);
+    LOAD_GL_FUNCTION(glNamedFramebufferDrawBuffer);
+    LOAD_GL_FUNCTION(glNamedFramebufferDrawBuffers);
+    LOAD_GL_FUNCTION(glNamedFramebufferReadBuffer);
+    LOAD_GL_FUNCTION(glInvalidateNamedFramebufferData);
+    LOAD_GL_FUNCTION(glInvalidateNamedFramebufferSubData);
+    LOAD_GL_FUNCTION(glClearNamedFramebufferiv);
+    LOAD_GL_FUNCTION(glClearNamedFramebufferuiv);
+    LOAD_GL_FUNCTION(glClearNamedFramebufferfv);
+    LOAD_GL_FUNCTION(glClearNamedFramebufferfi);
+    LOAD_GL_FUNCTION(glBlitNamedFramebuffer);
+    LOAD_GL_FUNCTION(glCheckNamedFramebufferStatus);
+    LOAD_GL_FUNCTION(glGetNamedFramebufferParameteriv);
+    LOAD_GL_FUNCTION(glGetNamedFramebufferAttachmentParameteriv);
+    LOAD_GL_FUNCTION(glCreateRenderbuffers);
+    LOAD_GL_FUNCTION(glNamedRenderbufferStorage);
+    LOAD_GL_FUNCTION(glNamedRenderbufferStorageMultisample);
+    LOAD_GL_FUNCTION(glGetNamedRenderbufferParameteriv);
+    LOAD_GL_FUNCTION(glCreateTextures);
+    LOAD_GL_FUNCTION(glTextureBuffer);
+    LOAD_GL_FUNCTION(glTextureBufferRange);
+    LOAD_GL_FUNCTION(glTextureStorage1D);
+    LOAD_GL_FUNCTION(glTextureStorage2D);
+    LOAD_GL_FUNCTION(glTextureStorage3D);
+    LOAD_GL_FUNCTION(glTextureStorage2DMultisample);
+    LOAD_GL_FUNCTION(glTextureStorage3DMultisample);
+    LOAD_GL_FUNCTION(glTextureSubImage1D);
+    LOAD_GL_FUNCTION(glTextureSubImage2D);
+    LOAD_GL_FUNCTION(glTextureSubImage3D);
+    LOAD_GL_FUNCTION(glCompressedTextureSubImage1D);
+    LOAD_GL_FUNCTION(glCompressedTextureSubImage2D);
+    LOAD_GL_FUNCTION(glCompressedTextureSubImage3D);
+    LOAD_GL_FUNCTION(glCopyTextureSubImage1D);
+    LOAD_GL_FUNCTION(glCopyTextureSubImage2D);
+    LOAD_GL_FUNCTION(glCopyTextureSubImage3D);
+    LOAD_GL_FUNCTION(glTextureParameterf);
+    LOAD_GL_FUNCTION(glTextureParameterfv);
+    LOAD_GL_FUNCTION(glTextureParameteri);
+    LOAD_GL_FUNCTION(glTextureParameterIiv);
+    LOAD_GL_FUNCTION(glTextureParameterIuiv);
+    LOAD_GL_FUNCTION(glTextureParameteriv);
+    LOAD_GL_FUNCTION(glGenerateTextureMipmap);
+    LOAD_GL_FUNCTION(glBindTextureUnit);
+    LOAD_GL_FUNCTION(glGetTextureImage);
+    LOAD_GL_FUNCTION(glGetCompressedTextureImage);
+    LOAD_GL_FUNCTION(glGetTextureLevelParameterfv);
+    LOAD_GL_FUNCTION(glGetTextureLevelParameteriv);
+    LOAD_GL_FUNCTION(glGetTextureParameterfv);
+    LOAD_GL_FUNCTION(glGetTextureParameterIiv);
+    LOAD_GL_FUNCTION(glGetTextureParameterIuiv);
+    LOAD_GL_FUNCTION(glGetTextureParameteriv);
+    LOAD_GL_FUNCTION(glCreateVertexArrays);
+    LOAD_GL_FUNCTION(glDisableVertexArrayAttrib);
+    LOAD_GL_FUNCTION(glEnableVertexArrayAttrib);
+    LOAD_GL_FUNCTION(glVertexArrayElementBuffer);
+    LOAD_GL_FUNCTION(glVertexArrayVertexBuffer);
+    LOAD_GL_FUNCTION(glVertexArrayVertexBuffers);
+    LOAD_GL_FUNCTION(glVertexArrayAttribBinding);
+    LOAD_GL_FUNCTION(glVertexArrayAttribFormat);
+    LOAD_GL_FUNCTION(glVertexArrayAttribIFormat);
+    LOAD_GL_FUNCTION(glVertexArrayAttribLFormat);
+    LOAD_GL_FUNCTION(glVertexArrayBindingDivisor);
+    LOAD_GL_FUNCTION(glGetVertexArrayiv);
+    LOAD_GL_FUNCTION(glGetVertexArrayIndexediv);
+    LOAD_GL_FUNCTION(glGetVertexArrayIndexed64iv);
+    LOAD_GL_FUNCTION(glCreateSamplers);
+    LOAD_GL_FUNCTION(glCreateProgramPipelines);
+    LOAD_GL_FUNCTION(glCreateQueries);
+    LOAD_GL_FUNCTION(glGetQueryBufferObjecti64v);
+    LOAD_GL_FUNCTION(glGetQueryBufferObjectiv);
+    LOAD_GL_FUNCTION(glGetQueryBufferObjectui64v);
+    LOAD_GL_FUNCTION(glGetQueryBufferObjectuiv);
+    LOAD_GL_FUNCTION(glMemoryBarrierByRegion);
+    LOAD_GL_FUNCTION(glGetTextureSubImage);
+    LOAD_GL_FUNCTION(glGetCompressedTextureSubImage);
+    LOAD_GL_FUNCTION(glGetGraphicsResetStatus);
+    LOAD_GL_FUNCTION(glGetnCompressedTexImage);
+    LOAD_GL_FUNCTION(glGetnTexImage);
+    LOAD_GL_FUNCTION(glGetnUniformdv);
+    LOAD_GL_FUNCTION(glGetnUniformfv);
+    LOAD_GL_FUNCTION(glGetnUniformiv);
+    LOAD_GL_FUNCTION(glGetnUniformuiv);
+    LOAD_GL_FUNCTION(glReadnPixels);
+    LOAD_GL_FUNCTION(glGetnMapdv);
+    LOAD_GL_FUNCTION(glGetnMapfv);
+    LOAD_GL_FUNCTION(glGetnMapiv);
+    LOAD_GL_FUNCTION(glGetnPixelMapfv);
+    LOAD_GL_FUNCTION(glGetnPixelMapuiv);
+    LOAD_GL_FUNCTION(glGetnPixelMapusv);
+    LOAD_GL_FUNCTION(glGetnPolygonStipple);
+    LOAD_GL_FUNCTION(glGetnColorTable);
+    LOAD_GL_FUNCTION(glGetnConvolutionFilter);
+    LOAD_GL_FUNCTION(glGetnSeparableFilter);
+    LOAD_GL_FUNCTION(glGetnHistogram);
+    LOAD_GL_FUNCTION(glGetnMinmax);
+    LOAD_GL_FUNCTION(glTextureBarrier);
+    LOAD_GL_FUNCTION(glSpecializeShader);
+    LOAD_GL_FUNCTION(glMultiDrawArraysIndirectCount);
+    LOAD_GL_FUNCTION(glMultiDrawElementsIndirectCount);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     SYSTEM_INTERNAL_glGetIntegerv = (PFNGLGETINTEGERVPROC)OpenGLGetProc("glGetIntegerv");
     SYSTEM_INTERNAL_glViewport = (PFNGLVIEWPORTPROC)OpenGLGetProc("glViewport");
     SYSTEM_INTERNAL_glClearBufferiv = (PFNGLCLEARBUFFERIVPROC)OpenGLGetProc("glClearBufferiv");
