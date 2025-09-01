@@ -2270,30 +2270,7 @@ void OpenGLInit(OpenGLVersion* Version)
 
 
 
-
-
-    SYSTEM_INTERNAL_glGetIntegerv = (PFNGLGETINTEGERVPROC)OpenGLGetProc("glGetIntegerv");
-    SYSTEM_INTERNAL_glViewport = (PFNGLVIEWPORTPROC)OpenGLGetProc("glViewport");
-    SYSTEM_INTERNAL_glClearBufferiv = (PFNGLCLEARBUFFERIVPROC)OpenGLGetProc("glClearBufferiv");
-    SYSTEM_INTERNAL_glClear = (PFNGLCLEARPROC)OpenGLGetProc("glClear");
-    SYSTEM_INTERNAL_glClearColor = (PFNGLCLEARCOLORPROC)OpenGLGetProc("glClearColor");
-    SYSTEM_INTERNAL_glDrawArrays = (PFNGLDRAWARRAYSPROC)OpenGLGetProc("glDrawArrays");
-    SYSTEM_INTERNAL_glGenBuffers = (PFNGLGENBUFFERSPROC)OpenGLGetProc("glGenBuffers");
-    SYSTEM_INTERNAL_glBufferData = (PFNGLBUFFERDATAPROC)OpenGLGetProc("glBufferData");
-    SYSTEM_INTERNAL_glCreateShader = (PFNGLCREATESHADERPROC)OpenGLGetProc("glCreateShader");
-    SYSTEM_INTERNAL_glShaderSource = (PFNGLSHADERSOURCEPROC)OpenGLGetProc("glShaderSource");
-    SYSTEM_INTERNAL_glCompileShader = (PFNGLCOMPILESHADERPROC)OpenGLGetProc("glCompileShader");
-    SYSTEM_INTERNAL_glGetShaderiv = (PFNGLGETSHADERIVPROC)OpenGLGetProc("glGetShaderiv");
-    SYSTEM_INTERNAL_glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)OpenGLGetProc("glGetShaderInfoLog");
-    SYSTEM_INTERNAL_glCreateProgram = (PFNGLCREATEPROGRAMPROC)OpenGLGetProc("glCreateProgram");
-    SYSTEM_INTERNAL_glAttachShader = (PFNGLATTACHSHADERPROC)OpenGLGetProc("glAttachShader");
-    SYSTEM_INTERNAL_glLinkProgram = (PFNGLLINKPROGRAMPROC)OpenGLGetProc("glLinkProgram");
-    SYSTEM_INTERNAL_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)OpenGLGetProc("glGetProgramiv");
-    SYSTEM_INTERNAL_glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)OpenGLGetProc("glGetProgramInfoLog");
-    SYSTEM_INTERNAL_glUseProgram = (PFNGLUSEPROGRAMPROC)OpenGLGetProc("glUseProgram");
-    SYSTEM_INTERNAL_glDeleteShader = (PFNGLDELETESHADERPROC)OpenGLGetProc("glDeleteShader");
-    SYSTEM_INTERNAL_glGetStringi = (PFNGLGETSTRINGIPROC)OpenGLGetProc("glGetStringi");
-    SYSTEM_INTERNAL_glGetString = (PFNGLGETSTRINGPROC)OpenGLGetProc("glGetString");
+     
 
     wglCreateContextAttribsARB =   (PFNWGLCREATECONTEXTATTRIBSARBPROC)OpenGLGetProc("wglCreateContextAttribsARB");
     if (!wglCreateContextAttribsARB) {
@@ -2301,21 +2278,8 @@ void OpenGLInit(OpenGLVersion* Version)
         std::cerr << "Failed to load wglCreateContextAttribsARB!" << std::endl;
     }
 
-
-    if (SYSTEM_INTERNAL_glViewport == NULL) {
-        MessageBoxA(NULL, "glViewport failed to load!", "Error", MB_OK | MB_ICONERROR);
-        return;
-    }
-   
-    if (SYSTEM_INTERNAL_glClear == NULL) {
-        MessageBoxA(NULL, "glClear failed to load!", "Error", MB_OK | MB_ICONERROR);
-        return;
-    }
-
-    if (SYSTEM_INTERNAL_glGetIntegerv == NULL) {
-        MessageBoxA(NULL, "glGetIntegerv failed to load!", "Error", MB_OK | MB_ICONERROR);
-        return;
-    } 
+ 
+ 
     
    SYSTEM_INTERNAL_glViewport(0, 0, 800, 400); 
 
