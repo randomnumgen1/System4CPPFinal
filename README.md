@@ -45,11 +45,11 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 General
 
-|           Define           |                Comment               |
-| -------------------------- | ------------------------------------ |
-| SYSTEM_PROFILER_ENABLED    |                                      |
-| SYSTEM_EXPERIMENTAL_ENABLED| EXPERIMENTAL code that may have bugs |
-| SYSTEM_SOCKETS_ENABLED     | enable cross platform sockets        |
+|            Define            |                Comment               |
+| ---------------------------- | ------------------------------------ |
+| `SYSTEM_PROFILER_ENABLED`    |                                      |
+| `SYSTEM_EXPERIMENTAL_ENABLED`| EXPERIMENTAL code that may have bugs |
+| `SYSTEM_SOCKETS_ENABLED`     | enable cross platform sockets        |
 
 
 
