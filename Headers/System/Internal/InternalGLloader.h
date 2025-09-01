@@ -1,12 +1,18 @@
-#include <wtypes.h>
 #ifndef INCLUDE_OPENGL_GENERATED_H
 #define INCLUDE_OPENGL_GENERATED_H
 
-// NOTE: This file is generated automatically. Do not edit.
-// @GENERATED: 0
+#include <cstdint>
+#include <cstddef>
 
-typedef struct OpenGLVersion
-{
+
+#if (defined(__x86_64__) || defined(_M_X64)) && defined(_WIN32)
+#include <wtypes.h>
+#endif
+
+
+
+
+typedef struct OpenGLVersion{
     int Major;
     int Minor;
 } OpenGLVersion;
@@ -22,7 +28,6 @@ typedef struct OpenGLVersion
 //    }
 //
 static void OpenGLInit(OpenGLVersion* Version);
-
 
 #ifndef APIENTRY
 #define APIENTRY
@@ -62,53 +67,48 @@ typedef struct __GLsync* GLsync;
 #define GL_MAJOR_VERSION                  0x821B
 
 
+/*
+struct OpenGLFunctionTable {
+    PFNGLCULLFACEPROC glCullFace;
+    PFNGLFRONTFACEPROC glFrontFace;
+    PFNGLHINTPROC glHint;
+    PFNGLLINEWIDTHPROC glLineWidth;
+    PFNGLPOINTSIZEPROC glPointSize;
+    PFNGLPOLYGONMODEPROC glPolygonMode;
+};
+extern OpenGLFunctionTable glFunctions;
+struct OpenGLFunctionInfo {
+    const char* name;
+    void** functionPointer;
+};
+
+OpenGLFunctionInfo functionList[] = {
+    {"glCullFace", (void**)&glFunctions.glCullFace},
+    {"glFrontFace", (void**)&glFunctions.glFrontFace},
+    {"glHint", (void**)&glFunctions.glHint},
+    {"glLineWidth", (void**)&glFunctions.glLineWidth},
+    {"glPointSize", (void**)&glFunctions.glPointSize},
+    {"glPolygonMode", (void**)&glFunctions.glPolygonMode}
+};
+
+void LoadOpenGLFunctions() {
+    for (auto& entry : functionList) {
+        *entry.functionPointer = wglGetProcAddress(entry.name); // Adjust for other platforms
+    }
+    glFunctions.glCullFace(0x1,0x1);
+}
+*/
+
+ 
+
+
+
+
+
+
 typedef void (APIENTRY* GLDEBUGPROC)(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
-typedef  void (APIENTRYP PFNGLGETINTEGERVPROC)  (GLenum pname, GLint* data);
-PFNGLGETINTEGERVPROC GEN_glGetIntegerv;
-typedef void (APIENTRYP PFNGLVIEWPORTPROC)(GLint x, GLint y, GLsizei width, GLsizei height);
-PFNGLVIEWPORTPROC GEN_glViewport;
-typedef void (APIENTRYP PFNGLCLEARBUFFERIVPROC)(GLenum buffer, GLint drawbuffer, const GLint* value);
-PFNGLCLEARBUFFERIVPROC GEN_glClearBufferiv;
-typedef void (APIENTRYP PFNGLCLEARPROC)(GLbitfield mask);
-PFNGLCLEARPROC GEN_glClear;
-typedef void (APIENTRYP PFNGLCLEARCOLORPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-PFNGLCLEARCOLORPROC GEN_glClearColor;
-typedef void (APIENTRYP PFNGLDRAWARRAYSPROC)(GLenum mode, GLint first, GLsizei count);
-PFNGLDRAWARRAYSPROC GEN_glDrawArrays;
-typedef void (APIENTRYP PFNGLGENBUFFERSPROC)(GLsizei n, GLuint* buffers);
-PFNGLGENBUFFERSPROC GEN_glGenBuffers;
-typedef void (APIENTRYP PFNGLBUFFERDATAPROC)(GLenum target, GLsizeiptr size, const void* data, GLenum usage);
-PFNGLBUFFERDATAPROC GEN_glBufferData;
-typedef GLuint(APIENTRYP PFNGLCREATESHADERPROC)(GLenum type);
-PFNGLCREATESHADERPROC GEN_glCreateShader;
-typedef void (APIENTRYP PFNGLSHADERSOURCEPROC)(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length);
-PFNGLSHADERSOURCEPROC GEN_glShaderSource;
-typedef void (APIENTRYP PFNGLCOMPILESHADERPROC)(GLuint shader);
-PFNGLCOMPILESHADERPROC GEN_glCompileShader;
-typedef void (APIENTRYP PFNGLGETSHADERIVPROC)(GLuint shader, GLenum pname, GLint* params);
-PFNGLGETSHADERIVPROC GEN_glGetShaderiv;
-typedef void (APIENTRYP PFNGLGETSHADERINFOLOGPROC)(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
-PFNGLGETSHADERINFOLOGPROC GEN_glGetShaderInfoLog;
-typedef GLuint(APIENTRYP PFNGLCREATEPROGRAMPROC)(void);
-PFNGLCREATEPROGRAMPROC GEN_glCreateProgram;
-typedef void (APIENTRYP PFNGLATTACHSHADERPROC)(GLuint program, GLuint shader);
-PFNGLATTACHSHADERPROC GEN_glAttachShader;
-typedef void (APIENTRYP PFNGLLINKPROGRAMPROC)(GLuint program);
-PFNGLLINKPROGRAMPROC GEN_glLinkProgram;
-typedef void (APIENTRYP PFNGLGETPROGRAMIVPROC)(GLuint program, GLenum pname, GLint* params);
-PFNGLGETPROGRAMIVPROC GEN_glGetProgramiv;
-typedef void (APIENTRYP PFNGLGETPROGRAMINFOLOGPROC)(GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog);
-PFNGLGETPROGRAMINFOLOGPROC GEN_glGetProgramInfoLog;
-typedef void (APIENTRYP PFNGLUSEPROGRAMPROC)(GLuint program);
-PFNGLUSEPROGRAMPROC GEN_glUseProgram;
-typedef void (APIENTRYP PFNGLDELETESHADERPROC)(GLuint shader);
-PFNGLDELETESHADERPROC GEN_glDeleteShader;
-
-
-
-
 typedef void (APIENTRYP PFNGLCULLFACEPROC)(GLenum mode);
-PFNGLCULLFACEPROC SYSTEM_INTERNAL_glCullFace;
+PFNGLCULLFACEPROC SYSTEM_INTERNAL_glCullFace = nullptr;
 typedef void (APIENTRYP PFNGLFRONTFACEPROC)(GLenum mode);
 PFNGLFRONTFACEPROC SYSTEM_INTERNAL_glFrontFace;
 typedef void (APIENTRYP PFNGLHINTPROC)(GLenum target, GLenum mode);
@@ -1508,18 +1508,8 @@ PFNGLPOLYGONOFFSETCLAMPPROC SYSTEM_INTERNAL_glPolygonOffsetClamp;
 
 
 
-//SYSTEM_INTERNAL_glDrawArrays
-
-
-
-
-
-
-
-
-#define Internal_glGetIntegerv GEN_glGetIntegerv
-#define Internal_glViewport GEN_glViewport
-
+typedef HGLRC (APIENTRYP PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int* attribList);
+PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 
 
 
@@ -1542,8 +1532,9 @@ static void UnloadOpenGL()
 static OpenGLProc OpenGLGetProc(const char* proc)
 {
     OpenGLProc Result = (OpenGLProc)wglGetProcAddress(proc);
-    if (!Result)
-        Result = (OpenGLProc)GetProcAddress(OpenGLHandle, proc);
+    if (!Result) return nullptr;
+   // if (!Result)
+    //  Result = (OpenGLProc)GetProcAddress(OpenGLHandle, proc);
     return Result;
 }
 
@@ -1573,90 +1564,65 @@ static OpenGLProc OpenGLGetProc(const char* proc)
 #endif
 
 
-
 void OpenGLInit(OpenGLVersion* Version)
 {
     LoadOpenGL();
+    SYSTEM_INTERNAL_glGetIntegerv = (PFNGLGETINTEGERVPROC)OpenGLGetProc("glGetIntegerv");
+    SYSTEM_INTERNAL_glViewport = (PFNGLVIEWPORTPROC)OpenGLGetProc("glViewport");
+    SYSTEM_INTERNAL_glClearBufferiv = (PFNGLCLEARBUFFERIVPROC)OpenGLGetProc("glClearBufferiv");
+    SYSTEM_INTERNAL_glClear = (PFNGLCLEARPROC)OpenGLGetProc("glClear");
+    SYSTEM_INTERNAL_glClearColor = (PFNGLCLEARCOLORPROC)OpenGLGetProc("glClearColor");
+    SYSTEM_INTERNAL_glDrawArrays = (PFNGLDRAWARRAYSPROC)OpenGLGetProc("glDrawArrays");
+    SYSTEM_INTERNAL_glGenBuffers = (PFNGLGENBUFFERSPROC)OpenGLGetProc("glGenBuffers");
+    SYSTEM_INTERNAL_glBufferData = (PFNGLBUFFERDATAPROC)OpenGLGetProc("glBufferData");
+    SYSTEM_INTERNAL_glCreateShader = (PFNGLCREATESHADERPROC)OpenGLGetProc("glCreateShader");
+    SYSTEM_INTERNAL_glShaderSource = (PFNGLSHADERSOURCEPROC)OpenGLGetProc("glShaderSource");
+    SYSTEM_INTERNAL_glCompileShader = (PFNGLCOMPILESHADERPROC)OpenGLGetProc("glCompileShader");
+    SYSTEM_INTERNAL_glGetShaderiv = (PFNGLGETSHADERIVPROC)OpenGLGetProc("glGetShaderiv");
+    SYSTEM_INTERNAL_glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)OpenGLGetProc("glGetShaderInfoLog");
+    SYSTEM_INTERNAL_glCreateProgram = (PFNGLCREATEPROGRAMPROC)OpenGLGetProc("glCreateProgram");
+    SYSTEM_INTERNAL_glAttachShader = (PFNGLATTACHSHADERPROC)OpenGLGetProc("glAttachShader");
+    SYSTEM_INTERNAL_glLinkProgram = (PFNGLLINKPROGRAMPROC)OpenGLGetProc("glLinkProgram");
+    SYSTEM_INTERNAL_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)OpenGLGetProc("glGetProgramiv");
+    SYSTEM_INTERNAL_glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)OpenGLGetProc("glGetProgramInfoLog");
+    SYSTEM_INTERNAL_glUseProgram = (PFNGLUSEPROGRAMPROC)OpenGLGetProc("glUseProgram");
+    SYSTEM_INTERNAL_glDeleteShader = (PFNGLDELETESHADERPROC)OpenGLGetProc("glDeleteShader");
+    SYSTEM_INTERNAL_glGetStringi = (PFNGLGETSTRINGIPROC)OpenGLGetProc("glGetStringi");
+    SYSTEM_INTERNAL_glGetString = (PFNGLGETSTRINGPROC)OpenGLGetProc("glGetString");
 
-    GEN_glGetIntegerv = (PFNGLGETINTEGERVPROC)OpenGLGetProc("glGetIntegerv");
-    GEN_glViewport = (PFNGLVIEWPORTPROC)OpenGLGetProc("glViewport");
-    GEN_glClearBufferiv = (PFNGLCLEARBUFFERIVPROC)OpenGLGetProc("glClearBufferiv");
-    GEN_glClear = (PFNGLCLEARPROC)OpenGLGetProc("glClear");
-    GEN_glClearColor = (PFNGLCLEARCOLORPROC)OpenGLGetProc("glClearColor");
-    GEN_glDrawArrays = (PFNGLDRAWARRAYSPROC)OpenGLGetProc("glDrawArrays");
-    GEN_glGenBuffers = (PFNGLGENBUFFERSPROC)OpenGLGetProc("glGenBuffers");
-    GEN_glBufferData = (PFNGLBUFFERDATAPROC)OpenGLGetProc("glBufferData");
-    GEN_glCreateShader = (PFNGLCREATESHADERPROC)OpenGLGetProc("glCreateShader");
-    GEN_glShaderSource = (PFNGLSHADERSOURCEPROC)OpenGLGetProc("glShaderSource");
-    GEN_glCompileShader = (PFNGLCOMPILESHADERPROC)OpenGLGetProc("glCompileShader");
-    GEN_glGetShaderiv = (PFNGLGETSHADERIVPROC)OpenGLGetProc("glGetShaderiv");
-    GEN_glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)OpenGLGetProc("glGetShaderInfoLog");
-    GEN_glCreateProgram = (PFNGLCREATEPROGRAMPROC)OpenGLGetProc("glCreateProgram");
-    GEN_glAttachShader = (PFNGLATTACHSHADERPROC)OpenGLGetProc("glAttachShader");
-    GEN_glLinkProgram = (PFNGLLINKPROGRAMPROC)OpenGLGetProc("glLinkProgram");
-    GEN_glGetProgramiv = (PFNGLGETPROGRAMIVPROC)OpenGLGetProc("glGetProgramiv");
-    GEN_glGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)OpenGLGetProc("glGetProgramInfoLog");
-    GEN_glUseProgram = (PFNGLUSEPROGRAMPROC)OpenGLGetProc("glUseProgram");
-    GEN_glDeleteShader = (PFNGLDELETESHADERPROC)OpenGLGetProc("glDeleteShader");
-
-
-
-    /*
-
-
-
-
-
-
-
-
-     =   ()OpenGLGetProc("");
-
-
- ;
- ;
- ;
- ;
- ;
- ;
- ;
-
-    */
-
-
-
-    UnloadOpenGL();
-
-    Version->Major = 0;
-    Version->Minor = 0;
-
-    if (Internal_glViewport) {
-        MessageBoxA(NULL, "view s!", "Error", MB_OK | MB_ICONERROR);
-        std::cout << "viewport";
-        GEN_glViewport(0, 0, 800, 400);
-    }
-    else {
-        MessageBoxA(NULL, "view f!", "Error", MB_OK | MB_ICONERROR);
-    }
-    GEN_glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-    if (GEN_glClear) {
-        MessageBoxA(NULL, "clear s!", "Error", MB_OK | MB_ICONERROR);
-        std::cout << "clear s!";
-        GEN_glClear(0x00004000);
-    }
-    else {
-        MessageBoxA(NULL, "clear f!", "Error", MB_OK | MB_ICONERROR);
-    }
-
-    if (Internal_glGetIntegerv) {
-        Internal_glGetIntegerv(GL_MAJOR_VERSION, &Version->Major);
-        Internal_glGetIntegerv(GL_MINOR_VERSION, &Version->Minor);
+    wglCreateContextAttribsARB =   (PFNWGLCREATECONTEXTATTRIBSARBPROC)OpenGLGetProc("wglCreateContextAttribsARB");
+    if (!wglCreateContextAttribsARB) {
+        MessageBoxA(NULL, "wglCreateContextAttribsARB failed to load!", "Error", MB_OK | MB_ICONERROR);
+        std::cerr << "Failed to load wglCreateContextAttribsARB!" << std::endl;
     }
 
 
+    if (SYSTEM_INTERNAL_glViewport == NULL) {
+        MessageBoxA(NULL, "glViewport failed to load!", "Error", MB_OK | MB_ICONERROR);
+        return;
+    }
+   
+    if (SYSTEM_INTERNAL_glClear == NULL) {
+        MessageBoxA(NULL, "glClear failed to load!", "Error", MB_OK | MB_ICONERROR);
+        return;
+    }
 
+    if (SYSTEM_INTERNAL_glGetIntegerv == NULL) {
+        MessageBoxA(NULL, "glGetIntegerv failed to load!", "Error", MB_OK | MB_ICONERROR);
+        return;
+    } 
+    
+   SYSTEM_INTERNAL_glViewport(0, 0, 800, 400); 
 
+ SYSTEM_INTERNAL_glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 
+SYSTEM_INTERNAL_glClear(0x00004000);
+
+ Version->Major = 0;
+Version->Minor = 0;
+ SYSTEM_INTERNAL_glGetIntegerv(GL_MAJOR_VERSION, &Version->Major);
+        SYSTEM_INTERNAL_glGetIntegerv(GL_MINOR_VERSION, &Version->Minor);
+  UnloadOpenGL();
 }
 
 #endif // INCLUDE_OPENGL_GENERATED_H
