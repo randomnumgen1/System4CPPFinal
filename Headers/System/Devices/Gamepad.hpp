@@ -2,6 +2,10 @@
 #define _SYSTEM_DEVICES_GAMEPAD_H
 #define USE_MULTIPAD 1
 #ifdef _WIN32
+#include <windows.h>
+#include <XInput.h>
+#include <cmath>
+#pragma comment(lib, "xinput.lib")
 #else
 #include <linux/input.h>
 #include <fcntl.h>
@@ -40,8 +44,251 @@ namespace System::Devices {
 
 #ifdef _WIN32
     class GamePad {
+    public:
+   enum class ButtonCode {
+            // *****FACE BUTTONS*****
 
+            // Xbox layout (evdev codes)
+            BTN_XBOX_A = 304,  // A button
+            BTN_XBOX_B = 305,  // B button
+            BTN_XBOX_X = 307,  // X button
+            BTN_XBOX_Y = 308,  // Y button
+            // Playstation layout
+            BTN_PS_CROSS = BTN_XBOX_A, // Cross (X)
+            BTN_PS_CIRCLE = BTN_XBOX_B, // Circle
+            BTN_PS_SQUARE = BTN_XBOX_X, // Square
+            BTN_PS_TRIANGLE = BTN_XBOX_Y,  // Triangle
+            // Generic layout
+            BTN_CONTROLLER_NORTH = BTN_XBOX_Y,// Y (Xbox), Triangle (PS)
+            BTN_CONTROLLER_EAST = BTN_XBOX_B,// B (Xbox), Circle (PS)
+            BTN_CONTROLLER_SOUTH = BTN_XBOX_A,// A (Xbox), Cross (PS)
+            BTN_CONTROLLER_WEST = BTN_XBOX_X,// X (Xbox), Square (PS)
+
+            // *****D-PAD BUTTONS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_DPAD_UP = 544,
+            BTN_XBOX_DPAD_DOWN = 545,
+            BTN_XBOX_DPAD_LEFT = 546,
+            BTN_XBOX_DPAD_RIGHT = 547,
+            // Playstation layout
+            BTN_PS_DPAD_UP = 544,
+            BTN_PS_DPAD_DOWN = 545,
+            BTN_PS_DPAD_LEFT = 546,
+            BTN_PS_DPAD_RIGHT = 547,
+            // Generic layout
+            BTN_CONTROLLER_DPAD_UP = 544,
+            BTN_CONTROLLER_DPAD_DOWN = 545,
+            BTN_CONTROLLER_DPAD_LEFT = 546,
+            BTN_CONTROLLER_DPAD_RIGHT = 547,
+
+            // *****STICK BUTTONS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_STICK_LEFTCLICK = 317,
+            BTN_XBOX_STICK_RIGHTCLICK = 318,
+            // Playstation layout
+            BTN_PS_STICK_LEFTCLICK = 317,
+            BTN_PS_STICK_RIGHTCLICK = 318,
+            // Generic layout
+            BTN_CONTROLLER_STICK_LEFTCLICK = 317,
+            BTN_CONTROLLER_STICK_RIGHTCLICK = 318,
+            // *****TRIGGERS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_LT = 312,  // Left Trigger
+            BTN_XBOX_RT = 313,  // Right Trigger
+
+            // Playstation layout
+            BTN_PS_L2 = BTN_XBOX_LT,  // L2
+            BTN_PS_R2 = BTN_XBOX_RT,  // R2
+
+            // Generic layout
+            BTN_CONTROLLER_TRIGGER_LEFT = BTN_XBOX_LT,
+            BTN_CONTROLLER_TRIGGER_RIGHT = BTN_XBOX_RT,
+
+            // *****SHOULDER BUTTONS*****
+
+            // Xbox layout (evdev codes)
+            BTN_XBOX_LB = 310,  // Left Bumper
+            BTN_XBOX_RB = 311,  // Right Bumper
+
+            // Playstation layout
+            BTN_PS_L1 = BTN_XBOX_LB,  // L1
+            BTN_PS_R1 = BTN_XBOX_RB,  // R1
+
+            // Generic layout
+            BTN_CONTROLLER_SHOULDER_LEFT = BTN_XBOX_LB,
+            BTN_CONTROLLER_SHOULDER_RIGHT = BTN_XBOX_RB,
+
+
+
+
+
+
+            BTN_KEYBOARD_A = 30,
+            BTN_KEYBOARD_S = 31,
+            BTN_KEYBOARD_D = 32,
+            BTN_KEYBOARD_W = 17,
+
+
+            AXIS_CONTROLLER_LEFT_X = 0,
+            AXIS_CONTROLLER_LEFT_Y = 1,
+
+            AXIS_CONTROLLER_RIGHT_X = 3,
+            AXIS_CONTROLLER_RIGHT_Y = 4,
+
+
+        };
+    private:
+        struct GamepadState {
+            bool isConnected;
+            XINPUT_STATE state;
+            XINPUT_STATE lastState;
+        };
+        GamepadState gamepads[4];
+        bool isDebug = false;
+
+        WORD getXInputButtonMask(ButtonCode code) const {
+            switch (code) {
+            case ButtonCode::BTN_XBOX_A: return XINPUT_GAMEPAD_A;
+            case ButtonCode::BTN_XBOX_B: return XINPUT_GAMEPAD_B;
+            case ButtonCode::BTN_XBOX_X: return XINPUT_GAMEPAD_X;
+            case ButtonCode::BTN_XBOX_Y: return XINPUT_GAMEPAD_Y;
+            case ButtonCode::BTN_XBOX_LB: return XINPUT_GAMEPAD_LEFT_SHOULDER;
+            case ButtonCode::BTN_XBOX_RB: return XINPUT_GAMEPAD_RIGHT_SHOULDER;
+            case ButtonCode::BTN_CONTROLLER_DPAD_UP: return XINPUT_GAMEPAD_DPAD_UP;
+            case ButtonCode::BTN_CONTROLLER_DPAD_DOWN: return XINPUT_GAMEPAD_DPAD_DOWN;
+            case ButtonCode::BTN_CONTROLLER_DPAD_LEFT: return XINPUT_GAMEPAD_DPAD_LEFT;
+            case ButtonCode::BTN_CONTROLLER_DPAD_RIGHT: return XINPUT_GAMEPAD_DPAD_RIGHT;
+            case ButtonCode::BTN_XBOX_STICK_LEFTCLICK: return XINPUT_GAMEPAD_LEFT_THUMB;
+            case ButtonCode::BTN_XBOX_STICK_RIGHTCLICK: return XINPUT_GAMEPAD_RIGHT_THUMB;
+            default: return 0;
+            }
+        }
+
+    public:
+     
+        GamePad() {
+            for (int i = 0; i < 4; ++i) {
+                gamepads[i].isConnected = false;
+                ZeroMemory(&gamepads[i].state, sizeof(XINPUT_STATE));
+                ZeroMemory(&gamepads[i].lastState, sizeof(XINPUT_STATE));
+            }
+            update();
+        }
+
+        ~GamePad() {
+        }
+
+        void setDebug(bool debug) {
+            isDebug = debug;
+        }
+
+        void setDeadZone() {
+        }
+
+        void update() {
+            for (DWORD i = 0; i < 4; ++i) {
+                gamepads[i].lastState = gamepads[i].state;
+
+                if (XInputGetState(i, &gamepads[i].state) == ERROR_SUCCESS) {
+                    gamepads[i].isConnected = true;
+                }
+                else {
+                    gamepads[i].isConnected = false;
+                }
+            }
+        }
+
+        bool isButtonPressed(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= 4 || !gamepads[playerIndex].isConnected) return false;
+
+            if (code == ButtonCode::BTN_XBOX_LT) {
+                return gamepads[playerIndex].state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+            }
+            if (code == ButtonCode::BTN_XBOX_RT) {
+                return gamepads[playerIndex].state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+            }
+
+            WORD mask = getXInputButtonMask(code);
+            return (gamepads[playerIndex].state.Gamepad.wButtons & mask) != 0;
+        }
+
+        bool wasPressedThisFrame(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= 4 || !gamepads[playerIndex].isConnected) return false;
+
+            if (code == ButtonCode::BTN_XBOX_LT) {
+                bool now = gamepads[playerIndex].state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                bool last = gamepads[playerIndex].lastState.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                return now && !last;
+            }
+            if (code == ButtonCode::BTN_XBOX_RT) {
+                bool now = gamepads[playerIndex].state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                bool last = gamepads[playerIndex].lastState.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                return now && !last;
+            }
+
+            WORD mask = getXInputButtonMask(code);
+            bool now = (gamepads[playerIndex].state.Gamepad.wButtons & mask) != 0;
+            bool last = (gamepads[playerIndex].lastState.Gamepad.wButtons & mask) != 0;
+            return now && !last;
+        }
+
+        bool wasReleasedThisFrame(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= 4 || !gamepads[playerIndex].isConnected) return false;
+
+            if (code == ButtonCode::BTN_XBOX_LT) {
+                bool now = gamepads[playerIndex].state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                bool last = gamepads[playerIndex].lastState.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                return !now && last;
+            }
+            if (code == ButtonCode::BTN_XBOX_RT) {
+                bool now = gamepads[playerIndex].state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                bool last = gamepads[playerIndex].lastState.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+                return !now && last;
+            }
+
+            WORD mask = getXInputButtonMask(code);
+            bool now = (gamepads[playerIndex].state.Gamepad.wButtons & mask) != 0;
+            bool last = (gamepads[playerIndex].lastState.Gamepad.wButtons & mask) != 0;
+            return !now && last;
+        }
+
+        int getAxis(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= 4 || !gamepads[playerIndex].isConnected) return 0;
+
+            const XINPUT_GAMEPAD& gamepad = gamepads[playerIndex].state.Gamepad;
+            short value = 0;
+
+            switch (code) {
+            case ButtonCode::AXIS_CONTROLLER_LEFT_X:  value = gamepad.sThumbLX; break;
+            case ButtonCode::AXIS_CONTROLLER_LEFT_Y:  value = -gamepad.sThumbLY; break;
+            case ButtonCode::AXIS_CONTROLLER_RIGHT_X: value = gamepad.sThumbRX; break;
+            case ButtonCode::AXIS_CONTROLLER_RIGHT_Y: value = -gamepad.sThumbRY; break;
+            default: return 0;
+            }
+
+            short deadzone = 0;
+            switch (code) {
+            case ButtonCode::AXIS_CONTROLLER_LEFT_X:
+            case ButtonCode::AXIS_CONTROLLER_LEFT_Y:
+                deadzone = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+                break;
+            case ButtonCode::AXIS_CONTROLLER_RIGHT_X:
+            case ButtonCode::AXIS_CONTROLLER_RIGHT_Y:
+                deadzone = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+                break;
+            }
+
+            if (std::abs(value) < deadzone) {
+                return 0;
+            }
+
+            return value;
+        }
     };
+
 
 
 #else
