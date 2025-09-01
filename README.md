@@ -41,9 +41,9 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 
 
-# Defines
+## Defines
 
-General
+### General
 
 |            Define            |                Comment               |
 | ---------------------------- | ------------------------------------ |
@@ -53,7 +53,7 @@ General
 
 
 
-Graphics 
+### Graphics 
 
 
 |         Define         |   Comment     |
@@ -64,9 +64,9 @@ Graphics
 
 
 
-Gamepad not working?
+**Gamepad not working?**
 
-```
+```bash
 sudo usermod -a -G input $USER
 ```
 
