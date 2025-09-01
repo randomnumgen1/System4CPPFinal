@@ -67,35 +67,40 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 namespace System::Graphics{
 #ifdef _SYSTEM_OPENGL_WIN
+	enum class GLenum1 : unsigned int{
+	 GL_TEXTURE_2D = 0x0DE1
+	};
+
+
 	typedef enum GL_BitField : uint32_t {
 		COLOR_BUFFER_BIT = 0x00004000,
 		DEPTH_BUFFER_BIT = 0x00000100,
 		STENCIL_BUFFER_BIT = 0x00000400
 	} GL_BitField;
 	typedef enum GL_FrameBufferTarget : uint32_t {
-		GL_DRAW_FRAMEBUFFER,
-		GL_READ_FRAMEBUFFER,
-		GL_FRAMEBUFFER
+		GL_DRAW_FRAMEBUFFER = 0x8CA9,
+		GL_READ_FRAMEBUFFER = 0x8CA8,
+		GL_FRAMEBUFFER = 0x8D40
 	} GL_FrameBufferTarget;
 	typedef enum GL_DrawMode : uint32_t {
 		POINTS = 0x0000,
 		LINE_STRIP = 0x0003,
 		LINE_LOOP = 0x0002,
 		LINES = 0x0001,
-		LINE_STRIP_ADJACENCY = 0x000B,  // Correct OpenGL value
-		LINES_ADJACENCY = 0x000A,       // Correct OpenGL value
+		LINE_STRIP_ADJACENCY = 0x000B,
+		LINES_ADJACENCY = 0x000A,
 		TRIANGLE_STRIP = 0x0005,
 		TRIANGLE_FAN = 0x0006,
 		TRIANGLES = 0x0004,
-		TRIANGLE_STRIP_ADJACENCY = 0x000D, // Correct OpenGL value
-		TRIANGLES_ADJACENCY = 0x000C,      // Correct OpenGL value
-		PATCHES = 0x000E  // OpenGL tessellation patch primitive
-		} GL_DrawMode;
+		TRIANGLE_STRIP_ADJACENCY = 0x000D,
+		TRIANGLES_ADJACENCY = 0x000C,
+		PATCHES = 0x000E
+	} GL_DrawMode;
 	typedef enum GL_Usage : uint32_t {
-		STREAM_DRAW,
-		STATIC_DRAW,
-		DYNAMIC_DRAW
-		} GL_Usage;
+		STREAM_DRAW = 0x88E0,
+		STATIC_DRAW = 0x88E4,
+		DYNAMIC_DRAW = 0x88E8
+	} GL_Usage;
 	 
 		inline GL_BitField operator|(GL_BitField a, GL_BitField b) {
 			return static_cast<GL_BitField>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
@@ -120,7 +125,7 @@ namespace System::Graphics{
 			}
 			return false;
 		}
-		static std::vector<std::string> ListExtensions() {
+		static std::vector<std::string> ListExtensions(){
 			std::vector<std::string> extensions;
 			int numExtensions = 0;
 			int GL_NUM_EXTENSIONS = 0x821D;
@@ -134,6 +139,27 @@ namespace System::Graphics{
 			}
 			return extensions;
 		}
+
+
+
+
+		inline static void gl_glBindTexture(GLenum1 target, uint32_t texture){
+			SYSTEM_INTERNAL_glBindTexture( (unsigned int)target,   texture);
+		}
+		inline static void gl_glTexSubImage2D(){
+			//SYSTEM_INTERNAL_glTexSubImage2D();
+		}
+
+
+
+
+
+
+
+
+
+
+
 		inline static void gl_glUniformMatrix4fv(int location, int count, bool transpose, const float* value) {
 			SYSTEM_INTERNAL_glUniformMatrix4fv(location, count, transpose, value);
 		}
@@ -167,7 +193,7 @@ namespace System::Graphics{
 		inline static void gl_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){
 			SYSTEM_INTERNAL_glBufferData(target,size,data,usage);
 		}
-		inline static void gl_glCreateShader(int n){
+		inline static uint32_t gl_glCreateShader(int n){
 			SYSTEM_INTERNAL_glCreateShader(n);
 		}
 		inline static void gl_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length){
@@ -182,7 +208,7 @@ namespace System::Graphics{
 		inline static void gl_glGetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
 			SYSTEM_INTERNAL_glGetShaderInfoLog(shader, bufSize,length,infoLog);
 		}
-		inline static void gl_glCreateProgram(){
+		inline static uint32_t gl_glCreateProgram(){
 			SYSTEM_INTERNAL_glCreateProgram();
 		}
 		inline static void gl_glAttachShader(GLuint program, GLuint shader){
@@ -215,9 +241,7 @@ namespace System::Graphics{
 		inline static void gl_glGenVertexArrays(GLsizei n, GLuint* arrays){
 			SYSTEM_INTERNAL_glGenVertexArrays(  n,  arrays);
 		}
-		inline static void gl_glDrawArrays(GLenum mode, GLint first, GLsizei count){
-			SYSTEM_INTERNAL_glDrawArrays(  mode,   first,   count);
-		}
+
 		inline static void gl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices){
 			SYSTEM_INTERNAL_glDrawElements(  mode,   count,   type,   indices);
 		} 
@@ -246,16 +270,14 @@ namespace System::Graphics{
 		inline static void gl_glGenerateMipmap(GLenum target){
 			SYSTEM_INTERNAL_glGenerateMipmap(  target);
 		}
-		inline static void gl_glBindTexture(GLenum target, GLuint texture){
-			SYSTEM_INTERNAL_glBindTexture(  target,   texture);
-		}
+
 		inline static void gl_glActiveTexture(GLenum texture){
 			SYSTEM_INTERNAL_glActiveTexture(  texture);
 		}
 		inline static void gl_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels){
 			SYSTEM_INTERNAL_glTexImage2D(  target,   level,   internalformat,   width,   height,   border,   format,   type,   pixels);
 		}
-
+		
 	}; 
 
 #endif
