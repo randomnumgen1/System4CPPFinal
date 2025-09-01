@@ -29,11 +29,11 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 + **Text-Based formats** Provides classes to parse CSV, INI, and JSON
 + **TrueType font loading** Enables parsing of TrueType (.ttf) files for text rendering.
 + **Drawing Canvas** provides a HTML Canvas–style interface for 2D drawing.
-+ **Image Formats** in progress support for loading various image formats.
-+ **3D model Formats** in progress support for loading various 3d models.
++ **Image Formats (PNG, JPEG, BMP,...)** in progress support for loading various image formats.
++ **3D model Formats (OBJ, FBX, GLTF...)** in progress support for loading various 3d models.
 + **Game Math** Vector2, Vector3, Matrix4x4 etc...
-+ **Controller Support** Planned cross-platform support for PS, Xbox, and 8bitdo controllers.
-+ **Networking** Planned cross-platform support for TCP/UDP sockets, HTTP clients, and WebSocket.
++ **Controller Support (PS, Xbox, 8bitdo)** Planned cross-platform support for PS, Xbox, and 8bitdo controllers.
++ **Networking (TCP/UDP, HTTP, WebSocket)** Planned cross-platform support for TCP/UDP sockets, HTTP clients, and WebSocket.
 + **Audio** Planned cross-platform support for audio.
 + **Animation System** Planned cross-platform support for Animation System.
 
