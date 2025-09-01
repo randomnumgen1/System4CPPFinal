@@ -80,5 +80,9 @@ sudo apt-get update && sudo apt-get install -y libgtest-dev libglm-dev
 
 # Credits
 
-BigInt - Author: Syed Faheel Ahmad (faheel@live.in)
-glgen  - Author: MetricPanda
+BigInt
+Author: Syed Faheel Ahmad (faheel@live.in)
+
+
+glgen
+Author: MetricPanda
