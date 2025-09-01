@@ -1503,8 +1503,8 @@ typedef void (APIENTRYP PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC)(GLenum mode, cons
 PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC SYSTEM_INTERNAL_glMultiDrawArraysIndirectCount = nullptr;
 typedef void (APIENTRYP PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC)(GLenum mode, GLenum type, const void* indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC SYSTEM_INTERNAL_glMultiDrawElementsIndirectCount = nullptr;
-typedef void (APIENTRYP PFNGLPOLYGONOFFSETCLAMPPROC)(GLfloat factor, GLfloat units, GLfloat clamp);
-PFNGLPOLYGONOFFSETCLAMPPROC SYSTEM_INTERNAL_glPolygonOffsetClamp = nullptr;
+//typedef void (APIENTRYP PFNGLPOLYGONOFFSETCLAMPPROC)(GLfloat factor, GLfloat units, GLfloat clamp);
+//PFNGLPOLYGONOFFSETCLAMPPROC SYSTEM_INTERNAL_glPolygonOffsetClamp = nullptr;
 
 
 
