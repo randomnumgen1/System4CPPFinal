@@ -38,12 +38,52 @@ namespace System{
         bitFlags m_bitFlags;
         
     public:
+        enum MeshTopology {
+            Triangles,
+            Quads,
+            Lines,
+            LineStrip,
+            Points
+        };
+
+
+
+
         std::vector<System::Vector3> vertices;
-        std::vector<System::Vector3> normals;
-        std::vector<System::Vector2> uvs;
+        std::vector<System::Vector3> normals; 
         std::vector<int> triangles;
         System::Bounds bounds;
         int subMeshCount;
+
+
+
+        std::vector<std::vector<System::Vector2>> uv;
+        std::vector<std::vector<System::Vector2>> uv2;
+        std::vector<std::vector<System::Vector2>> uv3;
+        std::vector<std::vector<System::Vector2>> uv4;
+        std::vector<std::vector<System::Vector2>> uv5;
+        std::vector<std::vector<System::Vector2>> uv6;
+        std::vector<std::vector<System::Vector2>> uv7;
+        std::vector<std::vector<System::Vector2>> uv8;
+
+
+
+
+        void GetUVs(int channel, std::vector<Vector2>& outUVs) {
+            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            outUVs = uv[channel];
+        }
+        void GetUVs(int channel, std::vector<Vector3>& outUVs) {
+            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            outUVs = uv[channel];
+        }
+        void GetUVs(int channel, std::vector<Vector4>& outUVs) {
+            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            outUVs = uv[channel];
+        }
+
+
+
 
         bool isReadable() const {
            return (m_bitFlags & bitFlags::NoLongerReadable) != bitFlags::NoLongerReadable;
