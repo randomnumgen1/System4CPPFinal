@@ -8,6 +8,7 @@
 #include <System/Vector4.hpp>
 #include <System/Mathf.hpp>
 #include <System/Bounds.hpp>
+#include <stdexcept>
 
 
 
@@ -42,7 +43,7 @@ namespace System{
         std::vector<System::Vector2> uvs;
         std::vector<int> triangles;
         System::Bounds bounds;
-
+        int subMeshCount;
 
         bool isReadable() const {
            return (m_bitFlags & bitFlags::NoLongerReadable) != bitFlags::NoLongerReadable;
@@ -108,22 +109,34 @@ namespace System{
             vertices.assign(inVertices, inVertices + count);
         }
         void SetUVs(int channel, System::Vector2* uvs, int count) {
-
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetUVs(int channel, System::Vector3* uvs, int count) {
-
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetUVs(int channel, System::Vector4* uvs, int count) {
-
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetUVs(int channel,const  std::vector<System::Vector2>& new_uvs) {
-           
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetUVs(int channel, const std::vector<System::Vector3>& new_uvs) {
-
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetUVs(int channel, const std::vector<System::Vector4>& new_uvs) {
-
+            if ((channel < 0) || (channel > 7)) [[unlikely]] {
+                throw std::out_of_range("Channel must be between 0 and 7");
+            }
         }
         void SetTriangles(std::vector<int> triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
         
