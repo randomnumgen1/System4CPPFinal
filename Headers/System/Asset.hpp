@@ -21,7 +21,7 @@ public:
     std::vector<System::Mesh> meshes;
     std::vector<System::Image> images;
 
-
+    // Group-Aware Mesh Segmentation - OBJ files often use g (group) alongside o. You could treat each g as a submesh or segment within an object:
     void LoadOBJ(const std::string& filepath) {
         std::ifstream file(filepath);
         if (!file.is_open()) {
@@ -49,6 +49,11 @@ public:
                 System::Vector3 vertex;
                 ss >> vertex.x >> vertex.y >> vertex.z;
                 temp_vertices.push_back(vertex);
+            }
+            else if (keyword == "usemtl") {
+                std::string materialName;
+                ss >> materialName;
+
             }
             else if (keyword == "vt") {
                 System::Vector2 uv;
