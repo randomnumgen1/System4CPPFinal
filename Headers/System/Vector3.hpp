@@ -117,6 +117,12 @@ namespace System {
                 z - other.z
             };
         }   
+        Vector3& operator-=(const Vector3& other) {
+            x -= other.x;
+            y -= other.y;
+            z -= other.z;
+            return *this;
+        }
         Vector3 operator+(const Vector3& other) const {
             return Vector3{
                 x + other.x,
@@ -124,7 +130,12 @@ namespace System {
                 z + other.z
             };
         }
-
+        Vector3& operator+=(const Vector3& other) {
+            x += other.x;
+            y += other.y;
+            z += other.z;
+            return *this;
+        }
         bool operator==(const Vector3& rhs) const { 
             float diff_x = x - rhs.x;
             float diff_y = y - rhs.y;
