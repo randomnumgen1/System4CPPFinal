@@ -79,6 +79,9 @@ namespace System{
                 normals.push_back(normal);
             }
         }
+        void RecalculateTangents() {
+        
+        }
         void SetVertices(const std::vector<Vector3>& inVertices) {
             vertices = inVertices;
         }
@@ -102,6 +105,9 @@ namespace System{
         }
         void SetUVs(int channel, const std::vector<System::Vector4>& new_uvs) {
 
+        }
+        void SetTriangles(std::vector<int> triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+        
         }
         void UploadMeshData(bool markNoLongerReadable){
             if (markNoLongerReadable) {
