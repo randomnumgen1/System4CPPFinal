@@ -9,6 +9,8 @@
 #include <System/Mathf.hpp>
 #include <System/Bounds.hpp>
 #include <stdexcept>
+#include <variant>
+#include <string>
 
 
 
@@ -45,43 +47,61 @@ namespace System{
             LineStrip,
             Points
         };
-
+        struct SubMeshDescriptor {
+            int indexStart;
+            int indexCount;
+            int baseVertex;
+            MeshTopology topology;
+        };
 
 
 
         std::vector<System::Vector3> vertices;
         std::vector<System::Vector3> normals; 
-        std::vector<int> triangles;
+        std::vector<int> indices;
         System::Bounds bounds;
         int subMeshCount;
+        std::vector<SubMeshDescriptor> submeshes;
+
+
+        std::variant<std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
 
 
 
-        std::vector<std::vector<System::Vector2>> uv;
-        std::vector<std::vector<System::Vector2>> uv2;
-        std::vector<std::vector<System::Vector2>> uv3;
-        std::vector<std::vector<System::Vector2>> uv4;
-        std::vector<std::vector<System::Vector2>> uv5;
-        std::vector<std::vector<System::Vector2>> uv6;
-        std::vector<std::vector<System::Vector2>> uv7;
-        std::vector<std::vector<System::Vector2>> uv8;
+         
 
 
 
+  
 
         void GetUVs(int channel, std::vector<Vector2>& outUVs) {
             if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
-            outUVs = uv[channel];
-        }
-        void GetUVs(int channel, std::vector<Vector3>& outUVs) {
-            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
-            outUVs = uv[channel];
-        }
-        void GetUVs(int channel, std::vector<Vector4>& outUVs) {
-            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
-            outUVs = uv[channel];
+            if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[channel])) {
+                outUVs = *pval;
+            }
+            else {
+                throw std::runtime_error("UV channel " + std::to_string(channel) + " does not contain Vector2 data.");
+            }
         }
 
+        void GetUVs(int channel, std::vector<Vector3>& outUVs) {
+            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            if (auto* pval = std::get_if<std::vector<Vector3>>(&uvs[channel])) {
+                outUVs = *pval;
+            }
+            else {
+                throw std::runtime_error("UV channel " + std::to_string(channel) + " does not contain Vector3 data.");
+            }
+        }
+
+        void GetUVs(int channel, std::vector<Vector4>& outUVs) {
+            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            if (auto* pval = std::get_if<std::vector<Vector4>>(&uvs[channel])) {
+                outUVs = *pval;
+            }else{
+                throw std::runtime_error("UV channel " + std::to_string(channel) + " does not contain Vector4 data.");
+            }
+        }
 
 
 
@@ -114,11 +134,11 @@ namespace System{
             normals.assign(vertices.size(), Vector3(0, 0, 0));
 
             // Iterate over each triangle
-            for (size_t i = 0; i < triangles.size(); i += 3) {
+            for (size_t i = 0; i < indices.size(); i += 3) {
                 // Get the indices of the vertices that form the triangle
-                int idx0 = triangles[i];
-                int idx1 = triangles[i + 1];
-                int idx2 = triangles[i + 2];
+                int idx0 = indices[i];
+                int idx1 = indices[i + 1];
+                int idx2 = indices[i + 2];
 
                 // Get the vertices of the triangle
                 const Vector3& v0 = vertices[idx0];
@@ -167,19 +187,35 @@ namespace System{
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
+            uvs[channel] = new_uvs;
         }
         void SetUVs(int channel, const std::vector<System::Vector3>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
+            uvs[channel] = new_uvs;
         }
         void SetUVs(int channel, const std::vector<System::Vector4>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
+            uvs[channel] = new_uvs;
+
         }
         void SetTriangles(std::vector<int> triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
         
+        }
+        const SubMeshDescriptor& GetSubMesh(int index) const {
+            if (index < 0 || index >= submeshes.size()) throw std::out_of_range("Submesh index is out of range.");
+            return submeshes[index];
+        }
+        std::vector<int> GetIndices(int submesh) const {
+            if (submesh < 0 || submesh >= submeshes.size()) {
+                throw std::out_of_range("Submesh index is out of range.");
+            }
+
+            const auto& desc = submeshes[submesh];
+            return std::vector<int>(indices.begin() + desc.indexStart, indices.begin() + desc.indexStart + desc.indexCount);
         }
         void UploadMeshData(bool markNoLongerReadable){
             if (markNoLongerReadable) {
