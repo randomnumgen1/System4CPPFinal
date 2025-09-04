@@ -57,27 +57,53 @@ public:
                 temp_normals.push_back(normal);
             }
             else if (keyword == "f") {
+                std::vector<std::tuple<int, int, int>> face_indices;
                 std::string face_data;
                 while (ss >> face_data) {
-                    std::stringstream face_ss(face_data);
-                    std::string index_str;
                     int v_idx = 0, vt_idx = 0, vn_idx = 0;
+                    size_t first_slash = face_data.find('/');
+                    size_t second_slash = face_data.find('/', first_slash + 1);
 
-                    std::getline(face_ss, index_str, '/');
-                    if (!index_str.empty()) v_idx = std::stoi(index_str);
+                    v_idx = std::stoi(face_data.substr(0, first_slash));
 
-                    std::getline(face_ss, index_str, '/');
-                    if (!index_str.empty()) vt_idx = std::stoi(index_str);
-
-                    std::getline(face_ss, index_str, '/');
-                    if (!index_str.empty()) vn_idx = std::stoi(index_str);
-
-                    if (v_idx > 0) {
-                        mesh.vertices.push_back(temp_vertices[v_idx - 1]);
-                        mesh.triangles.push_back(mesh.vertices.size() - 1);
+                    if (first_slash != std::string::npos) { //
+                        if (first_slash + 1 != second_slash) {
+                            vt_idx = std::stoi(face_data.substr(first_slash + 1, second_slash - first_slash - 1));
+                        }
+                        if (second_slash != std::string::npos) {
+                            vn_idx = std::stoi(face_data.substr(second_slash + 1));
+                        }
                     }
-                    if (vt_idx > 0) mesh.uvs.push_back(temp_uvs[vt_idx - 1]);
-                    if (vn_idx > 0) mesh.normals.push_back(temp_normals[vn_idx - 1]);
+                    face_indices.emplace_back(v_idx, vt_idx, vn_idx);
+                }
+
+                if (face_indices.size() < 3) {
+                    // Not a valid face
+                    continue;
+                }
+
+                // Triangulation (fan)
+                for (size_t i = 1; i < face_indices.size() - 1; ++i) {
+                    int indices[3] = { 0, (int)i, (int)i + 1 };
+
+                    for (int j = 0; j < 3; ++j) {
+                        auto& face_index = face_indices[indices[j]];
+                        int v_idx = std::get<0>(face_index);
+                        int vt_idx = std::get<1>(face_index);
+                        int vn_idx = std::get<2>(face_index);
+
+                        // Handle negative indices
+                        if (v_idx < 0) v_idx = temp_vertices.size() + v_idx + 1;
+                        if (vt_idx < 0) vt_idx = temp_uvs.size() + vt_idx + 1;
+                        if (vn_idx < 0) vn_idx = temp_normals.size() + vn_idx + 1;
+
+                        if (v_idx > 0) {
+                            mesh.vertices.push_back(temp_vertices[v_idx - 1]);
+                            mesh.triangles.push_back(mesh.vertices.size() - 1);
+                        }
+                        if (vt_idx > 0) mesh.uvs.push_back(temp_uvs[vt_idx - 1]);
+                        if (vn_idx > 0) mesh.normals.push_back(temp_normals[vn_idx - 1]);
+                    }
                 }
             }
         }
