@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <tuple>
 #include <System/Mesh.h>
 #include <System/Image.hpp>
 #include <System/Vector2.hpp>
