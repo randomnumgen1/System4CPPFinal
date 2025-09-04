@@ -1,7 +1,13 @@
 CXX = g++
 INCLUDES = -I../../Headers
 STANDARD = -std=c++17
-SRCS = AssetTests.cpp
+SRCS = AssetTests.cpp \
+       ../../Sources/System/Vector2.cpp \
+       ../../Sources/System/Vector3.cpp \
+       ../../Sources/System/Mathf.cpp \
+       ../../Sources/System/Image.cpp \
+       ../../Sources/System/Color.cpp \
+       ../../Sources/System/Color32.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Targets
