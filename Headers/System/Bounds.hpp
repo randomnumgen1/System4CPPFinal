@@ -11,6 +11,8 @@ namespace System {
         Vector3 max;
         Vector3 min;
         Vector3 size;
+        Bounds() : center(0, 0, 0), extents(0, 0, 0), max(0, 0, 0), min(0, 0, 0), size(0, 0, 0) {}
+
         Bounds(Vector3 new_center, Vector3 new_size){
             center = new_center;
             size = new_size;
