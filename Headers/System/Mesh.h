@@ -69,14 +69,33 @@ namespace System{
             bounds.extents = bounds.size * 0.5f;
         }
         void RecalculateNormals() {
-            normals.clear();
-            size_t vertexCount = vertices.size();
-            normals.reserve(vertexCount);
-            for (size_t i = 0; i < vertexCount; i += 3){
-                Vector3 normal = Vector3::Cross(vertices[i + 1] - vertices[i], vertices[i + 2] - vertices[i]).normalized();
-                normals.push_back(normal);
-                normals.push_back(normal);
-                normals.push_back(normal);
+            // Clear existing normals and resize to the same size as vertices, initialized to zero.
+            normals.assign(vertices.size(), Vector3(0, 0, 0));
+
+            // Iterate over each triangle
+            for (size_t i = 0; i < triangles.size(); i += 3) {
+                // Get the indices of the vertices that form the triangle
+                int idx0 = triangles[i];
+                int idx1 = triangles[i + 1];
+                int idx2 = triangles[i + 2];
+
+                // Get the vertices of the triangle
+                const Vector3& v0 = vertices[idx0];
+                const Vector3& v1 = vertices[idx1];
+                const Vector3& v2 = vertices[idx2];
+
+                // Calculate the normal of the triangle
+                Vector3 normal = Vector3::Cross(v1 - v0, v2 - v0);
+
+                // Add the normal to the normals of the three vertices
+                normals[idx0] += normal;
+                normals[idx1] += normal;
+                normals[idx2] += normal;
+            }
+
+            // Normalize all the normals
+            for (auto& normal : normals) {
+                normal.Normalize();
             }
         }
         void RecalculateTangents() {
