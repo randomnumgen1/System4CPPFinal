@@ -28,8 +28,7 @@ public:
             return;
         }
 
-        meshes.emplace_back();
-        System::Mesh& mesh = meshes.back();
+        System::Mesh* currentMesh = nullptr;
 
         std::vector<System::Vector3> temp_vertices;
         std::vector<System::Vector2> temp_uvs;
@@ -41,7 +40,11 @@ public:
             std::string keyword;
             ss >> keyword;
 
-            if (keyword == "v") {
+            if (keyword == "o") {
+                meshes.emplace_back();
+                currentMesh = &meshes.back();
+            }
+            else if (keyword == "v") {
                 System::Vector3 vertex;
                 ss >> vertex.x >> vertex.y >> vertex.z;
                 temp_vertices.push_back(vertex);
@@ -57,23 +60,26 @@ public:
                 temp_normals.push_back(normal);
             }
             else if (keyword == "f") {
+                if (currentMesh == nullptr) {
+                    meshes.emplace_back();
+                    currentMesh = &meshes.back();
+                }
                 std::vector<std::tuple<int, int, int>> face_indices;
                 std::string face_data;
                 while (ss >> face_data) {
                     int v_idx = 0, vt_idx = 0, vn_idx = 0;
-                    size_t first_slash = face_data.find('/');
-                    size_t second_slash = face_data.find('/', first_slash + 1);
 
-                    v_idx = std::stoi(face_data.substr(0, first_slash));
-
-                    if (first_slash != std::string::npos) { //
-                        if (first_slash + 1 != second_slash) {
-                            vt_idx = std::stoi(face_data.substr(first_slash + 1, second_slash - first_slash - 1));
-                        }
-                        if (second_slash != std::string::npos) {
-                            vn_idx = std::stoi(face_data.substr(second_slash + 1));
-                        }
+                    std::stringstream face_ss(face_data);
+                    std::string segment;
+                    std::vector<std::string> segments;
+                    while (std::getline(face_ss, segment, '/')) {
+                        segments.push_back(segment);
                     }
+
+                    v_idx = segments.size() > 0 && !segments[0].empty() ? std::stoi(segments[0]) : 0;
+                    vt_idx = segments.size() > 1 && !segments[1].empty() ? std::stoi(segments[1]) : 0;
+                    vn_idx = segments.size() > 2 && !segments[2].empty() ? std::stoi(segments[2]) : 0;
+
                     face_indices.emplace_back(v_idx, vt_idx, vn_idx);
                 }
 
@@ -98,16 +104,18 @@ public:
                         if (vn_idx < 0) vn_idx = temp_normals.size() + vn_idx + 1;
 
                         if (v_idx > 0) {
-                            mesh.vertices.push_back(temp_vertices[v_idx - 1]);
-                            mesh.triangles.push_back(mesh.vertices.size() - 1);
+                            currentMesh->vertices.push_back(temp_vertices[v_idx - 1]);
+                            currentMesh->triangles.push_back(currentMesh->vertices.size() - 1);
                         }
-                        if (vt_idx > 0) mesh.uvs.push_back(temp_uvs[vt_idx - 1]);
-                        if (vn_idx > 0) mesh.normals.push_back(temp_normals[vn_idx - 1]);
+                        if (vt_idx > 0) currentMesh->uvs.push_back(temp_uvs[vt_idx - 1]);
+                        if (vn_idx > 0) currentMesh->normals.push_back(temp_normals[vn_idx - 1]);
                     }
                 }
             }
         }
-        mesh.RecalculateBounds();
+        for (auto& mesh : meshes) {
+            mesh.RecalculateBounds();
+        }
     }
     void LoadDAE(const std::string& filepath) {
 
