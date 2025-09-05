@@ -160,7 +160,62 @@ namespace System{
             }
         }
         void RecalculateTangents() {
-        
+            if (vertices.empty() || normals.empty()) return;
+
+            std::vector<Vector3> tan1(vertices.size(), Vector3(0, 0, 0));
+            std::vector<Vector3> tan2(vertices.size(), Vector3(0, 0, 0));
+            tangents.resize(vertices.size(), Vector4(0, 0, 0, 0));
+
+            std::vector<Vector2> uv0;
+            GetUVs(0, uv0); // assumes channel 0 is Vector2
+
+            for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+                int i0 = indices[i];
+                int i1 = indices[i + 1];
+                int i2 = indices[i + 2];
+
+                const Vector3& v0 = vertices[i0];
+                const Vector3& v1 = vertices[i1];
+                const Vector3& v2 = vertices[i2];
+
+                const Vector2& uv0_0 = uv0[i0];
+                const Vector2& uv0_1 = uv0[i1];
+                const Vector2& uv0_2 = uv0[i2];
+
+                Vector3 edge1 = v1 - v0;
+                Vector3 edge2 = v2 - v0;
+
+                Vector2 deltaUV1 = uv0_1 - uv0_0;
+                Vector2 deltaUV2 = uv0_2 - uv0_0;
+
+                float r = deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y;
+                if (r == 0.0f) r = 1.0f; // fallback to avoid division by zero
+
+                float invR = 1.0f / r;
+                Vector3 tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * invR;
+                Vector3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * invR;
+
+                tan1[i0] += tangent;
+                tan1[i1] += tangent;
+                tan1[i2] += tangent;
+
+                tan2[i0] += bitangent;
+                tan2[i1] += bitangent;
+                tan2[i2] += bitangent;
+            }
+
+            for (size_t i = 0; i < vertices.size(); ++i) {
+                const Vector3& n = normals[i];
+                const Vector3& t = tan1[i];
+
+                // Gram-Schmidt orthogonalize
+                Vector3 tangent = (t - n * Vector3::Dot(n, t)).Normalized();
+
+                // Calculate handedness
+                float w = (Vector3::Dot(Vector3::Cross(n, t), tan2[i]) < 0.0f) ? -1.0f : 1.0f;
+
+                tangents[i] = Vector4(tangent.x, tangent.y, tangent.z, w);
+            }
         }
         void SetVertices(const std::vector<Vector3>& inVertices) {
             vertices = inVertices;
