@@ -65,8 +65,12 @@ namespace System{
 
          
 
-
-
+        void GetNativeIndexBufferPtr() {
+        
+        }
+        void GetNativeVertexBufferPtr() {
+        
+        }
   
 
         void GetUVs(int channel, std::vector<Vector2>& outUVs) {
