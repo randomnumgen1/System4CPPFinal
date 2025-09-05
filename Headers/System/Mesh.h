@@ -25,6 +25,7 @@
 enum bitFlags : uint32_t {
             lol,
             NoLongerReadable = 1 << 0,
+            Modified = 1 << 1
        
         };
  ENUM_FLAG_OPERATORS(bitFlags);
@@ -214,44 +215,53 @@ namespace System{
         }
         void SetVertices(const std::vector<Vector3>& inVertices) {
             vertices = inVertices;
+            m_bitFlags |= bitFlags::Modified;
         }
         void SetVertices(System::Vector3* inVertices,int count) {
             vertices.assign(inVertices, inVertices + count);
+            m_bitFlags |= bitFlags::Modified;
         }
         void SetUVs(int channel, Vector2* data, int count) {
             if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
             uvs[channel] = std::vector<Vector2>(data, data + count);
+            m_bitFlags |= bitFlags::Modified;
         }
 
         void SetUVs(int channel, Vector3* data, int count) {
             if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
             uvs[channel] = std::vector<Vector3>(data, data + count);
+            m_bitFlags |= bitFlags::Modified;
         }
 
         void SetUVs(int channel, Vector4* data, int count) {
             if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
             uvs[channel] = std::vector<Vector4>(data, data + count);
+            m_bitFlags |= bitFlags::Modified;
         }
         void SetUVs(int channel,const  std::vector<System::Vector2>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
             uvs[channel] = new_uvs;
+            m_bitFlags |= bitFlags::Modified;
         }
         void SetUVs(int channel, const std::vector<System::Vector3>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
             uvs[channel] = new_uvs;
+            m_bitFlags |= bitFlags::Modified;
         }
         void SetUVs(int channel, const std::vector<System::Vector4>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
             uvs[channel] = new_uvs;
+            m_bitFlags |= bitFlags::Modified;
 
         }
         void SetTriangles(const std::vector<int>& triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+            m_bitFlags |= bitFlags::Modified;
             if (submesh < 0) {
                 throw std::out_of_range("Submesh index is out of range.");
             }
@@ -310,11 +320,21 @@ namespace System{
         void setSubMeshCount(int count) {
             submeshes.resize(count);
         }
-        void UploadMeshData(bool markNoLongerReadable){
-            if (markNoLongerReadable) {
-                m_bitFlags = m_bitFlags | bitFlags::NoLongerReadable;
+        void UploadMeshData(bool markNoLongerReadable) {
+            if ((m_bitFlags & bitFlags::Modified) == 0) return;
+
+            if ((m_bitFlags & bitFlags::NoLongerReadable) != 0) {
+                throw std::out_of_range("Mesh was deleted from CPU side and is no longer readable.");
             }
-        }
+
+            // GPU upload here...
+
+            if (markNoLongerReadable) {
+                m_bitFlags |= bitFlags::NoLongerReadable;
+            }
+            //clear the modified flag
+            m_bitFlags &= ~bitFlags::Modified;
+        } 
 
 
     };
