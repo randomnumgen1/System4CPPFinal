@@ -49,10 +49,10 @@ namespace System{
         static void Setgravity(const Vector3& gravity);
 
 
-        static void GenerateCollider(System::Mesh mesh){
+        static void GenerateCollider(const System::Mesh& mesh) {
 #if defined(SYSTEM_PHYSICS_BULLET)
             btConvexHullComputer ch;
-            ch.compute(&vertices[0].x(), sizeof(btVector3), vertices.size(), 0.0f, 0.0f);
+            ch.compute(&mesh.vertices[0].x, sizeof(System::Vector3), mesh.vertices.size(), 0.0f, 0.0f);
 
             // Access hull points:
             for (int i = 0; i < ch.vertices.size(); ++i) {
