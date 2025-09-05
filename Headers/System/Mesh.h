@@ -260,6 +260,9 @@ namespace System{
 
         }
         void SetTriangles(const std::vector<int>& triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+            SetIndices(triangles, MeshTopology::Triangles, submesh, calculateBounds, baseVertex);
+        }
+        void SetIndices(const std::vector<int>& newIndices, MeshTopology topology, int submesh, bool calculateBounds = true, int baseVertex = 0) {
             m_bitFlags |= bitFlags::Modified;
             if (submesh < 0) {
                 throw std::out_of_range("Submesh index is out of range.");
@@ -269,8 +272,31 @@ namespace System{
                 submeshes.resize(submesh + 1);
             }
 
-            submeshes[submesh] = { (int)indices.size(), (int)triangles.size(), baseVertex, MeshTopology::Triangles };
-            indices.insert(indices.end(), triangles.begin(), triangles.end());
+            // If it's a new submesh at the end
+            if (submesh == submeshes.size() - 1 && submeshes[submesh].indexCount == 0) {
+                submeshes[submesh] = { (int)indices.size(), (int)newIndices.size(), baseVertex, topology };
+                indices.insert(indices.end(), newIndices.begin(), newIndices.end());
+            }
+            else { // It's an existing submesh that we are replacing
+                SubMeshDescriptor& desc = submeshes[submesh];
+                int oldIndexCount = desc.indexCount;
+                int newIndexCount = newIndices.size();
+                int diff = newIndexCount - oldIndexCount;
+
+                // Replace the indices
+                indices.erase(indices.begin() + desc.indexStart, indices.begin() + desc.indexStart + oldIndexCount);
+                indices.insert(indices.begin() + desc.indexStart, newIndices.begin(), newIndices.end());
+
+                // Update the current submesh descriptor
+                desc.indexCount = newIndexCount;
+                desc.topology = topology;
+                desc.baseVertex = baseVertex;
+
+                // Update subsequent submeshes
+                for (size_t i = submesh + 1; i < submeshes.size(); ++i) {
+                    submeshes[i].indexStart += diff;
+                }
+            }
 
             if (calculateBounds) {
                 RecalculateBounds();
