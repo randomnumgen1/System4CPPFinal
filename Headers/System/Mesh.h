@@ -23,7 +23,6 @@
   
 
 enum bitFlags : uint32_t {
-            lol,
             NoLongerReadable = 1 << 0,
             Modified = 1 << 1
        
