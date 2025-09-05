@@ -78,7 +78,7 @@ namespace System {
 			}
 			else if (chunk.GetType() == 0x49454E44) { // IEND
 				std::cout << "attempting decompress";
-				std::vector<uint8_t> decompressed_data = System::IO::Compression::Deflate::Decompress(idat_data);
+				std::vector<uint8_t> decompressed_data = System::IO::Compression::DeflateStream::Decompress(idat_data);
 				Unfilter(decompressed_data, *ihdr);
 				break;
 			}
