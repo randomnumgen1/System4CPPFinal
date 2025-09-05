@@ -12,10 +12,6 @@
 #include <variant>
 #include <string>
 
-
-
-
-
 #define ENUM_FLAG_OPERATORS(T) \
     inline T operator~ (T a) { return static_cast<T>(~static_cast<std::underlying_type_t<T>>(a)); } \
     inline T operator| (T a, T b) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(a) | static_cast<std::underlying_type_t<T>>(b)); } \
