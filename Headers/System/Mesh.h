@@ -162,7 +162,7 @@ namespace System{
             tangents.resize(vertices.size(), Vector4(0, 0, 0, 0));
 
             std::vector<Vector2> uv0;
-            GetUVs(0, uv0); // assumes channel 0 is Vector2
+            GetUVs(0, uv0);
 
             for (size_t i = 0; i + 2 < indices.size(); i += 3) {
                 int i0 = indices[i];
@@ -184,7 +184,7 @@ namespace System{
                 Vector2 deltaUV2 = uv0_2 - uv0_0;
 
                 float r = deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y;
-                if (r == 0.0f) r = 1.0f; // fallback to avoid division by zero
+                if (r == 0.0f) r = 1.0f;
 
                 float invR = 1.0f / r;
                 Vector3 tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * invR;
@@ -203,12 +203,8 @@ namespace System{
                 const Vector3& n = normals[i];
                 const Vector3& t = tan1[i];
 
-                // Gram-Schmidt orthogonalize
-                Vector3 tangent = (t - n * Vector3::Dot(n, t)).Normalized();
-
-                // Calculate handedness
+                Vector3 tangent = (t - n * Vector3::Dot(n, t)).normalized();
                 float w = (Vector3::Dot(Vector3::Cross(n, t), tan2[i]) < 0.0f) ? -1.0f : 1.0f;
-
                 tangents[i] = Vector4(tangent.x, tangent.y, tangent.z, w);
             }
         }
