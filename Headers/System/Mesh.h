@@ -60,7 +60,6 @@ namespace System{
         std::vector<System::Vector3> normals; 
         std::vector<int> indices;
         System::Bounds bounds;
-        int subMeshCount;
         std::vector<SubMeshDescriptor> submeshes;
         std::vector<Vector4> tangents;
 
@@ -290,14 +289,30 @@ namespace System{
             tangents.clear();
             indices.clear();
             submeshes.clear();
-            bounds = Bounds();
-            subMeshCount = 0;
+            bounds = Bounds(); 
 
             if (!keepVertexLayout) {
                 for (int i = 0; i < 8; ++i) {
                     uvs[i] = std::monostate{}; // or leave untouched if you want to preserve type
                 }
             }
+        }
+        void SetSubMesh(int index, const SubMeshDescriptor& desc) {
+            if (index < 0) {
+                throw std::out_of_range("Submesh index is out of range.");
+            }
+            if (submeshes.size() <= index) {
+                submeshes.resize(index + 1);
+            }
+            submeshes[index] = desc;
+        }
+
+        int getSubMeshCount() const {
+            return submeshes.size();
+        }
+
+        void setSubMeshCount(int count) {
+            submeshes.resize(count);
         }
         void UploadMeshData(bool markNoLongerReadable){
             if (markNoLongerReadable) {
