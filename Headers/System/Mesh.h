@@ -62,9 +62,9 @@ namespace System{
         System::Bounds bounds;
         int subMeshCount;
         std::vector<SubMeshDescriptor> submeshes;
+        std::vector<Vector4> tangents;
 
-
-        std::variant<std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
+        std::variant<std::monostate,std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
 
 
 
@@ -168,20 +168,19 @@ namespace System{
         void SetVertices(System::Vector3* inVertices,int count) {
             vertices.assign(inVertices, inVertices + count);
         }
-        void SetUVs(int channel, System::Vector2* uvs, int count) {
-            if ((channel < 0) || (channel > 7)) [[unlikely]] {
-                throw std::out_of_range("Channel must be between 0 and 7");
-            }
+        void SetUVs(int channel, Vector2* data, int count) {
+            if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
+            uvs[channel] = std::vector<Vector2>(data, data + count);
         }
-        void SetUVs(int channel, System::Vector3* uvs, int count) {
-            if ((channel < 0) || (channel > 7)) [[unlikely]] {
-                throw std::out_of_range("Channel must be between 0 and 7");
-            }
+
+        void SetUVs(int channel, Vector3* data, int count) {
+            if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
+            uvs[channel] = std::vector<Vector3>(data, data + count);
         }
-        void SetUVs(int channel, System::Vector4* uvs, int count) {
-            if ((channel < 0) || (channel > 7)) [[unlikely]] {
-                throw std::out_of_range("Channel must be between 0 and 7");
-            }
+
+        void SetUVs(int channel, Vector4* data, int count) {
+            if (channel < 0 || channel > 7) throw std::out_of_range("Channel must be between 0 and 7");
+            uvs[channel] = std::vector<Vector4>(data, data + count);
         }
         void SetUVs(int channel,const  std::vector<System::Vector2>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
@@ -233,9 +232,17 @@ namespace System{
         void Clear(bool keepVertexLayout = true) {
             vertices.clear();
             normals.clear();
+            tangents.clear();
             indices.clear();
             submeshes.clear();
             bounds = Bounds();
+            subMeshCount = 0;
+
+            if (!keepVertexLayout) {
+                for (int i = 0; i < 8; ++i) {
+                    uvs[i] = std::monostate{}; // or leave untouched if you want to preserve type
+                }
+            }
         }
         void UploadMeshData(bool markNoLongerReadable){
             if (markNoLongerReadable) {
