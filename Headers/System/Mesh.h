@@ -202,8 +202,21 @@ namespace System{
             uvs[channel] = new_uvs;
 
         }
-        void SetTriangles(std::vector<int> triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
-        
+        void SetTriangles(const std::vector<int>& triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+            if (submesh < 0) {
+                throw std::out_of_range("Submesh index is out of range.");
+            }
+
+            if (submeshes.size() <= submesh) {
+                submeshes.resize(submesh + 1);
+            }
+
+            submeshes[submesh] = { (int)indices.size(), (int)triangles.size(), baseVertex, MeshTopology::Triangles };
+            indices.insert(indices.end(), triangles.begin(), triangles.end());
+
+            if (calculateBounds) {
+                RecalculateBounds();
+            }
         }
         const SubMeshDescriptor& GetSubMesh(int index) const {
             if (index < 0 || index >= submeshes.size()) throw std::out_of_range("Submesh index is out of range.");
@@ -216,6 +229,13 @@ namespace System{
 
             const auto& desc = submeshes[submesh];
             return std::vector<int>(indices.begin() + desc.indexStart, indices.begin() + desc.indexStart + desc.indexCount);
+        }
+        void Clear(bool keepVertexLayout = true) {
+            vertices.clear();
+            normals.clear();
+            indices.clear();
+            submeshes.clear();
+            bounds = Bounds();
         }
         void UploadMeshData(bool markNoLongerReadable){
             if (markNoLongerReadable) {
