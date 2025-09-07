@@ -35,7 +35,7 @@ namespace System::IO::Compression {
 		};
 	public:
 		// Reads a specified number of bits from the data vector
-		static uint32_t read_bits(const std::vector<uint8_t>& data, int& bit_position, int count) {
+		static uint32_t read_bitsfssdg(const std::vector<uint8_t>& data, int& bit_position, int count) {
 			uint32_t value = 0;
 			for (int i = 0; i < count; ++i) {
 				int byte_index = (bit_position + i) / 8;
@@ -71,7 +71,7 @@ namespace System::IO::Compression {
 				throw std::runtime_error("Invalid ZLib data: preset dictionary not supported");
 			}
 			std::vector<uint8_t> decompressed = DeflateStream::DecompressBlock(bitstream);
-			uint32_t adler32_checksum  = bitstream.ReadBits(32);
+			uint32_t adler32_checksum  = bitstream.ReadBits32(32);
 			uint32_t adler32_checksum_tocheck = adler32(decompressed);
 			if(adler32_checksum != adler32_checksum_tocheck){
 				throw std::runtime_error("Invalid ZLib data: data checksum missmatch");
