@@ -474,38 +474,7 @@ namespace System {
 					}
 					return result;
 				}
-				static std::vector<uint8_t> Decompress(const std::vector<uint8_t>& data) {
-					return Decompress(data.data(), data.size());
-				}
-				// Decompresses data using the Deflate algorithm
-				static std::vector<uint8_t> Decompress(const uint8_t* data, size_t data_len) {
-					std::vector<uint8_t> result;
-					int bit_position = 0;
-
-					while (true) {
-						BlockMarker marker = (BlockMarker)DeflateStream::read_bits(data, data_len, bit_position, 1);
-						BlockType type = (BlockType)DeflateStream::read_bits(data, data_len, bit_position, 2);
-
-						if (type == BlockType::Stored) {
-							ReadStoredBlock(result, data, data_len, bit_position);
-						}
-						else if (type == BlockType::Static) {
-							ReadStaticBlock(result, data, data_len, bit_position);
-						}
-						else if (type == BlockType::Dynamic) {
-							ReadDynamicBlock(result, data, data_len, bit_position);
-						}
-						else {
-							throw std::runtime_error("Error, Invalid Deflate block type");
-						}
-
-						// Check if this is the last block
-						if (marker == BlockMarker::Last) {
-							break;
-						}
-					}
-					return result;
-				}
+			
 			};
 		}
 	}
