@@ -660,11 +660,16 @@ namespace System {
 					BlockMarker marker = (BlockMarker)bsr.ReadBits32(1);
 					BlockType type = (BlockType)bsr.ReadBits32(2);
 					if (type == BlockType::Stored) {
+						std::cout << "DecompressBlock(br): Stored " << std::endl;
 						ReadStoredBlock(result, bsr);
 					}else if (type == BlockType::Static) {
-						throw std::runtime_error("Error, Invalid Deflate block type");
+						std::cout << "DecompressBlock(br): Static" << std::endl;
+						ReadStaticBlock(result, bsr);
+						//throw std::runtime_error("Error, Invalid Deflate block type");
 					}else if (type == BlockType::Dynamic) {
-						throw std::runtime_error("Error, Invalid Deflate block type");
+						std::cout << "DecompressBlock(br): Dynamic" << std::endl;
+						ReadDynamicBlock(result, bsr);
+						//throw std::runtime_error("Error, Invalid Deflate block type");
 					}else{
 						throw std::runtime_error("Error, Invalid Deflate block type");
 					}
