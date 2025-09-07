@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <System/Mathf.hpp>
 #include <memory>
-#include <System/Mesh.h>
+#include <System/Mesh.hpp>
 
 
 #if defined(SYSTEM_PHYSICS_BULLET)
