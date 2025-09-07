@@ -434,6 +434,10 @@ namespace System {
 					//4 bits: HCLEN - number of code length codes
 					uint16_t hclen = read_bits(data, data_len, bit_position, 4) + 4;
 
+					if (hlit > 286 || hdist > 30 || hclen > 19) {
+						throw std::runtime_error("Invalid Huffman header values: HLIT, HDIST, or HCLEN out of bounds");
+					}
+
 					std::vector<int> code_lengths_lengths(19, 0);
 					int code_lengths_order[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
@@ -451,6 +455,9 @@ namespace System {
 						}
 						else if (symbol == 16) {
 							int repeat_count = read_bits(data, data_len, bit_position, 2) + 3;
+							if (literal_lengths.empty()) {
+								throw std::runtime_error("Error: cannot repeat from empty literal lengths");
+							}
 							int previous_length = literal_lengths.back();
 							for (int i = 0; i < repeat_count; ++i) {
 								literal_lengths.push_back(previous_length);
@@ -468,6 +475,10 @@ namespace System {
 								literal_lengths.push_back(0);
 							}
 						}
+					}
+
+					if (literal_lengths.size() != hlit + hdist) {
+						throw std::runtime_error("Mismatch in literal/distance code lengths");
 					}
 
 					std::vector<int> literal_huffman_lengths(literal_lengths.begin(), literal_lengths.begin() + hlit);
@@ -553,6 +564,7 @@ namespace System {
 						}
 					}
 				}
+			
 				static void ReadDynamicBlock(std::vector<uint8_t>& result, BitstreamReader& bsr) {
 					//5 bits: HLIT - number of literal/length codes
 					uint16_t hlit = bsr.ReadBits32(5) + 257;
@@ -560,6 +572,10 @@ namespace System {
 					uint16_t hdist = bsr.ReadBits32(5) + 1;
 					//4 bits: HCLEN - number of code length codes
 					uint16_t hclen = bsr.ReadBits32(4) + 4;
+
+					if (hlit > 286 || hdist > 30 || hclen > 19) {
+						throw std::runtime_error("Invalid Huffman header values: HLIT, HDIST, or HCLEN out of bounds");
+					}
 
 					std::vector<int> code_lengths_lengths(19, 0);
 					int code_lengths_order[19] = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
@@ -578,6 +594,9 @@ namespace System {
 						}
 						else if (symbol == 16) {
 							int repeat_count = bsr.ReadBits32(2) + 3;
+							if (literal_lengths.empty()) {
+								throw std::runtime_error("Error: cannot repeat from empty literal lengths");
+							}
 							int previous_length = literal_lengths.back();
 							for (int i = 0; i < repeat_count; ++i) {
 								literal_lengths.push_back(previous_length);
@@ -595,6 +614,10 @@ namespace System {
 								literal_lengths.push_back(0);
 							}
 						}
+					}
+
+					if (literal_lengths.size() != hlit + hdist) {
+						throw std::runtime_error("Mismatch in literal/distance code lengths");
 					}
 
 					std::vector<int> literal_huffman_lengths(literal_lengths.begin(), literal_lengths.begin() + hlit);
