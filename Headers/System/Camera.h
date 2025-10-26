@@ -11,7 +11,7 @@
 #include <algorithm>
 namespace System{
 struct Camera {
-    static std::vector<Camera> allCameras;
+    static std::vector<Camera*> allCameras;
 public:
     bool isMain;
     uint32_t cullingMask;
@@ -24,16 +24,16 @@ public:
     int priority;
     System::RenderTexture* targetTexture;
     System::Transform transform;
-    static std::vector<Camera> getallCameras() {
-        std::vector<Camera> activeCameras;
+    static std::vector<Camera*> getallCameras() {
+        std::vector<Camera*> activeCameras;
         for (const auto& camera : allCameras) {
-            if (camera.active) {
+            if (camera->active) {
                 activeCameras.push_back(camera);
             }
         }
         std::sort(activeCameras.begin(), activeCameras.end(),
-                  [](const Camera& a, const Camera& b) {
-                      return a.priority < b.priority;
+                  [](const Camera* a, const Camera* b) {
+                      return a->priority < b->priority;
                   });
         return activeCameras;
     }
@@ -41,10 +41,10 @@ public:
         Camera* selectedCamera = nullptr;
         int lowestPriority = INT_MAX;
         for (auto& camera : allCameras) {
-            if ((camera.isMain) && (camera.active == true)) {
-                if (camera.priority < lowestPriority) {
-                    lowestPriority = camera.priority;
-                    selectedCamera = &camera;
+            if ((camera->isMain) && (camera->active == true)) {
+                if (camera->priority < lowestPriority) {
+                    lowestPriority = camera->priority;
+                    selectedCamera = camera;
                 }
             }
         }
@@ -61,7 +61,10 @@ public:
         active = true;
         priority = -1;
         targetTexture = nullptr;
-        allCameras.push_back(*this);
+        allCameras.push_back(this);
+    }
+    ~Camera() {
+        allCameras.erase(std::remove(allCameras.begin(), allCameras.end(), this), allCameras.end());
     }
     void RenderStart() const{
         if(targetTexture == nullptr){
@@ -88,6 +91,6 @@ public:
         }
     }
 };
-std::vector<Camera> Camera::allCameras;
+std::vector<Camera*> Camera::allCameras;
 }
 #endif
