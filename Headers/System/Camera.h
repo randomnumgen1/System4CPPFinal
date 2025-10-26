@@ -27,7 +27,7 @@ public:
     static std::vector<Camera*> getallCameras() {
         std::vector<Camera*> activeCameras;
         for (const auto& camera : allCameras) {
-            if (camera->active) {
+            if (camera && camera->active) {
                 activeCameras.push_back(camera);
             }
         }
@@ -37,7 +37,7 @@ public:
                   });
         return activeCameras;
     }
-    static Camera* main() {
+    static Camera* Getmain() {
         Camera* selectedCamera = nullptr;
         int lowestPriority = INT_MAX;
         for (auto& camera : allCameras) {
