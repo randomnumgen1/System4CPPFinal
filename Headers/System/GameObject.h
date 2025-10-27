@@ -28,7 +28,9 @@ namespace System {
         }
 
 
-
+        static GameObject Find(std::string name) {
+        
+        }
         static GameObject CreatePrimitive(PrimitiveType type) {
 
 
