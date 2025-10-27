@@ -19,7 +19,12 @@ namespace System {
         std::shared_ptr<Transform> transform; 
 
         GameObject(const std::string& name, System::Transform* parent = nullptr)
-            : name(name), transform(std::make_shared<Transform>(parent)) {}
+            : name(name), transform(std::make_shared<Transform>(parent)) {
+        
+            if (parent) {
+                transform->SetParent(parent);
+            }
+        }
 
 
 
