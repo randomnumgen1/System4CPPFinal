@@ -94,6 +94,13 @@ public:
         position.x = nx;
         position.y = ny;
         position.z = nz;
+        if (parent) {
+            Matrix4x4 parentWorldToLocal = parent->GetLocalToWorldMatrix().inverse();
+            localPosition = parentWorldToLocal.MultiplyPoint3x4(position);
+        }
+        else {
+            localPosition = position;
+        }
         hasChanged = true;
     }
     void PrintPosition() const {
