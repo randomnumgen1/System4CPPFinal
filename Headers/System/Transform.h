@@ -14,107 +14,139 @@ Since every GameObject has a Transform component, parenting is handled at the Tr
 #include <System/Component.h>
 #include <vector>
 enum Space { Self, World };
-namespace System{
-class Transform : public System::Component {
-private:
-   
-public:
-    /// <summary>
-    /// The position of the transform in world space.
-    /// </summary>
-    System::Vector3 position;
-    /// <summary>
-    /// The rotation of the transform in world space.
-    /// </summary>
-    System::Quaternion rotation;
-    /// <summary>
-    /// The scale of the transform in world space.
-    /// </summary>
-    System::Vector3 scale;
+namespace System {
+    class Transform : public System::Component {
+    private:
+        // Local space properties - these are the source of truth
+        System::Vector3 localPosition;
+        System::Quaternion localRotation;
+        System::Vector3 localScale;
+    public:
 
 
-    System::Vector3 localPosition;
-    System::Quaternion localRotation;
-    System::Vector3 localScale;
+        // Hierarchy
+        Transform* parent;
+        std::vector<Transform*> children;
+        bool hasChanged;
 
-
-
-    Transform *parent;
- std::vector<Transform*> children;
-    bool hasChanged;
-    Transform(){
-        position = System::Vector3(0.0f, 0.0f, 0.0f);
-        rotation = System::Quaternion::Euler(0.0f, 0.0f, 0.0f);
-        scale = System::Vector3(1.0f, 1.0f, 1.0f);
-
-        localPosition = position;
-        localRotation = rotation;
-        localScale = scale;
-        parent = nullptr;
-        hasChanged = false;
-    }
-    System::Vector3 right() const {
-        return rotation * Vector3::right;
-    }
-    System::Vector3 up() const {
-        return rotation * Vector3::up;
-    }
-    System::Vector3 forward() const {
-        return rotation * Vector3::forward;
-    }
-    void SetParent(Transform* p) {
-        parent = p;
-        p->children.push_back(this);
-    }
-    void SetParent(Transform* p, bool worldPositionStays) {
-    
-    }
-
-
-    void Rotate(System::Vector3 eulers, Space relativeTo) {
-    
-    }
-    void Rotate(float xAngle, float yAngle, float zAngle, Space relativeTo) {
-    
-    }
-    void Rotate(System::Vector3 eulers, Space relativeTo) {
-        System::Quaternion rotationDelta = System::Quaternion::Euler(eulers.x, eulers.y, eulers.z);
-        if (relativeTo == Self) {
-            rotation = rotation * rotationDelta; // Local rotation
+        Transform() {
+            localPosition = System::Vector3(0.0f, 0.0f, 0.0f);
+            localRotation = System::Quaternion::Euler(0.0f, 0.0f, 0.0f);
+            localScale = System::Vector3(1.0f, 1.0f, 1.0f);
+            parent = nullptr;
+            hasChanged = false;
         }
-        else {
-            rotation = rotationDelta * rotation; // World rotation
-        }
-    }
-    System::Matrix4x4 GetLocalToWorldMatrix() const {
-        System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(localPosition) * System::Matrix4x4::Rotation(localRotation) * System::Matrix4x4::Scaling(localScale);
-        if (parent) {
-            return parent->GetLocalToWorldMatrix() * localMatrix;
-        }
-        return System::Matrix4x4::Translation(position) * System::Matrix4x4::Rotation(rotation) * System::Matrix4x4::Scaling(scale);
-    }
-    System::Matrix4x4 worldToLocalMatrix() const {
-    
-    }
 
-    void SetPosition(float nx, float ny, float nz) {
-        std::cout << "Setting position to: (" << nx << ", " << ny << ", " << nz << ")" << std::endl;
-        position.x = nx;
-        position.y = ny;
-        position.z = nz;
-        if (parent) {
-            Matrix4x4 parentWorldToLocal = parent->GetLocalToWorldMatrix().inverse();
-            localPosition = parentWorldToLocal.MultiplyPoint3x4(position);
+        // Getters for world-space properties
+        System::Vector3 GetPosition() const {
+            if (parent) {
+                return parent->GetLocalToWorldMatrix().MultiplyPoint3x4(localPosition);
+            }
+            return localPosition;
         }
-        else {
-            localPosition = position;
-        }
-        hasChanged = true;
-    }
-    void PrintPosition() const {
-        std::cout << "Position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-    }
 
-};
+        System::Quaternion GetRotation() const {
+            if (parent) {
+                return parent->GetRotation() * localRotation;
+            }
+            return localRotation;
+        }
+
+        // Setters for world-space properties
+        void SetPosition(const System::Vector3& newPosition) {
+            if (parent) {
+                localPosition = parent->worldToLocalMatrix().MultiplyPoint3x4(newPosition);
+            }else{
+                localPosition = newPosition;
+            }
+            hasChanged = true;
+        }
+
+        void SetPosition(float nx, float ny, float nz) {
+            SetPosition(System::Vector3(nx, ny, nz));
+        }
+
+        // Matrix calculations
+        System::Matrix4x4 GetLocalToWorldMatrix() const {
+            System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(localPosition) * System::Matrix4x4::Rotation(localRotation) * System::Matrix4x4::Scaling(localScale);
+            if (parent) {
+                return parent->GetLocalToWorldMatrix() * localMatrix;
+            }
+            return localMatrix;
+        }
+
+        System::Matrix4x4 worldToLocalMatrix() const {
+            return GetLocalToWorldMatrix().inverse();
+        }
+
+        void SetParent(Transform* p) {
+            // A proper implementation would also remove this from the old parent's children list
+            if (parent) {
+                auto& siblings = parent->children;
+                siblings.erase(std::remove(siblings.begin(), siblings.end(), this), siblings.end());
+            }
+            parent = p;
+            if (p) {
+                p->children.push_back(this);
+            }
+        }
+        void SetParent(Transform* p, bool worldPositionStays) {
+            if (worldPositionStays) {
+                System::Vector3 worldPos = GetPosition();
+                System::Quaternion worldRot = GetRotation();
+                SetParent(p);
+                SetPosition(worldPos);
+                localRotation = System::Quaternion::Inverse(GetRotation()) * worldRot;
+
+            }
+            else {
+                SetParent(p);
+            }
+        }
+
+        System::Vector3 right() const {
+            return GetRotation() * Vector3::right;
+        }
+        /// <summary>
+        /// Y axis of the transform in world space.
+        /// </summary>
+        /// <returns></returns>
+        System::Vector3 up() const {
+            return GetRotation() * Vector3::up;
+        }
+        System::Vector3 forward() const {
+            return GetRotation() * Vector3::forward;
+        }
+
+        void Rotate(float xAngle, float yAngle, float zAngle, Space relativeTo) {
+            Rotate(System::Vector3(xAngle, yAngle, zAngle), relativeTo);
+        }
+
+        void Rotate(System::Vector3 eulers, Space relativeTo) {
+            System::Quaternion rotationDelta = System::Quaternion::Euler(eulers.x, eulers.y, eulers.z);
+            if (relativeTo == Self) {
+                localRotation = localRotation * rotationDelta; // Local rotation
+            }
+            else {
+                // World rotation
+                System::Quaternion currentWorldRotation = GetRotation();
+                System::Quaternion newWorldRotation = rotationDelta * currentWorldRotation;
+                if (parent) {
+                    localRotation = System::Quaternion::Inverse(parent->GetRotation()) * newWorldRotation;
+                }
+                else {
+                    localRotation = newWorldRotation;
+                }
+            }
+            hasChanged = true;
+        }
+
+        // Debugging
+        void PrintPosition() const {
+            System::Vector3 worldPos = GetPosition();
+            std::cout << "Position: (" << worldPos.x << ", " << worldPos.y << ", " << worldPos.z << ")" << std::endl;
+        }
+
+    };
 }
 #endif
