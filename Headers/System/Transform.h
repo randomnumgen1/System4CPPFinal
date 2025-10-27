@@ -80,30 +80,49 @@ namespace System {
         }
 
         void SetParent(Transform* p) {
-            // A proper implementation would also remove this from the old parent's children list
+            // Default to worldPositionStays = true, which is the most common expectation.
+            SetParent(p, true);
+        }
+
+        void SetParent(Transform* newParent, bool worldPositionStays) {
+            // 1. If we are to maintain the world position, store the current world position and rotation.
+            System::Vector3 oldWorldPosition;
+            System::Quaternion oldWorldRotation;
+            if (worldPositionStays) {
+                oldWorldPosition = GetPosition();
+                oldWorldRotation = GetRotation();
+            }
+
+            // 2. Remove this transform from the old parent's children list.
             if (parent) {
                 auto& siblings = parent->children;
                 siblings.erase(std::remove(siblings.begin(), siblings.end(), this), siblings.end());
             }
-            parent = p;
-            if (p) {
-                p->children.push_back(this);
+
+            // 3. Set the new parent.
+            parent = newParent;
+            if (parent) {
+                parent->children.push_back(this);
             }
-        }
-        void SetParent(Transform* p, bool worldPositionStays) {
+
+            // 4. If we are maintaining world position, calculate the new local position and rotation.
             if (worldPositionStays) {
-                System::Vector3 worldPos = GetPosition();
-                System::Quaternion worldRot = GetRotation();
-                SetParent(p);
-                SetPosition(worldPos);
-                localRotation = System::Quaternion::Inverse(GetRotation()) * worldRot;
-
+                if (parent) {
+                    // The new local position is the old world position transformed into the new parent's local space.
+                    localPosition = parent->worldToLocalMatrix().MultiplyPoint3x4(oldWorldPosition);
+                    // The new local rotation is derived from the old world rotation and the new parent's world rotation.
+                    localRotation = System::Quaternion::Inverse(parent->GetRotation()) * oldWorldRotation;
+                }
+                else {
+                    // If there's no new parent, the new local position/rotation is just the old world position/rotation.
+                    localPosition = oldWorldPosition;
+                    localRotation = oldWorldRotation;
+                }
+                hasChanged = true;
             }
-            else {
-                SetParent(p);
-            }
+            // If worldPositionStays is false, the localPosition and localRotation remain unchanged,
+            // so the object's position and rotation will now be relative to the new parent.
         }
-
         System::Vector3 right() const {
             return GetRotation() * Vector3::right;
         }
@@ -144,7 +163,9 @@ namespace System {
         // Debugging
         void PrintPosition() const {
             System::Vector3 worldPos = GetPosition();
-            std::cout << "Position: (" << worldPos.x << ", " << worldPos.y << ", " << worldPos.z << ")" << std::endl;
+            std::cout << "Position (World): (" << worldPos.x << ", " << worldPos.y << ", " << worldPos.z << ")" << std::endl;
+            std::cout << "Position (local): (" <<  ")" << std::endl;
+
         }
 
     };
