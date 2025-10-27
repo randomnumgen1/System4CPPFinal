@@ -11,9 +11,10 @@ Since every GameObject has a Transform component, parenting is handled at the Tr
 #include <System/Vector3.hpp>
 #include <System/Quaternion.hpp>
 #include <System/Matrix4x4.hpp>
+#include <System/Component.h>
 enum Space { Self, World };
 namespace System{
-class Transform {
+class Transform : System::Component {
 private:
 
 public:
