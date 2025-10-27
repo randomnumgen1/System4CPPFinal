@@ -13,6 +13,8 @@ Since every GameObject has a Transform component, parenting is handled at the Tr
 #include <System/Matrix4x4.hpp>
 #include <System/Component.h>
 #include <vector>
+#include <algorithm>
+
 enum Space { Self, World };
 namespace System {
     class Transform : public System::Component {
@@ -164,7 +166,8 @@ namespace System {
         void PrintPosition() const {
             System::Vector3 worldPos = GetPosition();
             std::cout << "Position (World): (" << worldPos.x << ", " << worldPos.y << ", " << worldPos.z << ")" << std::endl;
-            std::cout << "Position (local): (" <<  ")" << std::endl;
+            std::cout << "Position (local): (" << localPosition.x << ", " << localPosition.y << ", " << localPosition.z << ")" << std::endl;
+
 
         }
 
