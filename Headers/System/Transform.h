@@ -89,6 +89,10 @@ public:
         }
         return localMatrix;
     }
+    System::Matrix4x4 worldToLocalMatrix() const {
+    
+    }
+
     void SetPosition(float nx, float ny, float nz) {
         std::cout << "Setting position to: (" << nx << ", " << ny << ", " << nz << ")" << std::endl;
         position.x = nx;
