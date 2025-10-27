@@ -43,6 +43,12 @@ public:
         position = System::Vector3(0.0f, 0.0f, 0.0f);
         rotation = System::Quaternion::Euler(0.0f, 0.0f, 0.0f);
         scale = System::Vector3(1.0f, 1.0f, 1.0f);
+
+        localPosition = position;
+        localRotation = rotation;
+        localScale = scale;
+        parent = nullptr;
+        hasChanged = false;
     }
     System::Vector3 right() const {
         return rotation * Vector3::right;
@@ -77,7 +83,7 @@ public:
         }
     }
     System::Matrix4x4 GetLocalToWorldMatrix() const {
-        System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(position) * System::Matrix4x4::Rotation(rotation) * System::Matrix4x4::Scaling(scale);
+        System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(localPosition) * System::Matrix4x4::Rotation(localRotation) * System::Matrix4x4::Scaling(localScale);
         if (parent) {
             return parent->GetLocalToWorldMatrix() * localMatrix;
         }
