@@ -64,6 +64,8 @@ namespace System {
          float determinant() const;
          Vector4 GetColumn(int index);
          Vector4 GetRow(int index);
+         Matrix4x4 inverse() const;
+
             /*
             ----------------------------------------------------------------------------------------
             Operators
