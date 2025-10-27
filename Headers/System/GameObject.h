@@ -5,7 +5,7 @@
 #include <string>
 #include "Transform.h"
 namespace System {
-    enum class PrimitiveType { 
+    enum class PrimitiveType {
         Sphere,
         Capsule,
         Cylinder,
@@ -16,24 +16,25 @@ namespace System {
     struct GameObject {
         std::string name;
 
-        std::shared_ptr<Transform> transform; 
+        Transform* transform;
 
-        GameObject(const std::string& name, System::Transform* parent = nullptr)
-            : name(name), transform(std::make_shared<Transform>(parent)) {
-        
-            if (parent) {
-                transform->SetParent(parent);
-            }
+        GameObject(const std::string& name) : name(name) {
+            transform = new Transform();
+            transform->gameObject = this;
+        }
+
+        ~GameObject() {
+            delete transform;
         }
 
 
 
-        static GameObject CreatePrimitive(PrimitiveType type){
-        
-        
+        static GameObject CreatePrimitive(PrimitiveType type) {
+
+
         }
-        static GameObject Instantiate(GameObject original, Vector3 position, Quaternion rotation){
-        
+        static GameObject Instantiate(GameObject original, Vector3 position, Quaternion rotation) {
+
         }
 
 
