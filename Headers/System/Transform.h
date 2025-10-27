@@ -16,7 +16,7 @@ enum Space { Self, World };
 namespace System{
 class Transform : System::Component {
 private:
-
+   
 public:
     /// <summary>
     /// The position of the transform in world space.
@@ -39,6 +39,7 @@ public:
 
 
     Transform *parent;
+ std::vector<Transform*> children;
     bool hasChanged;
     Transform(){
         position = System::Vector3(0.0f, 0.0f, 0.0f);
@@ -61,7 +62,8 @@ public:
         return rotation * Vector3::forward;
     }
     void SetParent(Transform* p) {
-
+        parent = p;
+        p->children.push_back(this);
     }
     void SetParent(Transform* p, bool worldPositionStays) {
     
