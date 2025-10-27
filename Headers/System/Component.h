@@ -11,11 +11,14 @@ namespace System {
     struct Component {
     private:
         friend class GameObject;
-        GameObject* gameObject = nullptr;
-        Transform* transform = nullptr;
+        GameObject* m_gameObject = nullptr;
+        Transform* m_transform = nullptr;
     public:
-        Transform transform() {
-        
+        Transform Gettransform() {
+            return *m_transform;
+        }
+        GameObject GetgameObject() {
+            return *m_gameObject;
         }
 
     };
