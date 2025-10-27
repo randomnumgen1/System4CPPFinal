@@ -87,7 +87,7 @@ public:
         if (parent) {
             return parent->GetLocalToWorldMatrix() * localMatrix;
         }
-        return localMatrix;
+        return System::Matrix4x4::Translation(position) * System::Matrix4x4::Rotation(rotation) * System::Matrix4x4::Scaling(scale);
     }
     System::Matrix4x4 worldToLocalMatrix() const {
     
