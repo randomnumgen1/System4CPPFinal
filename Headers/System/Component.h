@@ -14,11 +14,11 @@ namespace System {
         GameObject* m_gameObject = nullptr;
         Transform* m_transform = nullptr;
     public:
-        Transform Gettransform() {
-            return *m_transform;
+        Transform transform() {
+            return m_transform;
         }
-        GameObject GetgameObject() {
-            return *m_gameObject;
+        GameObject gameObject() {
+            return m_gameObject;
         }
 
     };
