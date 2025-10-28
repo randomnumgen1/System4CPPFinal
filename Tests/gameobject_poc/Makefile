@@ -1,17 +1,17 @@
 CXX = g++
-INCLUDES = -IHeaders
+INCLUDES = -I../../Headers
 STANDARD = -std=c++17
 SRCS = Sources/System/Tools/SoftwareCanvas.cpp Tests/SoftwareCanvasTests.cpp Sources/System/Vector2.cpp Sources/System/Matrix3x3.cpp Sources/System/Mathf.cpp Sources/System/Color32.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # POC
-POC_SRCS = Sources/gameobject_poc.cpp Sources/System/Vector3.cpp Sources/System/Quaternion.cpp Sources/System/Matrix4x4.cpp Sources/System/Mathf.cpp Sources/System/Vector4.cpp Sources/System/GameObject.cpp Sources/System/Scene.cpp Sources/System/Transform.cpp
+POC_SRCS = gameobject_poc.cpp ../../Sources/System/Vector3.cpp ../../Sources/System/Quaternion.cpp ../../Sources/System/Matrix4x4.cpp ../../Sources/System/Mathf.cpp ../../Sources/System/Vector4.cpp ../../Sources/System/GameObject.cpp ../../Sources/System/Scene.cpp ../../Sources/System/Transform.cpp
 POC_OBJS = $(POC_SRCS:.cpp=.o)
 POC_TARGET = gameobject_poc
 
 # Targets
-DEBUG_TARGET = test_software_canvas_debug
-RELEASE_TARGET = test_software_canvas_release
+DEBUG_TARGET = gameobject_poc_debug
+RELEASE_TARGET = gameobject_poc_release
 
 # Flags
 DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -DSYSTEM_PROFILER_ENABLED
