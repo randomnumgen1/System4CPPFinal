@@ -1,13 +1,13 @@
 CXX = g++
 INCLUDES = -I../../Headers
 STANDARD = -std=c++17
-SRCS = Sources/System/Tools/SoftwareCanvas.cpp Tests/SoftwareCanvasTests.cpp Sources/System/Vector2.cpp Sources/System/Matrix3x3.cpp Sources/System/Mathf.cpp Sources/System/Color32.cpp
-OBJS = $(SRCS:.cpp=.o)
+
+# VPATH specifies a list of directories to search for prerequisites.
+VPATH = ../../Sources/System
 
 # POC
-POC_SRCS = gameobject_poc.cpp ../../Sources/System/Vector3.cpp ../../Sources/System/Quaternion.cpp ../../Sources/System/Matrix4x4.cpp ../../Sources/System/Mathf.cpp ../../Sources/System/Vector4.cpp ../../Sources/System/GameObject.cpp ../../Sources/System/Scene.cpp ../../Sources/System/Transform.cpp
+POC_SRCS = gameobject_poc.cpp Vector3.cpp Quaternion.cpp Matrix4x4.cpp Mathf.cpp Vector4.cpp GameObject.cpp Scene.cpp Transform.cpp
 POC_OBJS = $(POC_SRCS:.cpp=.o)
-POC_TARGET = gameobject_poc
 
 # Targets
 DEBUG_TARGET = gameobject_poc_debug
@@ -16,8 +16,6 @@ RELEASE_TARGET = gameobject_poc_release
 # Flags
 DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -DSYSTEM_PROFILER_ENABLED
 RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG
-
-LDFLAGS = -lgtest -lpthread -lgtest_main
 
 # Default target
 all: debug
@@ -28,22 +26,16 @@ debug: $(DEBUG_TARGET)
 release: CXXFLAGS = $(RELEASE_FLAGS)
 release: $(RELEASE_TARGET)
 
-poc: CXXFLAGS = $(DEBUG_FLAGS)
-poc: $(POC_TARGET)
+$(DEBUG_TARGET): $(POC_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(DEBUG_TARGET): $(OBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
-
-$(RELEASE_TARGET): $(OBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS)
-
-$(POC_TARGET): $(POC_OBJS)
+$(RELEASE_TARGET): $(POC_OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET) $(POC_OBJS) $(POC_TARGET)
+	rm -f $(POC_OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET)
 
-.PHONY: all debug release clean poc
+.PHONY: all debug release clean
