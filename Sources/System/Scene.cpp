@@ -1,10 +1,19 @@
-#include "System/Scene.hpp"
+#include <System/Scene.hpp>
+#include <System/GameObject.h>
 
-void System::Scene::Initialize(){
+namespace System {
+    GameObject* Scene::root = nullptr;
 
+    void Scene::Initialize() {
+        if (!root) {
+            //dummy gameobject acts as a "meta-parent" or a "scene organizer.".
 
-}
+            root = new GameObject("__SceneRoot__");
+        }
+    }
 
-void System::Scene::Shutdown()
-{
+    void Scene::Shutdown() {
+        delete root;
+        root = nullptr;
+    }
 }
