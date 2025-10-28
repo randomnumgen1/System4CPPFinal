@@ -2,7 +2,7 @@
 #include <System/GameObject.h>
 #include <System/Transform.h>
 #include <System/Vector3.hpp>
-#include <System/Scene.h>
+#include <System/Scene.hpp>
 
 void PrintTransformDetails(System::GameObject* go) {
     if (!go) {
