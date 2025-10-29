@@ -4,6 +4,7 @@
 #include <typeindex>
 #include <string>
 #include "Transform.hpp"
+#include "Scene.hpp"
 namespace System {
     enum class PrimitiveType {
         Sphere,
@@ -17,15 +18,8 @@ namespace System {
         std::string name;
 
         Transform* transform;
-
-        GameObject(const std::string& name) : name(name) {
-            transform = new Transform();
-            transform->m_gameObject = this;
-            //automatically parent new objects to the scene root.
-            if (Scene::root && this != Scene::root) {
-                transform->SetParent(Scene::root->transform);
-            }
-        }
+      
+        GameObject(const std::string& name);
 
         ~GameObject() {
             delete transform;
