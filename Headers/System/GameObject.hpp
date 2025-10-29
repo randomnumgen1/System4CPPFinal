@@ -16,9 +16,14 @@ namespace System {
     };
     struct GameObject {
         std::string name;
-
         Transform* transform;
       
+        std::unordered_map<std::type_index, void*> components;
+
+
+
+
+
         GameObject(const std::string& name);
 
         ~GameObject() {
@@ -50,7 +55,7 @@ namespace System {
 
 
 
-        std::unordered_map<std::type_index, void*> components;
+        
         template<typename T>
         void AddComponent(T* component) {
             components[std::type_index(typeid(T))] = component;
