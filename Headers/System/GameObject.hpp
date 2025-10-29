@@ -17,7 +17,7 @@ namespace System {
     struct GameObject {
         std::string name;
         Transform* transform;
-      
+        uint32_t layer;
         std::unordered_map<std::type_index, void*> components;
 
 
@@ -28,6 +28,17 @@ namespace System {
 
         ~GameObject() {
             delete transform;
+        }
+        /// <summary>
+        /// GameObject can only be assigned to one layer at a time.
+        /// default is layer 0 (default layer).
+        /// </summary>
+        /// <param name="newLayer"></param>
+        void SetLayer(uint32_t newLayer) {
+            if (newLayer != 0 && (newLayer & (newLayer - 1)) != 0) {
+                throw std::invalid_argument("Layer must be 0 (default) or have exactly one bit set (i.e., be a power of two).");
+            }
+            layer = newLayer;
         }
 
 
