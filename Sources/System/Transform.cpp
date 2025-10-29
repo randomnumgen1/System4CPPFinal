@@ -1,5 +1,5 @@
 #include "System/Transform.hpp"
-#include <System/GameObject.h>
+#include <System/GameObject.hpp>
 #include <System/Scene.hpp>
 #include <algorithm>
 

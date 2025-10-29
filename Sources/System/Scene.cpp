@@ -1,5 +1,5 @@
 #include <System/Scene.hpp>
-#include <System/GameObject.h>
+#include <System/GameObject.hpp>
 
 namespace System {
     GameObject* Scene::root = nullptr;
