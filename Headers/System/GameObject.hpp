@@ -19,6 +19,7 @@ namespace System {
         std::string name;
         Transform* transform;
         uint32_t layer;
+        std::string tag;
         std::unordered_map<std::type_index, void*> components;
 
 
