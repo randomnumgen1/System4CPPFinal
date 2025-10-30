@@ -25,15 +25,21 @@ namespace System {
         }
 
 
-        virtual void Awake() {}
-        virtual void Start() {}
-        virtual void Update() {}
-        virtual void FixedUpdate() {}
-        virtual void LateUpdate() {}
+        virtual void Awake(){}
+        virtual void Start(){}
+        virtual void Update(){}
+        virtual void FixedUpdate(){}
+        virtual void LateUpdate(){}
         
-        virtual void OnTriggerEnter(){}// (Collider other)
-        virtual void OnTriggerStay(){}// (Collider other)
-        virtual void OnTriggerExit(){}//(Collider other)
+        virtual void OnTriggerEnter(){}
+        virtual void OnTriggerStay(){}
+        virtual void OnTriggerExit(){}
+
+        virtual void OnCollisionEnter(){}
+        virtual void OnCollisionStay(){}
+        virtual void OnCollisionExit(){}
+
+
 
 
     };
