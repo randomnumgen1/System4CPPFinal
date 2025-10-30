@@ -53,11 +53,16 @@ namespace System {
             }
             return localPosition;
         }
-
+        System::Vector3 GetLocalPosition() const {
+            return localPosition;
+        }
         System::Quaternion GetRotation() const {
             if (parent) {
                 return parent->GetRotation() * localRotation;
             }
+            return localRotation;
+        }
+        System::Quaternion GetLocalRotation() const {
             return localRotation;
         }
 
@@ -70,7 +75,10 @@ namespace System {
             }
             hasChanged = true;
         }
-
+        void SetLocalPosition(const System::Vector3& newPosition) {
+            localPosition = newPosition;
+            hasChanged = true;
+        }
         void SetPosition(float nx, float ny, float nz) {
             SetPosition(System::Vector3(nx, ny, nz));
         }
