@@ -45,7 +45,17 @@ namespace System {
             parent = nullptr;
             hasChanged = false;
         }
+        Transform(const Transform& other) {
+            localPosition = other.localPosition;
+            localRotation = other.localRotation;
+            localScale = other.localScale;
+            parent = nullptr;
+            hasChanged = true;
+        }
 
+        Component* Clone() const override {
+            return new Transform(*this);
+        }
         // Getters for world-space properties
         System::Vector3 GetPosition() const {
             if (parent) {
