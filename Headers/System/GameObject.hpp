@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <string>
+#include <cstdint>
 #include "Transform.hpp"
 #include "Scene.hpp"
 namespace System {
