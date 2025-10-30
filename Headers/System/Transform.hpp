@@ -65,6 +65,15 @@ namespace System {
         System::Quaternion GetLocalRotation() const {
             return localRotation;
         }
+        System::Vector3 GetScale() const {
+            if (parent) {
+                return parent->GetScale() * localScale;
+            }
+            return localScale;
+        }
+        System::Vector3 GetLocalScale() const {
+            return localScale;
+        }
 
         // Setters for world-space properties
         void SetPosition(const System::Vector3& newPosition) {
@@ -82,7 +91,25 @@ namespace System {
         void SetPosition(float nx, float ny, float nz) {
             SetPosition(System::Vector3(nx, ny, nz));
         }
+        void SetRotation(const System::Quaternion& newRotation) {
+            if (parent) {
+                localRotation = Quaternion::Inverse(parent->GetRotation()) * newRotation;
+            }
+            else {
+                localRotation = newRotation;
+            }
+            hasChanged = true;
+        }
 
+        void SetScale(const System::Vector3& newScale) {
+            if (parent) {
+                localScale = newScale / parent->GetScale();
+            }
+            else {
+                localScale = newScale;
+            }
+            hasChanged = true;
+        }
         // Matrix calculations
         System::Matrix4x4 GetLocalToWorldMatrix() const {
             System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(localPosition) * System::Matrix4x4::Rotation(localRotation) * System::Matrix4x4::Scaling(localScale);
