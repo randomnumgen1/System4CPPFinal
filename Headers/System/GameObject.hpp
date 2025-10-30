@@ -4,6 +4,7 @@
 #include <typeindex>
 #include <string>
 #include <cstdint>
+#include <vector>
 #include "Transform.hpp"
 #include "Scene.hpp"
 namespace System {
@@ -20,7 +21,7 @@ namespace System {
         Transform* transform;
         uint32_t layer;
         std::string tag;
-        std::unordered_map<std::type_index, void*> components;
+        std::unordered_map<std::type_index, std::vector<void*>> components;
 
 
 
@@ -69,17 +70,42 @@ namespace System {
 
 
         
+    
+
+
+
+
+
         template<typename T>
-        void AddComponent(T* component) {
-            components[std::type_index(typeid(T))] = component;
+        T* AddComponent() {
+            T* component = new T();
+            component->m_gameObject = this;
+            component->m_transform = this->transform;
+            components[std::type_index(typeid(T))].emplace_back(component);
+            component->Awake();
+            return component;
         }
         template<typename T>
         T* GetComponent() {
             auto it = components.find(std::type_index(typeid(T)));
-            if (it != components.end()) {
-                return static_cast<T*>(it->second);
+            if (it != components.end() && !it->second.empty()) {
+                return static_cast<T*>(it->second[0]);
             }
             return nullptr;
+        }
+
+        template<typename T>
+        std::vector<T*> GetComponents() {
+            auto it = components.find(std::type_index(typeid(T)));
+            if (it != components.end()) {
+                std::vector<T*> result;
+                result.reserve(it->second.size());
+                for (void* comp : it->second) {
+                    result.push_back(static_cast<T*>(comp));
+                }
+                return result;
+            }
+            return std::vector<T*>();
         }
 
         template<typename T>
@@ -87,6 +113,13 @@ namespace System {
             component = GetComponent<T>();
             return component != nullptr;
         }
+
+
+
+
+
+
+
     };
 }
 #endif
