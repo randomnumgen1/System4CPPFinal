@@ -14,10 +14,10 @@ namespace System {
         GameObject* m_gameObject = nullptr;
         Transform* m_transform = nullptr;
     public:
-        Transform* transform() {
+        Transform* transform() const{
             return m_transform;
         }
-        GameObject* gameObject() {
+        GameObject* gameObject() const{
             return m_gameObject;
         }
         bool CompareTag(std::string tag) const{
