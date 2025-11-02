@@ -16,6 +16,12 @@ namespace System {
         allGameObjects.push_back(this);
     }
 
+    void GameObject::SetLayer(uint32_t newLayer){
+        if (newLayer != 0 && (newLayer & (newLayer - 1)) != 0) {
+            throw std::invalid_argument("Layer must be 0 (default) or have exactly one bit set (i.e., be a power of two).");
+        }
+        m_layer = newLayer;
+    }
     GameObject* GameObject::Find(std::string name) {
         auto it = std::find_if(allGameObjects.begin(), allGameObjects.end(),
                                [&](GameObject* go) { return go->name == name; });

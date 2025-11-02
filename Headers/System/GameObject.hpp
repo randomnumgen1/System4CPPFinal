@@ -57,12 +57,7 @@ namespace System {
         /// default is layer 0 (default layer).
         /// </summary>
         /// <param name="newLayer"></param>
-        void SetLayer(uint32_t newLayer) {
-            if (newLayer != 0 && (newLayer & (newLayer - 1)) != 0) {
-                throw std::invalid_argument("Layer must be 0 (default) or have exactly one bit set (i.e., be a power of two).");
-            }
-            m_layer = newLayer;
-        }
+        void SetLayer(uint32_t newLayer);
         uint32_t GetLayer() const{
             return m_layer;
         }
