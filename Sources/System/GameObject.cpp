@@ -6,7 +6,7 @@
 namespace System {
     std::vector<GameObject*> GameObject::allGameObjects;
 
-    GameObject::GameObject(const std::string& name) : name(name), m_layer(0) {
+    GameObject::GameObject(const std::string& name) : name(name), m_layer(0), m_activeSelf(true), m_activeInHierarchy(true) {
         transform = new Transform();
         transform->m_gameObject = this;
         //automatically parent new objects to the scene root.
@@ -31,15 +31,16 @@ namespace System {
         // Not implemented
         return nullptr;
     }
-    GameObject::GameObject(const GameObject& other) : name(other.name), m_layer(other.m_layer) {
+    GameObject::GameObject(const GameObject& other) : name(other.name), m_layer(other.m_layer), m_activeSelf(other.m_activeSelf), m_activeInHierarchy(other.m_activeInHierarchy) {
         transform = new Transform(*other.transform);
         transform->m_gameObject = this;
         allGameObjects.push_back(this);
 
         for (const auto& pair : other.components) {
-            for (const void* comp : pair.second) {
-                if (dynamic_cast<const Transform*>(static_cast<const Component*>(comp))) continue;
-                Component* newComp = static_cast<const Component*>(comp)->Clone();
+            for (void* comp : pair.second) {
+                if (!comp) continue;
+                if (dynamic_cast<Transform*>(static_cast<Component*>(comp))) continue;
+                Component* newComp = static_cast<Component*>(comp)->Clone();
                 newComp->m_gameObject = this;
                 newComp->m_transform = this->transform;
                 components[pair.first].push_back(newComp);
