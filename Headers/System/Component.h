@@ -23,6 +23,7 @@ namespace System {
         bool CompareTag(std::string tag) const{
             return tag == m_gameObject->tag;
         }
+        virtual ~Component() = default;
         virtual Component* Clone() const = 0;
 
         virtual void Awake(){}
