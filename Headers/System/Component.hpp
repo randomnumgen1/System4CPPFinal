@@ -14,6 +14,7 @@ namespace System {
         friend class GameObject;
         GameObject* m_gameObject = nullptr;
         Transform* m_transform = nullptr;
+        bool enabled = false;
     public:
         Transform* transform() const{
             return m_transform;
