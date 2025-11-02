@@ -21,7 +21,10 @@ namespace System {
                                [&](GameObject* go) { return go->name == name; });
         return (it != allGameObjects.end()) ? *it : nullptr;
     }
-
+    GameObject* GameObject::CreatePrimitive(PrimitiveType type) {
+        // Not implemented
+        return nullptr;
+    }
     GameObject::GameObject(const GameObject& other) : name(other.name), m_layer(other.m_layer) {
         transform = new Transform(*other.transform);
         transform->m_gameObject = this;

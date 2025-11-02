@@ -61,15 +61,8 @@ namespace System {
         }
 
 
-        static GameObject* Find(std::string name) {
-            // Not implemented
-            return nullptr;
-        }
-        static GameObject* CreatePrimitive(PrimitiveType type) {
-            // Not implemented
-            return nullptr;
-
-        }
+        static GameObject* Find(std::string name);
+        static GameObject* CreatePrimitive(PrimitiveType type);
         static GameObject* Instantiate(GameObject* original);
         static GameObject* Instantiate(GameObject* original, Vector3 position, Quaternion rotation);
 
