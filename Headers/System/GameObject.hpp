@@ -17,20 +17,33 @@ namespace System {
         Quad
     };
     struct GameObject {
+    private:
+        uint32_t m_layer;
+    public:
+
         std::string name;
         Transform* transform;
-        uint32_t layer;
+        
         std::string tag;
         std::unordered_map<std::type_index, std::vector<void*>> components;
 
+        static std::vector<GameObject*> allGameObjects;
 
+    private:
+        GameObject(const GameObject& other);
+        static GameObject* InstantiateRecursive(GameObject* original);
 
-
-
+    public:
         GameObject(const std::string& name);
 
         ~GameObject() {
             delete transform;
+            for (auto& pair : components) {
+                for (void* comp : pair.second) {
+                    delete static_cast<Component*>(comp);
+                }
+            }
+            allGameObjects.erase(std::remove(allGameObjects.begin(), allGameObjects.end(), this), allGameObjects.end());
         }
         /// <summary>
         /// GameObject can only be assigned to one layer at a time.
@@ -41,7 +54,10 @@ namespace System {
             if (newLayer != 0 && (newLayer & (newLayer - 1)) != 0) {
                 throw std::invalid_argument("Layer must be 0 (default) or have exactly one bit set (i.e., be a power of two).");
             }
-            layer = newLayer;
+            m_layer = newLayer;
+        }
+        uint32_t GetLayer() const{
+            return m_layer;
         }
 
 
@@ -54,10 +70,8 @@ namespace System {
             return nullptr;
 
         }
-        static GameObject* Instantiate(GameObject original, Vector3 position, Quaternion rotation) {
-            // Not implemented
-            return nullptr;
-        }
+        static GameObject* Instantiate(GameObject* original);
+        static GameObject* Instantiate(GameObject* original, Vector3 position, Quaternion rotation);
 
 
 
