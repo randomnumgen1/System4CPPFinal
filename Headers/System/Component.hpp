@@ -21,9 +21,7 @@ namespace System {
         GameObject* gameObject() const{
             return m_gameObject;
         }
-        bool CompareTag(std::string tag) const{
-            return tag == m_gameObject->tag;
-        }
+        bool CompareTag(std::string tag) const;
         virtual ~Component() = default;
         virtual Component* Clone() const = 0;
 
