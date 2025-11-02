@@ -18,11 +18,12 @@ void System::Transform::SetParent(Transform* newParent, bool worldPositionStays)
     }
 
     // 2. Remove this transform from the old parent's children list.
+    // if the current parent is null, it means we are currently parented to the scene root so we remove from there.
+
     if (parent) {
         auto& siblings = parent->children;
         siblings.erase(std::remove(siblings.begin(), siblings.end(), this), siblings.end());
-    }
-    else {
+    }else{
         auto& siblings = Scene::root->transform->children;
         siblings.erase(std::remove(siblings.begin(), siblings.end(), this), siblings.end());
     }
