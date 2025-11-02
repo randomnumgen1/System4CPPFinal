@@ -1,6 +1,7 @@
 #ifndef _SYSTEM_COMPONENT_H
 #define _SYSTEM_COMPONENT_H
 
+#include <string>
 
 namespace System {
     class GameObject;
