@@ -6,7 +6,7 @@ STANDARD = -std=c++17
 VPATH = ../../Sources/System
 
 # POC
-POC_SRCS = gameobject_poc.cpp Vector3.cpp Quaternion.cpp Matrix4x4.cpp Mathf.cpp Vector4.cpp GameObject.cpp Scene.cpp Transform.cpp
+POC_SRCS = gameobject_poc.cpp MonsterAI.cpp Vector3.cpp Quaternion.cpp Matrix4x4.cpp Mathf.cpp Vector4.cpp GameObject.cpp Scene.cpp Transform.cpp
 POC_OBJS = $(POC_SRCS:.cpp=.o)
 
 # Targets
