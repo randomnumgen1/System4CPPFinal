@@ -19,12 +19,19 @@ namespace System {
     struct GameObject {
     private:
         uint32_t m_layer;
+
+        
+        bool m_activeSelf;
+        //parent may be inactive
+        bool m_activeInHierarchy;
+
     public:
 
         std::string name;
         Transform* transform;
         
         std::string tag;
+        
         std::unordered_map<std::type_index, std::vector<void*>> components;
 
         static std::vector<GameObject*> allGameObjects;
@@ -59,7 +66,18 @@ namespace System {
         uint32_t GetLayer() const{
             return m_layer;
         }
+        void SetActive(bool value){
+            m_activeSelf = value;
+            if (value) {
+                //loop through all children and update their m_activeInHierarchy to true;
+                //remember to check each child's m_activeSelf before setting m_activeInHierarchy
+            }else{
+                //loop through all children and update their m_activeInHierarchy to false;
+            }
 
+
+            
+        }
 
         static GameObject* Find(std::string name);
         static GameObject* CreatePrimitive(PrimitiveType type);
