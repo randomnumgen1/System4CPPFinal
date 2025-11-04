@@ -11,13 +11,9 @@ namespace System {
     /// usually attached to the main camera to represent the players point of hearing
     /// </summary>
     struct AudioListener : public System::Component {
-        static AudioListener* main;
         float m_volume = 1.0f;
-        AudioListener() {
-            if (!main) {
-                main = this;
-                m_volume = 1.0f;
-            }
+        AudioListener() { 
+                m_volume = 1.0f; 
         }
         void Update() override {
             Scene::audioEngine->SetListenerPosition(this->transform()->GetPosition()); 
