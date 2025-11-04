@@ -2,7 +2,10 @@
 #define _SYSTEM_AUDIOLISTENER_H
 
 #include <System/Component.hpp>
-
+#include <System/Vector3.hpp>
+#include <System/Transform.hpp>
+#include <System/Scene.hpp> 
+#include <System/Internal/AudioEngine.hpp>
 namespace System {
     /// <summary>
     /// usually attached to the main camera to represent the players point of hearing
@@ -16,11 +19,9 @@ namespace System {
                 m_volume = 1.0f;
             }
         }
-#if SYSTEM_AUDIO_OPENAL
         void Update() override {
-            alListenerfv(AL_POSITION, this->transform.GetPosition());
+            Scene::audioEngine->SetListenerPosition(this->transform()->GetPosition()); 
         }
-#endif
         void SetVolume(float volume) {
             m_volume = volume;
         }

@@ -10,6 +10,7 @@ namespace System {
     /// usually attached to a gameobject to play sounds from that position.
     /// </summary>
     struct AudioSource : public System::Component {
+        unsigned int sourceId;
         System::AudioClip* m_clip;
         float m_volume;
         bool m_loop;

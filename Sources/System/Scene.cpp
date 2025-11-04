@@ -1,6 +1,6 @@
 #include <System/Scene.hpp>
 #include <System/GameObject.hpp>
-
+#include <System/Internal/OpenALEngine.hpp>
 namespace System {
     GameObject* Scene::root = nullptr;
 
@@ -9,6 +9,10 @@ namespace System {
             //dummy gameobject acts as a "meta-parent" or a "scene organizer.".
 
             root = new GameObject("__SceneRoot__");
+        }
+        if (!audioEngine) {
+            audioEngine = new OpenALEngine();
+            audioEngine->Initialize();
         }
     }
 
