@@ -15,6 +15,9 @@ namespace System {
         unsigned int m_audioBufferId, m_audioSourceId;
         unsigned char* m_waveData;
         unsigned int m_waveSize;
+        int m_channels;
+        int m_frequency;
+        int m_samples;
         struct RiffWaveHeaderType
         {
             char chunkId[4];
@@ -39,22 +42,39 @@ namespace System {
         };
 
     public:
+        /// <summary>
+        /// Returns the number of audio channels in the clip.
+        /// Common values: 1 for mono, 2 for stereo.
+        /// </summary>
+        /// <returns></returns>
         int GetChannels() const{
-            return 0;
+            return m_channels;
         }
+        /// <summary>
+        /// Returns the sample rate of the audio clip in Hertz (Hz).
+        /// </summary>
+        /// <returns></returns>
         int GetFrequency() const {
-            return 0;
+            return m_frequency;
         }
+        /// <summary>
+        /// Returns the total duration of the audio clip in seconds.
+        /// </summary>
+        /// <returns></returns>
         float GetLength() const {
             return 0.0f;
         }
+        /// <summary>
+        ///  Returns the total number of audio samples in the clip.
+        /// </summary>
+        /// <returns></returns>
         int GetSamples() const {
-            return 0;
+            return m_samples;
         }
 
 
         //code taken from rastertek tutorials for quickness
-          bool LoadStereoWaveFile(std::string filename) {
+          bool LoadMonoWaveFile(std::string filename) {
          
               FILE* filePtr;
               RiffWaveHeaderType riffWaveFileHeader;
