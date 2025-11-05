@@ -7,7 +7,8 @@
 
 namespace System {
     /// <summary>
-    /// usually attached to a gameobject to play sounds from that position.
+    /// Component that can be optionally attached to a GameObject to enable spatial audio playback.
+    /// Plays sounds from the GameObject's position in the scene, using the assigned AudioClip.
     /// </summary>
     struct AudioSource : public System::Component {
         unsigned int sourceId;

@@ -5,7 +5,8 @@
 
 namespace System {
     /// <summary>
-    /// 
+    /// Represents a loaded audio asset, typically a WAV file, that can be played by an AudioSource.
+    /// Handles raw waveform data and metadata such as sample rate, channel count, and duration.
     /// </summary>
     struct AudioClip {
     private:

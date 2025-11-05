@@ -8,7 +8,8 @@
 #include <System/Internal/AudioEngine.hpp>
 namespace System {
     /// <summary>
-    /// usually attached to the main camera to represent the players point of hearing
+    /// Typically attached to the main camera to define the player's auditory perspective.
+    /// Updates the listener's position in the audio engine to match the GameObject's transform.
     /// </summary>
     struct AudioListener : public System::Component {
         float m_volume = 1.0f;
