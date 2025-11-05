@@ -9,6 +9,8 @@ namespace System {
     /// Handles raw waveform data and metadata such as sample rate, channel count, and duration.
     /// </summary>
     struct AudioClip {
+    public:
+        unsigned int bufferId;
     private:
         unsigned int m_audioBufferId, m_audioSourceId;
         unsigned char* m_waveData;
