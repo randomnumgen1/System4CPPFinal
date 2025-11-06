@@ -17,7 +17,11 @@ namespace System {
                 m_volume = 1.0f; 
         }
         void Update() override {
+            // Update the listener's position in the audio engine to match the GameObject's world position.
             Scene::audioEngine->SetListenerPosition(this->transform()->GetPosition()); 
+            // Update the listener's orientation using the GameObject's forward and up vectors.
+            // This defines the direction the listener is facing and the vertical axis for spatial audio calculations.
+            Scene::audioEngine->SetListenerOrientation(this->transform()->forward(), this->transform()->up());
         }
         void SetVolume(float volume) {
             m_volume = volume;
