@@ -5,8 +5,9 @@
 
 namespace System {
     /// <summary>
-    /// Represents a loaded audio asset, typically a WAV file, that can be played by an AudioSource.
-    /// Handles raw waveform data and metadata such as sample rate, channel count, and duration.
+    /// Represents a decoded PCM audio asset that can be played by an AudioSource.
+    /// Stores raw waveform data and metadata such as sample rate, channel count, bit depth, and duration.
+    /// Supports loading from multiple formats (e.g., WAV, MP3) as long as they decode to PCM.
     /// </summary>
     struct AudioClip {
     public:
@@ -189,7 +190,9 @@ namespace System {
               return true;
           }
 
+          bool LoadMP3File(std::string filename) {
 
+          }
 
 
 
