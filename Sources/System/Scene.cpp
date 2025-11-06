@@ -3,6 +3,7 @@
 #include <System/Internal/OpenALEngine.hpp>
 namespace System {
     GameObject* Scene::root = nullptr;
+    AudioEngine* Scene::audioEngine = nullptr;
 
     void Scene::Initialize() {
         if (!root) {
