@@ -1,6 +1,6 @@
 #include <System/Scene.hpp>
 #include <System/GameObject.hpp>
-#include <System/Internal/OpenALEngine.hpp>
+#include <System/Internal/Audio/OpenALEngine.hpp>
 namespace System {
     GameObject* Scene::root = nullptr;
     AudioEngine* Scene::audioEngine = nullptr;

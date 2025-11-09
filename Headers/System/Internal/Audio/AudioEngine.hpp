@@ -2,9 +2,9 @@
 #ifndef _SYSTEM_AUDIOENGINE_HPP_
 #define _SYSTEM_AUDIOENGINE_HPP_
 
-#include "../AudioSource.hpp"
-#include "../Vector3.hpp"
-#include "../AudioClip.hpp"
+#include "../../AudioSource.hpp"
+#include "../../Vector3.hpp"
+#include "../../AudioClip.hpp"
 
 namespace System {
     class AudioEngine {
