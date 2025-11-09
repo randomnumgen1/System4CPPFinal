@@ -65,7 +65,7 @@ namespace System {
         alSourcef(source->sourceId, AL_GAIN, 1.0f);
         alSource3f( source->sourceId, AL_POSITION, 0, 0, 0);
         alSource3f( source->sourceId, AL_VELOCITY, 0, 0, 0);
-        alSourcei( source->sourceId, AL_LOOPING, AL_TRUE);
+        alSourcei( source->sourceId, AL_LOOPING, AL_FALSE);
         CHECK_AL_ERROR("alGenSources failed");
     }
 
