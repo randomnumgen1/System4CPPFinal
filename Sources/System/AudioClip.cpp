@@ -180,8 +180,7 @@ namespace System {
         ALenum format;
         if (m_channels == 1 && m_bitsPerSample == 16) {
             format = AL_FORMAT_MONO16;
-        }
-        else {
+        }else {
             // Add support for other formats if needed
             std::cerr << "Unsupported audio format" << std::endl;
             delete[] m_waveData;
@@ -191,7 +190,7 @@ namespace System {
 
         // Upload the audio data to the buffer
         alBufferData(m_audiobufferId, format, m_waveData, m_waveSize, m_frequency);
-        std::cout << "format" << format << "size" << m_waveSize << "freq" << m_frequency << std::endl;
+        std::cout << "format: " << format << ", wave size:" << m_waveSize << ", freq" << m_frequency << std::endl;
 
 
 
