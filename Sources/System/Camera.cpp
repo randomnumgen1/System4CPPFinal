@@ -58,12 +58,12 @@ void System::Camera::RenderStart() const{
 
         System::Matrix4x4 view = Matrix4x4::LookAt(System::Vector3(0, 0, 5), System::Vector3(0, 0, 0), System::Vector3(0, 1, 0));
         int shaderProgram = 0;
-        //glUseProgram(shaderProgram);
+       // glUseProgram(shaderProgram);
+        System::Graphics::GL::gl_glUseProgram(shaderProgram);
         System::Graphics::GL::gl_glUniformMatrix4fv(System::Graphics::GL::gl_glGetUniformLocation(shaderProgram, "projection"), 1, false, &projection.m00);
         System::Graphics::GL::gl_glUniformMatrix4fv(System::Graphics::GL::gl_glGetUniformLocation(shaderProgram, "view"), 1, false, &view.m00);
 
-    }
-    else {
+    }else{
         //Render to the target texture
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, targetTexture->GetNativeTexturePtr());
         System::Graphics::GL::gl_glViewport(0, 0, targetTexture->GetWidth(), targetTexture->GetHeight());
