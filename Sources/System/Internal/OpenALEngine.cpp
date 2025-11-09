@@ -93,17 +93,25 @@ namespace System {
         alSourcePlay(source->sourceId);
     }
      
+ 
     void OpenALEngine::PlaySource(AudioSource* source) {
-         // should we use source->m_clip->bufferId or source->sourceId 
-        std::cout << "playing bufferId: " << source->sourceId <<  std::endl;
+        std::cout << "OpenALEngine::PlaySource called for source ID: " << source->sourceId << std::endl;
+        if (!source || !source->m_clip) {
+            std::cerr << "PlaySource error: Invalid source or clip." << std::endl;
+            return;
+        }
+
+        if (source->m_clip->m_audiobufferId == 0) {
+            std::cerr << "PlaySource error: Invalid audio buffer." << std::endl;
+            return;
+        }
+
+        std::cout << "playing bufferId: " << source->m_clip->m_audiobufferId << std::endl;
         alSourcei(source->sourceId, AL_BUFFER, source->m_clip->m_audiobufferId);
-        alSourcef(source->sourceId, AL_GAIN, 1.0f);
-        alSource3f(source->sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
+        CHECK_AL_ERROR("alSourcei failed");
         alSourcePlay(source->sourceId);
-         
         CHECK_AL_ERROR("alSourcePlay failed");
     }
-
     void OpenALEngine::SetSourcePosition(AudioSource* source, const Vector3& position) {
         alSource3f(source->sourceId, AL_POSITION, position.x, position.y, position.z);
     }

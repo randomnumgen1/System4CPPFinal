@@ -191,7 +191,7 @@ namespace System {
 
         // Upload the audio data to the buffer
         alBufferData(m_audiobufferId, format, m_waveData, m_waveSize, m_frequency);
-
+        std::cout << "format" << format << "size" << m_waveSize << "freq" << m_frequency << std::endl;
 
 
 

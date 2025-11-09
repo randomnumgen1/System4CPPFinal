@@ -48,6 +48,9 @@ namespace System {
     }
 
     void AudioSource::Play() {
+        std::cout << "AudioSource::Play() " << std::endl;
+         
+
         Scene::audioEngine->SetSourcePosition(this, transform()->GetPosition());
         Scene::audioEngine->PlaySource(this);
     }
