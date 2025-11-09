@@ -4,7 +4,7 @@
 #include <System/Transform.hpp>
 
 namespace System {
-    AudioSource::AudioSource() : m_clip(nullptr), m_volume(1.0f), m_loop(false) {
+    AudioSource::AudioSource() : m_clip(nullptr), m_volume(1.0f), m_loop(false), sourceId(0) {
         Scene::audioEngine->GenerateSource(this);
     }
 
@@ -14,7 +14,7 @@ namespace System {
 
     void AudioSource::SetClip(System::AudioClip* clip) {
         m_clip = clip;
-        Scene::audioEngine->SetSourceClip(this, clip->bufferId);
+        Scene::audioEngine->SetSourceClip(this, clip->m_audiobufferId);
     }
 
     void AudioSource::SetVolume(float volume) {
@@ -32,7 +32,7 @@ namespace System {
     }
 
     void AudioSource::PlayOneShot(AudioClip* clip, float volumeScale) {
-        Scene::audioEngine->PlaySourceOneShot(this, clip->bufferId, volumeScale);
+        Scene::audioEngine->PlaySourceOneShot(this, clip->m_audiobufferId, volumeScale);
     }
 
     void AudioSource::Play() {

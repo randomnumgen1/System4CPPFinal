@@ -11,9 +11,8 @@ namespace System {
     /// </summary>
     struct AudioClip {
     public:
-        unsigned int bufferId;
-    private:
-        unsigned int m_audioBufferId, m_audioSourceId;
+        unsigned int m_audiobufferId;
+    private: 
         unsigned char* m_waveData;
         unsigned int m_waveSize;
         int m_channels;

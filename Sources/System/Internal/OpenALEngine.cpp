@@ -112,7 +112,7 @@ namespace System {
     void OpenALEngine::PlayClipAtPoint(AudioClip* clip, const Vector3& position, float volume) {
         unsigned int sourceId;
         alGenSources(1, &sourceId);
-        alSourcei(sourceId, AL_BUFFER, clip->bufferId);
+        alSourcei(sourceId, AL_BUFFER, clip->m_audiobufferId);
         alSourcef(sourceId, AL_GAIN, volume);
         alSource3f(sourceId, AL_POSITION, position.x, position.y, position.z);
         alSourcePlay(sourceId);
