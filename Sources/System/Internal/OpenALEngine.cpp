@@ -9,7 +9,14 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #endif
-
+#define CHECK_AL_ERROR(msg) \
+    { \
+        ALenum error = alGetError(); \
+        if (error != AL_NO_ERROR) { \
+            std::cerr << "[OpenAL Error] " << msg << " at " << __FILE__ << ":" << __LINE__ \
+                      << " (code: " << error << ")" << std::endl; \
+        } \
+    }
 namespace System {
     OpenALEngine::OpenALEngine() : m_device(nullptr), m_context(nullptr) {}
 
@@ -28,6 +35,7 @@ namespace System {
             return;
         }
         alcMakeContextCurrent(m_context);
+        std::cerr << "init success OpenAL device" << std::endl;
     }
 
     void OpenALEngine::Shutdown() {
@@ -38,6 +46,7 @@ namespace System {
 
     void OpenALEngine::GenerateSource(AudioSource* source) {
         alGenSources(1, &source->sourceId);
+        CHECK_AL_ERROR("alGenSources failed");
     }
 
     void OpenALEngine::DeleteSource(AudioSource* source) {
@@ -47,9 +56,10 @@ namespace System {
     void OpenALEngine::SetSourceClip(AudioSource* source, unsigned int bufferId) {
         alSourcei(source->sourceId, AL_BUFFER, bufferId);
     }
-
+     
     void OpenALEngine::SetSourceVolume(AudioSource* source, float volume) {
         alSourcef(source->sourceId, AL_GAIN, volume);
+        CHECK_AL_ERROR("alSourcef(AL_GAIN) failed");
     }
 
     void OpenALEngine::SetSourceLoop(AudioSource* source, bool loop) {
@@ -61,9 +71,16 @@ namespace System {
         alSourcef(source->sourceId, AL_GAIN, volumeScale);
         alSourcePlay(source->sourceId);
     }
-
+     
     void OpenALEngine::PlaySource(AudioSource* source) {
+         // should we use source->m_clip->bufferId or source->sourceId 
+        std::cout << "playing bufferId: " << source->sourceId <<  std::endl;
+        alSourcei(source->sourceId, AL_BUFFER, source->sourceId);
+        alSourcef(source->sourceId, AL_GAIN, 1.0f);
+        alSource3f(source->sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
         alSourcePlay(source->sourceId);
+         
+        CHECK_AL_ERROR("alSourcePlay failed");
     }
 
     void OpenALEngine::SetSourcePosition(AudioSource* source, const Vector3& position) {
