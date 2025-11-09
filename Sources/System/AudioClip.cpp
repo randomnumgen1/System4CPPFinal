@@ -35,6 +35,7 @@ namespace System {
         // Open the wave file for reading in binary.
         filePtr = fopen(filename.c_str(), "rb");
         if (filePtr == NULL) {
+            std::cout << "file fail" << std::endl;
             return false;
         }
 
@@ -42,21 +43,24 @@ namespace System {
         count = fread(&riffWaveFileHeader, sizeof(riffWaveFileHeader), 1, filePtr);
         if (count != 1) {
             fclose(filePtr);
+            std::cout << "file pointer fail" << std::endl;
             return false;
         }
 
         // Check that the chunk ID is the RIFF format.
         if ((riffWaveFileHeader.chunkId[0] != 'R') || (riffWaveFileHeader.chunkId[1] != 'I') || (riffWaveFileHeader.chunkId[2] != 'F') || (riffWaveFileHeader.chunkId[3] != 'F')) {
             fclose(filePtr);
+            std::cout << "file riff fail" << std::endl;
             return false;
         }
 
         // Check that the file format is the WAVE format.
         if ((riffWaveFileHeader.format[0] != 'W') || (riffWaveFileHeader.format[1] != 'A') || (riffWaveFileHeader.format[2] != 'V') || (riffWaveFileHeader.format[3] != 'E')) {
             fclose(filePtr);
+            std::cout << "file wav fail" << std::endl;
             return false;
         }
-
+       
         // Read in the sub chunk headers until you find the format chunk.
         foundFormat = false;
         while (foundFormat == false) {
@@ -64,6 +68,7 @@ namespace System {
             count = fread(&subChunkHeader, sizeof(subChunkHeader), 1, filePtr);
             if (count != 1) {
                 fclose(filePtr);
+                std::cout << "" << std::endl;
                 return false;
             }
 
@@ -88,6 +93,7 @@ namespace System {
             fclose(filePtr);
             return false;
         }
+
         // Check that the wave file was recorded in mono format.
         if (fmtData.numChannels != 1) {
             fclose(filePtr);
@@ -98,8 +104,7 @@ namespace System {
         if (fmtData.sampleRate != 44100) {
             fclose(filePtr);
             return false;
-        }
-
+        } 
         // Ensure that the wave file was recorded in 16 bit format.
         if (fmtData.bitsPerSample != 16) {
             fclose(filePtr);
