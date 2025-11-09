@@ -15,6 +15,8 @@ namespace System {
         float m_volume = 1.0f;
         AudioListener() { 
                 m_volume = 1.0f; 
+                Scene::audioEngine->SetListenerPosition(Vector3(0.0f, 0.0f, 0.0f));
+
         }
         void Update() override {
             // Update the listener's position in the audio engine to match the GameObject's world position.
