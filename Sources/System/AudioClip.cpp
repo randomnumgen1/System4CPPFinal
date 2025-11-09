@@ -3,9 +3,26 @@
 #include <fstream>
 #include <vector>
 #include <stdio.h>
-
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+#include <al.h>
+#include <alc.h>
+#else
+#include <AL/al.h>
+#include <AL/alc.h>
+#endif
 namespace System {
+    AudioClip::AudioClip() : m_audiobufferId(0), m_waveData(nullptr), m_waveSize(0), m_channels(0), m_frequency(0), m_samples(0), m_bitsPerSample(0) {
+    }
 
+    AudioClip::~AudioClip() {
+        if (m_audiobufferId != 0) {
+            alDeleteBuffers(1, &m_audiobufferId);
+        }
+        if (m_waveData != nullptr) {
+            delete[] m_waveData;
+            m_waveData = nullptr;
+        }
+    }
     int AudioClip::GetChannels() const {
         return m_channels;
     }
@@ -156,6 +173,24 @@ namespace System {
         // Close the file once done reading.
         fclose(filePtr);
 
+        // Create the OpenAL buffer
+        alGenBuffers(1, &m_audiobufferId);
+
+        // Determine the audio format
+        ALenum format;
+        if (m_channels == 1 && m_bitsPerSample == 16) {
+            format = AL_FORMAT_MONO16;
+        }
+        else {
+            // Add support for other formats if needed
+            std::cerr << "Unsupported audio format" << std::endl;
+            delete[] m_waveData;
+            m_waveData = nullptr;
+            return false;
+        }
+
+        // Upload the audio data to the buffer
+        alBufferData(m_audiobufferId, format, m_waveData, m_waveSize, m_frequency);
 
 
 

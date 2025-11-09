@@ -75,7 +75,7 @@ namespace System {
     void OpenALEngine::PlaySource(AudioSource* source) {
          // should we use source->m_clip->bufferId or source->sourceId 
         std::cout << "playing bufferId: " << source->sourceId <<  std::endl;
-        alSourcei(source->sourceId, AL_BUFFER, source->sourceId);
+        alSourcei(source->sourceId, AL_BUFFER, source->m_clip->m_audiobufferId);
         alSourcef(source->sourceId, AL_GAIN, 1.0f);
         alSource3f(source->sourceId, AL_POSITION, 0.0f, 0.0f, 0.0f);
         alSourcePlay(source->sourceId);

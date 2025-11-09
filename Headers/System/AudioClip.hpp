@@ -43,6 +43,8 @@ namespace System {
         };
 
     public:
+        AudioClip();
+        ~AudioClip();
         /// <summary>
         /// Returns the number of audio channels in the clip.
         /// Common values: 1 for mono, 2 for stereo.

@@ -13,6 +13,10 @@ namespace System {
     }
 
     void AudioSource::SetClip(System::AudioClip* clip) {
+        if (!clip || clip->m_audiobufferId == 0) {
+            std::cerr << "AudioSource::SetClip - Invalid clip or buffer" << std::endl;
+            return;
+        }
         m_clip = clip;
         Scene::audioEngine->SetSourceClip(this, clip->m_audiobufferId);
     }
