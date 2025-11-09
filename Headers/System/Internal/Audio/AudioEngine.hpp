@@ -26,6 +26,12 @@ namespace System {
         virtual void PlayClipAtPoint(AudioClip* clip, const Vector3& position, float volume) = 0;
         virtual void SetListenerPosition(const Vector3& position) = 0;
         virtual void SetListenerOrientation(const Vector3& forward, const Vector3& up) = 0;
+        inline float dbToVolume(float dB){
+            return powf(10.0f, 0.05f * dB);
+        }
+        inline float VolumeTodB(float volume){
+            return 20.0f * log10f(volume);
+        }
     };
 }
 #endif
