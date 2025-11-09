@@ -47,7 +47,9 @@ namespace System {
     void AudioSource::Stop() {
         Scene::audioEngine->StopSource(this);
     }
-
+    void AudioSource::Update() {
+        Scene::audioEngine->SetSourcePosition(this, transform()->GetPosition());
+    }
     void AudioSource::PlayClipAtPoint(AudioClip* clip, System::Vector3 position) {
         PlayClipAtPoint(clip, position, 1.0f);
     }

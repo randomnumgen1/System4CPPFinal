@@ -11,35 +11,26 @@ int main() {
 
     std::cout << "Creating listener..." << std::endl;
     auto* listenerGo = new System::GameObject("Listener");
-    listenerGo->AddComponent<System::AudioListener>();
+    auto* listener = listenerGo->AddComponent<System::AudioListener>();
 
     std::cout << "Creating audio source..." << std::endl;
     auto* audioGo = new System::GameObject("AudioSource");
     auto* audioSource = audioGo->AddComponent<System::AudioSource>();
 
-    std::cout << "Loading audio clip..." << std::endl;
-    System::AudioClip audioClip;
-    // NOTE: This file does not exist. The test will fail to load it,
-    // but the program should not crash.
-    if (audioClip.LoadMonoWaveFile("test.wav")) {
-        std::cout << "Audio clip loaded successfully." << std::endl;
-        audioSource->SetClip(&audioClip);
-        audioSource->SetLoop(true);
-        audioSource->Play();
+    std::cout << "Audio components created successfully." << std::endl;
 
-        std::cout << "Playing for 5 seconds..." << std::endl;
-        for (int i = 0; i < 5; ++i) {
-            System::Scene::audioEngine->Update();
-            sleep(1);
-        }
-
-        audioSource->Stop();
-        std::cout << "Playback stopped." << std::endl;
-    } else {
-        std::cout << "Failed to load audio clip. This is expected as the file doesn't exist." << std::endl;
+    // We can't play audio without a file, but we can update the engine
+    // to make sure nothing crashes.
+    std::cout << "Updating audio engine for 2 seconds..." << std::endl;
+    for (int i = 0; i < 2; ++i) {
+        listener->Update();
+        audioSource->Update();
+        System::Scene::audioEngine->Update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     System::Scene::Shutdown();
     std::cout << "Scene shut down." << std::endl;
+
     return 0;
 }

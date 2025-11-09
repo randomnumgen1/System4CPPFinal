@@ -27,6 +27,7 @@ namespace System {
         void Play();
         void Pause();
         void Stop();
+        void Update();
 
         Component* Clone() const override {
             AudioSource* newSource = new AudioSource(*this);

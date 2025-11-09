@@ -87,7 +87,7 @@ namespace System {
 
         // Setters for world-space properties
         void SetPosition(const System::Vector3& newPosition) {
-            if (parent) {
+            if (parent != nullptr) {
                 localPosition = parent->worldToLocalMatrix().MultiplyPoint3x4(newPosition);
             }else{
                 localPosition = newPosition;
