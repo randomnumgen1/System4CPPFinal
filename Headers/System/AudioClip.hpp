@@ -70,9 +70,7 @@ namespace System {
         //code taken from rastertek tutorials for quickness
         bool LoadMonoWaveFile(std::string filename);
         bool LoadStereoWaveFile(std::string filename);
-        bool LoadMP3File(std::string filename) {
-
-        }
+        bool LoadMP3File(std::string filename);
 
 
 
