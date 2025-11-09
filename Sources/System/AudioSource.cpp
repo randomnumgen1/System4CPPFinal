@@ -19,6 +19,14 @@ namespace System {
         }
         m_clip = clip;
         Scene::audioEngine->SetSourceClip(this, clip->m_audiobufferId);
+
+        
+
+
+
+
+
+
     }
 
     void AudioSource::SetVolume(float volume) {

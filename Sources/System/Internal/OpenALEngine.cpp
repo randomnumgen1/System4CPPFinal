@@ -17,7 +17,18 @@
                       << " (code: " << error << ")" << std::endl; \
         } \
     }
+
+
 namespace System {
+
+
+
+
+
+
+
+
+
     OpenALEngine::OpenALEngine() : m_device(nullptr), m_context(nullptr) {}
 
     OpenALEngine::~OpenALEngine() {}
@@ -46,6 +57,15 @@ namespace System {
 
     void OpenALEngine::GenerateSource(AudioSource* source) {
         alGenSources(1, &source->sourceId);
+        ALenum error = alGetError();
+        if (error != AL_NO_ERROR) {
+            /* handle different possibilities */
+        }
+        alSourcef(source->sourceId, AL_PITCH, 1);
+        alSourcef(source->sourceId, AL_GAIN, 1.0f);
+        alSource3f( source->sourceId, AL_POSITION, 0, 0, 0);
+        alSource3f( source->sourceId, AL_VELOCITY, 0, 0, 0);
+        alSourcei( source->sourceId, AL_LOOPING, AL_TRUE);
         CHECK_AL_ERROR("alGenSources failed");
     }
 
@@ -55,6 +75,7 @@ namespace System {
 
     void OpenALEngine::SetSourceClip(AudioSource* source, unsigned int bufferId) {
         alSourcei(source->sourceId, AL_BUFFER, bufferId);
+        CHECK_AL_ERROR("SetSourceClip failed");
     }
      
     void OpenALEngine::SetSourceVolume(AudioSource* source, float volume) {
