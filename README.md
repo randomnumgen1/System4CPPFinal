@@ -70,6 +70,14 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 | SYSTEM_AUDIO_OPENAL    |     NA                                   |
 | SYSTEM_AUDIO_FMOD      |     licensing fee may be required        |
 
+### PHYSICS
+
+
+
+|         Define         |   Comment                                |
+| ---------------------- | ---------------------------------------- |
+| SYSTEM_PHYSICS_BULLET  |     NA                                   |
+
 
 
 **Gamepad not working?**
