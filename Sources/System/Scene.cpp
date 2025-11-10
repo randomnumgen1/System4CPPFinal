@@ -3,7 +3,7 @@
 //Audio
 #if defined(SYSTEM_AUDIO_OPENAL)
 #include <System/Internal/Audio/OpenALEngine.hpp>
-#elseif defined(SYSTEM_AUDIO_FMOD)
+#elif defined(SYSTEM_AUDIO_FMOD)
 #include <System/Internal/Audio/FMODEngine.hpp>
 #else
 #include <System/Internal/Audio/DummyAudioEngine.hpp>
@@ -11,9 +11,9 @@
 //Physics
 #if defined(SYSTEM_PHYSICS_BULLET)
 #include <System/Internal/Physics/BulletPhysicsEngine.hpp>
-#elseif defined(SYSTEM_PHYSICS_PHYSX)
+#elif defined(SYSTEM_PHYSICS_PHYSX)
 #include <System/Internal/Physics/PhysxPhysicsEngine.hpp>
-#elseif defined(SYSTEM_PHYSICS_JOLT)
+#elif defined(SYSTEM_PHYSICS_JOLT)
 #include <System/Internal/Physics/JoltPhysicsEngine.hpp>
 #else
 #include <System/Internal/Physics/DummyPhysicsEngine.hpp>
@@ -33,7 +33,7 @@ namespace System {
         if (!audioEngine) {
 #if defined(SYSTEM_AUDIO_OPENAL)
             audioEngine = new OpenALEngine();
-#elseif defined(SYSTEM_AUDIO_FMOD)
+#elif defined(SYSTEM_AUDIO_FMOD)
             audioEngine = new FMODEngine();
 #else
             audioEngine = new DummyAudioEngine();
@@ -43,20 +43,33 @@ namespace System {
         if (!physicsEngine) {
 #if defined(SYSTEM_PHYSICS_BULLET)
             physicsEngine = new BulletPhysicsEngine();
-#elseif defined(SYSTEM_PHYSICS_PHYSX)
-physicsEngine = new PhysxPhysicsEngine();
-#elseif defined(SYSTEM_PHYSICS_JOLT)
+#elif defined(SYSTEM_PHYSICS_PHYSX)
+    physicsEngine = new PhysxPhysicsEngine();
+#elif defined(SYSTEM_PHYSICS_JOLT)
 physicsEngine = new JoltPhysicsEngine();
 #else
             physicsEngine = new DummyPhysicsEngine();
 #endif
+            physicsEngine->Initialize();
         }
 
 
     }
-
+ 
     void Scene::Shutdown() {
         delete root;
         root = nullptr;
+
+        if (audioEngine) {
+            audioEngine->Shutdown();
+            delete audioEngine;
+            audioEngine = nullptr;
+        }
+
+        if (physicsEngine) {
+            physicsEngine->Shutdown();
+            delete physicsEngine;
+            physicsEngine = nullptr;
+        }
     }
 }
