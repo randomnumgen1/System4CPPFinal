@@ -58,7 +58,7 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 |         Define         |   Comment     |
 | ---------------------- | ------------- |
-| SYSTEM_GRAPHICS_VULKAN |     NA        |
+| SYSTEM_GRAPHICS_VULKAN |     TODO      |
 | SYSTEM_GRAPHICS_OPENGL |     NA        |
 
 ### Audio
@@ -77,6 +77,8 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 |         Define         |   Comment                                |
 | ---------------------- | ---------------------------------------- |
 | SYSTEM_PHYSICS_BULLET  |     NA                                   |
+| SYSTEM_PHYSICS_PHYSX  |     NA                                   |
+| SYSTEM_PHYSICS_JOLT   |     NA                                   |
 
 
 
