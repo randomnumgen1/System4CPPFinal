@@ -1,6 +1,6 @@
 #include <System/Physics/Physics.h>
 #include <System/Scene.hpp>
-#include <System/Internal/Physics/PhysicsEngine.hpp>
+#include <System/Internal/Physics/PhysicsEngineInterface.hpp>
 
 namespace System {
     bool Physics::Raycast(Vector3 origin, Vector3 direction, float maxDistance, uint32_t layerMask) {

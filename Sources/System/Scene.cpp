@@ -21,8 +21,8 @@
 
 namespace System {
     GameObject* Scene::root = nullptr;
-    AudioEngine* Scene::audioEngine = nullptr;
-    PhysicsEngine* Scene::physicsEngine = nullptr;
+    AudioEngineInterface* Scene::audioEngine = nullptr;
+    PhysicsEngineInterface* Scene::physicsEngine = nullptr;
 
     void Scene::Initialize() {
         if (!root) {

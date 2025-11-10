@@ -3,16 +3,16 @@
 
 namespace System {
     class GameObject; // Forward declaration
-    class AudioEngine; // Forward declaration
-    class PhysicsEngine; // Forward declaration
+    class AudioEngineInterface; // Forward declaration
+    class PhysicsEngineInterface; // Forward declaration
 
     class Scene {
     public:
         static GameObject* root;
         // Audio engine instance for managing audio within the scene
-        static AudioEngine* audioEngine;
+        static AudioEngineInterface* audioEngine;
         // Physics engine instance for managing physics within the scene
-        static PhysicsEngine* physicsEngine;
+        static PhysicsEngineInterface* physicsEngine;
 
         static void Initialize();
         static void Shutdown();
