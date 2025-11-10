@@ -1,6 +1,12 @@
 #include <System/Scene.hpp>
 #include <System/GameObject.hpp>
+#if defined(SYSTEM_AUDIO_OPENAL)
 #include <System/Internal/Audio/OpenALEngine.hpp>
+#elseif defined(SYSTEM_AUDIO_FMOD)
+#include <System/Internal/Audio/FMODEngine.hpp>
+#else
+#include <System/Internal/Audio/DummyAudioEngine.hpp>
+#endif
 namespace System {
     GameObject* Scene::root = nullptr;
     AudioEngine* Scene::audioEngine = nullptr;
@@ -12,7 +18,15 @@ namespace System {
             root = new GameObject("__SceneRoot__");
         }
         if (!audioEngine) {
+#if defined(SYSTEM_AUDIO_OPENAL)
             audioEngine = new OpenALEngine();
+#elseif defined(SYSTEM_AUDIO_FMOD)
+            audioEngine = new FMODEngine();
+#else
+            audioEngine = new DummyAudioEngine();
+#endif
+
+
             audioEngine->Initialize();
         }
     }
