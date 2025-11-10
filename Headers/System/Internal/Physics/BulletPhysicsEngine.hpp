@@ -1,13 +1,13 @@
 #ifndef _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
 #define _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
 
-#include "PhysicsEngine.hpp"
+#include "PhysicsEngineInterface.hpp"
 #include <memory>
 
 #include <bullet/btBulletDynamicsCommon.h>
 
 namespace System {
-    class BulletPhysicsEngine : public PhysicsEngine {
+    class BulletPhysicsEngine : public PhysicsEngineInterface {
     private:
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
         std::unique_ptr<btCollisionDispatcher> dispatcher;

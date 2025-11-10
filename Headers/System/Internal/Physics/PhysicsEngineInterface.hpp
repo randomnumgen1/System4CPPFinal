@@ -9,9 +9,9 @@ namespace System {
     struct Ray;
     struct RaycastHit;
 
-    class PhysicsEngine {
+    class PhysicsEngineInterface {
     public:
-        virtual ~PhysicsEngine() = default;
+        virtual ~PhysicsEngineInterface() = default;
 
         virtual void Initialize() = 0;
         virtual void Shutdown() = 0;
