@@ -5,7 +5,7 @@
 #include "../../AudioSource.hpp"
 #include "../../Vector3.hpp"
 #include "../../AudioClip.hpp"
-
+#include <cmath>
 namespace System {
     class AudioEngine {
     public:
