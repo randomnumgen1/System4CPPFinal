@@ -58,8 +58,9 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 
 |         Define         |   Comment     |
 | ---------------------- | ------------- |
+| SYSTEM_GRAPHICS_OPENGL |     default?  |
 | SYSTEM_GRAPHICS_VULKAN |     TODO      |
-| SYSTEM_GRAPHICS_OPENGL |     NA        |
+
 
 ### Audio
 
@@ -70,15 +71,15 @@ https://github.com/randomnumgen1/System4CPPFinal/wiki/Project-Status
 | SYSTEM_AUDIO_OPENAL    |     NA                                   |
 | SYSTEM_AUDIO_FMOD      |     licensing fee may be required        |
 
-### PHYSICS
+### Physics
 
 
 
 |         Define         |   Comment                                |
 | ---------------------- | ---------------------------------------- |
-| SYSTEM_PHYSICS_BULLET  |     NA                                   |
-| SYSTEM_PHYSICS_PHYSX  |     NA                                   |
-| SYSTEM_PHYSICS_JOLT   |     NA                                   |
+| SYSTEM_PHYSICS_BULLET  |   default?                               |
+| SYSTEM_PHYSICS_PHYSX   |     NA                                   |
+| SYSTEM_PHYSICS_JOLT    |     NA                                   |
 
 
 
