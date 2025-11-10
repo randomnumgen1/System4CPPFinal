@@ -1,14 +1,14 @@
 #ifndef _SYSTEM_AUDIO_DUMMYAUDIOENGINE_HPP_
 #define _SYSTEM_AUDIO_DUMMYAUDIOENGINE_HPP_
 
-#include <System/Internal/Audio/AudioEngine.hpp>
+#include <System/Internal/Audio/AudioEngineInterface.hpp>
 #include <vector>
 
 
  
 
 namespace System {
-    class DummyAudioEngine : public AudioEngine {
+    class DummyAudioEngine : public AudioEngineInterface {
     public:
         DummyAudioEngine();
         ~DummyAudioEngine();

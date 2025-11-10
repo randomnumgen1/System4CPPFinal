@@ -7,9 +7,9 @@
 #include "../../AudioClip.hpp"
 #include <cmath>
 namespace System {
-    class AudioEngine {
+    class AudioEngineInterface {
     public:
-        virtual ~AudioEngine() = default;
+        virtual ~AudioEngineInterface() = default;
         virtual void Initialize() = 0;
         virtual void Shutdown() = 0;
         virtual void Update() = 0;

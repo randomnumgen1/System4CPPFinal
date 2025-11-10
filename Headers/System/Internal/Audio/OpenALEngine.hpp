@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_AUDIO_OPENALENGINE_HPP_
 #define _SYSTEM_AUDIO_OPENALENGINE_HPP_
 
-#include <System/Internal/Audio/AudioEngine.hpp>
+#include <System/Internal/Audio/AudioEngineInterface.hpp>
 #include <vector>
 
 
@@ -14,7 +14,7 @@
 #endif
 
 namespace System {
-    class OpenALEngine : public AudioEngine {
+    class OpenALEngine : public AudioEngineInterface {
     public:
         OpenALEngine();
         ~OpenALEngine();
