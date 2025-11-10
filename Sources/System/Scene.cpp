@@ -10,6 +10,7 @@
 namespace System {
     GameObject* Scene::root = nullptr;
     AudioEngine* Scene::audioEngine = nullptr;
+    PhysicsEngine* Scene::physicsEngine = nullptr;
 
     void Scene::Initialize() {
         if (!root) {
@@ -25,10 +26,21 @@ namespace System {
 #else
             audioEngine = new DummyAudioEngine();
 #endif
-
-
             audioEngine->Initialize();
         }
+        if (!physicsEngine) {
+#if defined(SYSTEM_PHYSICS_BULLET)
+            physicsEngine = new BulletPhysicsEngine();
+#elseif defined(SYSTEM_PHYSICS_PHYSX)
+physicsEngine = new PhysxPhysicsEngine();
+#elseif defined(SYSTEM_PHYSICS_JOLT)
+physicsEngine = new JoltPhysicsEngine();
+#else
+            physicsEngine = new DummyPhysicsEngine();
+#endif
+        }
+
+
     }
 
     void Scene::Shutdown() {
