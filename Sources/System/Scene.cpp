@@ -1,5 +1,6 @@
 #include <System/Scene.hpp>
 #include <System/GameObject.hpp>
+//Audio
 #if defined(SYSTEM_AUDIO_OPENAL)
 #include <System/Internal/Audio/OpenALEngine.hpp>
 #elseif defined(SYSTEM_AUDIO_FMOD)
@@ -7,6 +8,17 @@
 #else
 #include <System/Internal/Audio/DummyAudioEngine.hpp>
 #endif
+//Physics
+#if defined(SYSTEM_PHYSICS_BULLET)
+#include <System/Internal/Physics/BulletPhysicsEngine.hpp>
+#elseif defined(SYSTEM_PHYSICS_PHYSX)
+#include <System/Internal/Physics/PhysxPhysicsEngine.hpp>
+#elseif defined(SYSTEM_PHYSICS_JOLT)
+#include <System/Internal/Physics/JoltPhysicsEngine.hpp>
+#else
+#include <System/Internal/Physics/DummyPhysicsEngine.hpp>
+#endif
+
 namespace System {
     GameObject* Scene::root = nullptr;
     AudioEngine* Scene::audioEngine = nullptr;
