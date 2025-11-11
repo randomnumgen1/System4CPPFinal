@@ -14,6 +14,9 @@ namespace System {
         // Physics engine instance for managing physics within the scene
         static PhysicsEngineInterface* physicsEngine;
 
+        /// <summary>
+        /// Initializes the scene, setting up audio and physics engines.
+        /// </summary>
         static void Initialize();
         static void Shutdown();
     };
