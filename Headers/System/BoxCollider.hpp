@@ -9,6 +9,9 @@ namespace System {
     public:
         Vector3 center;
         Vector3 size;
+
+        Vector3 ClosestPoint(Vector3 position) override;
+        Vector3 ClosestPointOnBounds(Vector3 position) override;
     };
 }
 #endif
