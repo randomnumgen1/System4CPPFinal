@@ -9,6 +9,9 @@ namespace System {
     public:
         Vector3 center;
         Vector3 size;
+        Bounds bounds() override {
+            return Bounds(transform()->GetPosition() + center, size);
+        }
         Component* Clone() const override;
         Vector3 ClosestPoint(Vector3 position) override;
         Vector3 ClosestPointOnBounds(Vector3 position) override;

@@ -7,8 +7,8 @@
 namespace System {
     Component* SphereCollider::Clone() const {
         SphereCollider* collider = new SphereCollider();
-        collider->center = center;
-        collider->radius = radius;
+        collider->center = this->center;
+        collider->radius = this->radius;
         return collider;
     }
 
