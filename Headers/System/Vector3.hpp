@@ -107,6 +107,12 @@ namespace System {
         */
         float magnitude() const noexcept;
         float sqrMagnitude() const noexcept;
+        /// <summary>
+        /// Sets the x, y and z components of the vector.
+        /// </summary>
+        /// <param name="new_x">The new x-component.</param>
+        /// <param name="new_y">The new y-component.</param>
+        /// <param name="new_z">The new z-component.</param>
         void Set(float new_x, float new_y, float new_z);
         /// <summary>
         /// Makes this vector have a magnitude of 1.
