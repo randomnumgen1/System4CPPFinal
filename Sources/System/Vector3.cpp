@@ -47,12 +47,11 @@ namespace System {
             (lhs.z * rhs.x) - (lhs.x * rhs.z),
             (lhs.x * rhs.y) - (lhs.y * rhs.x));
     }
-    float Vector3::Distance(const Vector3 lhs, const  Vector3 rhs) {
-        return System::Mathf::Sqrt(
-            System::Mathf::Pow(rhs.x - lhs.x, 2) +
-            System::Mathf::Pow(rhs.y - lhs.y, 2) +
-            System::Mathf::Pow(rhs.z - lhs.z, 2)
-        );
+    float Vector3::Distance(const Vector3 lhs, const  Vector3 rhs){
+        float diff_x = rhs.x - lhs.x;
+        float diff_y = rhs.y - lhs.y;
+        float diff_z = rhs.z - lhs.z;
+        return System::Mathf::Sqrt(diff_x * diff_x + diff_y * diff_y + diff_z * diff_z);
     }
     float Vector3::Dot(const Vector3 lhs, const  Vector3 rhs) {
         return (lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z);
@@ -68,14 +67,14 @@ namespace System {
             (lhs.z + (t * (rhs.z - lhs.z)))
         );
     }
-    Vector3 Vector3::Max(const Vector3 lhs, const  Vector3 rhs) {
+    Vector3 Vector3::Max(const Vector3 lhs, const  Vector3 rhs) noexcept {
         return  Vector3(
             std::max(lhs.x, rhs.x),
             std::max(lhs.y, rhs.y),
             std::max(lhs.z, rhs.z)
         );
     }
-    Vector3 Vector3::Min(const Vector3 lhs, const  Vector3 rhs) {
+    Vector3 Vector3::Min(const Vector3 lhs, const  Vector3 rhs) noexcept {
         return  Vector3(
             std::min(lhs.x, rhs.x),
             std::min(lhs.y, rhs.y),

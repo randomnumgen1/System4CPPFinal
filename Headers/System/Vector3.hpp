@@ -17,10 +17,9 @@ namespace System {
             };
         };
        
-      //  static constexpr float Rad2Deg = 180.0f / static_cast<float>(M_PI);
-
-        static constexpr float  kEpsilon = 0.00001F;
-        static constexpr float  kEpsilonNormalSqrt = 1e-15F;
+ 
+        static constexpr float kEpsilon = 0.00001F;
+        static constexpr float kEpsilonNormalSqrt = 1e-15F;
 
 
         static const Vector3 back;
@@ -61,8 +60,8 @@ namespace System {
         static float Dot(const Vector3 lhs, const  Vector3 rhs);
         static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs,const float t);
         static Vector3 LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t);
-        static Vector3 Max(const Vector3 lhs, const  Vector3 rhs);
-        static Vector3 Min(const Vector3 lhs, const  Vector3 rhs);
+        static Vector3 Max(const Vector3 lhs, const  Vector3 rhs) noexcept;
+        static Vector3 Min(const Vector3 lhs, const  Vector3 rhs) noexcept;
         static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta);
         /// <summary>
         /// This does not modify the given vector.
