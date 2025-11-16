@@ -11,6 +11,10 @@ namespace System {
         float radius;
         float height;
         int direction;
+
+        Component* Clone() const override;
+        Vector3 ClosestPoint(Vector3 position) override;
+        Vector3 ClosestPointOnBounds(Vector3 position) override;
     };
 }
 #endif
