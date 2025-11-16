@@ -66,6 +66,13 @@ namespace System {
         /// <param name="t">Interpolation factor (0 returns lhs,.5 is between lhs and rhs, .1 returns rhs).</param>
         /// <returns></returns>
         static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs,const float t);
+        /// <summary>
+        /// Performs linear interpolation between two vectors based on a blend factor, without clamping the factor to the [0, 1] range.
+        /// </summary>
+        /// <param name="lhs">The start vector.</param>
+        /// <param name="rhs">The end vector.</param>
+        /// <param name="t">Interpolation factor.</param>
+        /// <returns>The interpolated vector.</returns>
         static Vector3 LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t);
         /// <summary>
         /// Computes a component-wise maximum between two 3D vectors.
