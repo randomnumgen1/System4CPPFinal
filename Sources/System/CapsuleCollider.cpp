@@ -7,10 +7,10 @@
 namespace System {
     Component* CapsuleCollider::Clone() const {
         CapsuleCollider* collider = new CapsuleCollider();
-        collider->center = center;
-        collider->radius = radius;
-        collider->height = height;
-        collider->direction = direction;
+        collider->center = this->center;
+        collider->radius = this->radius;
+        collider->height = this->height;
+        collider->direction = this->direction;
         return collider;
     }
 
