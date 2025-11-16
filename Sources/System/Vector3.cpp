@@ -139,10 +139,10 @@ namespace System {
     Normal Methods
     ----------------------------------------------------------------------------------------
     */
-    float Vector3::magnitude() const {
+    float Vector3::magnitude() const noexcept {
         return System::Mathf::Sqrt(x * x + y * y + z * z);
     }
-    float Vector3::sqrMagnitude() const {
+    float Vector3::sqrMagnitude() const noexcept {
         return x * x + y * y + z * z;
     }
     void Vector3::Set(float new_x, float new_y, float new_z){

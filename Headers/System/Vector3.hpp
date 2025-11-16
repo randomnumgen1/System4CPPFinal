@@ -105,8 +105,8 @@ namespace System {
         Normal Methods
         ----------------------------------------------------------------------------------------
         */
-        float magnitude() const;
-        float sqrMagnitude() const;
+        float magnitude() const noexcept;
+        float sqrMagnitude() const noexcept;
         void Set(float new_x, float new_y, float new_z);
         /// <summary>
         /// Makes this vector have a magnitude of 1.
