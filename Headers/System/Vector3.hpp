@@ -37,8 +37,17 @@ namespace System {
         Constructors
          ----------------------------------------------------------------------------------------
         */
-      
+
+        /// <summary>
+        /// Creates a new vector with all components set to 0.
+        /// </summary>
         Vector3();
+        /// <summary>
+        /// Creates a new vector with the given components.
+        /// </summary>
+        /// <param name="x">The x-component.</param>
+        /// <param name="y">The y-component.</param>
+        /// <param name="z">The z-component.</param>
         Vector3(float x, float y, float z);
 
         /*inline explicit Vector3( System::Vector2 lol) {
