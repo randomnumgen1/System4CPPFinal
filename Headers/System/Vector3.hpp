@@ -53,10 +53,43 @@ namespace System {
         Static Methods
         ----------------------------------------------------------------------------------------
         */
+        
+
+
+        /// <summary>
+        /// Returns the angle in degrees between two vectors.
+        /// </summary>
+        /// <param name="from">The vector from which the angle is measured.</param>
+        /// <param name="to">The vector to which the angle is measured.</param>
+        /// <returns>The angle in degrees between the two vectors.</returns>
         static float Angle(const Vector3 from, const  Vector3 to);
+		/// <summary>
+		/// Returns a copy of the vector with its magnitude clamped to a maximum value.
+		/// </summary>
+		/// <param name="vector">The vector to clamp.</param>
+		/// <param name="maxLength">The maximum magnitude of the vector.</param>
+		/// <returns>A new vector with the same direction as the original vector but with a magnitude no greater than <paramref name="maxLength"/>.</returns>
 		static Vector3 ClampMagnitude(const Vector3 vector, const  float maxLength);
+        /// <summary>
+        /// Computes the cross product of two vectors.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         static Vector3 Cross(const Vector3 lhs, const  Vector3 rhs);
+        /// <summary>
+        /// Returns the distance between two vectors.
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         static float Distance(const Vector3 lhs, const  Vector3 rhs);
+        /// <summary>
+        /// Computes the dot product of two vectors.
+        /// </summary>
+        /// <param name="lhs">The first vector.</param>
+        /// <param name="rhs">The second vector.</param>
+        /// <returns></returns>
         static float Dot(const Vector3 lhs, const  Vector3 rhs);
         /// <summary>
         /// Performs linear interpolation between two vectors based on a blend factor.
@@ -90,6 +123,13 @@ namespace System {
         /// <param name="rhs">The second input vector.</param>
         /// <returns>A new vector containing the minimum components from <paramref name="lhs"/> and <paramref name="rhs"/>.</returns>
         static Vector3 Min(const Vector3 lhs, const  Vector3 rhs) noexcept;
+        /// <summary>
+        /// Moves a vector `current` towards a `target` vector, by a maximum distance delta.
+        /// </summary>
+        /// <param name="current">The position to move from.</param>
+        /// <param name="target">The position to move towards.</param>
+        /// <param name="maxDistanceDelta"></param>
+        /// <returns>The new position.</returns>
         static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta);
         /// <summary>
         /// This does not modify the given vector.
@@ -97,6 +137,11 @@ namespace System {
         /// <param name="value"></param>
         /// <returns>A new vector with the same direction as the original vector but with a magnitude of 1.0.</returns>
         static Vector3 Normalize(const Vector3 value);
+        /// <summary>
+        /// Normalizes two vectors, making them orthogonal to each other.
+        /// </summary>
+        /// <param name="normal"></param>
+        /// <param name="tangent"></param>
         static void OrthoNormalize(Vector3& normal, Vector3& tangent);
         static Vector3 Project(const Vector3 vector, const  Vector3 onNormal);
         static Vector3 ProjectOnPlane(const Vector3 vector, const  Vector3 planeNormal);

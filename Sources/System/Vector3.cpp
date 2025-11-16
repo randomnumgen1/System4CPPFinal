@@ -98,7 +98,9 @@ namespace System {
         return Vector3(value.x / magnitude, value.y / magnitude, value.z / magnitude);
     }
     void Vector3::OrthoNormalize(Vector3& normal, Vector3& tangent) {
-        throw std::runtime_error("Not Implemented Error.");
+        normal.Normalize();
+        tangent = tangent - Project(tangent, normal);
+        tangent.Normalize();
     }
     Vector3 Vector3::Project(const Vector3 vector, const  Vector3 onNormal) {
         return (onNormal * (Dot(vector, onNormal) / Dot(onNormal, onNormal)));
