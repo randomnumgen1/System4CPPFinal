@@ -60,7 +60,21 @@ namespace System {
         static float Dot(const Vector3 lhs, const  Vector3 rhs);
         static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs,const float t);
         static Vector3 LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t);
+        /// <summary>
+        /// Computes a component-wise maximum between two 3D vectors.
+        /// For each axis (X, Y, Z), selects the greater (or lesser) value from the inputs.
+        /// </summary>
+        /// <param name="lhs">The first input vector.</param>
+        /// <param name="rhs">The second input vector.</param>
+        /// <returns>A new vector containing the maximum components from <paramref name="lhs"/> and <paramref name="rhs"/>.</returns>
         static Vector3 Max(const Vector3 lhs, const  Vector3 rhs) noexcept;
+        /// <summary>
+        /// Computes a component-wise minimum between two 3D vectors.
+        /// For each axis (X, Y, Z), selects the lesser value from the inputs.
+        /// </summary>
+        /// <param name="lhs">The first input vector.</param>
+        /// <param name="rhs">The second input vector.</param>
+        /// <returns>A new vector containing the minimum components from <paramref name="lhs"/> and <paramref name="rhs"/>.</returns>
         static Vector3 Min(const Vector3 lhs, const  Vector3 rhs) noexcept;
         static Vector3 MoveTowards(Vector3 current, Vector3 target, float maxDistanceDelta);
         /// <summary>
@@ -89,6 +103,7 @@ namespace System {
         void Set(float new_x, float new_y, float new_z);
         /// <summary>
         /// Makes this vector have a magnitude of 1.
+        /// **this function changes the current vector**
         /// </summary>
         void Normalize();
         /// <summary>
