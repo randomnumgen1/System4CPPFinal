@@ -151,7 +151,7 @@ namespace System {
         static float SignedAngle(Vector3 from, Vector3 to, Vector3 axis);
         static Vector3 Slerp(Vector3 a, Vector3 b, float t);
         static Vector3 SlerpUnclamped(Vector3 lhs, Vector3 rhs, float t);
-        static Vector3 SmoothDamp();
+        static Vector3 SmoothDamp(Vector3 current, Vector3 target, Vector3& currentVelocity, float smoothTime);
         /*
         ----------------------------------------------------------------------------------------
         Normal Methods

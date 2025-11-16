@@ -119,21 +119,66 @@ namespace System {
         };
     }
     Vector3 Vector3::RotateTowards(Vector3 current, Vector3 target, float maxRadiansDelta, float maxMagnitudeDelta) {
-        throw std::runtime_error("Not Implemented Error.");
+        float currentMag = current.magnitude();
+        float targetMag = target.magnitude();
+
+        if (currentMag < kEpsilonNormalSqrt || targetMag < kEpsilonNormalSqrt) {
+            return MoveTowards(current, target, maxMagnitudeDelta);
+        }
+
+        Vector3 currentDir = current / currentMag;
+        Vector3 targetDir = target / targetMag;
+
+        float dot = Dot(currentDir, targetDir);
+        float angle = acos(Mathf::Clamp(dot, -1.0f, 1.0f));
+
+        Vector3 newDir;
+        if (angle <= maxRadiansDelta || angle < kEpsilon) {
+            newDir = targetDir;
+        }
+        else {
+            newDir = SlerpUnclamped(currentDir, targetDir, maxRadiansDelta / angle);
+        }
+
+        float newMag;
+        if (abs(targetMag - currentMag) <= maxMagnitudeDelta) {
+            newMag = targetMag;
+        }
+        else {
+            newMag = currentMag + Mathf::Sign(targetMag - currentMag) * maxMagnitudeDelta;
+        }
+
+        return newDir * newMag;
     }
     Vector3 Vector3::Scale(const Vector3 a, const  Vector3 b) {
         return Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
     }
     float Vector3::SignedAngle(Vector3 from, Vector3 to, Vector3 axis) {
-        throw std::runtime_error("Not Implemented Error.");
+        float angle = Angle(from, to);
+        Vector3 cross = Cross(from, to);
+        if (Dot(cross, axis) < 0) {
+            angle = -angle;
+        }
+        return angle;
     }
     Vector3 Vector3::Slerp(Vector3 a, Vector3 b, float t) {
-        throw std::runtime_error("Not Implemented Error.");
+        return SlerpUnclamped(a, b, Mathf::Clamp(t, 0.0f, 1.0f));
     }
     Vector3 Vector3::SlerpUnclamped(Vector3 lhs, Vector3 rhs, float t) {
-        throw std::runtime_error("Not Implemented Error.");
+        float dot = Dot(lhs, rhs);
+        if (dot > 0.99999f) {
+            return LerpUnclamped(lhs, rhs, t);
+        }
+
+        float theta = Mathf::Acos(dot);
+        float sinTheta = Mathf::Sin(theta);
+
+        float scaleA = Mathf::Sin((1.0f - t) * theta) / sinTheta;
+        float scaleB = Mathf::Sin(t * theta) / sinTheta;
+
+        return (lhs * scaleA) + (rhs * scaleB);
     }
-    Vector3 Vector3::SmoothDamp() {
+    Vector3 Vector3::SmoothDamp(Vector3 current, Vector3 target, Vector3& currentVelocity, float smoothTime) {
         throw std::runtime_error("Not Implemented Error.");
     }
     /*
