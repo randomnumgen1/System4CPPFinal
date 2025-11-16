@@ -58,6 +58,13 @@ namespace System {
         static Vector3 Cross(const Vector3 lhs, const  Vector3 rhs);
         static float Distance(const Vector3 lhs, const  Vector3 rhs);
         static float Dot(const Vector3 lhs, const  Vector3 rhs);
+        /// <summary>
+        /// Performs linear interpolation between two vectors based on a blend factor.
+        /// </summary>
+        /// <param name="lhs">The start vector (returned when t = 0).</param>
+        /// <param name="rhs">The end vector (returned when t = 1).</param>
+        /// <param name="t">Interpolation factor (0 returns lhs,.5 is between lhs and rhs, .1 returns rhs).</param>
+        /// <returns></returns>
         static Vector3 Lerp(const Vector3 lhs, const  Vector3 rhs,const float t);
         static Vector3 LerpUnclamped(const Vector3 lhs, const  Vector3 rhs, const  float t);
         /// <summary>
