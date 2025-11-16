@@ -39,7 +39,13 @@ namespace System {
         return System::Mathf::Acos(dot) * System::Mathf::Rad2Deg;
     }
     Vector3 Vector3::ClampMagnitude(const Vector3 vector, const  float maxLength) {
-        throw std::runtime_error("Not Implemented Error.");
+        float sqrMag = vector.sqrMagnitude();
+        if (sqrMag > maxLength * maxLength) {
+            float mag = System::Mathf::Sqrt(sqrMag);
+            return vector * (maxLength / mag);
+        }
+        return vector;
+
     }
     Vector3 Vector3::Cross(const Vector3 lhs, const  Vector3 rhs) {
         return Vector3(
