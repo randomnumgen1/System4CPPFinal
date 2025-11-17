@@ -78,6 +78,36 @@ Vector2 Vector2::ClosestPointOnAnySegment(const Vector2& point, const std::vecto
 
     return closestPoint;
 }
+bool Vector2::IntersectsSegment(const Vector2& p1, const Vector2& p2, const Vector2& q1, const Vector2& q2){
+    auto Cross = [](const Vector2& a, const Vector2& b) -> float {
+        return a.x * b.y - a.y * b.x;
+        };
+
+
+    Vector2 r = p2 - p1;
+    Vector2 s = q2 - q1;
+    Vector2 qp = q1 - p1;
+
+    float rxs = Cross(r, s);
+    float qpxr = Cross(qp, r);
+
+    // Case 1: Parallel and non-intersecting
+    if (rxs == 0.0f && qpxr != 0.0f) return false;
+
+    // Case 2: Colinear
+    if (rxs == 0.0f && qpxr == 0.0f) {
+        float rDotR = Dot(r, r);
+        float t0 = Dot(qp, r) / rDotR;
+        float t1 = t0 + Dot(s, r) / rDotR;
+        return (t0 >= 0.0f && t0 <= 1.0f) || (t1 >= 0.0f && t1 <= 1.0f);
+    }
+
+    // Case 3: Proper intersection
+    float t = Cross(qp, s) / rxs;
+    float u = Cross(qp, r) / rxs;
+    return (t >= 0.0f && t <= 1.0f) && (u >= 0.0f && u <= 1.0f);
+
+}
 float Vector2::Distance(const Vector2 lhs, const Vector2 rhs){
     float dx = rhs.x - lhs.x;
     float dy = rhs.y - lhs.y;

@@ -31,6 +31,7 @@ namespace System {
         static Vector2 ClosestPointOnLineSegment(const Vector2& linestart, const Vector2& lineend, const Vector2& point);
         static Vector2 ClosestPointOnLineSegment2(const Vector2& linestart, const Vector2& lineend, const Vector2& point);
         static Vector2 ClosestPointOnAnySegment(const Vector2& point, const std::vector<Vector2>& segments);
+        static bool IntersectsSegment(const Vector2& p1, const Vector2& p2, const Vector2& q1, const Vector2& q2);
         static float Distance(const Vector2 lhs, const  Vector2 rhs);
         static float Dot(const Vector2 lhs, const  Vector2 rhs);
         static Vector2 Lerp(const Vector2 lhs, const  Vector2 rhs, float t);
