@@ -39,11 +39,49 @@ Vector2 Vector2::ClosestPointOnLineSegment(const Vector2& linestart, const Vecto
     // Calculate and return the nearest point on the line segment
     return linestart + heading * dotP;
 }
+Vector2 Vector2::ClosestPointOnLineSegment2(const Vector2& linestart, const Vector2& lineend, const Vector2& point) {
+    // Compute the vector representing the line segment
+    Vector2 segment = lineend - linestart;
+    // Compute the squared length of the segment (avoids costly sqrt)
+    float segmentLengthSq = segment.SqrMagnitude();
+    // Handle degenerate case: line segment is a single point
+    if (segmentLengthSq == 0.0f) return linestart;
+    // Compute vector from linestart to the external point
+    Vector2 toPoint = point - linestart;
+    // Project toPoint onto the segment vector and normalize by segment length
+    float t = Dot(toPoint, segment) / segmentLengthSq;
+    // Clamp the projection scalar to [0, 1] to stay within the segment bounds
+    t = Mathf::Clamp(t, 0.0f, 1.0f);
+    // Reconstruct the closest point using the clamped projection
+    return linestart + segment * t;
+}
+Vector2 Vector2::ClosestPointOnAnySegment(const Vector2& point, const std::vector<Vector2>& segments) {
+    Vector2 closestPoint;
+    float minDistSq = std::numeric_limits<float>::max();
+
+    // Ensure we have an even number of points (pairs)
+    size_t count = segments.size();
+    if (count < 2 || count % 2 != 0) return closestPoint; // Or throw/assert
+
+    for (size_t i = 0; i < count; i += 2) {
+        const Vector2& start = segments[i];
+        const Vector2& end = segments[i + 1];
+
+        Vector2 candidate =  ClosestPointOnLineSegment2(start, end, point);
+        float distSq = (candidate - point).SqrMagnitude();
+
+        if (distSq < minDistSq) {
+            minDistSq = distSq;
+            closestPoint = candidate;
+        }
+    }
+
+    return closestPoint;
+}
 float Vector2::Distance(const Vector2 lhs, const Vector2 rhs){
-    return System::Mathf::Sqrt(
-        System::Mathf::Pow(rhs.x - lhs.x, 2) +
-        System::Mathf::Pow(rhs.y - lhs.y, 2)
-    );
+    float dx = rhs.x - lhs.x;
+    float dy = rhs.y - lhs.y;
+    return System::Mathf::Sqrt(dx * dx + dy * dy);
 }
 float Vector2::Dot(const Vector2 lhs, const Vector2 rhs){
     return (lhs.x * rhs.x + lhs.y * rhs.y);

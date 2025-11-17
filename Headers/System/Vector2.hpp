@@ -1,6 +1,8 @@
 #ifndef _SYSTEM_VECTOR2_H
 #define _SYSTEM_VECTOR2_H
 #include <cassert>
+#include <vector>
+
 namespace System {
     struct Matrix3x3;
     struct Vector2 {
@@ -27,6 +29,8 @@ namespace System {
         */
         static float Angle(Vector2 from, Vector2 to);
         static Vector2 ClosestPointOnLineSegment(const Vector2& linestart, const Vector2& lineend, const Vector2& point);
+        static Vector2 ClosestPointOnLineSegment2(const Vector2& linestart, const Vector2& lineend, const Vector2& point);
+        static Vector2 ClosestPointOnAnySegment(const Vector2& point, const std::vector<Vector2>& segments);
         static float Distance(const Vector2 lhs, const  Vector2 rhs);
         static float Dot(const Vector2 lhs, const  Vector2 rhs);
         static Vector2 Lerp(const Vector2 lhs, const  Vector2 rhs, float t);
