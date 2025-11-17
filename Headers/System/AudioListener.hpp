@@ -5,7 +5,8 @@
 #include <System/Vector3.hpp>
 #include <System/Transform.hpp>
 #include <System/Scene.hpp> 
-#include <System/Internal/Audio/AudioEngine.hpp>
+
+#include <System/Internal/Audio/AudioEngineInterface.hpp>
 namespace System {
     /// <summary>
     /// Typically attached to the main camera to define the player's auditory perspective.

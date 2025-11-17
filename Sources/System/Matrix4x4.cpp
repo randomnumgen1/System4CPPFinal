@@ -22,10 +22,12 @@ namespace System {
         m03(0), m13(0), m23(0), m33(1) {
     }
     Matrix4x4::Matrix4x4(System::Vector4 column0, System::Vector4 column1, System::Vector4 column2, System::Vector4 column3) {
-        m00 = column0.x;  m01 = column1.x;  m02 = column2.x;  m03 = column3.x;
-        m10 = column0.y;  m11 = column1.y;  m12 = column2.y;  m13 = column3.y;
-        m20 = column0.z;  m21 = column1.z;  m22 = column2.z;  m23 = column3.z;
-        m30 = column0.w;  m31 = column1.w;  m32 = column2.w;  m33 = column3.w;
+        this->m00 = column0.x;  this->m01 = column1.x;  this->m02 = column2.x;  this->m03 = column3.x;
+        this->m10 = column0.y;  this->m11 = column1.y;  this->m12 = column2.y;  this->m13 = column3.y;
+        this->m20 = column0.z;  this->m21 = column1.z;  this->m22 = column2.z;  this->m23 = column3.z;
+        this->m30 = column0.w;  this->m31 = column1.w;  this->m32 = column2.w;  this->m33 = column3.w;
+
+
     }
     Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar) {
         float invWidth = 1.0f / (right - left);
@@ -79,12 +81,12 @@ namespace System {
 
         return m;
     }
-    Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar){
+    Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
         System::Matrix4x4 orthoMatrix = {
-            Vector4(2.0f / (right - left),  0.0f, 0.0f, -(right + left) / (right - left)),
-            Vector4(0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom)),
-            Vector4(0.0f, 0.0f, -2.0f / (zFar - zNear),  -(zFar + zNear) / (zFar - zNear)),
-            Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+            Vector4(2.0f / (right - left), 0.0f, 0.0f, 0.0f),
+            Vector4(0.0f, 2.0f / (top - bottom), 0.0f, 0.0f),
+            Vector4(0.0f, 0.0f, -2.0f / (zFar - zNear), 0.0f),
+            Vector4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zFar + zNear) / (zFar - zNear), 1.0f)
         };
         return orthoMatrix;
     }
@@ -93,8 +95,8 @@ namespace System {
         System::Matrix4x4 perspectiveMatrix = {
             Vector4(1.0f / (aspect * tanHalfFov), 0.0f, 0.0f, 0.0f),
             Vector4(0.0f, 1.0f / tanHalfFov, 0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear),  -2.0f * zFar * zNear / (zFar - zNear)),
-            Vector4(0.0f, 0.0f, -1.0f, 0.0f)
+            Vector4(0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear), -1.0f),
+            Vector4(0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
         };
         return perspectiveMatrix;
     }

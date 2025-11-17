@@ -102,8 +102,8 @@ namespace System{
                 maxBounds.y = System::Mathf::Max(maxBounds.y, vertex.y);
                 maxBounds.z = System::Mathf::Max(maxBounds.z, vertex.z);
             }
-            bounds.min = minBounds;
-            bounds.max = maxBounds;
+            bounds.m_min = minBounds;
+            bounds.m_max = maxBounds;
             bounds.size = maxBounds - minBounds;
             bounds.center = (maxBounds + minBounds) * 0.5f;
             bounds.extents = bounds.size * 0.5f;

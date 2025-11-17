@@ -1,6 +1,6 @@
 #include <System/AudioSource.hpp>
 #include <System/Scene.hpp>
-#include <System/Internal/Audio/AudioEngine.hpp>
+#include <System/Internal/Audio/AudioEngineInterface.hpp>
 #include <System/Transform.hpp>
 
 namespace System {

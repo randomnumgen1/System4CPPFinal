@@ -46,6 +46,16 @@ namespace System {
         static Matrix4x4 Frustum(float left, float right, float bottom, float top, float zNear, float zFar);
         static Matrix4x4 LookAt(Vector3 from, Vector3 to, Vector3 up);
         static Matrix4x4 LookAt2(Vector3 from, Vector3 to, Vector3 up);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="left">Left-side x-coordinate.</param>
+        /// <param name="right">Right-side x-coordinate.</param>
+        /// <param name="bottom">Bottom y-coordinate.</param>
+        /// <param name="top">Top y-coordinate.</param>
+        /// <param name="zNear">Near depth clipping plane value.</param>
+        /// <param name="zFar">Far depth clipping plane value.</param>
+        /// <returns></returns>
         static Matrix4x4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar);
         static Matrix4x4 Perspective(float fov, float aspect, float zNear, float zFar);
         static Matrix4x4 Rotation(System::Quaternion q);

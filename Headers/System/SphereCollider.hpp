@@ -10,9 +10,10 @@ namespace System {
         Vector3 center;
         float radius;
         Bounds bounds() override {
-            Vector3 worldCenter = transform()->GetPosition() + center;
-            Vector3 size(radius * 2, radius * 2, radius * 2);
-            return Bounds(worldCenter, size);
+            return Bounds();
+           // Vector3 worldCenter = transform()->GetPosition() + center;
+           // Vector3 size(radius * 2, radius * 2, radius * 2);
+           // return Bounds(worldCenter, size);
         }
 
         Component* Clone() const override;
