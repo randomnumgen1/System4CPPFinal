@@ -4,6 +4,9 @@
 #include <System/Vector4.hpp>
 #include <System/Vector3.hpp>
 #include <System/Quaternion.hpp>
+#include <sstream>
+#include <iomanip>
+
 namespace System {
     struct Matrix4x4 {
 
@@ -65,6 +68,18 @@ namespace System {
          Vector4 GetColumn(int index);
          Vector4 GetRow(int index);
          Matrix4x4 inverse() const;
+
+         std::string ToString() const {
+             std::ostringstream oss;
+             oss << std::fixed << std::setprecision(4);
+             oss << "Matrix4x4(\n";
+             oss << "  [" << m00 << ", " << m01 << ", " << m02 << ", " << m03 << "],\n";
+             oss << "  [" << m10 << ", " << m11 << ", " << m12 << ", " << m13 << "],\n";
+             oss << "  [" << m20 << ", " << m21 << ", " << m22 << ", " << m23 << "],\n";
+             oss << "  [" << m30 << ", " << m31 << ", " << m32 << ", " << m33 << "]\n";
+             oss << ")";
+             return oss.str();
+         }
 
             /*
             ----------------------------------------------------------------------------------------
