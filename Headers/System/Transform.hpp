@@ -171,7 +171,9 @@ namespace System {
             }
             hasChanged = true;
         }
+        void LookAt(Transform target) {
 
+        }
         // Debugging
         void PrintPosition() const {
             System::Vector3 worldPos = GetPosition();
