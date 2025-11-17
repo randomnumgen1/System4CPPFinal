@@ -10,6 +10,10 @@ namespace System {
         newCollider->size = this->size;
         return newCollider;
     }
+    Bounds BoxCollider::bounds()
+    {
+        return Bounds();
+    }
     Vector3 BoxCollider::ClosestPoint(Vector3 position) {
         Vector3 closestPoint = position;
         Vector3 boxMin = bounds().m_min();
