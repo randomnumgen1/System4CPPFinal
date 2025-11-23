@@ -55,6 +55,16 @@ physicsEngine = new JoltPhysicsEngine();
 
 
     }
+
+    void Scene::Run(){
+        for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
+            GameObject* go = GameObject::allGameObjects[i];
+           
+
+        
+        }
+
+    }
  
     void Scene::Shutdown() {
         delete root;

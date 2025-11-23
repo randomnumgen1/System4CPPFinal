@@ -18,6 +18,7 @@ namespace System {
         /// Initializes the scene, setting up audio and physics engines.
         /// </summary>
         static void Initialize();
+        void Run();
         static void Shutdown();
     };
 }
