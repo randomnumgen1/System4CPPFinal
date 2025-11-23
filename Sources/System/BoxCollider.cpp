@@ -16,8 +16,8 @@ namespace System {
     }
     Vector3 BoxCollider::ClosestPoint(Vector3 position) {
         Vector3 closestPoint = position;
-        Vector3 boxMin = bounds().m_min();
-        Vector3 boxMax = bounds().m_max();
+        Vector3 boxMin = bounds().m_min;
+        Vector3 boxMax = bounds().m_max;
 
         closestPoint.x = std::max(boxMin.x, std::min(closestPoint.x, boxMax.x));
         closestPoint.y = std::max(boxMin.y, std::min(closestPoint.y, boxMax.y));
@@ -28,8 +28,8 @@ namespace System {
 
     Vector3 BoxCollider::ClosestPointOnBounds(Vector3 position) {
         Vector3 closestPoint = position;
-        Vector3 boxMin = bounds().m_min();
-        Vector3 boxMax = bounds().m_max();
+        Vector3 boxMin = bounds().m_min;
+        Vector3 boxMax = bounds().m_max;
 
         float dx = std::max({ boxMin.x - closestPoint.x, 0.0f, closestPoint.x - boxMax.x });
         float dy = std::max({ boxMin.y - closestPoint.y, 0.0f, closestPoint.y - boxMax.y });
