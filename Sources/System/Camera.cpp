@@ -1,6 +1,8 @@
 #include <System/Camera.hpp>
 #include <vector>
 
+namespace System {
+
 std::vector<System::Camera*> System::Camera::getallCameras(){
     std::vector<Camera*> activeCameras;
     for (const auto& camera : allCameras) {
@@ -70,3 +72,4 @@ void System::Camera::RenderStart() const{
 
     }
 }
+};
