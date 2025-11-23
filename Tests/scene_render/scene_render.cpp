@@ -5,7 +5,6 @@
 #include <System/MeshFilter.hpp>
 #include <System/Material.hpp>
 #include <System/Shader.hpp>
-#include <System/Image.hpp>
 #include <System/Texture2d.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
 
@@ -30,10 +29,7 @@ int main() {
     System::Scene scene;
     scene.Run();
 
-    // TODO: The rendering pipeline is not fully implemented.
-    // This will save a black image.
-    System::Image image(800, 600);
-    image.Save("render_output.bmp", System::Image::ImageFormat::BMP);
+
 
     delete material;
     delete shader;
