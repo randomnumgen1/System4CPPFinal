@@ -23,8 +23,12 @@ namespace System {
             return  renderedTexture ;
         }
 
-        int GetWidth() {}
-        int GetHeight() {}
+        int GetWidth() {
+            return 0;
+        }
+        int GetHeight() {
+            return 0;
+        }
         ~RenderTexture() {
          //   System::Graphics::GL::gl_glDeleteTextures(1, &renderedTexture);
         }
