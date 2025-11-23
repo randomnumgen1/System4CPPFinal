@@ -29,7 +29,11 @@ namespace System {
             material->shader->setMat4("view", camera->viewMatrix);
             material->shader->setMat4("projection", camera->projectionMatrix);
             material->shader->setColor("color", material->color);
+            meshFilter->mesh->UploadMeshData(false);
 
+            System::Graphics::GL::gl_glBindVertexArray(meshFilter->mesh->GetVAO());
+            System::Graphics::GL::gl_glDrawElements(GL_TRIANGLES, meshFilter->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+            System::Graphics::GL::gl_glBindVertexArray(0);
              
         }
         Component* Clone() const override {

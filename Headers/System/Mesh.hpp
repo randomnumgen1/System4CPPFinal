@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <variant>
 #include <string>
+#include <System/Graphics/GraphicsHelpers.h>
 
 #define ENUM_FLAG_OPERATORS(T) \
     inline T operator~ (T a) { return static_cast<T>(~static_cast<std::underlying_type_t<T>>(a)); } \
@@ -20,15 +21,15 @@
     inline T& operator|= (T& a, T b) { a = a | b; return a; } \
     inline T& operator&= (T& a, T b) { a = a & b; return a; } \
     inline T& operator^= (T& a, T b) { a = a ^ b; return a; }
-  
+
 
 enum bitFlags : uint32_t {
-            NoLongerReadable = 1 << 0,
-            Modified = 1 << 1
-       
-        };
- ENUM_FLAG_OPERATORS(bitFlags);
-namespace System{
+    NoLongerReadable = 1 << 0,
+    Modified = 1 << 1
+
+};
+ENUM_FLAG_OPERATORS(bitFlags);
+namespace System {
 
     class Mesh {
     private:
@@ -53,21 +54,28 @@ namespace System{
 
 
         std::vector<System::Vector3> vertices;
-        std::vector<System::Vector3> normals; 
+        std::vector<System::Vector3> normals;
         std::vector<int> indices;
         System::Bounds bounds;
         std::vector<SubMeshDescriptor> submeshes;
         std::vector<Vector4> tangents;
 
-        std::variant<std::monostate,std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
+        std::variant<std::monostate, std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
 
+        Mesh() : m_bitFlags(), m_VAO(0), m_VBO(0), m_EBO(0) {
 
+        }
+        ~Mesh() {
+            System::Graphics::GL::gl_glDeleteVertexArrays(1, &m_VAO);
+            System::Graphics::GL::gl_glDeleteBuffers(1, &m_VBO);
+            System::Graphics::GL::gl_glDeleteBuffers(1, &m_EBO);
+        }
 
-         
+        unsigned int GetVAO() const { return m_VAO; }
 
         void GetNativeIndexBufferPtr();
         void GetNativeVertexBufferPtr();
-  
+
 
         void GetUVs(int channel, std::vector<Vector2>& outUVs);
 
@@ -77,7 +85,8 @@ namespace System{
             if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
             if (auto* pval = std::get_if<std::vector<Vector4>>(&uvs[channel])) {
                 outUVs = *pval;
-            }else{
+            }
+            else {
                 throw std::runtime_error("UV channel " + std::to_string(channel) + " does not contain Vector4 data.");
             }
         }
@@ -85,7 +94,7 @@ namespace System{
 
 
         bool isReadable() const {
-           return (m_bitFlags & bitFlags::NoLongerReadable) != bitFlags::NoLongerReadable;
+            return (m_bitFlags & bitFlags::NoLongerReadable) != bitFlags::NoLongerReadable;
         }
         void RecalculateBounds() {
             if (vertices.empty()) {
@@ -196,7 +205,7 @@ namespace System{
             vertices = inVertices;
             m_bitFlags |= bitFlags::Modified;
         }
-        void SetVertices(System::Vector3* inVertices,int count) {
+        void SetVertices(System::Vector3* inVertices, int count) {
             vertices.assign(inVertices, inVertices + count);
             m_bitFlags |= bitFlags::Modified;
         }
@@ -217,7 +226,7 @@ namespace System{
             uvs[channel] = std::vector<Vector4>(data, data + count);
             m_bitFlags |= bitFlags::Modified;
         }
-        void SetUVs(int channel,const  std::vector<System::Vector2>& new_uvs) {
+        void SetUVs(int channel, const  std::vector<System::Vector2>& new_uvs) {
             if ((channel < 0) || (channel > 7)) [[unlikely]] {
                 throw std::out_of_range("Channel must be between 0 and 7");
             }
@@ -300,7 +309,7 @@ namespace System{
             tangents.clear();
             indices.clear();
             submeshes.clear();
-            bounds = Bounds(); 
+            bounds = Bounds();
 
             if (!keepVertexLayout) {
                 for (int i = 0; i < 8; ++i) {
@@ -332,14 +341,59 @@ namespace System{
                 throw std::out_of_range("Mesh was deleted from CPU side and is no longer readable.");
             }
 
-            // GPU upload here...
+            if (m_VAO == 0) {
+                System::Graphics::GL::gl_glGenVertexArrays(1, &m_VAO);
+                System::Graphics::GL::gl_glGenBuffers(1, &m_VBO);
+                System::Graphics::GL::gl_glGenBuffers(1, &m_EBO);
+            }
+
+            System::Graphics::GL::gl_glBindVertexArray(m_VAO);
+            System::Graphics::GL::gl_glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+            size_t vertexSize = sizeof(Vector3) * vertices.size();
+            size_t normalSize = sizeof(Vector3) * normals.size();
+            size_t uvSize = 0;
+            if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
+                uvSize = sizeof(Vector2) * pval->size();
+            }
+
+            System::Graphics::GL::gl_glBufferData(GL_ARRAY_BUFFER, vertexSize + normalSize + uvSize, NULL, GL_STATIC_DRAW);
+
+            System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, 0, vertexSize, vertices.data());
+            System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, vertexSize, normalSize, normals.data());
+            if (uvSize > 0) {
+                if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
+                    System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, vertexSize + normalSize, uvSize, pval->data());
+                }
+            }
+
+            System::Graphics::GL::gl_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+            System::Graphics::GL::gl_glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+
+            System::Graphics::GL::gl_glEnableVertexAttribArray(0);
+            System::Graphics::GL::gl_glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vector3), (void*)0);
+
+            System::Graphics::GL::gl_glEnableVertexAttribArray(1);
+            System::Graphics::GL::gl_glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vector3), (void*)vertexSize);
+
+            if (uvSize > 0) {
+                System::Graphics::GL::gl_glEnableVertexAttribArray(2);
+                System::Graphics::GL::gl_glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vector2), (void*)(vertexSize + normalSize));
+            }
+
+            System::Graphics::GL::gl_glBindVertexArray(0);
 
             if (markNoLongerReadable) {
+                vertices.clear();
+                normals.clear();
+                indices.clear();
+                for (int i = 0; i < 8; ++i) {
+                    uvs[i] = std::monostate{};
+                }
                 m_bitFlags |= bitFlags::NoLongerReadable;
             }
-            //clear the modified flag
             m_bitFlags &= ~bitFlags::Modified;
-        } 
+        }
 
 
     };
