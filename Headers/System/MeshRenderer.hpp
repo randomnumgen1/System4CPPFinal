@@ -32,7 +32,11 @@ namespace System {
 
              
         }
-
+        Component* Clone() const override {
+            MeshRenderer* new_renderer = new MeshRenderer();
+            new_renderer->material = material;
+            return new_renderer;
+        }
  
     };
 }

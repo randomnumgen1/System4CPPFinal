@@ -40,7 +40,20 @@ public:
     static Camera* Getmain();
     Camera();
     ~Camera();
-
+    Component* Clone() const override {
+        Camera* new_camera = new Camera();
+        new_camera->isMain = isMain;
+        new_camera->cullingMask = cullingMask;
+        new_camera->viewport = viewport;
+        new_camera->nearClipPlane = nearClipPlane;
+        new_camera->farClipPlane = farClipPlane;
+        new_camera->targetDisplay = targetDisplay;
+        new_camera->orthographic = orthographic;
+        new_camera->active = active;
+        new_camera->priority = priority;
+        new_camera->targetTexture = targetTexture;
+        return new_camera;
+    }
 
     void RenderStart() const; 
 };

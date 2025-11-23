@@ -31,7 +31,7 @@ namespace System {
             Graphics::GL::gl_glUniformMatrix4fv(Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), 1, false, &mat.m00);
         }
         void setColor(const std::string& name, const Color& color){
-            Graphics::GL::gl_glUniform4f(Graphics::GL::gl_glGetUniformLocation(ID, name.c_c_str()), color.r, color.g, color.b, color.a);
+            Graphics::GL::gl_glUniform4f(Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), color.r, color.g, color.b, color.a);
         }
     private:
         void checkCompileErrors(unsigned int shader, std::string type){
