@@ -57,6 +57,7 @@ physicsEngine = new JoltPhysicsEngine();
     }
 
     void Scene::Run(){
+        auto cam = Camera::Getmain();
         for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
             GameObject* go = GameObject::allGameObjects[i];
            
