@@ -1,5 +1,6 @@
 #include <System/Scene.hpp>
 #include <System/GameObject.hpp>
+#include <System/Camera.hpp>
 //Audio
 #if defined(SYSTEM_AUDIO_OPENAL)
 #include <System/Internal/Audio/OpenALEngine.hpp>
@@ -57,16 +58,28 @@ physicsEngine = new JoltPhysicsEngine();
     }
 
     void Scene::Run(){
-        auto cam = Camera::Getmain();
+        // Update All GameObjects
+        
         for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
             GameObject* go = GameObject::allGameObjects[i];
-           
-
-        
         }
 
-    }
- 
+        // Render Scene
+        System::Camera* cam = Camera::Getmain();
+        for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
+            GameObject* go = GameObject::allGameObjects[i];
+            if (go->TryGetComponent<System::MeshRenderer>()) {
+             go->GetComponent<System::MeshRenderer>()->Render(cam);
+            }
+
+
+
+           
+
+            
+        }
+
+    } 
     void Scene::Shutdown() {
         delete root;
         root = nullptr;
