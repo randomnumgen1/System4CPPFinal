@@ -136,6 +136,7 @@ namespace System::Graphics{
 			return false;
 #else
 
+			return false;
 #endif
 		}
 		static std::vector<std::string> ListExtensions(){
@@ -152,6 +153,8 @@ namespace System::Graphics{
 				}
 			}
 			return extensions;
+#else
+			return std::vector<std::string>();
 #endif
 		}
 
@@ -161,6 +164,8 @@ namespace System::Graphics{
 		inline static void gl_glBindTexture(GLenum1 target, uint32_t texture){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindTexture( (unsigned int)target,   texture);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glTexSubImage2D(){
@@ -180,41 +185,57 @@ namespace System::Graphics{
 		inline static void gl_glUniformMatrix4fv(int location, int count, bool transpose, const float* value) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniformMatrix4fv(location, count, transpose, value);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static int gl_glGetUniformLocation(uint32_t program, const char* name) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			return SYSTEM_INTERNAL_glGetUniformLocation(program, name);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glBindFramebuffer(GL_FrameBufferTarget target, uint32_t framebuffer){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindFramebuffer(static_cast<GLenum>(target), static_cast<GLuint>(framebuffer));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glViewport(float x, float y, float width, float height) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glViewport(x,y,width,height);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static const uint8_t* gl_glGetString(GLenum name) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			return reinterpret_cast<const uint8_t*>(SYSTEM_INTERNAL_glGetString(name));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static const uint8_t* gl_glGetStringi(GLenum name, GLuint index) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			return reinterpret_cast<const uint8_t*>(SYSTEM_INTERNAL_glGetStringi(name, index));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glClear(GL_BitField BitField) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glClear(BitField);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glClearColor(float r, float g, float b, float a){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glClearColor(r, g, b, a);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glDrawArrays(GL_DrawMode mode, int first, int count) {
@@ -225,11 +246,15 @@ namespace System::Graphics{
 		inline static void gl_glGenBuffers(int n,uint32_t* buffers) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenBuffers(n,buffers);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBufferData(target,size,data,usage);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		/// <summary>
@@ -240,139 +265,193 @@ namespace System::Graphics{
 		inline static uint32_t gl_glCreateShader(shaderTypes n){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCreateShader(n);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glShaderSource(shader,count,string,length);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glCompileShader(GLuint shader){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCompileShader(shader);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGetShaderiv(GLuint shader, GLenum pname, GLint* params){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetShaderiv(shader,pname,params);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetShaderInfoLog(shader, bufSize,length,infoLog);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static uint32_t gl_glCreateProgram(){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCreateProgram();
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glAttachShader(GLuint program, GLuint shader){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glAttachShader(program, shader);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glLinkProgram(GLuint program){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glLinkProgram(program);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGetProgramiv(GLuint program, GLenum pname, GLint* params){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetProgramiv(program,pname,params);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGetProgramInfoLog(GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetProgramInfoLog(program, bufSize,  length, infoLog);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glUseProgram(GLuint program){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUseProgram(program);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glDeleteShader(GLuint shader){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glDeleteShader(shader);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glVertexAttribPointer( index,  size,  type,  normalized,  stride, pointer);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glEnableVertexAttribArray(GLuint index){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glEnableVertexAttribArray(index);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glBindBuffer(GLenum target, GLuint buffer){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindBuffer( target,  buffer);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		} 
 		inline static void gl_glGenVertexArrays(GLsizei n, GLuint* arrays){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenVertexArrays(  n,  arrays);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 
 		inline static void gl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glDrawElements(  mode,   count,   type,   indices);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		} 
 		inline static void gl_glBindVertexArray(GLuint array){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindVertexArray(  array);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGetIntegerv(GLenum pname, GLint* data){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetIntegerv(  pname,   data);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 
 		inline static void gl_glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform4f(  location,   v0,   v1,   v2,   v3);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glUniform1i(GLint location, GLint v0){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform1i(  location,   v0);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glUniform1f(GLint location, GLfloat v0){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform1f(  location,   v0);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glTexParameteri(GLenum target, GLenum pname, GLint param){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexParameteri(  target,   pname,   param);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glTexParameterfv(GLenum target, GLenum pname, const GLfloat* params){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexParameterfv(  target,   pname,   params);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glGenerateMipmap(GLenum target){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenerateMipmap(  target);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 
 		inline static void gl_glActiveTexture(GLenum texture){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glActiveTexture(  texture);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		inline static void gl_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexImage2D(  target,   level,   internalformat,   width,   height,   border,   format,   type,   pixels);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
 		
