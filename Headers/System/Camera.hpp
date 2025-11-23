@@ -10,9 +10,14 @@
 #include <System/Transform.hpp>
 #include <algorithm>
 namespace System{
-struct Camera {
+class Camera : public System::Component {
     static std::vector<Camera*> allCameras;
 public:
+
+    Matrix4x4 viewMatrix;
+    Matrix4x4 projectionMatrix;
+
+
     bool isMain;
     uint32_t cullingMask;
     System::Rect viewport;
