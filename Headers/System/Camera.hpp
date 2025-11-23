@@ -2,14 +2,18 @@
 #define _SYSTEM_CAMERA_H
 
 #include <vector>
-#include <System/RenderTexture.h>
+ 
 #include <System/Rect.hpp>
-#include <System/Mathf.hpp>
-#include <System/Graphics/GraphicsHelpers.h>
+#include <System/Component.hpp>
 #include <System/Matrix4x4.hpp>
-#include <System/Transform.hpp>
-#include <algorithm>
+
+
+
+
 namespace System{
+    class RenderTexture;
+    class Matrix4x4;
+
 class Camera : public System::Component {
     static std::vector<Camera*> allCameras;
 public:
@@ -28,7 +32,7 @@ public:
     bool active;
     int priority;
     System::RenderTexture* targetTexture;
-    System::Transform transform;
+   // System::Transform transform;
 
     static std::vector<Camera*> getallCameras();
 

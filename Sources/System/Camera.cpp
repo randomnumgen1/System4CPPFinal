@@ -1,5 +1,11 @@
 #include <System/Camera.hpp>
 #include <vector>
+#include <System/RenderTexture.h>
+#include <algorithm>
+#include <System/Mathf.hpp>
+#include <System/Graphics/GraphicsHelpers.h>
+
+
 
 namespace System {
 
