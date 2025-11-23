@@ -11,10 +11,12 @@ void System::DummyPhysicsEngine::Shutdown(){
 }
 
 bool System::DummyPhysicsEngine::Raycast(Vector3 origin, Vector3 direction, float maxDistance, uint32_t layerMask){
+    std::cout << "DummyPhysicsEngine::Raycast" << std::endl;
     return false;
 }
 
 bool System::DummyPhysicsEngine::Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, float maxDistance, uint32_t layerMask){
+    std::cout << "DummyPhysicsEngine::Raycast" << std::endl;
     return false;
 }
 
@@ -27,5 +29,5 @@ void System::DummyPhysicsEngine::Setgravity(const Vector3& gravity){
 }
 
 void System::DummyPhysicsEngine::GenerateCollider(const System::Mesh& mesh){
-
+    std::cout << "DummyPhysicsEngine::GenerateCollider" << std::endl;
 }
