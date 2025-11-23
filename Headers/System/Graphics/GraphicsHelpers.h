@@ -1,15 +1,18 @@
 #ifndef _SYSTEM_GRAPHICS_H
 #define _SYSTEM_GRAPHICS_H
 
+#include <System/Internal/InternalGLloader.h> 
+#include <string>
+#include <vector>
+
+
+
 #if (defined(__x86_64__) || defined(_M_X64))// && defined(_WIN32)
 #define _SYSTEM_OPENGL_WIN
 #include <cstdint>
 #elif defined(__arm__) || defined(_M_ARM)
 #define _SYSTEM_OPENGLES_ARM
 #endif
-#include <System/Internal/InternalGLloader.h> 
-#include <string>
-#include <vector>
 
 
 
@@ -51,6 +54,7 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 #define ENUM_FLAGS(T) ENUM_FLAGS_EX(T,uint32_t)
 #endif
+ 
 
 
 
@@ -67,7 +71,21 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
- 
+	enum class ProgramParam : int32_t {
+		LINK_STATUS = 0x8B82, // GL_LINK_STATUS
+		VALIDATE_STATUS = 0x8B83, // GL_VALIDATE_STATUS
+		INFO_LOG_LENGTH = 0x8B84, // GL_INFO_LOG_LENGTH
+		ATTACHED_SHADERS = 0x8B85, // GL_ATTACHED_SHADERS
+		ACTIVE_ATTRIBUTES = 0x8B89, // GL_ACTIVE_ATTRIBUTES
+		ACTIVE_ATTRIBUTE_MAX_LENGTH = 0x8B8A, // GL_ACTIVE_ATTRIBUTE_MAX_LENGTH
+		ACTIVE_UNIFORMS = 0x8B86, // GL_ACTIVE_UNIFORMS
+		ACTIVE_UNIFORM_MAX_LENGTH = 0x8B87  // GL_ACTIVE_UNIFORM_MAX_LENGTH
+	};
+	typedef enum ShaderParam : int32_t {
+		COMPILE_STATUS = 0x8B81,
+		INFO_LOG_LENGTH = 0x8B84,
+	} ShaderParam;
+
 	enum shaderTypes : int32_t {
 		GL_COMPUTE_SHADER = 0x91B9,
 		GL_VERTEX_SHADER = 0x8B31,
@@ -161,6 +179,22 @@ namespace System::Graphics{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		inline static void gl_glBindTexture(GLenum1 target, uint32_t texture){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindTexture( (unsigned int)target,   texture);
@@ -171,16 +205,6 @@ namespace System::Graphics{
 		inline static void gl_glTexSubImage2D(){
 			//SYSTEM_INTERNAL_glTexSubImage2D();
 		}
-
-
-
-
-
-
-
-
-
-
 
 		inline static void gl_glUniformMatrix4fv(int location, int count, bool transpose, const float* value) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
@@ -283,12 +307,8 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glGetShaderiv(GLuint shader, GLenum pname, GLint* params){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glGetShaderiv(shader,pname,params);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
+		inline static void gl_glGetShaderiv(GLuint shader, ShaderParam pname, GLint* params) {
+			SYSTEM_INTERNAL_glGetShaderiv(shader, static_cast<GLenum>(pname), params);
 		}
 		inline static void gl_glGetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
@@ -318,9 +338,15 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glGetProgramiv(GLuint program, GLenum pname, GLint* params){
+		/// <summary>
+		/// glGetProgramiv
+		/// </summary>
+		/// <param name="program"></param>
+		/// <param name="pname"></param>
+		/// <param name="params"></param>
+		inline static void gl_glGetProgramiv(GLuint program, ProgramParam pname, GLint* params){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glGetProgramiv(program,pname,params);
+			SYSTEM_INTERNAL_glGetProgramiv(program, static_cast<GLenum>(pname),params);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
@@ -457,8 +483,9 @@ namespace System::Graphics{
 		
 	}; 
 
-#endif
 
- 
+
 
 } 
+
+#endif

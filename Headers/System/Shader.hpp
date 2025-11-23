@@ -39,14 +39,14 @@ namespace System {
             int success;
             char infoLog[1024];
             if (type != "PROGRAM") {
-                System::Graphics::GL::gl_glGetShaderiv(shader, System::Graphics::GL_COMPILE_STATUS, &success);
+                System::Graphics::GL::gl_glGetShaderiv(shader, System::Graphics::ShaderParam::COMPILE_STATUS, &success);
                 if (!success) {
                     System::Graphics::GL::gl_glGetShaderInfoLog(shader, 1024, NULL, infoLog);
                     std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
                 }
             }
             else {
-                System::Graphics::GL::gl_glGetProgramiv(shader, System::Graphics::GL_LINK_STATUS, &success);
+                System::Graphics::GL::gl_glGetProgramiv(shader, System::Graphics::ProgramParam::LINK_STATUS, &success);
                 if (!success) {
                     System::Graphics::GL::gl_glGetProgramInfoLog(shader, 1024, NULL, infoLog);
                     std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
