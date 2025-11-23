@@ -2,6 +2,8 @@
 #include <System/Scene.hpp>
 #include <System/Transform.hpp>
 #include <algorithm>
+#include <System/Mesh.hpp>
+#include <System/MeshFilter.hpp>
 
 namespace System {
     std::vector<GameObject*> GameObject::allGameObjects;
@@ -28,6 +30,83 @@ namespace System {
         return (it != allGameObjects.end()) ? *it : nullptr;
     }
     GameObject* GameObject::CreatePrimitive(PrimitiveType type) {
+        Mesh* mesh = new Mesh();
+        if (PrimitiveType::Cube == type) {
+            std::vector<Vector3> vertices = {
+                // Front face
+                Vector3(-0.5f, -0.5f,  0.5f),
+                Vector3(0.5f, -0.5f,  0.5f),
+                Vector3(0.5f,  0.5f,  0.5f),
+                Vector3(-0.5f,  0.5f,  0.5f),
+
+                // Back face
+                Vector3(-0.5f, -0.5f, -0.5f),
+                Vector3(0.5f, -0.5f, -0.5f),
+                Vector3(0.5f,  0.5f, -0.5f),
+                Vector3(-0.5f,  0.5f, -0.5f),
+
+                // Top face
+                Vector3(-0.5f,  0.5f,  0.5f),
+                Vector3(0.5f,  0.5f,  0.5f),
+                Vector3(0.5f,  0.5f, -0.5f),
+                Vector3(-0.5f,  0.5f, -0.5f),
+
+                // Bottom face
+                Vector3(-0.5f, -0.5f,  0.5f),
+                Vector3(0.5f, -0.5f,  0.5f),
+                Vector3(0.5f, -0.5f, -0.5f),
+                Vector3(-0.5f, -0.5f, -0.5f),
+
+                // Right face
+                Vector3(0.5f, -0.5f,  0.5f),
+                Vector3(0.5f, -0.5f, -0.5f),
+                Vector3(0.5f,  0.5f, -0.5f),
+                Vector3(0.5f,  0.5f,  0.5f),
+
+                // Left face
+                Vector3(-0.5f, -0.5f,  0.5f),
+                Vector3(-0.5f, -0.5f, -0.5f),
+                Vector3(-0.5f,  0.5f, -0.5f),
+                Vector3(-0.5f,  0.5f,  0.5f)
+            };
+
+            std::vector<int> triangles = {
+                // Front face
+                0, 1, 2,
+                2, 3, 0,
+
+                // Back face
+                4, 5, 6,
+                6, 7, 4,
+
+                // Top face
+                8, 9, 10,
+                10, 11, 8,
+
+                // Bottom face
+                12, 13, 14,
+                14, 15, 12,
+
+                // Right face
+                16, 17, 18,
+                18, 19, 16,
+
+                // Left face
+                20, 21, 22,
+                22, 23, 20
+            };
+
+            mesh->SetVertices(vertices);
+            mesh->SetTriangles(triangles, 0);
+
+            mesh->RecalculateNormals();
+            mesh->RecalculateBounds();
+
+            GameObject* go = new GameObject("Cube");
+            MeshFilter* mf = go->AddComponent<MeshFilter>();
+            mf->mesh = mesh;
+            return go;
+        }
         // Not implemented
         return nullptr;
     }
