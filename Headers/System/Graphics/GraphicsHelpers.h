@@ -9,6 +9,7 @@
 #endif
 #include <System/Internal/InternalGLloader.h> 
 #include <string>
+#include <vector>
 
 
 
@@ -66,6 +67,15 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+ 
+	enum shaderTypes : int32_t {
+		GL_COMPUTE_SHADER = 0x91B9,
+		GL_VERTEX_SHADER = 0x8B31,
+		GL_TESS_CONTROL_SHADER = 0x8E88,
+		GL_TESS_EVALUATION_SHADER = 0x8E87,
+		GL_GEOMETRY_SHADER = 0x8DD9,
+		GL_FRAGMENT_SHADER = 0x8B30
+	};
 	enum class GLenum1 : unsigned int{
 	 GL_TEXTURE_2D = 0x0DE1
 	};
@@ -222,7 +232,12 @@ namespace System::Graphics{
 			SYSTEM_INTERNAL_glBufferData(target,size,data,usage);
 #endif
 		}
-		inline static uint32_t gl_glCreateShader(int n){
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="n"></param>
+		/// <returns></returns>
+		inline static uint32_t gl_glCreateShader(shaderTypes n){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCreateShader(n);
 #endif
