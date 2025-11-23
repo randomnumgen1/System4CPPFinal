@@ -1,3 +1,7 @@
+#ifndef _SYSTEM_TEXTURE2D_HPP
+#define _SYSTEM_TEXTURE2D_HPP
+
+
 #include <System/Image.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
 namespace System{
@@ -38,3 +42,4 @@ namespace System{
 
     };
 }
+#endif

@@ -34,7 +34,7 @@ namespace System{
     private:
 
         bitFlags m_bitFlags;
-        
+        unsigned int m_VAO, m_VBO, m_EBO;
     public:
         enum MeshTopology {
             Triangles,
