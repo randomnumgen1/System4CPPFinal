@@ -1,7 +1,7 @@
 #ifndef _SYSTEM_GRAPHICS_H
 #define _SYSTEM_GRAPHICS_H
 
-#if (defined(__x86_64__) || defined(_M_X64)) && defined(_WIN32)
+#if (defined(__x86_64__) || defined(_M_X64))// && defined(_WIN32)
 #define _SYSTEM_OPENGL_WIN
 #include <cstdint>
 #elif defined(__arm__) || defined(_M_ARM)
@@ -65,8 +65,7 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 
-namespace System::Graphics{
-#ifdef _SYSTEM_OPENGL_WIN
+namespace System::Graphics{ 
 	enum class GLenum1 : unsigned int{
 	 GL_TEXTURE_2D = 0x0DE1
 	};
@@ -113,6 +112,7 @@ namespace System::Graphics{
 
 
 		static bool IsExtensionSupported(const std::string& v) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			int GL_NUM_EXTENSIONS = 0x821D;
 			int GL_EXTENSIONS = 0x1F03;
 			int numExtensions = 0;
@@ -124,8 +124,12 @@ namespace System::Graphics{
 				}
 			}
 			return false;
+#else
+
+#endif
 		}
 		static std::vector<std::string> ListExtensions(){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			std::vector<std::string> extensions;
 			int numExtensions = 0;
 			int GL_NUM_EXTENSIONS = 0x821D;
@@ -138,13 +142,16 @@ namespace System::Graphics{
 				}
 			}
 			return extensions;
+#endif
 		}
 
 
 
 
 		inline static void gl_glBindTexture(GLenum1 target, uint32_t texture){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindTexture( (unsigned int)target,   texture);
+#endif
 		}
 		inline static void gl_glTexSubImage2D(){
 			//SYSTEM_INTERNAL_glTexSubImage2D();
@@ -161,121 +168,197 @@ namespace System::Graphics{
 
 
 		inline static void gl_glUniformMatrix4fv(int location, int count, bool transpose, const float* value) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniformMatrix4fv(location, count, transpose, value);
+#endif
 		}
 		inline static int gl_glGetUniformLocation(uint32_t program, const char* name) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			return SYSTEM_INTERNAL_glGetUniformLocation(program, name);
+#endif
 		}
 		inline static void gl_glBindFramebuffer(GL_FrameBufferTarget target, uint32_t framebuffer){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindFramebuffer(static_cast<GLenum>(target), static_cast<GLuint>(framebuffer));
+#endif
 		}
 		inline static void gl_glViewport(float x, float y, float width, float height) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glViewport(x,y,width,height);
+#endif
 		}
 		inline static const uint8_t* gl_glGetString(GLenum name) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			return reinterpret_cast<const uint8_t*>(SYSTEM_INTERNAL_glGetString(name));
+#endif
 		}
 		inline static const uint8_t* gl_glGetStringi(GLenum name, GLuint index) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			return reinterpret_cast<const uint8_t*>(SYSTEM_INTERNAL_glGetStringi(name, index));
+#endif
 		}
 		inline static void gl_glClear(GL_BitField BitField) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glClear(BitField);
+#endif
 		}
 		inline static void gl_glClearColor(float r, float g, float b, float a){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glClearColor(r, g, b, a);
+#endif
 		}
 		inline static void gl_glDrawArrays(GL_DrawMode mode, int first, int count) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glDrawArrays(static_cast<GLenum>(mode), static_cast<GLint>(first), static_cast<GLsizei>(count));//(GLenum mode, GLint first, GLsizei count);
+#endif
 		}
 		inline static void gl_glGenBuffers(int n,uint32_t* buffers) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenBuffers(n,buffers);
+#endif
 		}
 		inline static void gl_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBufferData(target,size,data,usage);
+#endif
 		}
 		inline static uint32_t gl_glCreateShader(int n){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCreateShader(n);
+#endif
 		}
 		inline static void gl_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glShaderSource(shader,count,string,length);
+#endif
 		}
 		inline static void gl_glCompileShader(GLuint shader){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCompileShader(shader);
+#endif
 		}
 		inline static void gl_glGetShaderiv(GLuint shader, GLenum pname, GLint* params){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetShaderiv(shader,pname,params);
+#endif
 		}
 		inline static void gl_glGetShaderInfoLog(GLuint shader, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetShaderInfoLog(shader, bufSize,length,infoLog);
+#endif
 		}
 		inline static uint32_t gl_glCreateProgram(){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glCreateProgram();
+#endif
 		}
 		inline static void gl_glAttachShader(GLuint program, GLuint shader){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glAttachShader(program, shader);
+#endif
 		}
 		inline static void gl_glLinkProgram(GLuint program){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glLinkProgram(program);
+#endif
 		}
 		inline static void gl_glGetProgramiv(GLuint program, GLenum pname, GLint* params){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetProgramiv(program,pname,params);
+#endif
 		}
 		inline static void gl_glGetProgramInfoLog(GLuint program, GLsizei bufSize, GLsizei* length, GLchar* infoLog){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetProgramInfoLog(program, bufSize,  length, infoLog);
+#endif
 		}
 		inline static void gl_glUseProgram(GLuint program){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUseProgram(program);
+#endif
 		}
 		inline static void gl_glDeleteShader(GLuint shader){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glDeleteShader(shader);
+#endif
 		}
 		inline static void gl_glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glVertexAttribPointer( index,  size,  type,  normalized,  stride, pointer);
+#endif
 		}
 		inline static void gl_glEnableVertexAttribArray(GLuint index){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glEnableVertexAttribArray(index);
+#endif
 		}
 		inline static void gl_glBindBuffer(GLenum target, GLuint buffer){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindBuffer( target,  buffer);
+#endif
 		} 
 		inline static void gl_glGenVertexArrays(GLsizei n, GLuint* arrays){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenVertexArrays(  n,  arrays);
+#endif
 		}
 
 		inline static void gl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glDrawElements(  mode,   count,   type,   indices);
+#endif
 		} 
 		inline static void gl_glBindVertexArray(GLuint array){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindVertexArray(  array);
+#endif
 		}
 		inline static void gl_glGetIntegerv(GLenum pname, GLint* data){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGetIntegerv(  pname,   data);
+#endif
 		}
 
 		inline static void gl_glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform4f(  location,   v0,   v1,   v2,   v3);
+#endif
 		}
 		inline static void gl_glUniform1i(GLint location, GLint v0){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform1i(  location,   v0);
+#endif
 		}
 		inline static void gl_glUniform1f(GLint location, GLfloat v0){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform1f(  location,   v0);
+#endif
 		}
 		inline static void gl_glTexParameteri(GLenum target, GLenum pname, GLint param){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexParameteri(  target,   pname,   param);
+#endif
 		}
 		inline static void gl_glTexParameterfv(GLenum target, GLenum pname, const GLfloat* params){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexParameterfv(  target,   pname,   params);
+#endif
 		}
 		inline static void gl_glGenerateMipmap(GLenum target){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenerateMipmap(  target);
+#endif
 		}
 
 		inline static void gl_glActiveTexture(GLenum texture){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glActiveTexture(  texture);
+#endif
 		}
 		inline static void gl_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glTexImage2D(  target,   level,   internalformat,   width,   height,   border,   format,   type,   pixels);
+#endif
 		}
 		
 	}; 
@@ -284,5 +367,4 @@ namespace System::Graphics{
 
  
 
-}
-#endif
+} 
