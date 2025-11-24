@@ -11,6 +11,7 @@ namespace System {
 
 
     public:
+        virtual ~DummyPhysicsEngine() = default;
         void Initialize() override;
         void Shutdown() override;
         bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, uint32_t layerMask) override;
