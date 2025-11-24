@@ -72,6 +72,25 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	enum class IndexType : int32_t {
+		UNSIGNED_BYTE = 0x1401, // GL_UNSIGNED_BYTE
+		UNSIGNED_SHORT = 0x1403, // GL_UNSIGNED_SHORT
+		UNSIGNED_INT = 0x1405  // GL_UNSIGNED_INT
+	};
+	enum class DrawMode : int32_t {
+		POINTS = 0x0000, // GL_POINTS
+		LINE_STRIP = 0x0003, // GL_LINE_STRIP
+		LINE_LOOP = 0x0002, // GL_LINE_LOOP
+		LINES = 0x0001, // GL_LINES
+		LINE_STRIP_ADJACENCY = 0x000B, // GL_LINE_STRIP_ADJACENCY
+		LINES_ADJACENCY = 0x000A, // GL_LINES_ADJACENCY
+		TRIANGLE_STRIP = 0x0005, // GL_TRIANGLE_STRIP
+		TRIANGLE_FAN = 0x0006, // GL_TRIANGLE_FAN
+		TRIANGLES = 0x0004, // GL_TRIANGLES
+		TRIANGLE_STRIP_ADJACENCY = 0x000D, // GL_TRIANGLE_STRIP_ADJACENCY
+		TRIANGLES_ADJACENCY = 0x000C, // GL_TRIANGLES_ADJACENCY
+		PATCHES = 0x000E  // GL_PATCHES
+	};
 	enum class ProgramParam : int32_t {
 		LINK_STATUS = 0x8B82, // GL_LINK_STATUS
 		VALIDATE_STATUS = 0x8B83, // GL_VALIDATE_STATUS
@@ -176,8 +195,25 @@ namespace System::Graphics{
 			return std::vector<std::string>();
 #endif
 		}
-
-
+		/// <summary>
+		/// Creates a shader object
+		/// </summary>
+		/// <param name="n">Specifies the type of shader to be created. Must be one of GL_COMPUTE_SHADER, GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER</param>
+		/// <returns></returns>
+		inline static uint32_t gl_glCreateShader(shaderTypes n){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			return SYSTEM_INTERNAL_glCreateShader(n);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+		inline static void gl_glDrawElements(DrawMode mode, int count, IndexType type, const void* indices){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDrawElements(static_cast<GLenum>(mode), static_cast<GLsizei>(count), static_cast<GLenum>(type),   indices);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		} 
 
 
 
@@ -282,18 +318,7 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		/// <summary>
-		/// Creates a shader object
-		/// </summary>
-		/// <param name="n">Specifies the type of shader to be created. Must be one of GL_COMPUTE_SHADER, GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER</param>
-		/// <returns></returns>
-		inline static uint32_t gl_glCreateShader(shaderTypes n){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			return SYSTEM_INTERNAL_glCreateShader(n);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		}
+
 		inline static void gl_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glShaderSource(shader,count,string,length);
@@ -402,13 +427,7 @@ namespace System::Graphics{
 #endif
 		}
 
-		inline static void gl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glDrawElements(  mode,   count,   type,   indices);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		} 
+
 		inline static void gl_glBindVertexArray(GLuint array){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindVertexArray(  array);
