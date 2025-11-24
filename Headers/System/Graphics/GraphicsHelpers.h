@@ -345,7 +345,7 @@ namespace System::Graphics{
 		}
 		inline static uint32_t gl_glCreateProgram(){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glCreateProgram();
+			return SYSTEM_INTERNAL_glCreateProgram();
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
