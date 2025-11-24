@@ -1533,12 +1533,12 @@ static OpenGLProc OpenGLGetProc(const char* proc)
 #else
 
 typedef void (*__GLXextproc)(void);
-typedef __GLXextproc(*extern PFNGLXGETPROCADDRESSPROC) (const GLubyte* procName);
-static extern PFNGLXGETPROCADDRESSPROC glx_get_proc_address;
+typedef __GLXextproc(*PFNGLXGETPROCADDRESSPROC) (const GLubyte* procName);
+static PFNGLXGETPROCADDRESSPROC glx_get_proc_address;
 static void LoadOpenGL()
 {
     OpenGLHandle = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
-    glx_get_proc_address = (extern PFNGLXGETPROCADDRESSPROC)dlsym(OpenGLHandle, "glXGetProcAddressARB");
+    glx_get_proc_address = (PFNGLXGETPROCADDRESSPROC)dlsym(OpenGLHandle, "glXGetProcAddressARB");
 }
 static OpenGLProc OpenGLGetProc(const char* proc)
 {
@@ -2283,7 +2283,9 @@ void OpenGLInit(OpenGLVersion* Version)
 #endif
 
     if (!SYSTEM_INTERNAL_glClearColor) {
+#ifdef _WIN32
         MessageBoxA(NULL, "SYSTEM_INTERNAL_glClearColor failed to load!", "Error", MB_OK | MB_ICONERROR);
+#endif
     }
 
 

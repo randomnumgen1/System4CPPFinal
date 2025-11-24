@@ -12,7 +12,8 @@ using namespace System::Graphics;
 
 int main() {
     System::Scene::Initialize();
-
+  OpenGLVersion version;
+    OpenGLInit(&version);
     System::GameObject* cameraGO = new System::GameObject("Main Camera");
     System::Camera* camera = cameraGO->AddComponent<System::Camera>();
     camera->isMain = true;
