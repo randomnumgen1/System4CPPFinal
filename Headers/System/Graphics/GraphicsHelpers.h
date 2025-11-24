@@ -282,13 +282,13 @@ namespace System::Graphics{
 #endif
 		}
 		/// <summary>
-		/// 
+		/// Creates a shader object
 		/// </summary>
-		/// <param name="n"></param>
+		/// <param name="n">Specifies the type of shader to be created. Must be one of GL_COMPUTE_SHADER, GL_VERTEX_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_GEOMETRY_SHADER, or GL_FRAGMENT_SHADER</param>
 		/// <returns></returns>
 		inline static uint32_t gl_glCreateShader(shaderTypes n){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glCreateShader(n);
+			return SYSTEM_INTERNAL_glCreateShader(n);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
