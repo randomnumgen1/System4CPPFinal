@@ -32,7 +32,7 @@ namespace System {
             meshFilter->mesh->UploadMeshData(false);
 
             System::Graphics::GL::gl_glBindVertexArray(meshFilter->mesh->GetVAO());
-            System::Graphics::GL::gl_glDrawElements(GL_TRIANGLES, meshFilter->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+            System::Graphics::GL::gl_glDrawElements(GL_TRIANGLES, meshFilter->mesh->indices.size(), GL_UNSIGNED_INT, 0);//fix
             System::Graphics::GL::gl_glBindVertexArray(0);
              
         }

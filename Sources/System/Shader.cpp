@@ -24,6 +24,7 @@ namespace System {
         }
         catch (std::ifstream::failure& e) {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+            throw e;
         }
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();

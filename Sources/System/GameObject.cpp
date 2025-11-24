@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <System/Mesh.hpp>
 #include <System/MeshFilter.hpp>
+#include <System/MeshRenderer.hpp>
 
 namespace System {
     std::vector<GameObject*> GameObject::allGameObjects;
@@ -105,6 +106,7 @@ namespace System {
             GameObject* go = new GameObject("Cube");
             MeshFilter* mf = go->AddComponent<MeshFilter>();
             mf->mesh = mesh;
+            go->AddComponent<MeshRenderer>();
             return go;
         }
         // Not implemented
