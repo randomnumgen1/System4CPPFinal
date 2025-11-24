@@ -25,6 +25,9 @@
 
 enum bitFlags : uint32_t {
     NoLongerReadable = 1 << 0,
+    /// <summary>
+    /// has the mesh been modified from the last time it was uploaded to the GPU?
+    /// </summary>
     Modified = 1 << 1
 
 };
