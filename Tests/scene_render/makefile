@@ -14,6 +14,7 @@ SRCS = scene_render.cpp \
        Texture2d.cpp \
        Transform.cpp \
        Vector3.cpp \
+	   DummyPhysicsEngine.cpp \
        Vector4.cpp \
        Quaternion.cpp \
        Matrix4x4.cpp \
