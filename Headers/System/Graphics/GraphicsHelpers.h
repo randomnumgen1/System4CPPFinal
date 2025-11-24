@@ -1,3 +1,4 @@
+//This header is a wrapper for the OpenGL functions in the file InternalGLloader.
 #ifndef _SYSTEM_GRAPHICS_H
 #define _SYSTEM_GRAPHICS_H
 
