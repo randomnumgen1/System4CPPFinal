@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <System/Mathf.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
-
+#include <climits>
 
 
 namespace System {
@@ -59,7 +59,7 @@ void System::Camera::RenderStart() const{
         // Render to the screen
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-        System::Graphics::GL::gl_glClear(System::Graphics::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
+        System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
         System::Matrix4x4 projection = orthographic
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
             : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), viewport.width / viewport.height, nearClipPlane, farClipPlane);
@@ -74,7 +74,7 @@ void System::Camera::RenderStart() const{
         //Render to the target texture
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, targetTexture->GetNativeTexturePtr());
         System::Graphics::GL::gl_glViewport(0, 0, targetTexture->GetWidth(), targetTexture->GetHeight());
-        System::Graphics::GL::gl_glClear(System::Graphics::COLOR_BUFFER_BIT | System::Graphics::DEPTH_BUFFER_BIT);
+        System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
     }
 }
