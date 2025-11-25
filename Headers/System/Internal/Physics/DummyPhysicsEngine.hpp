@@ -1,5 +1,5 @@
-#ifndef _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
-#define _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
+#ifndef _SYSTEM_DUMMY_PHYSICS_ENGINE_HPP
+#define _SYSTEM_DUMMY_PHYSICS_ENGINE_HPP
 
 #include "PhysicsEngineInterface.hpp"
 #include <memory>
