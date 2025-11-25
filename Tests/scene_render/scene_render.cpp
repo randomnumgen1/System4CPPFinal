@@ -7,10 +7,24 @@
 #include <System/Shader.hpp>
 #include <System/Texture2d.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
+#include <GLFW/glfw3.h>
 
 using namespace System::Graphics;
 
 int main() {
+    if (!glfwInit()) {
+        return -1;
+    }
+
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+
     System::Scene::Initialize();
   OpenGLVersion version;
     OpenGLInit(&version);
@@ -37,5 +51,6 @@ int main() {
     delete cube;
     delete cameraGO;
 
+    glfwTerminate();
     return 0;
 }

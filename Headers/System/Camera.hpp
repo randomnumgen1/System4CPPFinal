@@ -57,6 +57,5 @@ public:
 
     void RenderStart() const; 
 };
-std::vector<Camera*> Camera::allCameras;
 }
 #endif

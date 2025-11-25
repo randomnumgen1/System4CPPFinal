@@ -91,6 +91,14 @@ namespace System::Graphics{
 		TRIANGLES_ADJACENCY = 0x000C, // GL_TRIANGLES_ADJACENCY
 		PATCHES = 0x000E  // GL_PATCHES
 	};
+
+	enum GL_CONSTANTS: GLenum {
+		GL_ARRAY_BUFFER = 0x8892,
+		GL_ELEMENT_ARRAY_BUFFER = 0x8893,
+		GL_STATIC_DRAW = 0x88E4,
+		GL_FLOAT = 0x1406
+	};
+
 	enum class ProgramParam : int32_t {
 		LINK_STATUS = 0x8B82, // GL_LINK_STATUS
 		VALIDATE_STATUS = 0x8B83, // GL_VALIDATE_STATUS
@@ -422,6 +430,30 @@ namespace System::Graphics{
 		inline static void gl_glGenVertexArrays(GLsizei n, GLuint* arrays){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenVertexArrays(  n,  arrays);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
+		inline static void gl_glDeleteVertexArrays(GLsizei n, const GLuint* arrays) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDeleteVertexArrays(n, arrays);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
+		inline static void gl_glDeleteBuffers(GLsizei n, const GLuint* buffers) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDeleteBuffers(n, buffers);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
+		inline static void gl_glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void* data) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glBufferSubData(target, offset, size, data);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif

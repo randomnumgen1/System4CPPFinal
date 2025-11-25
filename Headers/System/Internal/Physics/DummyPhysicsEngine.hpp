@@ -12,13 +12,13 @@ namespace System {
 
     public:
         virtual ~DummyPhysicsEngine() = default;
-        void Initialize() override;
-        void Shutdown() override;
-        bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, uint32_t layerMask) override;
-        bool Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, float maxDistance, uint32_t layerMask) override;
-        void Simulate(float step) override;
-        void Setgravity(const Vector3& gravity) override;
-        void GenerateCollider(const System::Mesh& mesh) override;
+        void Initialize() override {}
+        void Shutdown() override {}
+        bool Raycast(Vector3 origin, Vector3 direction, float maxDistance, uint32_t layerMask) override { return false; }
+        bool Raycast(Vector3 origin, Vector3 direction, RaycastHit& hitInfo, float maxDistance, uint32_t layerMask) override { return false; }
+        void Simulate(float step) override {}
+        void Setgravity(const Vector3& gravity) override {}
+        void GenerateCollider(const System::Mesh& mesh) override {}
     };
 }
 

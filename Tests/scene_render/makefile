@@ -3,7 +3,7 @@ INCLUDES = -I../../Headers
 STANDARD = -std=c++17
 
 # VPATH specifies a list of directories to search for prerequisites.
-VPATH = ../../Sources/System ../../Sources/System/Internal ../../Sources/System/Internal/Audio
+VPATH = ../../Sources/System ../../Sources/System/Internal ../../Sources/System/Internal/Audio ../../Sources/System/Internal/Physics
 
 # SRCS
 SRCS = scene_render.cpp \
@@ -14,7 +14,6 @@ SRCS = scene_render.cpp \
        Texture2d.cpp \
        Transform.cpp \
        Vector3.cpp \
-	   DummyPhysicsEngine.cpp \
        Vector4.cpp \
        Quaternion.cpp \
        Matrix4x4.cpp \
@@ -34,7 +33,7 @@ RELEASE_TARGET = scene_render_release
 # Flags
 DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -DSYSTEM_GRAPHICS_OPENGL
 RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG -DSYSTEM_GRAPHICS_OPENGL
-LDFLAGS = -lGL -ldl
+LDFLAGS = -lGL -ldl -lglfw
 
 # Default target
 all: debug

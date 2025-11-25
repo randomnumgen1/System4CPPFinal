@@ -2,13 +2,14 @@
 #include <vector>
 #include <System/RenderTexture.h>
 #include <algorithm>
+#include <climits>
 #include <System/Mathf.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
 
 
 
 namespace System {
-
+std::vector<Camera*> Camera::allCameras;
 std::vector<System::Camera*> System::Camera::getallCameras(){
     std::vector<Camera*> activeCameras;
     for (const auto& camera : allCameras) {
