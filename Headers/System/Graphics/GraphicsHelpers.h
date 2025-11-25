@@ -72,6 +72,13 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	enum class BufferTarget : int32_t {
+		ARRAY_BUFFER = 0x8892, // GL_ARRAY_BUFFER
+		ELEMENT_ARRAY_BUFFER = 0x8893, // GL_ELEMENT_ARRAY_BUFFER
+		UNIFORM_BUFFER = 0x8A11, // GL_UNIFORM_BUFFER
+		TEXTURE_BUFFER = 0x8C2A, // GL_TEXTURE_BUFFER
+		// add others as needed
+	};
 	enum class IndexType : int32_t {
 		UNSIGNED_BYTE = 0x1401, // GL_UNSIGNED_BYTE
 		UNSIGNED_SHORT = 0x1403, // GL_UNSIGNED_SHORT
@@ -220,13 +227,24 @@ namespace System::Graphics{
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
-		} 
+		}
+		/// <summary>
+		/// updates a subset of a buffer objects data store
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="offset"></param>
+		/// <param name="size"></param>
+		/// <param name="data"></param>
+		inline static void gl_glBufferSubData(BufferTarget target,GLintptr offset,GLsizeiptr size,const void* data) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glBufferSubData(static_cast<GLenum>(target), offset, size, data);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 
-
-
-
-
+ 
 
 
 

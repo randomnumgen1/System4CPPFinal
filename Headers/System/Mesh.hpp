@@ -69,9 +69,9 @@ namespace System {
 
         }
         ~Mesh() {
-            System::Graphics::GL::gl_glDeleteVertexArrays(1, &m_VAO);
-            System::Graphics::GL::gl_glDeleteBuffers(1, &m_VBO);
-            System::Graphics::GL::gl_glDeleteBuffers(1, &m_EBO);
+            //System::Graphics::GL::gl_glDeleteVertexArrays(1, &m_VAO);
+            //System::Graphics::GL::gl_glDeleteBuffers(1, &m_VBO);
+            //System::Graphics::GL::gl_glDeleteBuffers(1, &m_EBO);
         }
 
         unsigned int GetVAO() const { return m_VAO; }
@@ -359,10 +359,10 @@ namespace System {
             if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
                 uvSize = sizeof(Vector2) * pval->size();
             }
-
+           
             System::Graphics::GL::gl_glBufferData(GL_ARRAY_BUFFER, vertexSize + normalSize + uvSize, NULL, GL_STATIC_DRAW);
 
-            System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, 0, vertexSize, vertices.data());
+            System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, 0, vertexSize, vertices.data());
             System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, vertexSize, normalSize, normals.data());
             if (uvSize > 0) {
                 if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
@@ -370,8 +370,8 @@ namespace System {
                 }
             }
 
-            System::Graphics::GL::gl_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-            System::Graphics::GL::gl_glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+            System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, m_EBO);
+            System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
             System::Graphics::GL::gl_glEnableVertexAttribArray(0);
             System::Graphics::GL::gl_glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vector3), (void*)0);
