@@ -30,8 +30,8 @@ namespace System {
         const char* fShaderCode = fragmentCode.c_str();
 
         unsigned int vertex, fragment;
-        int success;
-        char infoLog[512];
+        int success = 0;
+        char infoLog[512]{};
         vertex = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_VERTEX_SHADER);
         System::Graphics::GL::gl_glShaderSource(vertex, 1, &vShaderCode, NULL);
         System::Graphics::GL::gl_glCompileShader(vertex);
