@@ -82,7 +82,8 @@ namespace System::Graphics{
 	enum class IndexType : int32_t {
 		UNSIGNED_BYTE = 0x1401, // GL_UNSIGNED_BYTE
 		UNSIGNED_SHORT = 0x1403, // GL_UNSIGNED_SHORT
-		UNSIGNED_INT = 0x1405  // GL_UNSIGNED_INT
+		UNSIGNED_INT = 0x1405,  // GL_UNSIGNED_INT
+		FLOAT = 0x1406
 	};
 	enum class DrawMode : int32_t {
 		POINTS = 0x0000, // GL_POINTS
@@ -108,10 +109,10 @@ namespace System::Graphics{
 		ACTIVE_UNIFORMS = 0x8B86, // GL_ACTIVE_UNIFORMS
 		ACTIVE_UNIFORM_MAX_LENGTH = 0x8B87  // GL_ACTIVE_UNIFORM_MAX_LENGTH
 	};
-	typedef enum ShaderParam : int32_t {
+	enum class ShaderParam : int32_t {
 		COMPILE_STATUS = 0x8B81,
 		INFO_LOG_LENGTH = 0x8B84,
-	} ShaderParam;
+	}  ;
 
 	enum shaderTypes : int32_t {
 		GL_COMPUTE_SHADER = 0x91B9,
@@ -126,17 +127,17 @@ namespace System::Graphics{
 	};
 
 
-	typedef enum GL_BitField : uint32_t {
+	enum class GL_BitField : uint32_t {
 		COLOR_BUFFER_BIT = 0x00004000,
 		DEPTH_BUFFER_BIT = 0x00000100,
 		STENCIL_BUFFER_BIT = 0x00000400
-	} GL_BitField;
-	typedef enum GL_FrameBufferTarget : uint32_t {
+	}  ;
+	enum class GL_FrameBufferTarget : uint32_t {
 		GL_DRAW_FRAMEBUFFER = 0x8CA9,
 		GL_READ_FRAMEBUFFER = 0x8CA8,
 		GL_FRAMEBUFFER = 0x8D40
-	} GL_FrameBufferTarget;
-	typedef enum GL_DrawMode : uint32_t {
+	}  ;
+	enum class GL_DrawMode : uint32_t {
 		POINTS = 0x0000,
 		LINE_STRIP = 0x0003,
 		LINE_LOOP = 0x0002,
@@ -149,12 +150,12 @@ namespace System::Graphics{
 		TRIANGLE_STRIP_ADJACENCY = 0x000D,
 		TRIANGLES_ADJACENCY = 0x000C,
 		PATCHES = 0x000E
-	} GL_DrawMode;
-	typedef enum GL_Usage : uint32_t {
+	}  ;
+	enum class GL_Usage : uint32_t {
 		STREAM_DRAW = 0x88E0,
 		STATIC_DRAW = 0x88E4,
 		DYNAMIC_DRAW = 0x88E8
-	} GL_Usage;
+	}  ;
 	 
 		inline GL_BitField operator|(GL_BitField a, GL_BitField b) {
 			return static_cast<GL_BitField>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
@@ -242,9 +243,27 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-
-
- 
+		inline static void gl_glBindBuffer(BufferTarget target, GLuint buffer){//GLenum
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glBindBuffer(static_cast<GLenum>(target),  buffer);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		} 
+		inline static void gl_glBufferData(BufferTarget target, GLsizeiptr size, const void* data, GL_Usage usage){//GL_Usage
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glBufferData(static_cast<GLenum>(target),size,data, static_cast<GLenum>(usage));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+ 		inline static void gl_glVertexAttribPointer(GLuint index, GLint size, IndexType type, GLboolean normalized, GLsizei stride, const void* pointer){//IndexType
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glVertexAttribPointer( index,  size, static_cast<GLenum>(type),  normalized,  stride, pointer);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 
 
@@ -312,7 +331,7 @@ namespace System::Graphics{
 		}
 		inline static void gl_glClear(GL_BitField BitField) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glClear(BitField);
+			SYSTEM_INTERNAL_glClear(static_cast<int>(BitField));
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
@@ -336,13 +355,7 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glBufferData(target,size,data,usage);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		}
+
 
 		inline static void gl_glShaderSource(GLuint shader, GLsizei count, const GLchar* const* string, const GLint* length){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
@@ -423,13 +436,7 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glVertexAttribPointer( index,  size,  type,  normalized,  stride, pointer);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		}
+
 		inline static void gl_glEnableVertexAttribArray(GLuint index){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glEnableVertexAttribArray(index);
@@ -437,13 +444,7 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glBindBuffer(GLenum target, GLuint buffer){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glBindBuffer( target,  buffer);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		} 
+
 		inline static void gl_glGenVertexArrays(GLsizei n, GLuint* arrays){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glGenVertexArrays(  n,  arrays);

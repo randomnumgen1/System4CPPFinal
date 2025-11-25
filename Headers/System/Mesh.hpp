@@ -351,7 +351,7 @@ namespace System {
             }
 
             System::Graphics::GL::gl_glBindVertexArray(m_VAO);
-            System::Graphics::GL::gl_glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+            System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ARRAY_BUFFER, m_VBO);
 
             size_t vertexSize = sizeof(Vector3) * vertices.size();
             size_t normalSize = sizeof(Vector3) * normals.size();
@@ -360,28 +360,28 @@ namespace System {
                 uvSize = sizeof(Vector2) * pval->size();
             }
            
-            System::Graphics::GL::gl_glBufferData(GL_ARRAY_BUFFER, vertexSize + normalSize + uvSize, NULL, GL_STATIC_DRAW);
+            System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize + normalSize + uvSize, NULL, System::Graphics::GL_Usage::STATIC_DRAW);
 
             System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, 0, vertexSize, vertices.data());
-            System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, vertexSize, normalSize, normals.data());
+            System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize, normalSize, normals.data());
             if (uvSize > 0) {
                 if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
-                    System::Graphics::GL::gl_glBufferSubData(GL_ARRAY_BUFFER, vertexSize + normalSize, uvSize, pval->data());
+                    System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize + normalSize, uvSize, pval->data());
                 }
             }
 
             System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, m_EBO);
-            System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
+            System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), System::Graphics::GL_Usage::STATIC_DRAW);
 
             System::Graphics::GL::gl_glEnableVertexAttribArray(0);
-            System::Graphics::GL::gl_glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vector3), (void*)0);
+            System::Graphics::GL::gl_glVertexAttribPointer(0, 3, System::Graphics::IndexType::FLOAT, false, sizeof(Vector3), (void*)0);
 
             System::Graphics::GL::gl_glEnableVertexAttribArray(1);
-            System::Graphics::GL::gl_glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vector3), (void*)vertexSize);
+            System::Graphics::GL::gl_glVertexAttribPointer(1, 3, System::Graphics::IndexType::FLOAT, false, sizeof(Vector3), (void*)vertexSize);
 
             if (uvSize > 0) {
                 System::Graphics::GL::gl_glEnableVertexAttribArray(2);
-                System::Graphics::GL::gl_glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vector2), (void*)(vertexSize + normalSize));
+                System::Graphics::GL::gl_glVertexAttribPointer(2, 2, System::Graphics::IndexType::FLOAT, false, sizeof(Vector2), (void*)(vertexSize + normalSize));
             }
 
             System::Graphics::GL::gl_glBindVertexArray(0);
