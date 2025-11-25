@@ -3,7 +3,7 @@ INCLUDES = -I../../Headers
 STANDARD = -std=c++17
 
 # VPATH specifies a list of directories to search for prerequisites.
-VPATH = ../../Sources/System ../../Sources/System/Internal ../../Sources/System/Internal/Audio
+VPATH = ../../Sources/System ../../Sources/System/Internal ../../Sources/System/Internal/Audio ../../Sources/System/Internal/Physics
 
 # SRCS
 SRCS = scene_render.cpp \
