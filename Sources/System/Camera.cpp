@@ -9,6 +9,7 @@
 
 namespace System {
 
+    std::vector<Camera*> Camera::allCameras;
 std::vector<System::Camera*> System::Camera::getallCameras(){
     std::vector<Camera*> activeCameras;
     for (const auto& camera : allCameras) {
