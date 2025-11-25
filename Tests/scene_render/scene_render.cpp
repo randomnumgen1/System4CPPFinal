@@ -21,7 +21,7 @@ int main() {
     System::GameObject* cube = System::GameObject::CreatePrimitive(System::PrimitiveType::Cube);
     System::MeshRenderer* renderer = cube->GetComponent<System::MeshRenderer>();
 
-    System::Shader* shader = new System::Shader("Tests/gameobject_poc/simple.vert", "Tests/gameobject_poc/simple.frag");
+    System::Shader* shader = new System::Shader("Tests/scene_render/simple.vert", "Tests/scene_render/simple.frag");
     System::Material* material = new System::Material(shader);
     material->color = System::Color(1, 0, 0, 1);
 
