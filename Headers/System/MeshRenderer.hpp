@@ -6,7 +6,7 @@
 #include <System/MeshFilter.hpp>
 #include <System/GameObject.hpp>
 #include <System/Camera.hpp>
-
+#include <System/Graphics/GraphicsHelpers.h>
 namespace System {
     class MeshRenderer : public Component {
     public:
