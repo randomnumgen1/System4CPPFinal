@@ -469,6 +469,14 @@ namespace System::Graphics{
 #endif
 		}
 
+		inline static void gl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glReadPixels(x, y, width, height, format, type, pixels);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
 		inline static void gl_glUniform4f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glUniform4f(  location,   v0,   v1,   v2,   v3);
