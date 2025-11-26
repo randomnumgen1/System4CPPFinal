@@ -7,13 +7,33 @@
 #include <System/Shader.hpp>
 #include <System/Texture2d.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
+#include "GLFW/glfw3.h"
+#include <iostream>
 
 using namespace System::Graphics;
 
 int main() {
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Hidden Window", NULL, NULL);
+    if (window == NULL) {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+
     System::Scene::Initialize();
-  OpenGLVersion version;
+    OpenGLVersion version;
     OpenGLInit(&version);
+
     System::GameObject* cameraGO = new System::GameObject("Main Camera");
     System::Camera* camera = cameraGO->AddComponent<System::Camera>();
     camera->isMain = true;
@@ -37,5 +57,6 @@ int main() {
     delete cube;
     delete cameraGO;
 
+    glfwTerminate();
     return 0;
 }
