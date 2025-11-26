@@ -1,20 +1,24 @@
-#ifndef _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
+#ifndef _SYSTEM_BULLET_PHYSICS_ENGINE_HPP  
 #define _SYSTEM_BULLET_PHYSICS_ENGINE_HPP
 
 #include "PhysicsEngineInterface.hpp"
 #include <memory>
 
+
+#if   defined(SYSTEM_PHYSICS_BULLET)
 #include <bullet/btBulletDynamicsCommon.h>
+#endif
 
 namespace System {
     class BulletPhysicsEngine : public PhysicsEngineInterface {
     private:
+#if   defined(SYSTEM_PHYSICS_BULLET)
         std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
         std::unique_ptr<btCollisionDispatcher> dispatcher;
         std::unique_ptr<btBroadphaseInterface> broadphase;
         std::unique_ptr<btSequentialImpulseConstraintSolver> solver;
         std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
-
+#endif
     public:
         void Initialize() override;
         void Shutdown() override;
