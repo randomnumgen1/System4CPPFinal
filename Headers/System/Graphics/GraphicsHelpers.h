@@ -72,6 +72,30 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	enum class PixelFormat : int32_t {
+		RED = 0x1903, // GL_RED
+		RG = 0x8227, // GL_RG
+		RGB = 0x1907, // GL_RGB
+		RGBA = 0x1908, // GL_RGBA
+		DEPTH_COMPONENT = 0x1902, // GL_DEPTH_COMPONENT
+		STENCIL_INDEX = 0x1901  // GL_STENCIL_INDEX
+	};
+
+	enum class PixelType : int32_t {
+		UNSIGNED_BYTE = 0x1401, // GL_UNSIGNED_BYTE
+		UNSIGNED_SHORT = 0x1403, // GL_UNSIGNED_SHORT
+		UNSIGNED_INT = 0x1405, // GL_UNSIGNED_INT
+		FLOAT = 0x1406  // GL_FLOAT
+	};
+
+	enum class GLStateParam : int32_t {
+		MAX_TEXTURE_SIZE = 0x0D33, // GL_MAX_TEXTURE_SIZE
+		VIEWPORT = 0x0BA2, // GL_VIEWPORT
+		MAJOR_VERSION = 0x821B, // GL_MAJOR_VERSION
+		MINOR_VERSION = 0x821C, // GL_MINOR_VERSION
+		MAX_VERTEX_ATTRIBS = 0x8869, // GL_MAX_VERTEX_ATTRIBS
+		// add more as needed
+	};
 	enum class BufferTarget : int32_t {
 		ARRAY_BUFFER = 0x8892, // GL_ARRAY_BUFFER
 		ELEMENT_ARRAY_BUFFER = 0x8893, // GL_ELEMENT_ARRAY_BUFFER
@@ -273,8 +297,32 @@ namespace System::Graphics{
 
 
 
-
-
+		inline static void gl_glReadPixels(GLint x,
+									GLint y,
+									GLsizei width,
+									GLsizei height,
+									PixelFormat format,
+									PixelType type,
+									void* data) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glReadPixels(x,
+						   y,
+						   width,
+						   height,
+						   static_cast<GLenum>(format),
+						   static_cast<GLenum>(type),
+						   data);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+		inline static void gl_glGetIntegerv(GLStateParam pname, GLint* data) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glGetIntegerv(static_cast<GLenum>(pname), data);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 		inline static void gl_glBindTexture(GLenum1 target, uint32_t texture){
 #if defined(SYSTEM_GRAPHICS_OPENGL)

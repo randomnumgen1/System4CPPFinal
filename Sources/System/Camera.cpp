@@ -82,14 +82,14 @@ void System::Camera::RenderStart() const{
 }
 void Camera::TakeScreenshot(const std::string& filename) {
     GLint viewport[4];
-    System::Graphics::GL::gl_glGetIntegerv(GL_VIEWPORT, viewport);
+    System::Graphics::GL::gl_glGetIntegerv(System::Graphics::GLStateParam::VIEWPORT, viewport);
     int x = viewport[0];
     int y = viewport[1];
     int width = viewport[2];
     int height = viewport[3];
 
     Image image(width, height);
-    System::Graphics::GL::gl_glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, image.m_pixels.data());
+    System::Graphics::GL::gl_glReadPixels(x, y, width, height, System::Graphics::PixelFormat::RGBA, System::Graphics::PixelType::UNSIGNED_BYTE, image.m_pixels.data());
     image.Flip();
     image.Save(filename, Image::ImageFormat::BMP);
 }
