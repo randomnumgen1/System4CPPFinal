@@ -58,7 +58,6 @@ public:
 
     void RenderStart() const; 
     void TakeScreenshot(const std::string& filename);
-};
 }; 
 }
 #endif
