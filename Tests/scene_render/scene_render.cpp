@@ -7,13 +7,35 @@
 #include <System/Shader.hpp>
 #include <System/Texture2d.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
 
 using namespace System::Graphics;
 
 int main() {
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return -1;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Scene Render Test", NULL, NULL);
+    if (!window) {
+        std::cerr << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+
     System::Scene::Initialize();
-  OpenGLVersion version;
+    OpenGLVersion version;
     OpenGLInit(&version);
+
     System::GameObject* cameraGO = new System::GameObject("Main Camera");
     System::Camera* camera = cameraGO->AddComponent<System::Camera>();
     camera->isMain = true;
@@ -28,14 +50,22 @@ int main() {
     renderer->material = material;
 
     System::Scene scene;
-    scene.Run();
 
-
+    // Run for a couple of frames to ensure everything is initialized and rendered
+    for (int i = 0; i < 2; ++i) {
+        scene.Run();
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
     delete material;
     delete shader;
     delete cube;
     delete cameraGO;
+
+    System::Scene::Shutdown();
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
     return 0;
 }
