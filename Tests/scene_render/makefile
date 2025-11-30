@@ -34,7 +34,7 @@ RELEASE_TARGET = scene_render_release
 # Flags
 DEBUG_FLAGS = $(INCLUDES) $(STANDARD) -g -DDEBUG -DSYSTEM_GRAPHICS_OPENGL
 RELEASE_FLAGS = $(INCLUDES) $(STANDARD) -O3 -DNDEBUG -DSYSTEM_GRAPHICS_OPENGL
-LDFLAGS = -lGL -ldl
+LDFLAGS = -lGL -ldl -lglfw
 
 # Default target
 all: debug
