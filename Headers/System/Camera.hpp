@@ -25,6 +25,9 @@ public:
 
     bool isMain;
     uint32_t cullingMask;
+    /// <summary>
+    /// Normalized View Port Rect. numbers are from 0-1
+    /// </summary>
     System::Rect viewport;
     float nearClipPlane;
     float farClipPlane;
@@ -56,7 +59,7 @@ public:
         return new_camera;
     }
 
-    void RenderStart() const; 
+    void RenderStart() ; 
     void TakeScreenshot(const std::string& filename);
 }; 
 }
