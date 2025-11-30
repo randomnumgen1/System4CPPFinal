@@ -301,24 +301,24 @@ namespace System::Graphics{
 									GLint y,
 									GLsizei width,
 									GLsizei height,
-									PixelFormat format,
-									PixelType type,
+									GLenum format,
+									GLenum type,
 									void* data) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glReadPixels(x,
 						   y,
 						   width,
 						   height,
-						   static_cast<GLenum>(format),
-						   static_cast<GLenum>(type),
+						   format,
+						   type,
 						   data);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-		inline static void gl_glGetIntegerv(GLStateParam pname, GLint* data) {
+		inline static void gl_glGetIntegerv(GLenum pname, GLint* data) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glGetIntegerv(static_cast<GLenum>(pname), data);
+			SYSTEM_INTERNAL_glGetIntegerv(pname, data);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
@@ -505,13 +505,6 @@ namespace System::Graphics{
 		inline static void gl_glBindVertexArray(GLuint array){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindVertexArray(  array);
-#else
-			throw std::runtime_error("GraphicsHelpers gl function not implemented");
-#endif
-		}
-		inline static void gl_glGetIntegerv(GLenum pname, GLint* data){
-#if defined(SYSTEM_GRAPHICS_OPENGL)
-			SYSTEM_INTERNAL_glGetIntegerv(  pname,   data);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
