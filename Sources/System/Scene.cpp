@@ -71,6 +71,7 @@ physicsEngine = new JoltPhysicsEngine();
         }
         // Render Scene
         System::Camera* cam = Camera::Getmain();
+        cam->RenderStart();
         for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
             GameObject* go = GameObject::allGameObjects[i];
             System::MeshRenderer* renderer = go->GetComponent<System::MeshRenderer>();
