@@ -6,11 +6,13 @@
 #include <vector>
 #include <cstdint>
 #include <stdexcept>
-#include <immintrin.h>
+
 #include <cassert>
 #include <cstring>
 #if defined(__aarch64__) || defined(__arm__)
 #include <arm_acle.h> // For ARM intrinsics
+#else
+#include <immintrin.h>
 #endif
 //int numbytesaffected = (bitOffset + count + 7) / 8;
 namespace System {
