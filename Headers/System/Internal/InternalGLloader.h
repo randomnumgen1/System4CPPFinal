@@ -67,6 +67,9 @@ typedef int64_t GLint64EXT;
 typedef struct __GLsync* GLsync;
 #define GL_MINOR_VERSION                  0x821C
 #define GL_MAJOR_VERSION                  0x821B
+#define GL_VIEWPORT                       0x0BA2
+#define GL_RGBA                           0x1908
+#define GL_UNSIGNED_BYTE                  0x1401
 
 
 
