@@ -57,6 +57,14 @@ namespace System {
         /// <param name="zFar">Far depth clipping plane value.</param>
         /// <returns></returns>
         static Matrix4x4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fov"></param>
+        /// <param name="aspect"></param>
+        /// <param name="zNear"></param>
+        /// <param name="zFar"></param>
+        /// <returns></returns>
         static Matrix4x4 Perspective(float fov, float aspect, float zNear, float zFar);
         static Matrix4x4 Rotation(System::Quaternion q);
         static Matrix4x4 Scaling(const Vector3& scale);
