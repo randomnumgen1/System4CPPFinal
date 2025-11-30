@@ -31,7 +31,6 @@ int main() {
     System::GameObject* cameraGO = new System::GameObject("Main Camera");
     System::Camera* camera = cameraGO->AddComponent<System::Camera>();
     camera->isMain = true;
-
     System::GameObject* cube = System::GameObject::CreatePrimitive(System::PrimitiveType::Cube);
     System::MeshRenderer* renderer = cube->GetComponent<System::MeshRenderer>();
 
