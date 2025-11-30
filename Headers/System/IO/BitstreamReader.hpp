@@ -175,8 +175,10 @@ namespace System {
 #elif defined(__BMI__)
                 uint32_t mask = _blsmsk_u32(1u << (count - 1));
                 return result & mask;
-#elif defined(__aarch64__) || defined(__arm__)
-                return __ubfx(result, 0, count);
+//#elif defined(__aarch64__) || defined(__arm__)
+                //return __ubfx(result, 0, count); 
+
+
 #else
                 uint32_t mask = ~(uint32_t)0 >> ((32 - count) & 31);//doesnt support count == 0
                 return result & mask;
