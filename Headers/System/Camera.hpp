@@ -56,8 +56,8 @@ public:
         return new_camera;
     }
 
-    void RenderStart() const; 
+    void RenderStart();
     void TakeScreenshot(const std::string& filename);
-}; 
+};
 }
 #endif
