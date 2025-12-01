@@ -46,7 +46,7 @@ int main() {
     renderer->material = material;
 
     System::Scene scene;
-    scene.Run();
+    scene.Run(800, 600);
 
     delete material;
     delete shader;

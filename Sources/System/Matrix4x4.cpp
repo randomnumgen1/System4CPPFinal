@@ -54,7 +54,7 @@ namespace System {
     }
     Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up){
         Matrix4x4 m =  Matrix4x4();
-        Vector3 vector = from - to;
+        Vector3 vector = to - from;
         vector.Normalize();
 
         Vector3 vector2 = Vector3::Cross(up, vector);
