@@ -70,6 +70,9 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
 
  // Set the viewport
         System::Graphics::GL::gl_glViewport(pixelX, pixelY, pixelWidth, pixelHeight);
+        // SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
+        // 
+        System::Graphics::GL::gl_glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
  // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
