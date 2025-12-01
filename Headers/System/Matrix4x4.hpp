@@ -93,6 +93,7 @@ namespace System {
          Vector4 GetColumn(int index);
          Vector4 GetRow(int index);
          Matrix4x4 inverse() const;
+         bool isIdentity() const;
 
          std::string ToString() const {
              std::ostringstream oss;
