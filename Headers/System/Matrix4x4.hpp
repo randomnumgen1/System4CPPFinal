@@ -9,7 +9,14 @@
 
 namespace System {
     struct Matrix4x4 {
-
+        /// <summary>
+        /// It has 1s in the main diagonal and 0s in all other elements:
+        /// same as:
+        /// 1.00000 0.00000 0.00000 0.00000
+        /// 0.00000 1.00000 0.00000 0.00000
+        /// 0.00000 0.00000 1.00000 0.00000
+        /// 0.00000 0.00000 0.00000 1.00000
+        /// </summary>
         static const Matrix4x4 identity;
         static const Matrix4x4 zero;
 
