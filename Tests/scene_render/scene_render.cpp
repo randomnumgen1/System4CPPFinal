@@ -45,6 +45,7 @@ int main() {
 
     renderer->material = material;
 
+
     System::Scene scene;
     scene.Run(800, 600);
 

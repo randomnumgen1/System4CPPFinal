@@ -52,34 +52,31 @@ namespace System {
           Vector4(-Vector3::Dot(right,from), -Vector3::Dot(trueUp,from), Vector3::Dot(forward,from), 1.0f) 
         };
     }
-    Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up){
-        Matrix4x4 m =  Matrix4x4();
-        Vector3 vector = from - to;
-        vector.Normalize();
+    Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up) {
+        Matrix4x4 m;
 
-        Vector3 vector2 = Vector3::Cross(up, vector);
-        vector2.Normalize();
+        Vector3 z = (to - from).normalized();
+        Vector3 x = Vector3::Cross(up, z).normalized();
+        Vector3 y = Vector3::Cross(z, x);
 
-        Vector3 vector3 = Vector3::Cross(vector, vector2);
-
-        m.m00 = vector2.x;
-        m.m01 = vector2.y;
-        m.m02 = vector2.z;
-
-        m.m10 = vector3.x;
-        m.m11 = vector3.y;
-        m.m12 = vector3.z;
-
-        m.m20 = vector.x;
-        m.m21 = vector.y;
-        m.m22 = vector.z;
-
-        m.m03 = -Vector3::Dot(from, vector2);
-        m.m13 = -Vector3::Dot(from, vector3);
-        m.m23 = -Vector3::Dot(from, vector);
+        m.m00 = x.x;
+        m.m01 = y.x;
+        m.m02 = z.x;
+        m.m03 = 0;
+        m.m10 = x.y;
+        m.m11 = y.y;
+        m.m12 = z.y;
+        m.m13 = 0;
+        m.m20 = x.z;
+        m.m21 = y.z;
+        m.m22 = z.z;
+        m.m23 = 0;
+        m.m30 = -Vector3::Dot(x, from);
+        m.m31 = -Vector3::Dot(y, from);
+        m.m32 = -Vector3::Dot(z, from);
         m.m33 = 1;
 
-        return m;
+        return m.transpose();
     }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
         System::Matrix4x4 orthoMatrix = {
@@ -90,15 +87,17 @@ namespace System {
         };
         return orthoMatrix;
     }
-    Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar){
-        float tanHalfFov = System::Mathf::Tan(fov * 0.5f * (System::Mathf::PI / 180.0f));
-        System::Matrix4x4 perspectiveMatrix = {
-            Vector4(1.0f / (aspect * tanHalfFov), 0.0f, 0.0f, 0.0f),
-            Vector4(0.0f, 1.0f / tanHalfFov, 0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear), -1.0f),
-            Vector4(0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
-        };
-        return perspectiveMatrix;
+    Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar) {
+        float tanHalfFovy = tan(fov / 2.0f);
+
+        Matrix4x4 m = Matrix4x4::zero;
+        m.m00 = 1.0f / (aspect * tanHalfFovy);
+        m.m11 = 1.0f / tanHalfFovy;
+        m.m22 = (zFar + zNear) / (zFar - zNear);
+        m.m23 = - (2.0f * zFar * zNear) / (zFar - zNear);
+        m.m32 = 1.0f;
+
+        return m;
     }
     Matrix4x4 Matrix4x4::Rotation(System::Quaternion q){
         // Precalculate coordinate products
@@ -255,19 +254,10 @@ namespace System {
     }
 
     bool Matrix4x4::isIdentity() const {
-        if (m00 != 1.0f && m10 != 0.0f && m20 != 0.0f && m30 != 0.0f){
-            return false;
-        }
-        if (m01 == 0.0f && m11 == 1.0f && m21 == 0.0f && m31 == 0.0f) {
-            return false;
-        }
-        if (m02 == 0.0f && m12 == 0.0f && m22 == 1.0f && m32 == 0.0f) {
-            return false;
-        }
-        if (m03 == 0.0f && m13 == 0.0f && m23 == 0.0f && m33 == 1.0f) {
-            return false;
-        }
-
+        return m00 == 1.0f && m10 == 0.0f && m20 == 0.0f && m30 == 0.0f &&
+               m01 == 0.0f && m11 == 1.0f && m21 == 0.0f && m31 == 0.0f &&
+               m02 == 0.0f && m12 == 0.0f && m22 == 1.0f && m32 == 0.0f &&
+               m03 == 0.0f && m13 == 0.0f && m23 == 0.0f && m33 == 1.0f;
     }
 
  
