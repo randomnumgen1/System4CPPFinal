@@ -2,7 +2,8 @@
 #define _SYSTEM_VECTOR3_H
 
 #include <assert.h>
- 
+#include <sstream>
+#include <iomanip>
 //#include <System/Vector2.h>
 
 namespace System {
@@ -188,6 +189,15 @@ namespace System {
         /// </summary>
         /// <returns></returns>
         Vector3 normalized();
+
+        std::string ToString() const {
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(4);
+            oss << "Vector3(\n";
+            oss << "  [" << x << ", " << y << ", " << z   << "],\n"; 
+            oss << ")";
+            return oss.str();
+        }
         /*
         ----------------------------------------------------------------------------------------
         Operators
