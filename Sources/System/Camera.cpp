@@ -6,7 +6,7 @@
 #include <System/Graphics/GraphicsHelpers.h>
 #include <climits>
 #include <System/Image.hpp>
-
+#include <System/Transform.hpp>
 
 namespace System {
 
@@ -59,14 +59,22 @@ System::Camera::~Camera() {
 void System::Camera::RenderStart()  {
     if (targetTexture == nullptr) {
         // Render to the screen
-        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
+        
+        // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
+        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);
+        // Set the viewport
         System::Graphics::GL::gl_glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
         projectionMatrix = orthographic
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
             : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), viewport.width / viewport.height, nearClipPlane, farClipPlane);
 
-        viewMatrix = Matrix4x4::LookAt(System::Vector3(0, 0, 5), System::Vector3(0, 0, 0), System::Vector3(0, 1, 0));
+        
+        
+        // Calculate the view matrix based on the camera's transform
+        viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
+
 
     }else{
         //Render to the target texture
