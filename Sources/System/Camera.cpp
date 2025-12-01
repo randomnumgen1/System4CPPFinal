@@ -56,24 +56,33 @@ System::Camera::~Camera() {
     allCameras.erase(std::remove(allCameras.begin(), allCameras.end(), this), allCameras.end());
 }
 
-void System::Camera::RenderStart()  {
+void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
         // Render to the screen
-        
-        // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
-        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);
-        // Set the viewport
-        System::Graphics::GL::gl_glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-        // Clear the screen
+
+// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
+        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
+
+        int pixelX = static_cast<int>(viewport.x * windowWidth);
+        int pixelY = static_cast<int>(viewport.y * windowHeight);
+        int pixelWidth = static_cast<int>(viewport.width * windowWidth);
+        int pixelHeight = static_cast<int>(viewport.height * windowHeight);
+
+ // Set the viewport
+        System::Graphics::GL::gl_glViewport(pixelX, pixelY, pixelWidth, pixelHeight);
+ // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
+
+        float aspect = static_cast<float>(pixelWidth) / static_cast<float>(pixelHeight);
+
         projectionMatrix = orthographic
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
-            : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), viewport.width / viewport.height, nearClipPlane, farClipPlane);
+            : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), aspect, nearClipPlane, farClipPlane);
 
-        
-        
-        // Calculate the view matrix based on the camera's transform
+ // Calculate the view matrix based on the camera's transform
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
+
+         
 
 
     }else{
