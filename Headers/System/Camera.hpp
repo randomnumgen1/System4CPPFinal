@@ -59,7 +59,7 @@ public:
         return new_camera;
     }
 
-    void RenderStart() ; 
+    void RenderStart(int windowWidth, int windowHeight) ;
     void TakeScreenshot(const std::string& filename);
 }; 
 }
