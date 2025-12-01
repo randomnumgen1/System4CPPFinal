@@ -22,12 +22,10 @@ namespace System {
         m03(0), m13(0), m23(0), m33(1) {
     }
     Matrix4x4::Matrix4x4(System::Vector4 column0, System::Vector4 column1, System::Vector4 column2, System::Vector4 column3) {
-        this->m00 = column0.x;  this->m01 = column1.x;  this->m02 = column2.x;  this->m03 = column3.x;
-        this->m10 = column0.y;  this->m11 = column1.y;  this->m12 = column2.y;  this->m13 = column3.y;
-        this->m20 = column0.z;  this->m21 = column1.z;  this->m22 = column2.z;  this->m23 = column3.z;
-        this->m30 = column0.w;  this->m31 = column1.w;  this->m32 = column2.w;  this->m33 = column3.w;
-
-
+        this->m00 = column0.x; this->m10 = column0.y; this->m20 = column0.z; this->m30 = column0.w;
+        this->m01 = column1.x; this->m11 = column1.y; this->m21 = column1.z; this->m31 = column1.w;
+        this->m02 = column2.x; this->m12 = column2.y; this->m22 = column2.z; this->m32 = column2.w;
+        this->m03 = column3.x; this->m13 = column3.y; this->m23 = column3.z; this->m33 = column3.w;
     }
     Matrix4x4 Matrix4x4::Frustum(float left, float right, float bottom, float top, float zNear, float zFar) {
         float invWidth = 1.0f / (right - left);
@@ -53,52 +51,33 @@ namespace System {
         };
     }
     Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up){
-        Matrix4x4 m =  Matrix4x4();
-        Vector3 vector = from - to;
-        vector.Normalize();
+        Vector3 zaxis = (to - from).normalized();
+        Vector3 xaxis = (Vector3::Cross(up, zaxis)).normalized();
+        Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
 
-        Vector3 vector2 = Vector3::Cross(up, vector);
-        vector2.Normalize();
-
-        Vector3 vector3 = Vector3::Cross(vector, vector2);
-
-        m.m00 = vector2.x;
-        m.m01 = vector2.y;
-        m.m02 = vector2.z;
-
-        m.m10 = vector3.x;
-        m.m11 = vector3.y;
-        m.m12 = vector3.z;
-
-        m.m20 = vector.x;
-        m.m21 = vector.y;
-        m.m22 = vector.z;
-
-        m.m03 = -Vector3::Dot(from, vector2);
-        m.m13 = -Vector3::Dot(from, vector3);
-        m.m23 = -Vector3::Dot(from, vector);
-        m.m33 = 1;
-
-        return m;
+        return Matrix4x4(
+            Vector4(xaxis.x, yaxis.x, zaxis.x, 0),
+            Vector4(xaxis.y, yaxis.y, zaxis.y, 0),
+            Vector4(xaxis.z, yaxis.z, zaxis.z, 0),
+            Vector4(-Vector3::Dot(xaxis, from), -Vector3::Dot(yaxis, from), -Vector3::Dot(zaxis, from), 1)
+        );
     }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
-        System::Matrix4x4 orthoMatrix = {
-            Vector4(2.0f / (right - left), 0.0f, 0.0f, 0.0f),
-            Vector4(0.0f, 2.0f / (top - bottom), 0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, -2.0f / (zFar - zNear), 0.0f),
-            Vector4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zFar + zNear) / (zFar - zNear), 1.0f)
-        };
-        return orthoMatrix;
+        return Matrix4x4(
+            Vector4(2.0f / (right - left), 0, 0, 0),
+            Vector4(0, 2.0f / (top - bottom), 0, 0),
+            Vector4(0, 0, 2.0f / (zFar - zNear), 0),
+            Vector4(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zFar + zNear) / (zFar - zNear), 1)
+        );
     }
-    Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar){
-        float tanHalfFov = System::Mathf::Tan(fov * 0.5f * (System::Mathf::PI / 180.0f));
-        System::Matrix4x4 perspectiveMatrix = {
-            Vector4(1.0f / (aspect * tanHalfFov), 0.0f, 0.0f, 0.0f),
-            Vector4(0.0f, 1.0f / tanHalfFov, 0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear), -1.0f),
-            Vector4(0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
-        };
-        return perspectiveMatrix;
+    Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar) {
+        float tanHalfFov = Mathf::Tan(fov * 0.5f);
+        return Matrix4x4(
+            Vector4(1.0f / (aspect * tanHalfFov), 0, 0, 0),
+            Vector4(0, 1.0f / tanHalfFov, 0, 0),
+            Vector4(0, 0, (zFar + zNear) / (zFar - zNear), 1),
+            Vector4(0, 0, -(2 * zFar * zNear) / (zFar - zNear), 0)
+        );
     }
     Matrix4x4 Matrix4x4::Rotation(System::Quaternion q){
         // Precalculate coordinate products
