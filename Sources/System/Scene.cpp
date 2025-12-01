@@ -60,7 +60,7 @@ physicsEngine = new JoltPhysicsEngine();
     }
 
     
-    void Scene::Run() {
+    void Scene::Run(int windowWidth, int windowHeight) {
         // Update All GameObjects
         for (GameObject* go : GameObject::allGameObjects) {
             for (auto const& [type, components] : go->components) {
@@ -71,7 +71,7 @@ physicsEngine = new JoltPhysicsEngine();
         }
         // Render Scene
         System::Camera* cam = Camera::Getmain();
-        cam->RenderStart();
+        cam->RenderStart(windowWidth, windowHeight);
         for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
             GameObject* go = GameObject::allGameObjects[i];
             System::MeshRenderer* renderer = go->GetComponent<System::MeshRenderer>();
