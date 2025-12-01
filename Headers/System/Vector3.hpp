@@ -6,6 +6,9 @@
 //#include <System/Vector2.h>
 
 namespace System {
+    /// <summary>
+    /// Vector3 (Left-Handed coordinate system)
+    /// </summary>
     struct Vector3 {
     public:
         union {
