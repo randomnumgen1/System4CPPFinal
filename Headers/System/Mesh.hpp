@@ -48,8 +48,8 @@ namespace System {
             Points
         };
         struct SubMeshDescriptor {
-            int indexStart;
-            int indexCount;
+            unsigned int indexStart;
+            unsigned int indexCount;
             int baseVertex;
             MeshTopology topology;
         };
@@ -58,7 +58,7 @@ namespace System {
 
         std::vector<System::Vector3> vertices;
         std::vector<System::Vector3> normals;
-        std::vector<int> indices;
+        std::vector<unsigned int> indices;
         System::Bounds bounds;
         std::vector<SubMeshDescriptor> submeshes;
         std::vector<Vector4> tangents;
@@ -251,10 +251,10 @@ namespace System {
             m_bitFlags |= bitFlags::Modified;
 
         }
-        void SetTriangles(const std::vector<int>& triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+        void SetTriangles(const std::vector<unsigned int>& triangles, int submesh, bool calculateBounds = true, int baseVertex = 0) {
             SetIndices(triangles, MeshTopology::Triangles, submesh, calculateBounds, baseVertex);
         }
-        void SetIndices(const std::vector<int>& newIndices, MeshTopology topology, int submesh, bool calculateBounds = true, int baseVertex = 0) {
+        void SetIndices(const std::vector<unsigned int>& newIndices, MeshTopology topology, int submesh, bool calculateBounds = true, int baseVertex = 0) {
             m_bitFlags |= bitFlags::Modified;
             if (submesh < 0) {
                 throw std::out_of_range("Submesh index is out of range.");
@@ -271,8 +271,8 @@ namespace System {
             }
             else { // It's an existing submesh that we are replacing
                 SubMeshDescriptor& desc = submeshes[submesh];
-                int oldIndexCount = desc.indexCount;
-                int newIndexCount = newIndices.size();
+                unsigned int oldIndexCount = desc.indexCount;
+                unsigned int newIndexCount = newIndices.size();
                 int diff = newIndexCount - oldIndexCount;
 
                 // Replace the indices
@@ -298,13 +298,13 @@ namespace System {
             if (index < 0 || index >= submeshes.size()) throw std::out_of_range("Submesh index is out of range.");
             return submeshes[index];
         }
-        std::vector<int> GetIndices(int submesh) const {
+        std::vector<unsigned int> GetIndices(int submesh) const {
             if (submesh < 0 || submesh >= submeshes.size()) {
                 throw std::out_of_range("Submesh index is out of range.");
             }
 
             const auto& desc = submeshes[submesh];
-            return std::vector<int>(indices.begin() + desc.indexStart, indices.begin() + desc.indexStart + desc.indexCount);
+            return std::vector<unsigned int>(indices.begin() + desc.indexStart, indices.begin() + desc.indexStart + desc.indexCount);
         }
         void Clear(bool keepVertexLayout = true) {
             vertices.clear();

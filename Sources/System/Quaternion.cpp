@@ -5,8 +5,7 @@
 namespace System {
 
 
-    System::Quaternion::Quaternion() {
-        *this = Identity();
+    System::Quaternion::Quaternion() : x(0), y(0), z(0), w(1) {
     }
     System::Quaternion::Quaternion(float _x, float _y, float _z, float _w) {
         x = _x;

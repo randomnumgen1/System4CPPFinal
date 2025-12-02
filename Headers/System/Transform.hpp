@@ -40,7 +40,7 @@ namespace System {
 
         Transform() {
             localPosition = System::Vector3(0.0f, 0.0f, 0.0f);
-            localRotation = System::Quaternion::Euler(0.0f, 0.0f, 0.0f);
+            localRotation = System::Quaternion();
             localScale = System::Vector3(1.0f, 1.0f, 1.0f);
             parent = nullptr;
             hasChanged = false;

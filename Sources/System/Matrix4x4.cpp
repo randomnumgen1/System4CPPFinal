@@ -40,44 +40,31 @@ namespace System {
             Vector4(0.0f, 0.0f, 1.0f, 0.0f) 
                          });
     }
-    Matrix4x4 Matrix4x4::LookAt2(Vector3 from, Vector3 to, Vector3 up) {
-        Vector3 forward = (to - from).normalized();
-        Vector3 right = Vector3::Cross(up,forward).normalized();
-        Vector3 trueUp = Vector3::Cross(forward,right);
-
-        return {
-            Vector4(right.x, trueUp.x, -forward.x, 0.0f),
-            Vector4(right.y, trueUp.y, -forward.y, 0.0f),
-           Vector4(right.z, trueUp.z, -forward.z, 0.0f),
-          Vector4(-Vector3::Dot(right,from), -Vector3::Dot(trueUp,from), Vector3::Dot(forward,from), 1.0f) 
-        };
-    }
-  
     Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up) {
-        Matrix4x4 m;
+        Matrix4x4 m = Matrix4x4::zero;
 
-        Vector3 z = (to - from).normalized();
-        Vector3 x = Vector3::Cross(up, z).normalized();
-        Vector3 y = Vector3::Cross(z, x);
+        Vector3 zaxis = (to - from).normalized();
+        Vector3 xaxis = Vector3::Cross(up, zaxis).normalized();
+        Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
 
-        m.m00 = x.x;
-        m.m01 = y.x;
-        m.m02 = z.x;
-        m.m03 = 0;
-        m.m10 = x.y;
-        m.m11 = y.y;
-        m.m12 = z.y;
-        m.m13 = 0;
-        m.m20 = x.z;
-        m.m21 = y.z;
-        m.m22 = z.z;
-        m.m23 = 0;
-        m.m30 = -Vector3::Dot(x, from);
-        m.m31 = -Vector3::Dot(y, from);
-        m.m32 = -Vector3::Dot(z, from);
-        m.m33 = 1;
+        m.m00 = xaxis.x;
+        m.m01 = xaxis.y;
+        m.m02 = xaxis.z;
+        m.m03 = -Vector3::Dot(xaxis, from);
 
-        return m.transpose();
+        m.m10 = yaxis.x;
+        m.m11 = yaxis.y;
+        m.m12 = yaxis.z;
+        m.m13 = -Vector3::Dot(yaxis, from);
+
+        m.m20 = zaxis.x;
+        m.m21 = zaxis.y;
+        m.m22 = zaxis.z;
+        m.m23 = -Vector3::Dot(zaxis, from);
+
+        m.m33 = 1.0f;
+
+        return m;
     }
     Matrix4x4 Matrix4x4::Ortho(float left, float right, float bottom, float top, float zNear, float zFar) {
         System::Matrix4x4 orthoMatrix = {
