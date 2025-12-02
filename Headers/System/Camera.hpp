@@ -61,6 +61,13 @@ public:
 
     void RenderStart(int windowWidth, int windowHeight) ;
     void TakeScreenshot(const std::string& filename);
+    /// <summary>
+    /// This matrix is often referred to as "view matrix" in graphics literature.
+    /// Note that camera space matches OpenGL convention: camera's forward is the negative Z axis. 
+    /// This is different from System4CPP's convention, where forward is the positive Z axis.
+    /// </summary>
+    /// <returns></returns>
+    Matrix4x4 GetworldToCameraMatrix();
 }; 
 }
 #endif

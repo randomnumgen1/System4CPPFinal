@@ -25,8 +25,11 @@ namespace System {
             }
 
             material->shader->use();
+            std::cout << "Model Matrix: " << transform()->GetLocalToWorldMatrix().ToString() << std::endl;
             material->shader->setMat4("model", transform()->GetLocalToWorldMatrix());
-            material->shader->setMat4("view", camera->viewMatrix);
+            std::cout << "View: " << camera->viewMatrix.ToString() << std::endl;
+            material->shader->setMat4("view", camera->GetworldToCameraMatrix());
+            std::cout << "Projection: " << camera->projectionMatrix.ToString() << std::endl;
             material->shader->setMat4("projection", camera->projectionMatrix);
             material->shader->setColor("color", material->color);
             meshFilter->mesh->UploadMeshData(false);

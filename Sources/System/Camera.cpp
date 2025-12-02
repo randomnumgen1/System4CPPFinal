@@ -68,12 +68,12 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
         int pixelWidth = static_cast<int>(viewport.width * windowWidth);
         int pixelHeight = static_cast<int>(viewport.height * windowHeight);
 
- // Set the viewport
+        // Set the viewport
         System::Graphics::GL::gl_glViewport(pixelX, pixelY, pixelWidth, pixelHeight);
         // SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
         // 
         System::Graphics::GL::gl_glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
- // Clear the screen
+        // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
         float aspect = static_cast<float>(pixelWidth) / static_cast<float>(pixelHeight);
@@ -82,7 +82,8 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
             : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), aspect, nearClipPlane, farClipPlane);
 
- // Calculate the view matrix based on the camera's transform
+        // Calculate the view matrix based on the camera's transform
+        
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
 
          
@@ -109,4 +110,20 @@ void Camera::TakeScreenshot(const std::string& filename) {
     image.Flip();
     image.Save(filename, Image::ImageFormat::BMP);
 }
+Matrix4x4 Camera::GetworldToCameraMatrix() {
+    // Get the camera's world transform
+    Matrix4x4 localToWorld = transform()->GetLocalToWorldMatrix();
+
+    // Invert it to go from world space to camera space
+    Matrix4x4 worldToCamera = localToWorld.inverse();
+
+    // Adjust for OpenGL convention: forward = -Z
+    // If your engine defines forward as +Z, you need to flip here.
+    // One way: multiply by a correction matrix that flips Z.
+    Matrix4x4 correction = Matrix4x4::identity;
+    correction.m22 = -1.0f; // flip Z axis
+
+    return correction * worldToCamera;
+}
+
 };
