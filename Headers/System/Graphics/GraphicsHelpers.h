@@ -72,6 +72,16 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	// Enum for common OpenGL capabilities using hex values
+	enum class GraphicsCapability : uint32_t {
+		CullFace = 0x0B44, // GL_CULL_FACE
+		DepthTest = 0x0B71, // GL_DEPTH_TEST
+		Blend = 0x0BE2, // GL_BLEND
+		ScissorTest = 0x0C11, // GL_SCISSOR_TEST
+		StencilTest = 0x0B90, // GL_STENCIL_TEST
+		Multisample = 0x809D  // GL_MULTISAMPLE
+	};
+
 	enum class WindingOrder : int32_t {
 		CW = 0x0900,
 		CCW = 0x0901
@@ -309,7 +319,13 @@ namespace System::Graphics{
 		}
 
 
-
+		inline static void gl_glDisable(GraphicsCapability w){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDisable(static_cast<GLenum>(w));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 
 
