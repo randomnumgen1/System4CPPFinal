@@ -32,6 +32,7 @@ namespace System {
         // column no  1  | m01 m11 m21 m31
         // (=horiz)   2  | m02 m12 m22 m32
         //            3  | m03 m13 m23 m33
+       
         float m00, m10, m20, m30;
         float m01, m11, m21, m31;
         float m02, m12, m22, m32;
@@ -67,10 +68,10 @@ namespace System {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="fov"></param>
-        /// <param name="aspect"></param>
-        /// <param name="zNear"></param>
-        /// <param name="zFar"></param>
+        /// <param name="fov">Vertical field-of-view in degrees.</param>
+        /// <param name="aspect">Aspect ratio (width divided by height).</param>
+        /// <param name="zNear">Near depth clipping plane value.</param>
+        /// <param name="zFar">Far depth clipping plane value.</param>
         /// <returns></returns>
         static Matrix4x4 Perspective(float fov, float aspect, float zNear, float zFar);
         static Matrix4x4 Rotation(System::Quaternion q);
