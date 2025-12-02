@@ -73,13 +73,14 @@ namespace System {
                 w * q.y - x * q.z + y * q.w + z * q.x,
                 w * q.z + x * q.y - y * q.x + z * q.w
             );
-        }
+        } 
         System::Vector3 operator*(const System::Vector3& v) const {
-            System::Quaternion vecQuat(v.x, v.y, v.z, 0.0f);
-            System::Quaternion result = (*this) * vecQuat * this->conjugate();
-            return System::Vector3(result.x, result.y, result.z);
+            Vector3 u(x, y, z);
+            float s = w;
+            return u * 2.0f * Vector3::Dot(u, v) +
+                v * (s * s - Vector3::Dot(u, u)) +
+                Vector3::Cross(u, v) * 2.0f * s;
         }
- 
 
         inline float operator[](int i) const { return (&x)[i]; }
         inline float& operator[](int i) { return (&x)[i]; }
