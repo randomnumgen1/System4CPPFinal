@@ -272,6 +272,11 @@ namespace System {
 
     }
 
+    void Matrix4x4::SetTRS(Vector3 pos, Quaternion q, Vector3 s){
+
+
+    }
+
  
 
 

@@ -94,6 +94,8 @@ namespace System {
          Vector4 GetRow(int index);
          Matrix4x4 inverse() const;
          bool isIdentity() const;
+         void SetTRS(Vector3 pos, Quaternion q, Vector3 s);
+
 
          std::string ToString() const {
              std::ostringstream oss;
