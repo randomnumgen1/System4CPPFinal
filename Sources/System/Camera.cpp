@@ -59,7 +59,7 @@ System::Camera::~Camera() {
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
         // Render to the screen
-
+        System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
 

@@ -72,6 +72,10 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	enum class WindingOrder : int32_t {
+		CW = 0x0900,
+		CCW = 0x0901
+	};
 	enum class PixelFormat : int32_t {
 		RED = 0x1903, // GL_RED
 		RG = 0x8227, // GL_RG
@@ -288,6 +292,22 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
+
+
+
+
+
+
+
+
+		inline static void gl_glFrontFace(WindingOrder w){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glFrontFace(static_cast<GLenum>(w));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
 
 
 
