@@ -18,8 +18,8 @@ namespace System {
          ----------------------------------------------------------------------------------------
          Constructors
          ----------------------------------------------------------------------------------------
-        */
-        Quaternion();
+        */ 
+        Quaternion() : x(0), y(0), z(0), w(1) {}
         Quaternion(float _x, float _y, float _z, float _w);
 
         static constexpr float  kEpsilon = 0.00001F;

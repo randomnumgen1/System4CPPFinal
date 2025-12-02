@@ -5,9 +5,7 @@
 namespace System {
 
 
-    System::Quaternion::Quaternion() {
-        *this = Identity();
-    }
+   
     System::Quaternion::Quaternion(float _x, float _y, float _z, float _w) {
         x = _x;
         y = _y;
@@ -59,7 +57,7 @@ namespace System {
         throw std::runtime_error("Not Implemented Error.");
     }
     Quaternion System::Quaternion::Inverse(Quaternion rotation) {
-        Quaternion ans;
+        Quaternion ans = Quaternion::Identity();
         float ls = rotation.x * rotation.x + rotation.y * rotation.y + rotation.z * rotation.z + rotation.w * rotation.w;
         float invNorm = 1.0f / ls;
         ans.x = -rotation.x * invNorm;
