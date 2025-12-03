@@ -59,7 +59,7 @@ System::Camera::~Camera() {
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
         // Render to the screen
-        System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
+       System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
 
@@ -73,15 +73,20 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
         // SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
         // 
         System::Graphics::GL::gl_glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
+ System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
         float aspect = static_cast<float>(pixelWidth) / static_cast<float>(pixelHeight);
-
+        
         projectionMatrix = orthographic
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
-            : System::Matrix4x4::Perspective(Mathf::Radians(60.0f), aspect, nearClipPlane, farClipPlane);
+            : System::Matrix4x4::Perspective(60.0f, aspect, nearClipPlane, farClipPlane);
 
+
+
+
+       // projectionMatrix = System::Matrix4x4::Perspective( 60.0f   , 1.0f, 1.0f, 100.0f);
         // Calculate the view matrix based on the camera's transform
         
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
