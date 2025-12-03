@@ -88,7 +88,7 @@ namespace System {
         };
         return orthoMatrix;
     }
- 
+ /*
     Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar) {
         float tanHalfFovy = tan(fov / 2.0f);
 
@@ -98,6 +98,19 @@ namespace System {
         m.m22 = (zFar + zNear) / (zFar - zNear);
         m.m23 = -(2.0f * zFar * zNear) / (zFar - zNear);
         m.m32 = 1.0f;
+
+        return m;
+    }
+*/
+    Matrix4x4 Matrix4x4::Perspective(float fovDeg, float aspect, float zNear, float zFar) {
+        float tanHalfFovy = tan(fovDeg * Mathf::Deg2Rad / 2.0f);
+
+        Matrix4x4 m = Matrix4x4::zero;
+        m.m00 = 1.0f / (aspect * tanHalfFovy);
+        m.m11 = 1.0f / tanHalfFovy;
+        m.m22 = -(zFar + zNear) / (zFar - zNear);
+        m.m23 = -(2.0f * zFar * zNear) / (zFar - zNear);
+        m.m32 = -1.0f;
 
         return m;
     }
