@@ -7,8 +7,8 @@
 #include <System/Vector3.hpp>
 #include <System/Quaternion.hpp>
 #include <System/Matrix4x4.hpp>
-#include <System/Component.h>
-#include "Color32.hpp"
+#include <System/Component.hpp>
+#include <System/Color32.hpp>
 
 namespace System {
     enum LightType {
