@@ -58,6 +58,7 @@ System::Camera::~Camera() {
 
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
+        System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
        System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
