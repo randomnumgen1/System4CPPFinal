@@ -108,6 +108,8 @@ namespace System {
             mf->mesh = mesh;
             go->AddComponent<MeshRenderer>();
             return go;
+        }else if(PrimitiveType::Sphere == type){
+        
         }
         // Not implemented
         return nullptr;
