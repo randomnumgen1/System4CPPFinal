@@ -35,12 +35,14 @@ namespace System {
             material->shader->setMat4("projection", camera->projectionMatrix );
             material->shader->setColor("color", material->color);
 
-
+            material->shader->setVec3("viewPos", camera->transform()->GetPosition());
             //point light
+            if(System::Light::allLights.size() > 0){
             material->shader->setVec3("lightPos", System::Light::allLights[0]->transform()->GetPosition());
             material->shader->setVec3("lightColor", System::Vector3(1, 1, 1)); 
+            }
 
-
+        //    System::Light::allLights[0].
 
             meshFilter->mesh->UploadMeshData(false);
 

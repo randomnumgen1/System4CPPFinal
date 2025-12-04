@@ -72,6 +72,17 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	// Enum for depth comparison functions
+	enum class DepthFunc : int32_t {
+		Never = 0x0200, // GL_NEVER
+		Less = 0x0201, // GL_LESS
+		Equal = 0x0202, // GL_EQUAL
+		Lequal = 0x0203, // GL_LEQUAL
+		Greater = 0x0204, // GL_GREATER
+		Notequal = 0x0205, // GL_NOTEQUAL
+		Gequal = 0x0206, // GL_GEQUAL
+		Always = 0x0207  // GL_ALWAYS
+	};
 	// Enum for common OpenGL capabilities using hex values
 	enum class GraphicsCapability : uint32_t {
 		CullFace = 0x0B44, // GL_CULL_FACE
@@ -346,6 +357,25 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
+		//inline static void  gl_glDepthFunc(GL_ALWAYS)
+
+
+		inline static void gl_glDepthFunc(DepthFunc func) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDepthFunc(static_cast<GLenum>(func));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+
+
+
+
+
+
+
+
+
 
 
 

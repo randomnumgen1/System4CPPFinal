@@ -27,7 +27,14 @@ namespace System {
         float range;
         Color32 color;
         float intensity;
-
+        Light()
+            : type(LightType::Point),
+            range(1.0f),
+            color(255, 255, 255, 255), // default white
+            intensity(1.0f)
+        {
+            allLights.push_back(this);
+        }
         Component* Clone() const override {
             Light* newLight = new Light();
             newLight->type = type;
