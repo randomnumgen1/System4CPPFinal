@@ -36,9 +36,9 @@ int main() {
     System::MeshRenderer* renderer = cube->GetComponent<System::MeshRenderer>();
 
 #if defined(__arm__) || defined(__aarch64__)
-    System::Shader* shader = new System::Shader("simple_es.vert", "simple_es.frag");
+    System::Shader* shader = new System::Shader("shaderbasicflat_es.vert", "shaderbasicflat_es.frag");
 #else	
-	System::Shader* shader = new System::Shader("simple.vert", "simple.frag");
+	System::Shader* shader = new System::Shader("shaderbasicflat.vert", "shaderbasicflat.frag");
 #endif	
 	
     System::Material* material = new System::Material(shader);
