@@ -109,7 +109,57 @@ namespace System {
             go->AddComponent<MeshRenderer>();
             return go;
         }else if(PrimitiveType::Sphere == type){
-        
+            const int stacks = 16;   // latitude subdivisions
+            const int slices = 32;   // longitude subdivisions
+            const float radius = 0.5f;
+
+            std::vector<Vector3> vertices;
+            std::vector<int> indices;
+
+            // Generate vertices
+            for (int i = 0; i <= stacks; ++i) {
+                float phi = M_PI * i / stacks; // latitude angle 
+                for (int j = 0; j <= slices; ++j) {
+                    float theta = 2.0f * M_PI * j / slices; // longitude angle [0,  ]
+
+                    float x = radius * sin(phi) * cos(theta);
+                    float y = radius * cos(phi);
+                    float z = radius * sin(phi) * sin(theta);
+
+                    vertices.emplace_back(x, y, z);
+                }
+            }
+            // Generate indices (two triangles per quad)
+            for (int i = 0; i < stacks; ++i) {
+                for (int j = 0; j < slices; ++j) {
+                    int first = i * (slices + 1) + j;
+                    int second = first + slices + 1;
+
+                    indices.push_back(first);
+                    indices.push_back(second);
+                    indices.push_back(first + 1);
+
+                    indices.push_back(second);
+                    indices.push_back(second + 1);
+                    indices.push_back(first + 1);
+                }
+            }
+
+
+            mesh->SetVertices(vertices);
+            mesh->SetTriangles(indices, 0);
+
+            mesh->RecalculateNormals();
+            mesh->RecalculateBounds();
+
+            GameObject* go = new GameObject("Sphere");
+            MeshFilter* mf = go->AddComponent<MeshFilter>();
+            mf->mesh = mesh;
+            go->AddComponent<MeshRenderer>();
+            return go;
+
+
+
         }
         // Not implemented
         return nullptr;

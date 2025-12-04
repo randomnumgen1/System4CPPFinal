@@ -339,8 +339,13 @@ namespace System::Graphics{
 
 
 
-
-
+		inline static void gl_glUniform3fv(GLint location, GLsizei count, const GLfloat* value) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glUniform3fv(location, count, value);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 
 
