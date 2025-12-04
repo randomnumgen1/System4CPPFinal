@@ -8,6 +8,9 @@
 #include <iomanip>
 
 namespace System {
+    /// <summary>
+    /// column major
+    /// </summary>
     struct Matrix4x4 {
         /// <summary>
         /// It has 1s in the main diagonal and 0s in all other elements:
@@ -83,7 +86,7 @@ namespace System {
 
 
          /// <summary>
-         /// Switches between row-major and column-major order.
+         /// swaps rows and columns.
          /// </summary>
          /// <returns>The transposed matrix.</returns>
          Matrix4x4 transpose() const;
