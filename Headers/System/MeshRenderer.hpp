@@ -7,6 +7,8 @@
 #include <System/GameObject.hpp>
 #include <System/Camera.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
+#include <System/Light.hpp>
+
 namespace System {
     class MeshRenderer : public Component {
     public:
@@ -32,6 +34,14 @@ namespace System {
             std::cout << "Projection: " << camera->projectionMatrix.ToString() << std::endl;
             material->shader->setMat4("projection", camera->projectionMatrix );
             material->shader->setColor("color", material->color);
+
+
+            //point light
+            material->shader->setVec3("lightPos", System::Light::allLights[0]->transform()->GetPosition());
+            material->shader->setVec3("lightColor", System::Vector3(1, 1, 1)); 
+
+
+
             meshFilter->mesh->UploadMeshData(false);
 
             System::Graphics::GL::gl_glBindVertexArray(meshFilter->mesh->GetVAO());

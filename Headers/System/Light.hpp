@@ -9,6 +9,7 @@
 #include <System/Matrix4x4.hpp>
 #include <System/Component.hpp>
 #include <System/Color32.hpp>
+#include <vector>
 
 namespace System {
     enum LightType {
@@ -20,6 +21,8 @@ namespace System {
     private:
         
     public:
+        static std::vector<Light*> allLights;
+
         LightType type;
         float range;
         Color32 color;
