@@ -25,6 +25,15 @@ namespace System {
         Color32 color;
         float intensity;
 
+        Component* Clone() const override {
+            Light* newLight = new Light();
+            newLight->type = type;
+            newLight->range = range;
+            newLight->color = color;
+            newLight->intensity = intensity;
+            return newLight;
+        }
+
     };
 }
 #endif
