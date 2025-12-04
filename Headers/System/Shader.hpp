@@ -28,6 +28,9 @@ namespace System {
         void setFloat(const std::string& name, float value) {
             System::Graphics::GL::gl_glUniform1f(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), value);
         }
+        void setVec3(const std::string& name, const Vector3& value) {
+            System::Graphics::GL::gl_glUniform3fv(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), 1, &value.x);
+        }
         void setMat4(const std::string& name, const Matrix4x4& mat) {
             System::Graphics::GL::gl_glUniformMatrix4fv(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), 1, false, &mat.m00);
         }
