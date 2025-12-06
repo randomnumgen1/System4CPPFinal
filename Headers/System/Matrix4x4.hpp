@@ -35,11 +35,15 @@ namespace System {
         // column no  1  | m01 m11 m21 m31
         // (=horiz)   2  | m02 m12 m22 m32
         //            3  | m03 m13 m23 m33
-       
-        float m00, m10, m20, m30;
-        float m01, m11, m21, m31;
-        float m02, m12, m22, m32;
-        float m03, m13, m23, m33;
+		union{
+			struct{
+				float m00, m10, m20, m30;
+				float m01, m11, m21, m31;
+				float m02, m12, m22, m32;
+				float m03, m13, m23, m33;
+			};
+			float raw[16];
+		};
         /*
          ----------------------------------------------------------------------------------------
          Constructors
