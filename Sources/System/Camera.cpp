@@ -58,7 +58,7 @@ System::Camera::~Camera() {
 
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
-        System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::DepthTest);
+        System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
        System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
        System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Always);
@@ -80,15 +80,14 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
         float aspect = static_cast<float>(pixelWidth) / static_cast<float>(pixelHeight);
-        
+       
         projectionMatrix = orthographic
             ? System::Matrix4x4::Ortho(viewport.x, viewport.x + viewport.width, viewport.y, viewport.y + viewport.height, nearClipPlane, farClipPlane)
             : System::Matrix4x4::Perspective(60.0f, aspect, nearClipPlane, farClipPlane);
 
 
 
-
-       // projectionMatrix = System::Matrix4x4::Perspective( 60.0f   , 1.0f, 1.0f, 100.0f);
+         
         // Calculate the view matrix based on the camera's transform
         
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
@@ -117,6 +116,7 @@ void Camera::TakeScreenshot(const std::string& filename) {
     image.Flip();
     image.Save(filename, Image::ImageFormat::BMP);
 }
+ 
 Matrix4x4 Camera::GetworldToCameraMatrix() {
     // Get the camera's world transform
     Matrix4x4 localToWorld = transform()->GetLocalToWorldMatrix();

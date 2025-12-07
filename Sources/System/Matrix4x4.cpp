@@ -39,7 +39,7 @@ namespace System {
             Vector4(0.0f, 0.0f, (zFar + zNear) * invDepth, 2.0f * zFar * zNear * invDepth),
             Vector4(0.0f, 0.0f, 1.0f, 0.0f) 
                          });
-    }
+    }/*
     Matrix4x4 Matrix4x4::LookAt2(Vector3 from, Vector3 to, Vector3 up) {
         Vector3 forward = (to - from).normalized();
         Vector3 right = Vector3::Cross(up,forward).normalized();
@@ -51,8 +51,20 @@ namespace System {
            Vector4(right.z, trueUp.z, -forward.z, 0.0f),
           Vector4(-Vector3::Dot(right,from), -Vector3::Dot(trueUp,from), Vector3::Dot(forward,from), 1.0f) 
         };
+    }*/
+    Matrix4x4 LookAt2(Vector3 from, Vector3 to, Vector3 up) {
+        Vector3 forward = (to - from).normalized();              // world +forward
+        Vector3 right = Vector3::Cross(up, forward).normalized();
+        Vector3 trueUp = Vector3::Cross(forward, right);
+
+        // Columns: right, up, -forward, translation
+        return {
+            Vector4(right.x,   right.y,   right.z,   -Vector3::Dot(right,   from)),
+            Vector4(trueUp.x,  trueUp.y,  trueUp.z,  -Vector3::Dot(trueUp,  from)),
+            Vector4(-forward.x,-forward.y,-forward.z, Vector3::Dot(forward, from)),
+            Vector4(0.0f,      0.0f,      0.0f,       1.0f)
+        };
     }
-  
     Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up) {
         Matrix4x4 m = Matrix4x4::zero;
 
@@ -90,7 +102,7 @@ namespace System {
     }
  /*
     Matrix4x4 Matrix4x4::Perspective(float fov, float aspect, float zNear, float zFar) {
-        float tanHalfFovy = tan(fov / 2.0f);
+        float tanHalfFovy = tan(fov * Mathf::Deg2Rad / 2.0f);
 
         Matrix4x4 m = Matrix4x4::zero;
         m.m00 = 1.0f / (aspect * tanHalfFovy);
