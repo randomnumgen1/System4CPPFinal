@@ -63,23 +63,25 @@ TEST(BasicMatrix4x4Test, TRStest) {
 }
 
 TEST(BasicMatrix4x4Test, lookattest) {
-	System::Matrix4x4 mat = System::Matrix4x4::LookAt(Vector3(512, 512, -5),System::Vector3(512, 512, 0), System::Vector3.up);
-	EXPECT_FLOAT_EQ(mat.raw[0],1f );
-	EXPECT_FLOAT_EQ(mat.raw[1], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[2], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[3], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[4], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[5],  1f);
-	EXPECT_FLOAT_EQ(mat.raw[6], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[7], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[8], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[9], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[10], 1f);
-	EXPECT_FLOAT_EQ(mat.raw[11], 0f);
-	EXPECT_FLOAT_EQ(mat.raw[12], 512f);
-	EXPECT_FLOAT_EQ(mat.raw[13], 512f);
-	EXPECT_FLOAT_EQ(mat.raw[14], -5f);
-	EXPECT_FLOAT_EQ(mat.raw[15],1f );
+	System::Matrix4x4 mat = System::Matrix4x4::LookAt(System::Vector3(512, 512, -5),System::Vector3(512, 512, 0), System::Vector3::up);
+	EXPECT_FLOAT_EQ(mat.raw[0],1.0f );
+	EXPECT_FLOAT_EQ(mat.raw[1], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[2], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[3], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[4], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[5],  1.0f);
+	EXPECT_FLOAT_EQ(mat.raw[6], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[7], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[8], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[9], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[10], 1.0f);
+	EXPECT_FLOAT_EQ(mat.raw[11], 0.0f);
+	EXPECT_FLOAT_EQ(mat.raw[12], 512.0f);
+	EXPECT_FLOAT_EQ(mat.raw[13], 512.0f);
+	EXPECT_FLOAT_EQ(mat.raw[14], -5.0f);
+	EXPECT_FLOAT_EQ(mat.raw[15],1.0f );
+		
+	
 	
 }
 
