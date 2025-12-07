@@ -58,7 +58,7 @@ System::Camera::~Camera() {
 
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
-       // System::Graphics::GL::gl_glFrontFace(GL_CW); // instead of GL_CCW
+System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
     System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
@@ -76,7 +76,7 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
         // SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
         // 
         System::Graphics::GL::gl_glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
- System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
+ 
         // Clear the screen
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
 
