@@ -58,7 +58,7 @@ namespace System {
 
         std::vector<System::Vector3> vertices;
         std::vector<System::Vector3> normals;
-        std::vector<int> indices;
+        std::vector<unsigned int> indices;
         System::Bounds bounds;
         std::vector<SubMeshDescriptor> submeshes;
         std::vector<Vector4> tangents;
@@ -120,6 +120,7 @@ namespace System {
             bounds.center = (maxBounds + minBounds) * 0.5f;
             bounds.extents = bounds.size * 0.5f;
         }
+        
         void RecalculateNormals() {
             // Clear existing normals and resize to the same size as vertices, initialized to zero.
             normals.assign(vertices.size(), Vector3(0, 0, 0));
@@ -127,22 +128,27 @@ namespace System {
             // Iterate over each triangle
             for (size_t i = 0; i < indices.size(); i += 3) {
                 // Get the indices of the vertices that form the triangle
-                int idx0 = indices[i];
-                int idx1 = indices[i + 1];
-                int idx2 = indices[i + 2];
+                unsigned int idx0 = indices[i];
+                unsigned int idx1 = indices[i + 1];
+                unsigned int idx2 = indices[i + 2];
 
                 // Get the vertices of the triangle
                 const Vector3& v0 = vertices[idx0];
                 const Vector3& v1 = vertices[idx1];
                 const Vector3& v2 = vertices[idx2];
 
-                // Calculate the normal of the triangle
-                Vector3 normal = Vector3::Cross(v1 - v0, v2 - v0);
+                // Calculate the normal of the triangle for CW winding
+                // Swap the order of the cross product compared to CCW
+                Vector3 normal = Vector3::Cross(v2 - v0, v1 - v0);
 
-                // Add the normal to the normals of the three vertices
-                normals[idx0] += normal;
-                normals[idx1] += normal;
-                normals[idx2] += normal;
+                // Weight by triangle area (optional, improves smooth shading)
+                float area = normal.magnitude();
+
+                if (area > 1e-6f) {
+                    normals[idx0] += normal * area;
+                    normals[idx1] += normal * area;
+                    normals[idx2] += normal * area;
+                }
             }
 
             // Normalize all the normals
@@ -161,9 +167,9 @@ namespace System {
             GetUVs(0, uv0);
 
             for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-                int i0 = indices[i];
-                int i1 = indices[i + 1];
-                int i2 = indices[i + 2];
+                unsigned int i0 = indices[i];
+                unsigned int i1 = indices[i + 1];
+                unsigned int i2 = indices[i + 2];
 
                 const Vector3& v0 = vertices[i0];
                 const Vector3& v1 = vertices[i1];

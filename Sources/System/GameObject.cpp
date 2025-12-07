@@ -72,29 +72,29 @@ namespace System {
             };
 
             std::vector<int> triangles = {
-                // Front face
-                0, 1, 2,
-                2, 3, 0,
+                // Front face (CW)
+                0, 2, 1,
+                2, 0, 3,
 
-                // Back face
-                4, 5, 6,
-                6, 7, 4,
+                // Back face (CW)
+                4, 6, 5,
+                6, 4, 7,
 
-                // Top face
-                8, 9, 10,
-                10, 11, 8,
+                // Top face (CW)
+                8, 10, 9,
+                10, 8, 11,
 
-                // Bottom face
-                12, 13, 14,
-                14, 15, 12,
+                // Bottom face (CW)
+                12, 14, 13,
+                14, 12, 15,
 
-                // Right face
-                16, 17, 18,
-                18, 19, 16,
+                // Right face (CW)
+                16, 18, 17,
+                18, 16, 19,
 
-                // Left face
-                20, 21, 22,
-                22, 23, 20
+                // Left face (CW)
+                20, 22, 21,
+                22, 20, 23
             };
 
             mesh->SetVertices(vertices);
@@ -108,7 +108,8 @@ namespace System {
             mf->mesh = mesh;
             go->AddComponent<MeshRenderer>();
             return go;
-        }else if(PrimitiveType::Sphere == type){
+        }
+        else if(PrimitiveType::Sphere == type){
             const int stacks = 16;   // latitude subdivisions
             const int slices = 32;   // longitude subdivisions
             const float radius = 0.5f;
