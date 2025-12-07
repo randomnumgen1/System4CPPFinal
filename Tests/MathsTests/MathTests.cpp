@@ -10,7 +10,7 @@ Matrix4x4 Tests
 //Constructors
 //this test is the correct values and float index DO NOT MODIFY
 TEST(BasicMatrix4x4Test, PerspectiveTest1) {
-	Matrix4x4 mat = Matrix4x4::Perspective(60.0f, 16.0f / 9.0f, 1.0f, 1000.0f);
+	System::Matrix4x4 mat = Matrix4x4::Perspective(60.0f, 16.0f / 9.0f, 1.0f, 1000.0f);
 	
 	EXPECT_FLOAT_EQ(mat.raw[0], 0.9742786);
 	EXPECT_FLOAT_EQ(mat.raw[1], 0.00000f);
@@ -44,7 +44,7 @@ TEST(BasicMatrix4x4Test, TRStest) {
 	EXPECT_FLOAT_EQ(mat.m02,0.0f );
 	EXPECT_FLOAT_EQ(mat.m03, 6.0f);
 	EXPECT_FLOAT_EQ(mat.m10, 0.0f);
-	EXPECT_FLOAT_EQ(mat.m11.,1.0f ); 
+	EXPECT_FLOAT_EQ(mat.m11,1.0f ); 
 	
 
 	
