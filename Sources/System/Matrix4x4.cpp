@@ -39,7 +39,7 @@ namespace System {
             Vector4(0.0f, 0.0f, (zFar + zNear) * invDepth, 2.0f * zFar * zNear * invDepth),
             Vector4(0.0f, 0.0f, 1.0f, 0.0f) 
                          });
-    }/*
+    }
     Matrix4x4 Matrix4x4::LookAt2(Vector3 from, Vector3 to, Vector3 up) {
         Vector3 forward = (to - from).normalized();
         Vector3 right = Vector3::Cross(up,forward).normalized();
@@ -51,7 +51,7 @@ namespace System {
            Vector4(right.z, trueUp.z, -forward.z, 0.0f),
           Vector4(-Vector3::Dot(right,from), -Vector3::Dot(trueUp,from), Vector3::Dot(forward,from), 1.0f) 
         };
-    }*/
+    }
     Matrix4x4 LookAt2(Vector3 from, Vector3 to, Vector3 up) {
         Vector3 forward = (to - from).normalized();              // world +forward
         Vector3 right = Vector3::Cross(up, forward).normalized();

@@ -58,10 +58,11 @@ System::Camera::~Camera() {
 
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
+       // System::Graphics::GL::gl_glFrontFace(GL_CW); // instead of GL_CCW
         System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
-       System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
-       System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Always);
+    System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
+      // System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Always);
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
 
@@ -90,6 +91,7 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
          
         // Calculate the view matrix based on the camera's transform
         
+       //viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() - -transform()->forward(), transform()->up());
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
 
          
@@ -130,7 +132,7 @@ Matrix4x4 Camera::GetworldToCameraMatrix() {
     Matrix4x4 correction = Matrix4x4::identity;
     correction.m22 = -1.0f; // flip Z axis
 
-    return correction * worldToCamera;
+    return  worldToCamera;
 }
 
 };
