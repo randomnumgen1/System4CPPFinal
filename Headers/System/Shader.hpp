@@ -15,7 +15,7 @@ namespace System {
         unsigned int ID;
 
         Shader(const char* vertexPath, const char* fragmentPath);
-
+        
         void use() {
             System::Graphics::GL::gl_glUseProgram(ID);
         }
