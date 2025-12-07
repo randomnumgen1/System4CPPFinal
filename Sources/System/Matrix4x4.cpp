@@ -66,6 +66,9 @@ namespace System {
         };
     }
     Matrix4x4 Matrix4x4::LookAt(Vector3 from, Vector3 to, Vector3 up) {
+        return Matrix4x4::TRS(from, Quaternion::LookRotation(to - from, up), Vector3::one);
+
+
         Matrix4x4 m = Matrix4x4::zero;
 
         Vector3 zaxis = (to - from).normalized();// forward
