@@ -1,3 +1,4 @@
+#include <gtest/gtest.h>
 #include "System/Vector3.hpp"
 #include "System/Matrix4x4.hpp"
 
@@ -9,10 +10,10 @@ Matrix4x4 Tests
 //Constructors
 //this test is the correct values and float index DO NOT MODIFY
 TEST(BasicMatrix4x4Test, PerspectiveTest1) {
-	Matrix4x4 mat = Matrix4x4::Perspective(60f, 16 / 9f, 1f, 1000f);
+	Matrix4x4 mat = Matrix4x4::Perspective(60.0f, 16.0f / 9.0f, 1.0f, 1000.0f);
 	
 	EXPECT_FLOAT_EQ(mat.raw[0], 0.9742786);
-	EXPECT_FLOAT_EQ(mat.raw[1], 	0.00000f);
+	EXPECT_FLOAT_EQ(mat.raw[1], 0.00000f);
 	EXPECT_FLOAT_EQ(mat.raw[2], 0.00000f);
 	EXPECT_FLOAT_EQ(mat.raw[3], 0.00000f);
 	
@@ -32,22 +33,37 @@ TEST(BasicMatrix4x4Test, PerspectiveTest1) {
 	EXPECT_FLOAT_EQ(mat.raw[15], 0.00000f);
 	
 }
-    
+//TRS tests
+
+
+
+TEST(BasicMatrix4x4Test, TRStest) {
+	System::Matrix4x4 mat = System::Matrix4x4::TRS(System::Vector3(6, 7, 8), System::Quaternion::Identity(), System::Vector3::one);
+	EXPECT_FLOAT_EQ(mat.m00,1.0f );
+	EXPECT_FLOAT_EQ(mat.m01, 0.0f);
+	EXPECT_FLOAT_EQ(mat.m02,0.0f );
+	EXPECT_FLOAT_EQ(mat.m03, 6.0f);
+	EXPECT_FLOAT_EQ(mat.m10, 0.0f);
+	EXPECT_FLOAT_EQ(mat.m11.,1.0f ); 
+	
+
+	
+    EXPECT_FLOAT_EQ(mat.m12, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m13, 7.0f);
+    EXPECT_FLOAT_EQ(mat.m20, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m21, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m22, 1.0f);
+    EXPECT_FLOAT_EQ(mat.m23, 8.0f);
+    EXPECT_FLOAT_EQ(mat.m30, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m31, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m32, 0.0f);
+    EXPECT_FLOAT_EQ(mat.m33, 1.0f);
+	
+	
+}
 
 
  
-
-
-
-
-
-
-
-
-
-
-//EXPECT_NEAR(,,1e-5f);
-
 
 /*
 ----------------------------
@@ -87,9 +103,9 @@ TEST(BasicVector3Test, Subtraction) {
 	System::Vector3 result;
 	
     result = add1 - add2;
-    EXPECT_EQ(result.x, 4.0f);
-    EXPECT_EQ(result.y, 4.0f);
-    EXPECT_EQ(result.z, 4.0f);
+    EXPECT_EQ(result.x, 2.0f);
+    EXPECT_EQ(result.y, 2.0f);
+    EXPECT_EQ(result.z, 2.0f);
 }
 
 
