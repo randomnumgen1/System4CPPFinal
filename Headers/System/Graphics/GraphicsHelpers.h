@@ -5,7 +5,7 @@
 #include <System/Internal/InternalGLloader.h> 
 #include <string>
 #include <vector>
-
+#include <System/Matrix4x4.hpp>
 
 
 #if (defined(__x86_64__) || defined(_M_X64))// && defined(_WIN32)
@@ -56,10 +56,6 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 #define ENUM_FLAGS(T) ENUM_FLAGS_EX(T,uint32_t)
 #endif
  
-
-
-
-
 
 
 
@@ -213,22 +209,26 @@ namespace System::Graphics{
 	public: 
 
 	
-	
 		/// <summary>
-		/// Matrix4x4 Adjusted projection matrix for the current graphics API.
-		/// </summary>
-		/// <param name="proj"></param>
-		/// <param name="renderIntoTexture"></param>
-		/// <returns></returns>
-		static Matrix4x4 GetGPUProjectionMatrix(Matrix4x4 proj){
+	/// Matrix4x4 Adjusted projection matrix for the current graphics API.
+	/// contains platform specific changes to handle y-flip and reverse z. 
+	/// </summary>
+	/// <param name="proj"></param>
+	/// <param name="renderIntoTexture"></param>
+	/// <returns></returns>
+		static  Matrix4x4 GetGPUProjectionMatrix( Matrix4x4 proj) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
+			Matrix4x4 m = proj; 
+				m.m11 *= -1.0f; // flip Y axis
+			return m;
 
 #elif defined(SYSTEM_GRAPHICS_VULKAN)
-
+			return proj;
 #else
-
+			return proj;
 #endif
 		}
+ 
 		static bool IsExtensionSupported(const std::string& v) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			int GL_NUM_EXTENSIONS = 0x821D;
