@@ -214,8 +214,21 @@ namespace System::Graphics{
 
 	
 	
+		/// <summary>
+		/// Matrix4x4 Adjusted projection matrix for the current graphics API.
+		/// </summary>
+		/// <param name="proj"></param>
+		/// <param name="renderIntoTexture"></param>
+		/// <returns></returns>
+		static Matrix4x4 GetGPUProjectionMatrix(Matrix4x4 proj){
+#if defined(SYSTEM_GRAPHICS_OPENGL)
 
+#elif defined(SYSTEM_GRAPHICS_VULKAN)
 
+#else
+
+#endif
+		}
 		static bool IsExtensionSupported(const std::string& v) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			int GL_NUM_EXTENSIONS = 0x821D;
