@@ -1,3 +1,4 @@
+// These tests produce the correct output, if these tests fail then its nothing to do with the actual tests.
 #include <gtest/gtest.h>
 #include "System/Vector3.hpp"
 #include "System/Matrix4x4.hpp"
