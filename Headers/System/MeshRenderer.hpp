@@ -31,11 +31,10 @@ namespace System {
            std::cout << "Model determint: " << transform()->GetLocalToWorldMatrix().determinant() << std::endl;
             material->shader->setMat4("model", transform()->GetLocalToWorldMatrix());
             std::cout << "View: " << camera->viewMatrix.ToString() << std::endl;
-            std::cout << "View determint: " << camera->viewMatrix.determinant() << std::endl;
+            std::cout << "View determint: " << camera->viewMatrix.determinant() << std::endl; 
             std::cout << "View2: " << camera->GetworldToCameraMatrix().ToString() << std::endl;
-            std::cout << "View2 determint: " << camera->GetworldToCameraMatrix().determinant()  << std::endl;
-
-            material->shader->setMat4("view", camera->GetworldToCameraMatrix());
+            //camera->GetworldToCameraMatrix() or camera->viewMatrix
+            material->shader->setMat4("view", camera->viewMatrix);
             std::cout << "Projection: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).ToString() << std::endl;
             std::cout << "Projection determint: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).determinant() << std::endl;
             material->shader->setMat4("projection", System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix) );
