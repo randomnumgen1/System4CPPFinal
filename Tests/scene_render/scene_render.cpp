@@ -33,8 +33,13 @@ int main() {
     camera->isMain = true;
 	camera->transform()->SetPosition(System::Vector3(0, 0, -5));
  camera->transform()->SetRotation(System::Quaternion::Euler(0, 20, 0));
-	
-	
+	 System::Matrix4x4 worldToCamera = camera->GetworldToCameraMatrix();
+ std::cout << worldToCamera.ToString() << std::endl;
+ 
+ 
+ 
+ 
+ 
     System::GameObject* cube = System::GameObject::CreatePrimitive(System::PrimitiveType::Cube);
     System::MeshRenderer* renderer = cube->GetComponent<System::MeshRenderer>();
 
