@@ -34,7 +34,7 @@ namespace System {
             std::cout << "View determint: " << camera->viewMatrix.determinant() << std::endl; 
             std::cout << "View2: " << camera->GetworldToCameraMatrix().ToString() << std::endl;
             //camera->GetworldToCameraMatrix() or camera->viewMatrix
-            material->shader->setMat4("view", camera->viewMatrix);
+            material->shader->setMat4("view", camera->GetworldToCameraMatrix());
             std::cout << "Projection: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).ToString() << std::endl;
             std::cout << "Projection determint: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).determinant() << std::endl;
             material->shader->setMat4("projection", System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix) );

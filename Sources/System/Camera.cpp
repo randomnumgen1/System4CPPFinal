@@ -59,7 +59,7 @@ System::Camera::~Camera() {
 void System::Camera::RenderStart(int windowWidth, int windowHeight) {
     if (targetTexture == nullptr) {
 System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
-        System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::DepthTest);
+        System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
     System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
       // System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Always);
@@ -72,8 +72,7 @@ System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         int pixelHeight = static_cast<int>(viewport.height * windowHeight);
 
         // Set the viewport
-        System::Graphics::GL::gl_glViewport(pixelX, pixelY, pixelWidth, pixelHeight);
-        // SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
+        System::Graphics::GL::gl_glViewport(pixelX, pixelY, pixelWidth, pixelHeight); 
         // 
         System::Graphics::GL::gl_glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
  
@@ -120,6 +119,16 @@ void Camera::TakeScreenshot(const std::string& filename) {
 }
  
 Matrix4x4 Camera::GetworldToCameraMatrix() {
+   Matrix4x4 correction = Matrix4x4::identity;
+    correction.m22 = -1.0f; // flip Z axis
+
+
+    Matrix4x4 rotation = Matrix4x4::Rotation(transform()->GetRotation());
+    Matrix4x4 translation = Matrix4x4::Translation(transform()->GetPosition());
+    Matrix4x4 localToWorld1 = rotation * translation; // R * T
+    return correction * localToWorld1.inverse();
+
+
     // Get the camera's world transform
     Matrix4x4 localToWorld = transform()->GetLocalToWorldMatrix();
 
@@ -129,10 +138,9 @@ Matrix4x4 Camera::GetworldToCameraMatrix() {
     // Adjust for OpenGL convention: forward = -Z
     // If your engine defines forward as +Z, you need to flip here.
     // One way: multiply by a correction matrix that flips Z.
-    Matrix4x4 correction = Matrix4x4::identity;
-    correction.m22 = -1.0f; // flip Z axis
+ 
 
-    return  worldToCamera;
+    return   correction * worldToCamera;
 }
 
 };

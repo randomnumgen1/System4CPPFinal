@@ -124,7 +124,8 @@ namespace System {
         }
         // Matrix calculations
         System::Matrix4x4 GetLocalToWorldMatrix() const {
-            System::Matrix4x4 localMatrix = System::Matrix4x4::Translation(localPosition) * System::Matrix4x4::Rotation(localRotation) * System::Matrix4x4::Scaling(localScale);
+            System::Matrix4x4 localMatrix = System::Matrix4x4::TRS(localPosition, localRotation, localScale);//return localRotation * localPosition * localScale;
+
             if (parent) {
                 return parent->GetLocalToWorldMatrix() * localMatrix;
             }

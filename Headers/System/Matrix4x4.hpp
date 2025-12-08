@@ -10,6 +10,8 @@
 namespace System {
     /// <summary>
     /// column major
+    /// the format of m00 means: m(column, row)
+    /// 
     /// </summary>
     struct Matrix4x4 {
         /// <summary>
@@ -26,15 +28,8 @@ namespace System {
         //column major
 
 
-        // memory layout:
-        //
-        //             row no (=vertical)
-        //               |  0   1   2   3
-        //            ---+----------------
-        //            0  | m00 m10 m20 m30
-        // column no  1  | m01 m11 m21 m31
-        // (=horiz)   2  | m02 m12 m22 m32
-        //            3  | m03 m13 m23 m33
+       // mXY means column X, row Y
+       // Layout is column-major: raw[0..3] = first column, raw[4..7] = second column, etc.
 		union{
 			struct{
 				float m00, m10, m20, m30;
@@ -104,15 +99,19 @@ namespace System {
          bool isIdentity() const;
          void SetTRS(Vector3 pos, Quaternion q, Vector3 s);
 
-
+          
          std::string ToString() const {
              std::ostringstream oss;
-             oss << std::fixed << std::setprecision(4);
+             oss << std::fixed << std::setprecision(8);
              oss << "Matrix4x4(\n";
-             oss << "  [" << m00 << ", " << m01 << ", " << m02 << ", " << m03 << "],\n";
-             oss << "  [" << m10 << ", " << m11 << ", " << m12 << ", " << m13 << "],\n";
-             oss << "  [" << m20 << ", " << m21 << ", " << m22 << ", " << m23 << "],\n";
-             oss << "  [" << m30 << ", " << m31 << ", " << m32 << ", " << m33 << "]\n";
+             // row 0
+             oss << "  [" << m00 << ", " << m10 << ", " << m20 << ", " << m30 << "],\n";
+             // row 1
+             oss << "  [" << m01 << ", " << m11 << ", " << m21 << ", " << m31 << "],\n";
+             // row 2
+             oss << "  [" << m02 << ", " << m12 << ", " << m22 << ", " << m32 << "],\n";
+             // row 3
+             oss << "  [" << m03 << ", " << m13 << ", " << m23 << ", " << m33 << "]\n";
              oss << ")";
              return oss.str();
          }
