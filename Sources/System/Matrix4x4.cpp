@@ -132,17 +132,17 @@ namespace System {
     Matrix4x4 Matrix4x4::Rotation(System::Quaternion q) {
         Matrix4x4 m = Matrix4x4::identity;
 
-        m.m00 = 1 - 2 * q.y * q.y - 2 * q.z * q.z;
-        m.m01 = 2 * q.x * q.y - 2 * q.z * q.w;
-        m.m02 = 2 * q.x * q.z + 2 * q.y * q.w;
+        m.m00 = 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z;
+        m.m10 = 2.0f * q.x * q.y + 2.0f * q.z * q.w;
+        m.m20 = 2.0f * q.x * q.z - 2.0f * q.y * q.w;
 
-        m.m10 = 2 * q.x * q.y + 2 * q.z * q.w;
-        m.m11 = 1 - 2 * q.x * q.x - 2 * q.z * q.z;
-        m.m12 = 2 * q.y * q.z - 2 * q.x * q.w;
+        m.m01 = 2.0f * q.x * q.y - 2.0f * q.z * q.w;
+        m.m11 = 1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z;
+        m.m21 = 2.0f * q.y * q.z + 2.0f * q.x * q.w;
 
-        m.m20 = 2 * q.x * q.z - 2 * q.y * q.w;
-        m.m21 = 2 * q.y * q.z + 2 * q.x * q.w;
-        m.m22 = 1 - 2 * q.x * q.x - 2 * q.y * q.y;
+        m.m02 = 2.0f * q.x * q.z + 2.0f * q.y * q.w;
+        m.m12 = 2.0f * q.y * q.z - 2.0f * q.x * q.w;
+        m.m22 = 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y;
 
         return m;
     }

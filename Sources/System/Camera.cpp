@@ -61,8 +61,8 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
 System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
-    System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
-      // System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Always);
+    System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::CullFace);
+      System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Less);
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
 
@@ -119,8 +119,22 @@ void Camera::TakeScreenshot(const std::string& filename) {
 }
  
 Matrix4x4 Camera::GetworldToCameraMatrix() {
-   Matrix4x4 correction = Matrix4x4::identity;
+  Matrix4x4 correction = Matrix4x4::identity;
     correction.m22 = -1.0f; // flip Z axis
+
+    return  correction * Matrix4x4::TRS(transform()->GetPosition(), transform()->GetRotation(), Vector3::one).inverse();
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
     Matrix4x4 rotation = Matrix4x4::Rotation(transform()->GetRotation());

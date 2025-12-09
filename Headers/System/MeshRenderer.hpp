@@ -28,22 +28,31 @@ namespace System {
 
             material->shader->use();
            std::cout << "Model Matrix: " << transform()->GetLocalToWorldMatrix().ToString() << std::endl;
-           std::cout << "Model determint: " << transform()->GetLocalToWorldMatrix().determinant() << std::endl;
-            material->shader->setMat4("model", transform()->GetLocalToWorldMatrix());
-            std::cout << "View: " << camera->viewMatrix.ToString() << std::endl;
-            std::cout << "View determint: " << camera->viewMatrix.determinant() << std::endl; 
-            std::cout << "View2: " << camera->GetworldToCameraMatrix().ToString() << std::endl;
+            material->shader->setMat4("model", transform()->GetLocalToWorldMatrix().transpose() );
+
+
+            std::cout << "View: " << camera->GetworldToCameraMatrix().ToString() << std::endl;
             //camera->GetworldToCameraMatrix() or camera->viewMatrix
             material->shader->setMat4("view", camera->GetworldToCameraMatrix());
-            std::cout << "Projection: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).ToString() << std::endl;
-            std::cout << "Projection determint: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).determinant() << std::endl;
-            material->shader->setMat4("projection", System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix) );
-            material->shader->setColor("color", material->color);
 
-            material->shader->setVec3("viewPos", camera->transform()->GetPosition());
+
+
+            std::cout << "Projection: " << camera->projectionMatrix.ToString() << std::endl;
+            std::cout << "GPU Projection: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).ToString() << std::endl;
+            material->shader->setMat4("projection", System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix) );
+
+
+
+
+            material->shader->setColor("color", material->color);
+            std::cout <<"MVP is" << ( System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix)* camera->GetworldToCameraMatrix() * transform()->GetLocalToWorldMatrix()).ToString() << std::endl;
+            material->shader->setVec3("viewPos", camera->transform()->GetPosition() );
             //point light
             if(System::Light::allLights.size() > 0){
             material->shader->setVec3("lightPos", System::Light::allLights[0]->transform()->GetPosition());
+            Vector3 oglLightPos = Vector3(System::Light::allLights[0]->transform()->GetPosition().x, System::Light::allLights[0]->transform()->GetPosition().y,  System::Light::allLights[0]->transform()->GetPosition().z);
+
+            std::cout << "lightPos: " << System::Light::allLights[0]->transform()->GetPosition().ToString() << std::endl;
             material->shader->setVec3("lightColor", System::Vector3(1, 1, 1)); 
             }
 

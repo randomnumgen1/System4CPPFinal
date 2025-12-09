@@ -218,15 +218,15 @@ namespace System::Graphics{
 	/// <returns></returns>
 		static  Matrix4x4 GetGPUProjectionMatrix( Matrix4x4 proj) {
 #if defined(SYSTEM_GRAPHICS_OPENGL)
-			 return proj;
+			    return proj;
 			Matrix4x4 m = proj;
 
 			// Flip Y axis
 			m.m11 *= -1.0f;
 
 			// Reverse Z: flip depth range so near=1, far=0
-			m.m22 *= -1.0f;   // flip the Z scale
-			m.m32 *= -1.0f;   // flip the Z translation
+			// m.m22 *= -1.0f;   // flip the Z scale
+			 //m.m32 *= -1.0f;   // flip the Z translation
 
 			return m;
 

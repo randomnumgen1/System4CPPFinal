@@ -66,7 +66,7 @@ namespace System {
         std::variant<std::monostate, std::vector<Vector2>, std::vector<Vector3>, std::vector<Vector4>> uvs[8];
 
         Mesh() : m_bitFlags(), m_VAO(0), m_VBO(0), m_EBO(0) {
-
+            m_bitFlags |= bitFlags::Modified;
         }
         ~Mesh() {
             //System::Graphics::GL::gl_glDeleteVertexArrays(1, &m_VAO);
@@ -210,6 +210,10 @@ namespace System {
                 tangents[i] = Vector4(tangent.x, tangent.y, tangent.z, w);
             }
         }
+        void SetNormals(const std::vector<Vector3>& inNormals) {
+            normals = inNormals;
+            m_bitFlags |= bitFlags::Modified;
+        }
         void SetVertices(const std::vector<Vector3>& inVertices) {
             vertices = inVertices;
             m_bitFlags |= bitFlags::Modified;
@@ -345,7 +349,7 @@ namespace System {
         }
         void UploadMeshData(bool markNoLongerReadable) {
             if ((m_bitFlags & bitFlags::Modified) == 0) return;
-
+            std::cout << "uploading" << std::endl;
             if ((m_bitFlags & bitFlags::NoLongerReadable) != 0) {
                 throw std::out_of_range("Mesh was deleted from CPU side and is no longer readable.");
             }

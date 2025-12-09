@@ -150,7 +150,11 @@ namespace System {
             mesh->SetVertices(vertices);
             mesh->SetTriangles(indices, 0);
 
-            mesh->RecalculateNormals();
+            std::vector<Vector3> normals;
+            for (auto& v : vertices) {
+                normals.push_back(v.normalized());
+            }
+            mesh->SetNormals(normals);
             mesh->RecalculateBounds();
 
             GameObject* go = new GameObject("Sphere");
