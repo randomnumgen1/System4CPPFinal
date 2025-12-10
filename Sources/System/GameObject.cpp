@@ -100,7 +100,21 @@ namespace System {
             mesh->SetVertices(vertices);
             mesh->SetTriangles(triangles, 0);
 
-            mesh->RecalculateNormals();
+            std::vector<Vector3> normals = {
+                // Front face (+Z)
+                Vector3(0,0,1), Vector3(0,0,1), Vector3(0,0,1), Vector3(0,0,1),
+                // Back face (–Z)
+                Vector3(0,0,-1), Vector3(0,0,-1), Vector3(0,0,-1), Vector3(0,0,-1),
+                // Top face (+Y)
+                Vector3(0,1,0), Vector3(0,1,0), Vector3(0,1,0), Vector3(0,1,0),
+                // Bottom face (–Y)
+                Vector3(0,-1,0), Vector3(0,-1,0), Vector3(0,-1,0), Vector3(0,-1,0),
+                // Right face (+X)
+                Vector3(1,0,0), Vector3(1,0,0), Vector3(1,0,0), Vector3(1,0,0),
+                // Left face (–X)
+                Vector3(-1,0,0), Vector3(-1,0,0), Vector3(-1,0,0), Vector3(-1,0,0)
+            };
+            mesh->SetNormals(normals);
             mesh->RecalculateBounds();
 
             GameObject* go = new GameObject("Cube");
