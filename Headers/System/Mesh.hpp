@@ -348,6 +348,8 @@ namespace System {
             submeshes.resize(count);
         }
         void UploadMeshData(bool markNoLongerReadable) {
+            static_assert(sizeof(Vector3) == 12, "Vector3 must be 12 bytes");
+
             if ((m_bitFlags & bitFlags::Modified) == 0) return;
             std::cout << "uploading" << std::endl;
             if ((m_bitFlags & bitFlags::NoLongerReadable) != 0) {
@@ -383,11 +385,14 @@ namespace System {
             System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, m_EBO);
             System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), System::Graphics::GL_Usage::STATIC_DRAW);
 
+
+            
+
             System::Graphics::GL::gl_glEnableVertexAttribArray(0);
-            System::Graphics::GL::gl_glVertexAttribPointer(0, 3, System::Graphics::IndexType::FLOAT, false, 0, (void*)0);
+            System::Graphics::GL::gl_glVertexAttribPointer(0, 3, System::Graphics::IndexType::FLOAT, false, sizeof(Vector3), (void*)0);
 
             System::Graphics::GL::gl_glEnableVertexAttribArray(1);
-            System::Graphics::GL::gl_glVertexAttribPointer(1, 3, System::Graphics::IndexType::FLOAT, false, 0, (void*)vertexSize);
+            System::Graphics::GL::gl_glVertexAttribPointer(1, 3, System::Graphics::IndexType::FLOAT, false, sizeof(Vector3), (void*)vertexSize);
 
             if (uvSize > 0) {
                 System::Graphics::GL::gl_glEnableVertexAttribArray(2);

@@ -26,38 +26,23 @@ namespace System {
                 return;
             }
 
-            material->shader->use();
-           std::cout << "Model Matrix: " << transform()->GetLocalToWorldMatrix().ToString() << std::endl;
-            material->shader->setMat4("model", transform()->GetLocalToWorldMatrix()  );
-
-
-            std::cout << "View: " << camera->GetworldToCameraMatrix().ToString() << std::endl;
-            //camera->GetworldToCameraMatrix() or camera->viewMatrix
-            material->shader->setMat4("view", camera->GetworldToCameraMatrix());
-
-
-
-            std::cout << "Projection: " << camera->projectionMatrix.ToString() << std::endl;
-            std::cout << "GPU Projection: " << System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix).ToString() << std::endl;
+            material->shader->use(); 
+            material->shader->setMat4("model", transform()->GetLocalToWorldMatrix()  ); 
+            material->shader->setMat4("view", camera->GetworldToCameraMatrix()); 
             material->shader->setMat4("projection", System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix) );
 
 
 
 
-            material->shader->setColor("color", material->color);
-            std::cout <<"MVP is" << ( System::Graphics::GL::GetGPUProjectionMatrix(camera->projectionMatrix)* camera->GetworldToCameraMatrix() * transform()->GetLocalToWorldMatrix()).ToString() << std::endl;
-            
-            
-            std::cout << "viewpos (camera)" << camera->transform()->GetPosition().ToString() << std::endl;
+            material->shader->setColor("color", material->color);  
             material->shader->setVec3("viewPos", camera->transform()->GetPosition() );
             //point light
-            if(System::Light::allLights.size() > 0){
-                std::cout << "lightPos (light)" << System::Light::allLights[0]->transform()->GetPosition().ToString() << std::endl;
+            if(System::Light::allLights.size() > 0){ 
             material->shader->setVec3("lightPos", System::Light::allLights[0]->transform()->GetPosition());
-            Vector3 oglLightPos = Vector3(System::Light::allLights[0]->transform()->GetPosition().x, System::Light::allLights[0]->transform()->GetPosition().y,  System::Light::allLights[0]->transform()->GetPosition().z);
-
-            std::cout << "lightPos: " << System::Light::allLights[0]->transform()->GetPosition().ToString() << std::endl;
-            material->shader->setVec3("lightColor", System::Vector3(1, 1, 1)); 
+           
+            material->shader->setVec3("lightColor", System::Vector3(1, 1, 1));
+            material->shader->setFloat("LightIntensity", System::Light::allLights[0]->intensity);
+             material->shader->setFloat("LightRange", System::Light::allLights[0]->range);
             }
 
         //    System::Light::allLights[0].

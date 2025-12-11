@@ -117,6 +117,14 @@ namespace System {
             mesh->SetNormals(normals);
             mesh->RecalculateBounds();
 
+
+            std::cout << "normal count" << mesh->normals.size() << std::endl;
+            std::cout << "vertices count" << mesh->vertices.size() << std::endl;
+            std::cout << "indices count" << mesh->indices.size() << std::endl;
+
+
+
+
             GameObject* go = new GameObject("Cube");
             MeshFilter* mf = go->AddComponent<MeshFilter>();
             mf->mesh = mesh;
