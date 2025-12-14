@@ -58,7 +58,8 @@ namespace System {
 
 
             meshFilter->mesh->UploadMeshData(false);
-
+            assert(meshFilter->mesh->GetVAO() != 0 && "Attempting to draw with uninitialized VAO");
+            assert(!meshFilter->mesh->indices.empty() && "No indices to draw");
             System::Graphics::GL::gl_glBindVertexArray(meshFilter->mesh->GetVAO());
             System::Graphics::GL::gl_glDrawElements(System::Graphics::DrawMode::TRIANGLES, meshFilter->mesh->indices.size(), System::Graphics::IndexType::UNSIGNED_INT, 0);//fix
             System::Graphics::GL::gl_glBindVertexArray(0); 

@@ -67,6 +67,9 @@ namespace System {
 
         Mesh() : m_bitFlags(), m_VAO(0), m_VBO(0), m_EBO(0) {
             m_bitFlags |= bitFlags::Modified;
+            if (m_VAO == 0) System::Graphics::GL::gl_glGenVertexArrays(1, &m_VAO);
+            if (m_VBO == 0) System::Graphics::GL::gl_glGenBuffers(1, &m_VBO);
+            if (m_EBO == 0) System::Graphics::GL::gl_glGenBuffers(1, &m_EBO);
         }
         ~Mesh() {
             //System::Graphics::GL::gl_glDeleteVertexArrays(1, &m_VAO);
@@ -349,6 +352,22 @@ namespace System {
         }
         void UploadMeshData(bool markNoLongerReadable) {
             static_assert(sizeof(Vector3) == 12, "Vector3 must be 12 bytes");
+
+            if (m_VAO == 0) {
+                throw new std::runtime_error("m_VAO not init");
+            }
+            if (m_VBO == 0) {
+                throw new std::runtime_error("m_VBO not init");
+            }
+            if (m_EBO == 0) {
+                throw new std::runtime_error("m_EBO not init");
+            }
+
+
+
+             
+
+
 
             if ((m_bitFlags & bitFlags::Modified) == 0) return;
             std::cout << "uploading mesh" << m_VAO << " " << this << std::endl;
