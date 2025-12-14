@@ -64,7 +64,7 @@ physicsEngine = new JoltPhysicsEngine();
     void Scene::Run(int windowWidth, int windowHeight) {
         System::Time::startframe();
 
-        // Update All GameObjects
+        // Run Update function on all GameObjects
         for (GameObject* go : GameObject::allGameObjects) {
             for (auto const& [type, components] : go->components) {
                 for (void* comp : components) {
