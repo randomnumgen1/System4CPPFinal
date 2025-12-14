@@ -351,7 +351,7 @@ namespace System {
             static_assert(sizeof(Vector3) == 12, "Vector3 must be 12 bytes");
 
             if ((m_bitFlags & bitFlags::Modified) == 0) return;
-            std::cout << "uploading" << std::endl;
+            std::cout << "uploading mesh" << m_VAO << " " << this << std::endl;
             if ((m_bitFlags & bitFlags::NoLongerReadable) != 0) {
                 throw std::out_of_range("Mesh was deleted from CPU side and is no longer readable.");
             }
