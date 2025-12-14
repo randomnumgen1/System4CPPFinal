@@ -8,6 +8,7 @@ namespace System {
     struct RenderTexture {
         GLuint renderedTexture;
         RenderTexture() {
+            renderedTexture = 0;
            
         //    System::Graphics::GL::gl_glGenTextures(1, &renderedTexture);
           //  System::Graphics::GL::gl_glBindTexture(GL_TEXTURE_2D, renderedTexture);

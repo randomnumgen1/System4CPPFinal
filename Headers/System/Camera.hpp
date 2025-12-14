@@ -12,8 +12,8 @@
 
 
 namespace System{
-    class RenderTexture;
-    class Matrix4x4;
+    struct RenderTexture;
+    struct Matrix4x4;
 
 class Camera : public System::Component {
     static std::vector<Camera*> allCameras;

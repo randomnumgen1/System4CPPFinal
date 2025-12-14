@@ -8,8 +8,7 @@ namespace System {
 		union {
 			double v[2];
 			struct {
-				double x;
-				double y;
+				double x,y;
 			};
 		};
 		/*
@@ -17,8 +16,8 @@ namespace System {
 		Constructors
 		 ----------------------------------------------------------------------------------------
 		*/
-		Vector2d() {}
-		Vector2d(double x, double y) {}
+		Vector2d() : x(0.0), y(0.0) {}
+		Vector2d(double x, double y) : x(x), y(y) {}
 
 
 

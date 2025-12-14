@@ -78,7 +78,7 @@ namespace System {
 #pragma pack(pop)
 			static uint32_t ReadUInt32BigEndian(std::ifstream& stream) {
 				uint32_t value = 0;
-				uint8_t bytes[4];
+				uint8_t bytes[4] = {};
 				stream.read(reinterpret_cast<char*>(bytes), 4);
 				value = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
 				return value;
