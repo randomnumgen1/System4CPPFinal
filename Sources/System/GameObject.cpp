@@ -33,93 +33,69 @@ namespace System {
     GameObject* GameObject::CreatePrimitive(PrimitiveType type) {
         Mesh* mesh = new Mesh();
         if (PrimitiveType::Cube == type) {
+            // Create the 8 cube corners
+            std::vector<Vector3> c(8);
+            float length = 1.0f;
+            float width = 1.0f;
+            float height = 1.0f;
+
+            c[0] = Vector3(-length * 0.5f, -width * 0.5f, height * 0.5f);
+            c[1] = Vector3(length * 0.5f, -width * 0.5f, height * 0.5f);
+            c[2] = Vector3(length * 0.5f, -width * 0.5f, -height * 0.5f);
+            c[3] = Vector3(-length * 0.5f, -width * 0.5f, -height * 0.5f);
+
+            c[4] = Vector3(-length * 0.5f, width * 0.5f, height * 0.5f);
+            c[5] = Vector3(length * 0.5f, width * 0.5f, height * 0.5f);
+            c[6] = Vector3(length * 0.5f, width * 0.5f, -height * 0.5f);
+            c[7] = Vector3(-length * 0.5f, width * 0.5f, -height * 0.5f);
+
+            // Define the 24 vertices (4 per face, 6 faces)
+            // This duplicates corners so each face can have its own normals
             std::vector<Vector3> vertices = {
-                // Front face
-                Vector3(-0.5f, -0.5f,  0.5f),
-                Vector3(0.5f, -0.5f,  0.5f),
-                Vector3(0.5f,  0.5f,  0.5f),
-                Vector3(-0.5f,  0.5f,  0.5f),
-
-                // Back face
-                Vector3(-0.5f, -0.5f, -0.5f),
-                Vector3(0.5f, -0.5f, -0.5f),
-                Vector3(0.5f,  0.5f, -0.5f),
-                Vector3(-0.5f,  0.5f, -0.5f),
-
-                // Top face
-                Vector3(-0.5f,  0.5f,  0.5f),
-                Vector3(0.5f,  0.5f,  0.5f),
-                Vector3(0.5f,  0.5f, -0.5f),
-                Vector3(-0.5f,  0.5f, -0.5f),
-
-                // Bottom face
-                Vector3(-0.5f, -0.5f,  0.5f),
-                Vector3(0.5f, -0.5f,  0.5f),
-                Vector3(0.5f, -0.5f, -0.5f),
-                Vector3(-0.5f, -0.5f, -0.5f),
-
-                // Right face
-                Vector3(0.5f, -0.5f,  0.5f),
-                Vector3(0.5f, -0.5f, -0.5f),
-                Vector3(0.5f,  0.5f, -0.5f),
-                Vector3(0.5f,  0.5f,  0.5f),
-
-                // Left face
-                Vector3(-0.5f, -0.5f,  0.5f),
-                Vector3(-0.5f, -0.5f, -0.5f),
-                Vector3(-0.5f,  0.5f, -0.5f),
-                Vector3(-0.5f,  0.5f,  0.5f)
+                c[0], c[1], c[2], c[3], // Bottom
+                c[7], c[4], c[0], c[3], // Left
+                c[4], c[5], c[1], c[0], // Front
+                c[6], c[7], c[3], c[2], // Back
+                c[5], c[6], c[2], c[1], // Right
+                c[7], c[6], c[5], c[4]  // Top
             };
+
+             
 
             std::vector<int> triangles = {
-                // Front face (CW)
-                0, 2, 1,
-                2, 0, 3,
-
-                // Back face (CW)
-                4, 6, 5,
-                6, 4, 7,
-
-                // Top face (CW)
-                8, 10, 9,
-                10, 8, 11,
-
-                // Bottom face (CW)
-                12, 14, 13,
-                14, 12, 15,
-
-                // Right face (CW)
-                16, 18, 17,
-                18, 16, 19,
-
-                // Left face (CW)
-                20, 22, 21,
-                22, 20, 23
+                     3, 1, 0,        3, 2, 1,        // Bottom	
+            7, 5, 4,        7, 6, 5,        // Left
+            11, 9, 8,       11, 10, 9,      // Front
+            15, 13, 12,     15, 14, 13,     // Back
+            19, 17, 16,     19, 18, 17,	    // Right
+            23, 21, 20,     23, 22, 21,	    // Top
             };
+
+
 
             mesh->SetVertices(vertices);
             mesh->SetTriangles(triangles, 0);
-
             std::vector<Vector3> normals = {
-                // Front face (+Z)
-                Vector3(0,0,1), Vector3(0,0,1), Vector3(0,0,1), Vector3(0,0,1),
-                // Back face (–Z)
-                Vector3(0,0,-1), Vector3(0,0,-1), Vector3(0,0,-1), Vector3(0,0,-1),
-                // Top face (+Y)
-                Vector3(0,1,0), Vector3(0,1,0), Vector3(0,1,0), Vector3(0,1,0),
-                // Bottom face (–Y)
-                Vector3(0,-1,0), Vector3(0,-1,0), Vector3(0,-1,0), Vector3(0,-1,0),
-                // Right face (+X)
-                Vector3(1,0,0), Vector3(1,0,0), Vector3(1,0,0), Vector3(1,0,0),
-                // Left face (–X)
-                Vector3(-1,0,0), Vector3(-1,0,0), Vector3(-1,0,0), Vector3(-1,0,0)
+             
+
+                 Vector3::down, Vector3::down, Vector3::down, Vector3::down,             // Bottom
+            Vector3::left, Vector3::left, Vector3::left, Vector3::left,             // Left
+            Vector3::forward, Vector3::forward, Vector3::forward, Vector3::forward,	// Front
+            Vector3::back, Vector3::back, Vector3::back, Vector3::back,             // Back
+            Vector3::right, Vector3::right, Vector3::right, Vector3::right,         // Right
+            Vector3::up, Vector3::up, Vector3::up, Vector3::up	                    // Top
             };
+
             mesh->SetNormals(normals);
             mesh->RecalculateBounds();
 
-
             std::cout << "normal count" << mesh->normals.size() << std::endl;
+            std::cout << "normal count" << mesh->normals.size() << std::endl;
+
+
             std::cout << "vertices count" << mesh->vertices.size() << std::endl;
+
+
             std::cout << "indices count" << mesh->indices.size() << std::endl;
 
 

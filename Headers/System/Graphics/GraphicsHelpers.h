@@ -68,6 +68,19 @@ inline T&	operator	^=	(T& x, T y)		{	x = x ^ y;	return x;	};
 
 
 namespace System::Graphics{ 
+	enum class CullFaceMode : uint32_t { FRONT = 0x0404, BACK = 0x0405, FRONT_AND_BACK = 0x0408 };
+
+	enum class FaceMode : uint32_t {
+		FRONT = 0x0404,            // GL_FRONT
+		BACK = 0x0405,             // GL_BACK
+		FRONT_AND_BACK = 0x0408    // GL_FRONT_AND_BACK
+	};
+	enum class PolygonRasterMode : uint32_t {
+		POINT = 0x1B00,            // GL_POINT
+		LINE = 0x1B01,            // GL_LINE
+		FILL = 0x1B02             // GL_FILL
+	};
+
 	// Enum for depth comparison functions
 	enum class DepthFunc : int32_t {
 		Never = 0x0200, // GL_NEVER
@@ -336,8 +349,14 @@ namespace System::Graphics{
 #endif
 		}
 
-
-
+		 
+		inline static void gl_glPolygonMode(FaceMode face, PolygonRasterMode mode) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glPolygonMode(static_cast<GLenum>(face), static_cast<GLenum>(mode));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
 
 
@@ -366,6 +385,7 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
+		inline static void gl_glCullFace(CullFaceMode m) { SYSTEM_INTERNAL_glCullFace(static_cast<GLenum>(m)); }
 
 
 

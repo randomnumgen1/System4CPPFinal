@@ -61,8 +61,18 @@ void System::Camera::RenderStart(int windowWidth, int windowHeight) {
 System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::DepthTest);
         // Render to the screen
-    System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::CullFace);
-      System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Less);
+       System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::CullFace);
+// System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
+       System::Graphics::GL::gl_glPolygonMode(System::Graphics::FaceMode::FRONT_AND_BACK, System::Graphics::PolygonRasterMode::FILL);
+       System::Graphics::GL::gl_glCullFace(System::Graphics::CullFaceMode::BACK);
+         
+        
+
+
+
+       System::Graphics::GL::gl_glDepthFunc(System::Graphics::DepthFunc::Less); 
+
+
 // render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
         System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, 0);// render to the screen (This is done by using 0 as the second parameter of glBindFramebuffer).
 

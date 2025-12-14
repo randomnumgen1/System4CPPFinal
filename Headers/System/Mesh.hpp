@@ -375,11 +375,7 @@ namespace System {
                 throw std::out_of_range("Mesh was deleted from CPU side and is no longer readable.");
             }
 
-            if (m_VAO == 0) {
-                System::Graphics::GL::gl_glGenVertexArrays(1, &m_VAO);
-                System::Graphics::GL::gl_glGenBuffers(1, &m_VBO);
-                System::Graphics::GL::gl_glGenBuffers(1, &m_EBO);
-            }
+          
 
             System::Graphics::GL::gl_glBindVertexArray(m_VAO);
             System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ARRAY_BUFFER, m_VBO);
@@ -390,11 +386,23 @@ namespace System {
             if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
                 uvSize = sizeof(Vector2) * pval->size();
             }
-           
+            std::cout << "gl_glBufferData" << (vertexSize + normalSize + uvSize) << " "   << std::endl;
             System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize + normalSize + uvSize, NULL, System::Graphics::GL_Usage::STATIC_DRAW);
 
             System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, 0, vertexSize, vertices.data());
+            std::cout << "--gl_glBufferSubData--" <<  std::endl;
+            for (auto& v : vertices) {
+                std::cout << "V:" << v.x << "," << v.y << "," << v.z << std::endl;
+            }
+
+
             System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize, normalSize, normals.data());
+            std::cout << "--gl_glBufferSubData--" << std::endl;
+            for (auto& v : normals) {
+                std::cout << "V:" << v.x << "," << v.y << "," << v.z << std::endl;
+            }
+
+
             if (uvSize > 0) {
                 if (auto* pval = std::get_if<std::vector<Vector2>>(&uvs[0])) {
                     System::Graphics::GL::gl_glBufferSubData(System::Graphics::BufferTarget::ARRAY_BUFFER, vertexSize + normalSize, uvSize, pval->data());
@@ -403,8 +411,10 @@ namespace System {
 
             System::Graphics::GL::gl_glBindBuffer(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, m_EBO);
             System::Graphics::GL::gl_glBufferData(System::Graphics::BufferTarget::ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), System::Graphics::GL_Usage::STATIC_DRAW);
-
-
+            std::cout << "--gl_glBufferData--" << std::endl;
+            for (auto& v : indices) {
+                std::cout << "i:" << v  << std::endl;
+            }
             
 
             System::Graphics::GL::gl_glEnableVertexAttribArray(0);
