@@ -60,35 +60,35 @@ physicsEngine = new JoltPhysicsEngine();
 
     }
 
-    
+    //this is a individual scene run, called every frame from the main loop.
     void Scene::Run(int windowWidth, int windowHeight) {
-        System::Time::startframe();
+            System::Time::startframe();
 
-        // Run Update function on all GameObjects
-        for (GameObject* go : GameObject::allGameObjects) {
-            for (auto const& [type, components] : go->components) {
-                for (void* comp : components) {
-                    static_cast<Component*>(comp)->Update();
+            // --- Update phase ---
+            for (GameObject* go : GameObject::allGameObjects) {
+                for (auto const& [type, components] : go->components) {
+                    for (void* comp : components) {
+                        static_cast<Component*>(comp)->Update();
+                    }
                 }
             }
-        }
-        // Render Scene
-        System::Camera* cam = Camera::Getmain();
-        cam->RenderStart(windowWidth, windowHeight);
-        for (int i = 0; i < GameObject::allGameObjects.size(); i++) {
-            GameObject* go = GameObject::allGameObjects[i];
-            System::MeshRenderer* renderer = go->GetComponent<System::MeshRenderer>();
-            if (renderer) {
-                renderer->Render(cam);
+
+            // --- Render phase ---
+            System::Camera* cam = Camera::Getmain();
+            cam->RenderStart(windowWidth, windowHeight);
+
+            for (GameObject* go : GameObject::allGameObjects) {
+                System::MeshRenderer* renderer = go->GetComponent<System::MeshRenderer>();
+                if (renderer) {
+                    renderer->Render(cam);
+                }
             }
 
-
-
+            // --- End frame ---
             System::Time::endframe();
 
 
-        }
-
+        
     }
     void Scene::Shutdown() {
         delete root;
