@@ -63,8 +63,8 @@ System::Graphics::GL::gl_glFrontFace(System::Graphics::WindingOrder::CW);
         // Render to the screen
        System::Graphics::GL::gl_glEnable(System::Graphics::GraphicsCapability::CullFace);
 // System::Graphics::GL::gl_glDisable(System::Graphics::GraphicsCapability::CullFace);
-       System::Graphics::GL::gl_glPolygonMode(System::Graphics::FaceMode::FRONT_AND_BACK, System::Graphics::PolygonRasterMode::FILL);
-       System::Graphics::GL::gl_glCullFace(System::Graphics::CullFaceMode::BACK);
+     //  System::Graphics::GL::gl_glPolygonMode(System::Graphics::FaceMode::FRONT_AND_BACK, System::Graphics::PolygonRasterMode::FILL);
+     //  System::Graphics::GL::gl_glCullFace(System::Graphics::CullFaceMode::BACK);
          
         
 

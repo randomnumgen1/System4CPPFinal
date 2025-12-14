@@ -21,6 +21,7 @@
 #else
 #include <System/Internal/Physics/DummyPhysicsEngine.hpp>
 #endif
+#include <System/Time.hpp>
 
 namespace System {
     GameObject* Scene::root = nullptr;
@@ -61,6 +62,8 @@ physicsEngine = new JoltPhysicsEngine();
 
     
     void Scene::Run(int windowWidth, int windowHeight) {
+        System::Time::startframe();
+
         // Update All GameObjects
         for (GameObject* go : GameObject::allGameObjects) {
             for (auto const& [type, components] : go->components) {
@@ -81,7 +84,7 @@ physicsEngine = new JoltPhysicsEngine();
 
 
 
-
+            System::Time::endframe();
 
 
         }

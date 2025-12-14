@@ -4,45 +4,20 @@
 #ifndef _SYSTEM_INPUT_H
 #define _SYSTEM_INPUT_H
 namespace System {
-    enum class KeyCode{
-        None ,
-        Backspace,  
-        Return,//	Return key.
-       A,//	'a' key.
-        B,//	'b' key.
-        C,//	'c' key.
-        D,//	'd' key.
-        E,//	'e' key.
-        F,//	'f' key.
-        G,//	'g' key.
-        H,//	'h' key.
-        I,//	'i' key.
-        J,//	'j' key.
-        K,//	'k' key.
-        L,//	'l' key.
-        M,//	'm' key.
-        N,//	'n' key.
-        O,//	'o' key.
-        P,//	'p' key.
-        Q,//	'q' key.
-        R,//	'r' key.
-        S,//	's' key.
-        T,//	't' key.
-        U,//	'u' key.
-        V,//	'v' key.
-        W,//	'w' key.
-        X,//	'x' key.
-        Y,//	'y' key.
-        Z,//	'z' key.
-       RightShift,//	Right shift key.
-        LeftShift,//	Left shift key.
-        WheelUp,//	Mouse wheel up.
-        WheelDown,//	Mouse wheel down.
-        Mouse0,//	The Left(or primary) mouse button.
-        Mouse1,//	Right mouse button(or secondary mouse button).
-        Mouse2,//	Middle mouse button(or third button).
-    
+    enum class KeyCode {
+        None,
+        Backspace,
+        Return,
+        A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+        RightShift,
+        LeftShift,
+        WheelUp,
+        WheelDown,
+        Mouse0,
+        Mouse1,
+        Mouse2
     };
+
     class Input {
     public:
         // Store input states: true if key is currently down
@@ -53,7 +28,15 @@ namespace System {
             return mousePos;
         } 
   
+        static float GetAxis(std::string axis){
+            if (axis == "Horizontal") {
 
+            }else if (axis == "Vertical") {
+            
+            }else{
+                throw std::invalid_argument("Axis not recognised");
+            }
+        }
         static bool GetKey(KeyCode key) {
             
         }
