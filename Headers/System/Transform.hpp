@@ -88,6 +88,28 @@ namespace System {
         }
 
         // Setters for world-space properties
+        void seteulerAngles(const System::Vector3& eulers, Space relativeTo = Self) {
+            System::Quaternion q = System::Quaternion::Euler(eulers.x, eulers.y, eulers.z);
+
+            if (relativeTo == Self) {
+                // Set local rotation directly
+                localRotation = q;
+            }
+            else {
+                // World rotation: convert to local relative to parent
+                if (parent) {
+                    localRotation = System::Quaternion::Inverse(parent->GetRotation()) * q;
+                }
+                else {
+                    localRotation = q;
+                }
+            }
+
+            hasChanged = true;
+        }
+
+
+
         void SetPosition(const System::Vector3& newPosition) {
             if (parent != nullptr) {
                 localPosition = parent->worldToLocalMatrix().MultiplyPoint3x4(newPosition);
