@@ -11,7 +11,7 @@ namespace System {
         Vector3 m_max;
         Vector3 m_min;
         Vector3 size;
-        Bounds() : center(0, 0, 0), extents(0, 0, 0), m_max(0, 0, 0), m_min(0, 0, 0), size(0, 0, 0) {}
+        Bounds() : center(0.0f, 0.0f, 0.0f), extents(0.0f, 0.0f, 0.0f), m_max(0.0f, 0.0f, 0.0f), m_min(0.0f, 0.0f, 0.0f), size(0.0f, 0.0f, 0.0f) {}
 
         Vector3 GetMin() const {
             return m_min;
