@@ -11,7 +11,7 @@ namespace System {
         Vector3 velocity;
         Vector3 force;
 
-        Rigidbody() : mass(1.0f), velocity(0, 0, 0), force(0, 0, 0) {}
+        Rigidbody() : mass(1.0f), velocity(0.0f, 0.0f, 0.0f), force(0.0f, 0.0f, 0.0f) {}
 
         void AddForce(const Vector3& force);
          
