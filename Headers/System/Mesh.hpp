@@ -126,7 +126,7 @@ namespace System {
         
         void RecalculateNormals() {
             // Clear existing normals and resize to the same size as vertices, initialized to zero.
-            normals.assign(vertices.size(), Vector3(0, 0, 0));
+            normals.assign(vertices.size(), Vector3(0.0f, 0.0f, 0.0f));
 
             // Iterate over each triangle
             for (size_t i = 0; i < indices.size(); i += 3) {
@@ -162,9 +162,9 @@ namespace System {
         void RecalculateTangents() {
             if (vertices.empty() || normals.empty()) return;
 
-            std::vector<Vector3> tan1(vertices.size(), Vector3(0, 0, 0));
-            std::vector<Vector3> tan2(vertices.size(), Vector3(0, 0, 0));
-            tangents.resize(vertices.size(), Vector4(0, 0, 0, 0));
+            std::vector<Vector3> tan1(vertices.size(), Vector3(0.0f, 0.0f, 0.0f));
+            std::vector<Vector3> tan2(vertices.size(), Vector3(0.0f, 0.0f, 0.0f));
+            tangents.resize(vertices.size(), Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 
             std::vector<Vector2> uv0;
             GetUVs(0, uv0);
