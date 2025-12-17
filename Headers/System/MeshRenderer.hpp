@@ -40,7 +40,7 @@ namespace System {
             if(System::Light::allLights.size() > 0){
                 if (System::Light::allLights[0]->type == System::LightType::Point) {
                 material->shader->setVec3("lightPos", System::Light::allLights[0]->transform()->GetPosition());
-                material->shader->setVec3("lightColor", System::Vector3(1, 1, 1));
+                material->shader->setVec3("lightColor", System::Vector3(1.0f, 1.0f, 1.0f));
                 material->shader->setFloat("LightIntensity", System::Light::allLights[0]->intensity);
                 material->shader->setFloat("LightRange", System::Light::allLights[0]->range);                
                 }else if (System::Light::allLights[0]->type == System::LightType::Directional) {
