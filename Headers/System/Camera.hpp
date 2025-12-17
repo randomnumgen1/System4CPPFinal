@@ -68,6 +68,9 @@ public:
     /// </summary>
     /// <returns></returns>
     Matrix4x4 GetworldToCameraMatrix();
+
+    //Ray ScreenPointToRay(Vector3 pos);
+
 }; 
 }
 #endif
