@@ -53,6 +53,10 @@ namespace System {
         /// <param name="y">The y-component.</param>
         /// <param name="z">The z-component.</param>
         Vector3(float x, float y, float z);
+        Vector3(int x, int y, int z) = delete;
+        Vector3(double x, double y, double z) = delete;
+
+
 
         /*inline explicit Vector3( System::Vector2 lol) {
             this->x = lol.x;
