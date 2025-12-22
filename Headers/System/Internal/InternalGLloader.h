@@ -71,7 +71,7 @@ typedef struct __GLsync* GLsync;
 
 
 
-
+ 
 
 
 
@@ -1472,17 +1472,23 @@ typedef void (APIENTRYP PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC)(GLenum mode, cons
 extern PFNGLMULTIDRAWARRAYSINDIRECTCOUNTPROC SYSTEM_INTERNAL_glMultiDrawArraysIndirectCount;
 typedef void (APIENTRYP PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC)(GLenum mode, GLenum type, const void* indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 extern PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC SYSTEM_INTERNAL_glMultiDrawElementsIndirectCount;
-//typedef void (APIENTRYP PFNGLPOLYGONOFFSETCLAMPPROC)(GLfloat factor, GLfloat units, GLfloat clamp);
-//extern PFNGLPOLYGONOFFSETCLAMPPROC SYSTEM_INTERNAL_glPolygonOffsetClamp;
+
 
 
 
 #ifdef _WIN32
 typedef HGLRC(APIENTRYP PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int* attribList);
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+
+typedef BOOL(APIENTRYP PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc,   const int* piAttribIList,   const FLOAT* pfAttribFList,    UINT nMaxFormats,    int* piFormats,    UINT* nNumFormats);
+extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
+
+typedef BOOL(APIENTRY* PFNWGLSWAPINTERVALPROC)(int);
+extern PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT;
 #endif
 
-
+//typedef void (APIENTRYP PFNGLPOLYGONOFFSETCLAMPPROC)(GLfloat factor, GLfloat units, GLfloat clamp);
+//extern PFNGLPOLYGONOFFSETCLAMPPROC SYSTEM_INTERNAL_glPolygonOffsetClamp;
 
 typedef void (*OpenGLProc)(void);
 
@@ -2280,6 +2286,19 @@ void OpenGLInit(OpenGLVersion* Version)
         MessageBoxA(NULL, "wglCreateContextAttribsARB failed to load!", "Error", MB_OK | MB_ICONERROR);
         std::cerr << "Failed to load wglCreateContextAttribsARB!" << std::endl;
     }
+    wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)OpenGLGetProc("wglChoosePixelFormatARB");
+    if (!wglChoosePixelFormatARB) {
+        MessageBoxA(NULL, "wglChoosePixelFormatARB failed to load!", "Error", MB_OK | MB_ICONERROR);
+        std::cerr << "Failed to load wglCreateContextAttribsARB!" << std::endl;
+    }
+
+    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC) OpenGLGetProc("wglSwapIntervalEXT");
+    if (!wglSwapIntervalEXT) {
+        MessageBoxA(NULL, "wglSwapIntervalEXT failed to load!", "Error", MB_OK | MB_ICONERROR);
+        std::cerr << "Failed to load wglSwapIntervalEXT!" << std::endl;
+    }
+
+    //wglGetExtensionsStringEXT
 #endif
 
     if (!SYSTEM_INTERNAL_glClearColor) {
