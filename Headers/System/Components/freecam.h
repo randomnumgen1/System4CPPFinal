@@ -46,11 +46,24 @@ namespace System {
             //rotation
 
 
-            yaw += speedH * System::Input::GetAxis("MouseX");
-            pitch += speedV * System::Input::GetAxis("MouseY");
+            float mouseX = System::Input::GetRawMouseDeltaX();
+            float mouseY = System::Input::GetRawMouseDeltaY();
+
+            yaw += 10.0f * mouseX * System::Time::deltaTime;
+            pitch += 10.0f * mouseY * System::Time::deltaTime;
+
+
             if (pitch > 89.0f) pitch = 89.0f;
             if (pitch < -89.0f) pitch = -89.0f;
-             
+
+
+
+
+
+
+
+
+
 
             
             camera->transform()->seteulerAngles(System::Vector3(pitch, yaw, 0.0f)); 
