@@ -1,8 +1,14 @@
+#include "System/Image"
+
 namespace System::Images{
 	class QRCODE{
 		
+		void setECClevel(){
+			
+			
+		}
 		
-		void Generate(std::string str){
+		System::Image Generate(std::string str){
 			
 			
 			
