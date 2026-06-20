@@ -590,7 +590,7 @@ namespace System::Devices {
                 std::string path = "/dev/input/" + std::string(entry->d_name);
                 if (path.find("event") != std::string::npos) {
 
-                    Device_t Device = {}
+                    Device_t Device = {};
                     Device.getDeviceCapabilities(path);
                     if (Device.hasgamepadkey() && Device.isKnownController()){
                         presentDevicePaths.push_back(path);
