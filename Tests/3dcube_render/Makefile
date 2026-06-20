@@ -1,8 +1,8 @@
 
 CXX = g++
 INCLUDES = -I../../Headers -I/usr/include/GL
-LIBS = -lGL -lGLU -lglut  
-
+LIBS = -lwayland-client -lwayland-egl -lEGL -lGL
+ 
 STANDARD = -std=c++17
 
 # VPATH specifies a list of directories to search for prerequisites
