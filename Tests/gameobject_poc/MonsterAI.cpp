@@ -13,7 +13,7 @@ namespace System {
         std::cout << "MonsterAI Start!" << std::endl;
         GameObject* prefab = GameObject::Find("MinionPrefab");
         if (prefab) {
-            GameObject* newMinion = GameObject::Instantiate(prefab, Vector3(5, 5, 5), Quaternion::Euler(0, 90, 0));
+            GameObject* newMinion = GameObject::Instantiate(prefab, Vector3(5.0f, 5.0f, 5.0f), Quaternion::Euler(0, 90, 0));
             if (newMinion) {
                 newMinion->transform->PrintPosition();
             }

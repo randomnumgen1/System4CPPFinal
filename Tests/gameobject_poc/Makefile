@@ -1,5 +1,4 @@
 
-
 CXX = g++
 INCLUDES = -I../../Headers -I/usr/include/GL
 LIBS = -lGL -lGLU -lglut
@@ -7,10 +6,29 @@ LIBS = -lGL -lGLU -lglut
 STANDARD = -std=c++17
 
 # VPATH specifies a list of directories to search for prerequisites
-VPATH = ../../Sources/System
+VPATH = ../../Sources/System:../../Sources/System/Internal:../../Sources/System/Internal/Audio:../../Sources/System/Internal/Physics
 
 # POC sources
-POC_SRCS = gameobject_poc.cpp MonsterAI.cpp Vector3.cpp Quaternion.cpp Matrix4x4.cpp Mathf.cpp Vector4.cpp GameObject.cpp Scene.cpp Transform.cpp
+POC_SRCS = gameobject_poc.cpp \
+           MonsterAI.cpp \
+           Vector3.cpp \
+           Quaternion.cpp \
+           Matrix4x4.cpp \
+           Mathf.cpp \
+           Vector4.cpp \
+           GameObject.cpp \
+           Scene.cpp \
+           Transform.cpp \
+           Component.cpp \
+           Light.cpp \
+           Camera.cpp \
+           Time.cpp \
+           InternalGLloader.cpp \
+           DummyAudioEngine.cpp \
+           DummyPhysicsEngine.cpp \
+           Mesh.cpp \
+           Image.cpp
+
 POC_OBJS = $(POC_SRCS:.cpp=.o)
 
 # Targets
@@ -31,15 +49,15 @@ release: CXXFLAGS = $(RELEASE_FLAGS)
 release: $(RELEASE_TARGET)
 
 $(DEBUG_TARGET): $(POC_OBJS)
-    $(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 $(RELEASE_TARGET): $(POC_OBJS)
-    $(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cpp
-    $(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-    rm -f $(POC_OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET)
+	rm -f $(POC_OBJS) $(DEBUG_TARGET) $(RELEASE_TARGET)
 
 .PHONY: all debug release clean
