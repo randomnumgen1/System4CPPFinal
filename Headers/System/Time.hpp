@@ -8,6 +8,7 @@ namespace System {
     private:
         static float m_deltaTime;
         static float m_time;
+        static int64_t m_frameCount;
         static float m_realtimeSinceStartup;
         static std::chrono::steady_clock::time_point lastTime;
         static std::chrono::steady_clock::time_point startTime;
@@ -16,6 +17,7 @@ namespace System {
         // Read-only references to the internal values
         static float const& deltaTime;
         static float const& time;
+        static int64_t const& frameCount;
         static float const& realtimeSinceStartup;
 
         static void startframe();

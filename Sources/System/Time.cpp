@@ -5,12 +5,14 @@ namespace System {
     // Static member definitions
     float Time::m_deltaTime = 0.0f;
     float Time::m_time = 0.0f;
+    int64_t Time::m_frameCount;
     float Time::m_realtimeSinceStartup = 0.0f;
     std::chrono::steady_clock::time_point Time::lastTime = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point Time::startTime = std::chrono::steady_clock::now();
 
     float const& Time::deltaTime = Time::m_deltaTime;
     float const& Time::time = Time::m_time;
+    int64_t const& Time::frameCount = Time::m_frameCount;
     float const& Time::realtimeSinceStartup = Time::m_realtimeSinceStartup;
 
     void Time::startframe() {
@@ -23,8 +25,7 @@ namespace System {
         std::chrono::duration<float> elapsed = currentTime - lastTime;
         m_deltaTime = elapsed.count();
         m_time += m_deltaTime;
-        m_realtimeSinceStartup =
-            std::chrono::duration<float>(currentTime - startTime).count();
+        m_realtimeSinceStartup = std::chrono::duration<float>(currentTime - startTime).count();
         lastTime = currentTime;
     }
 
