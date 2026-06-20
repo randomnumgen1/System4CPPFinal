@@ -5,8 +5,7 @@
 #include <System/Vector3.hpp>
 #include <System/Random.h>
 #include <System/Graphics/GraphicsHelpers.h> 
-#include <System/Color.hpp>
-#include <System/Tools/Mapping.hpp>
+#include <System/Color.hpp> 
 #include <System/Tools/SoftwareCanvas.h>
 
 
