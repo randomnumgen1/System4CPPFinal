@@ -1,5 +1,7 @@
 
 #include <iostream>
+
+#include <System/Windows/Application.h>
 #include <System/Profiler.hpp>
 #include <System/Environment/Environment.hpp>
 #include <System/Vector3.hpp>
@@ -462,7 +464,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previnstance, LPSTR cmdline, in
     dfsfsddss();
 
  
-     
+     System::Windows::Application::initWindow();
+	 
 
 
 
@@ -678,8 +681,8 @@ if (System::Input::GetKeyDown(System::KeyCode::X)) {
         //  camera->transform()->SetPosition(System::Vector3(0, 0, test));
        // camera->transform()->SetLocalPosition(System::Vector3(test,0,  -5.0f));
 
-        
-        SwapBuffers(hdc);
+        System::Windows::Application::SwapBuffers();
+        //SwapBuffers(hdc);
 System::Time::endframe();
     }
 
