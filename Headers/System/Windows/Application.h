@@ -9,7 +9,18 @@ namespace System::Windows {
     /// </summary>
     class Application {
     private:
+
+
+#if _WIN32
+        static HDC hdc;
+#else
+        static struct wl_display* display;
+#endif
+
         static int init;
+
+    public:
+
         static void initWindow() {
 
 
@@ -18,7 +29,7 @@ namespace System::Windows {
 
         }
 
-        static void SwapBuffers() {
+        inline static void SwapBuffers() {
 #if _WIN32
             ::SwapBuffers(hdc);
 #else

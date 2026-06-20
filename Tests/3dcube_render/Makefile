@@ -31,7 +31,9 @@ POC_SRCS = 3dcube_render.cpp \
            Vector2.cpp \
            Color.cpp \
            Color32.cpp \
-           Environment.cpp
+            Environment.cpp \
+           Application.cpp \
+           Input.cpp
 
 POC_OBJS = $(POC_SRCS:.cpp=.o)
 
