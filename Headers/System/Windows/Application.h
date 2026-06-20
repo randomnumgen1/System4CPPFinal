@@ -5,6 +5,9 @@
 #include <wayland-egl.h>
 #include <EGL/egl.h>
 #include <GLES3/gl3.h>
+#include <string.h>
+#include <stdio.h>
+#include <System/Internal/InternalGLloader.h>
 #endif
 namespace System::Windows {
     /// <summary>
@@ -15,27 +18,37 @@ namespace System::Windows {
 
 
 #if _WIN32
-        static HDC hdc;
+    public:
+        inline static HDC hdc = NULL;
+    private:
 #else
-       
-        struct wl_display* display = NULL;
-        struct wl_compositor* compositor = NULL;
-        struct wl_surface* wl_surface_ptr = NULL;
-        struct wl_egl_window* egl_window = NULL;
-        EGLDisplay egl_display = EGL_NO_DISPLAY;
-        EGLConfig egl_config;
-        EGLContext egl_context = EGL_NO_CONTEXT;
-        EGLSurface egl_surface = EGL_NO_SURFACE;
+
+        inline static struct wl_display* display = NULL;
+        inline static struct wl_compositor* compositor = NULL;
+        inline static struct wl_surface* wl_surface_ptr = NULL;
+        inline static struct wl_egl_window* egl_window = NULL;
+        inline static EGLDisplay egl_display = EGL_NO_DISPLAY;
+        inline static EGLConfig egl_config;
+        inline static EGLContext egl_context = EGL_NO_CONTEXT;
+        inline static EGLSurface egl_surface = EGL_NO_SURFACE;
+
+        static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
+            if (strcmp(interface, "wl_compositor") == 0) {
+                compositor = (struct wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 1);
+            }
+        }
+        static void registry_handle_global_remove(void* data, struct wl_registry* registry, uint32_t name) {}
+        inline static const struct wl_registry_listener registry_listener = { registry_handle_global, registry_handle_global_remove };
 #endif
 
-        static int init;
+        inline static int init = 0;
 
     public:
 
         static void initWindow() {
 #if _WIN32
 #else
-           
+
             display = wl_display_connect(NULL);
             if (!display) {
                 fprintf(stderr, "Failed to connect to Wayland display, trying EGL_DEFAULT_DISPLAY\n");
@@ -46,7 +59,7 @@ namespace System::Windows {
                 wl_registry_add_listener(registry, &registry_listener, NULL);
                 wl_display_dispatch(display);
                 wl_display_roundtrip(display);
-                if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); return 1; }
+                if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); return; }
                 wl_surface_ptr = wl_compositor_create_surface(compositor);
                 egl_display = eglGetDisplay((EGLNativeDisplayType)display);
             }
@@ -73,6 +86,9 @@ namespace System::Windows {
 
             eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);
 
+            OpenGLVersion Version;
+            OpenGLInit(&Version);
+
 
 #endif
 
@@ -81,23 +97,23 @@ namespace System::Windows {
 
         inline static void SwapBuffers() {
 #if _WIN32
-            ::SwapBuffers(hdc);
+            if (hdc) ::SwapBuffers(hdc);
 #else
 
             eglSwapBuffers(egl_display, egl_surface);
 #endif
-        //
-        
+            //
+
         }
 
 
 
-    public: 
+    public:
 
 
         Application() {
 
-        } 
+        }
 
 
     };
