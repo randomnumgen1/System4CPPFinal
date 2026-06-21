@@ -85,10 +85,10 @@ int main() {
 		//float mouseX = pad.getAxis(ABS_X);
 		//float mouseY = pad.getAxis(ABS_Y);
 		
-		 float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
+		float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
 		float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
 
-
+		
 
 		yaw += 100.0f * mouseX * System::Time::deltaTime;
 		pitch += 100.0f * mouseY * System::Time::deltaTime;
@@ -98,6 +98,19 @@ int main() {
 		if (pitch < -89.0f) pitch = -89.0f;
 		
 		camera->transform()->seteulerAngles(System::Vector3(pitch, yaw, 0.0f));
+		
+		
+		System::Vector3 move = System::Vector3::zero;
+		move.x = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
+		move.y = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
+		
+		
+		
+		
+		if (move != System::Vector3::zero) {
+    camera->transform()->SetPosition(camera->transform()->GetPosition() + move.normalized() * 1.0f * System::Time::deltaTime);
+}
+		
 		
 		
 		
