@@ -548,6 +548,13 @@ namespace System::Devices {
         }
 
 
+        float getAxis2(int playerIndex, ButtonCode code) const {
+            if (playerIndex < 0 || playerIndex >= 4) return 0.0f;
+            const auto& pad = joysticks[playerIndex];
+            auto it = pad.axes.find(static_cast<int>(code));
+            return it != pad.axes.end() ? (float)it->second / 32768.0f : 0.0f;
+        }
+
 
 
 

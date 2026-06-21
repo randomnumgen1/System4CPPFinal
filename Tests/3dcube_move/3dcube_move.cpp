@@ -85,8 +85,9 @@ int main() {
 		//float mouseX = pad.getAxis(ABS_X);
 		//float mouseY = pad.getAxis(ABS_Y);
 		
-			float mouseX = (float)pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X) / 32768.0f;
-		float mouseY = (float)pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y) / 32768.0f;
+		 float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
+		float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
+
 
 
 		yaw += 100.0f * mouseX * System::Time::deltaTime;
