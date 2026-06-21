@@ -80,11 +80,14 @@ namespace System {
         // Called from WndProc  WM_INPUT
 #if _WIN32
         static void UpdateRawMouseDelta(float dx, float dy) {
-#else
-        static void UpdateRawMouseDelta(float dx, float dy) {
-#endif
+
+#if _WIN32
             rawDeltaX += dx;
             rawDeltaY += dy;
+#else 
+            rawDeltaX = dx;
+            rawDeltaY = dy;
+#endif
         }
         // Optional: still allow cursor based position
         static void UpdateMousePosition(Vector2 pos) {
