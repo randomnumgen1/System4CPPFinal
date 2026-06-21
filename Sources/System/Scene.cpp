@@ -22,6 +22,7 @@
 #include <System/Internal/Physics/DummyPhysicsEngine.hpp>
 #endif
 #include <System/Time.hpp>
+#include <thread>
 
 namespace System {
     GameObject* Scene::root = nullptr;
@@ -62,7 +63,7 @@ physicsEngine = new JoltPhysicsEngine();
 
     //this is a individual scene run, called every frame from the main loop.
     void Scene::Run(int windowWidth, int windowHeight) {
-            System::Time::startframe();
+            //System::Time::startframe();
 
             // --- Update phase ---
             for (GameObject* go : GameObject::allGameObjects) {
@@ -83,9 +84,10 @@ physicsEngine = new JoltPhysicsEngine();
                     renderer->Render(cam);
                 }
             }
-
+          // Sleep(1);
+            //std::this_thread::sleep_for(std::chrono::milliseconds(1));
             // --- End frame ---
-            System::Time::endframe();
+         //  System::Time::endframe();
 
 
         
