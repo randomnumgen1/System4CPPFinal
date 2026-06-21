@@ -87,15 +87,30 @@ namespace System::Windows {
             else {
                 fprintf(stdout, "EGL initialized successfully.\n");
             }
-            EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
-            EGLint num_configs;
-            eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs);
 
 #if defined(__arm__) || defined(__aarch64__)
             eglBindAPI(EGL_OPENGL_ES_API);
-            EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+            EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
 #else
             eglBindAPI(EGL_OPENGL_API);
+            EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
+#endif
+
+            EGLint num_configs;
+            if (!eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs) || num_configs == 0) {
+                fprintf(stderr, "Failed to choose EGL config. Error: %x\n", eglGetError());
+#if defined(__arm__) || defined(__aarch64__)
+                // Fallback to ES2
+                attribs[1] = EGL_OPENGL_ES2_BIT;
+                if (!eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs) || num_configs == 0) {
+                    fprintf(stderr, "Failed to choose EGL config (fallback ES2). Error: %x\n", eglGetError());
+                }
+#endif
+            }
+
+#if defined(__arm__) || defined(__aarch64__)
+            EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+#else
             EGLint context_attribs[] = { EGL_CONTEXT_MAJOR_VERSION, 3, EGL_CONTEXT_MINOR_VERSION, 3, EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT, EGL_NONE };
 #endif
             egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
