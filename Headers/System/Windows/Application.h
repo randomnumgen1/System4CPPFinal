@@ -35,7 +35,8 @@ namespace System::Windows {
         inline static EGLSurface egl_surface = EGL_NO_SURFACE;
 
         static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
-            fprintf(stdout, "Wayland Registry: %s (name %u, version %u)\n", interface, name, version);
+            fprintf(stderr, "Wayland Registry: %s (name %u, version %u)\n", interface, name, version);
+            fflush(stderr);
             if (strcmp(interface, "wl_compositor") == 0) {
                 compositor = (struct wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 1);
             }
@@ -58,9 +59,11 @@ namespace System::Windows {
             display = wl_display_connect(NULL);
             if (!display) {
                 fprintf(stderr, "Failed to connect to Wayland display, trying EGL_DEFAULT_DISPLAY\n");
+                fflush(stderr);
             }
             else {
-                fprintf(stdout, "Connected to Wayland display.\n");
+                fprintf(stderr, "Connected to Wayland display.\n");
+                fflush(stderr);
             }
 
             if (display) {
@@ -68,10 +71,10 @@ namespace System::Windows {
                 wl_registry_add_listener(registry, &registry_listener, NULL);
                 wl_display_roundtrip(display);
                 wl_display_roundtrip(display);
-                if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); return; }
-                else { fprintf(stdout, "Found wl_compositor.\n"); }
-                if (wl_shell_ptr) { fprintf(stdout, "Found wl_shell.\n"); }
-                else { fprintf(stderr, "Failed to find wl_shell.\n"); }
+                if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); fflush(stderr); return; }
+                else { fprintf(stderr, "Found wl_compositor.\n"); fflush(stderr); }
+                if (wl_shell_ptr) { fprintf(stderr, "Found wl_shell.\n"); fflush(stderr); }
+                else { fprintf(stderr, "Failed to find wl_shell.\n"); fflush(stderr); }
 
                 wl_surface_ptr = wl_compositor_create_surface(compositor);
                 egl_display = eglGetDisplay((EGLNativeDisplayType)display);
@@ -82,10 +85,12 @@ namespace System::Windows {
 
             if (!eglInitialize(egl_display, NULL, NULL)) {
                 fprintf(stderr, "Failed to initialize EGL\n");
+                fflush(stderr);
                 return;
             }
             else {
-                fprintf(stdout, "EGL initialized successfully.\n");
+                fprintf(stderr, "EGL initialized successfully.\n");
+                fflush(stderr);
             }
 
 #if defined(__arm__) || defined(__aarch64__)
@@ -108,19 +113,22 @@ namespace System::Windows {
             for (int i = 0; attrib_lists[i] != NULL; ++i) {
                 if (eglChooseConfig(egl_display, attrib_lists[i], &egl_config, 1, &num_configs) && num_configs > 0) {
                     config_found = true;
-                    fprintf(stdout, "EGL config chosen (set %d).\n", i);
+                    fprintf(stderr, "EGL config chosen (set %d).\n", i);
+                    fflush(stderr);
                     break;
                 }
             }
 
             if (!config_found) {
                 fprintf(stderr, "Failed to choose any EGL config. Error: %x\n", eglGetError());
+                fflush(stderr);
 #if defined(__arm__) || defined(__aarch64__)
                 // Last ditch effort for ES2
                 EGLint es2_attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE };
                 if (eglChooseConfig(egl_display, es2_attribs, &egl_config, 1, &num_configs) && num_configs > 0) {
                     config_found = true;
-                    fprintf(stdout, "EGL config chosen (Last ditch ES2).\n");
+                    fprintf(stderr, "EGL config chosen (Last ditch ES2).\n");
+                    fflush(stderr);
                 }
 #endif
             }
@@ -137,7 +145,8 @@ namespace System::Windows {
                     wl_shell_surface_ptr = wl_shell_get_shell_surface(wl_shell_ptr, wl_surface_ptr);
                     if (wl_shell_surface_ptr) {
                         wl_shell_surface_set_toplevel(wl_shell_surface_ptr);
-                        fprintf(stdout, "Wayland surface set to toplevel.\n");
+                        fprintf(stderr, "Wayland surface set to toplevel.\n");
+                        fflush(stderr);
                     }
                 }
                 wl_surface_commit(wl_surface_ptr);
@@ -145,9 +154,11 @@ namespace System::Windows {
                 egl_surface = eglCreateWindowSurface(egl_display, egl_config, (EGLNativeWindowType)egl_window, NULL);
                 if (egl_surface == EGL_NO_SURFACE) {
                     fprintf(stderr, "Failed to create EGL window surface. Error: %x\n", eglGetError());
+                    fflush(stderr);
                 }
                 else {
-                    fprintf(stdout, "EGL window surface created.\n");
+                    fprintf(stderr, "EGL window surface created.\n");
+                    fflush(stderr);
                 }
             }
             else {
@@ -170,11 +181,12 @@ namespace System::Windows {
 #if _WIN32
             if (hdc) ::SwapBuffers(hdc);
 #else
-
             eglSwapBuffers(egl_display, egl_surface);
+            if (display) {
+                wl_display_flush(display);
+                wl_display_dispatch_pending(display);
+            }
 #endif
-            //
-
         }
 
 
@@ -188,4 +200,4 @@ namespace System::Windows {
 
 
     };
-} 
+}
