@@ -8,6 +8,94 @@
 #include <string.h>
 #include <stdio.h>
 #include <System/Internal/InternalGLloader.h>
+
+extern "C" {
+    struct xdg_wm_base;
+    struct xdg_surface;
+    struct xdg_toplevel;
+    extern const struct wl_interface xdg_wm_base_interface;
+    extern const struct wl_interface xdg_surface_interface;
+    extern const struct wl_interface xdg_toplevel_interface;
+
+    struct xdg_wm_base_listener {
+        void (*ping)(void* data, struct xdg_wm_base* xdg_wm_base, uint32_t serial);
+    };
+    struct xdg_surface_listener {
+        void (*configure)(void* data, struct xdg_surface* xdg_surface, uint32_t serial);
+    };
+    struct xdg_toplevel_listener {
+        void (*configure)(void* data, struct xdg_toplevel* xdg_toplevel, int32_t width, int32_t height, struct wl_array* states);
+        void (*close)(void* data, struct xdg_toplevel* xdg_toplevel);
+    };
+
+    static inline int xdg_wm_base_add_listener(struct xdg_wm_base* xdg_wm_base, const struct xdg_wm_base_listener* listener, void* data) {
+        return wl_proxy_add_listener((struct wl_proxy*)xdg_wm_base, (void (**)(void)) listener, data);
+    }
+    static inline void xdg_wm_base_pong(struct xdg_wm_base* xdg_wm_base, uint32_t serial) {
+        wl_proxy_marshal((struct wl_proxy*)xdg_wm_base, 3, serial);
+    }
+    static inline struct xdg_surface* xdg_wm_base_get_xdg_surface(struct xdg_wm_base* xdg_wm_base, struct wl_surface* surface) {
+        return (struct xdg_surface*)wl_proxy_marshal_constructor((struct wl_proxy*)xdg_wm_base, 2, &xdg_surface_interface, NULL, surface);
+    }
+    static inline int xdg_surface_add_listener(struct xdg_surface* xdg_surface, const struct xdg_surface_listener* listener, void* data) {
+        return wl_proxy_add_listener((struct wl_proxy*)xdg_surface, (void (**)(void)) listener, data);
+    }
+    static inline struct xdg_toplevel* xdg_surface_get_toplevel(struct xdg_surface* xdg_surface) {
+        return (struct xdg_toplevel*)wl_proxy_marshal_constructor((struct wl_proxy*)xdg_surface, 1, &xdg_toplevel_interface, NULL);
+    }
+    static inline void xdg_surface_ack_configure(struct xdg_surface* xdg_surface, uint32_t serial) {
+        wl_proxy_marshal((struct wl_proxy*)xdg_surface, 4, serial);
+    }
+    static inline int xdg_toplevel_add_listener(struct xdg_toplevel* xdg_toplevel, const struct xdg_toplevel_listener* listener, void* data) {
+        return wl_proxy_add_listener((struct wl_proxy*)xdg_toplevel, (void (**)(void)) listener, data);
+    }
+
+    extern const struct wl_interface wl_surface_interface;
+    inline const struct wl_interface* xdg_shell_types[] = {
+        NULL, NULL, NULL, NULL, NULL, &xdg_surface_interface, &wl_surface_interface, &xdg_toplevel_interface,
+    };
+    inline const struct wl_message xdg_wm_base_requests[] = {
+        { "destroy", "", xdg_shell_types + 0 },
+        { "create_positioner", "n", xdg_shell_types + 0 },
+        { "get_xdg_surface", "no", xdg_shell_types + 5 },
+        { "pong", "u", xdg_shell_types + 0 },
+    };
+    inline const struct wl_message xdg_wm_base_events[] = {
+        { "ping", "u", xdg_shell_types + 0 },
+    };
+    inline const struct wl_interface xdg_wm_base_interface = {
+        "xdg_wm_base", 1, 4, xdg_wm_base_requests, 1, xdg_wm_base_events,
+    };
+    inline const struct wl_message xdg_surface_requests[] = {
+        { "destroy", "", xdg_shell_types + 0 },
+        { "get_toplevel", "n", xdg_shell_types + 7 },
+        { "get_popup", "n?oo", xdg_shell_types + 0 },
+        { "set_window_geometry", "iiii", xdg_shell_types + 0 },
+        { "ack_configure", "u", xdg_shell_types + 0 },
+    };
+    inline const struct wl_message xdg_surface_events[] = {
+        { "configure", "u", xdg_shell_types + 0 },
+    };
+    inline const struct wl_interface xdg_surface_interface = {
+        "xdg_surface", 1, 5, xdg_surface_requests, 1, xdg_surface_events,
+    };
+    inline const struct wl_message xdg_toplevel_requests[] = {
+        { "destroy", "", xdg_shell_types + 0 }, { "set_parent", "?o", xdg_shell_types + 0 },
+        { "set_title", "s", xdg_shell_types + 0 }, { "set_app_id", "s", xdg_shell_types + 0 },
+        { "show_window_menu", "ouii", xdg_shell_types + 0 }, { "move", "ou", xdg_shell_types + 0 },
+        { "resize", "ouu", xdg_shell_types + 0 }, { "set_max_size", "ii", xdg_shell_types + 0 },
+        { "set_min_size", "ii", xdg_shell_types + 0 }, { "set_maximized", "", xdg_shell_types + 0 },
+        { "unset_maximized", "", xdg_shell_types + 0 }, { "set_fullscreen", "?o", xdg_shell_types + 0 },
+        { "unset_fullscreen", "", xdg_shell_types + 0 }, { "set_minimized", "", xdg_shell_types + 0 },
+    };
+    inline const struct wl_message xdg_toplevel_events[] = {
+        { "configure", "iia", xdg_shell_types + 0 },
+        { "close", "", xdg_shell_types + 0 },
+    };
+    inline const struct wl_interface xdg_toplevel_interface = {
+        "xdg_toplevel", 1, 14, xdg_toplevel_requests, 2, xdg_toplevel_events,
+    };
+}
 #endif
 namespace System::Windows {
     /// <summary>
@@ -27,12 +115,27 @@ namespace System::Windows {
         inline static struct wl_compositor* compositor = NULL;
         inline static struct wl_surface* wl_surface_ptr = NULL;
         inline static struct wl_egl_window* egl_window = NULL;
-        inline static struct wl_shell* wl_shell_ptr = NULL;
-        inline static struct wl_shell_surface* wl_shell_surface_ptr = NULL;
+        inline static struct xdg_wm_base* xdg_wm_base_ptr = NULL;
+        inline static struct xdg_surface* xdg_surface_ptr = NULL;
+        inline static struct xdg_toplevel* xdg_toplevel_ptr = NULL;
         inline static EGLDisplay egl_display = EGL_NO_DISPLAY;
         inline static EGLConfig egl_config;
         inline static EGLContext egl_context = EGL_NO_CONTEXT;
         inline static EGLSurface egl_surface = EGL_NO_SURFACE;
+
+        static void xdg_wm_base_ping(void* data, struct xdg_wm_base* xdg_wm_base, uint32_t serial) {
+            xdg_wm_base_pong(xdg_wm_base, serial);
+        }
+        inline static const struct xdg_wm_base_listener wm_base_listener = { xdg_wm_base_ping };
+
+        static void xdg_surface_configure(void* data, struct xdg_surface* xdg_surface, uint32_t serial) {
+            xdg_surface_ack_configure(xdg_surface, serial);
+        }
+        inline static const struct xdg_surface_listener surface_listener = { xdg_surface_configure };
+
+        static void xdg_toplevel_configure(void* data, struct xdg_toplevel* xdg_toplevel, int32_t width, int32_t height, struct wl_array* states) {}
+        static void xdg_toplevel_close(void* data, struct xdg_toplevel* xdg_toplevel) {}
+        inline static const struct xdg_toplevel_listener toplevel_listener = { xdg_toplevel_configure, xdg_toplevel_close };
 
         static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
             fprintf(stderr, "Wayland Registry: %s (name %u, version %u)\n", interface, name, version);
@@ -40,8 +143,8 @@ namespace System::Windows {
             if (strcmp(interface, "wl_compositor") == 0) {
                 compositor = (struct wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 1);
             }
-            else if (strcmp(interface, "wl_shell") == 0) {
-                wl_shell_ptr = (struct wl_shell*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
+            else if (strcmp(interface, "xdg_wm_base") == 0) {
+                xdg_wm_base_ptr = (struct xdg_wm_base*)wl_registry_bind(registry, name, &xdg_wm_base_interface, 1);
             }
         }
         static void registry_handle_global_remove(void* data, struct wl_registry* registry, uint32_t name) {}
@@ -73,8 +176,11 @@ namespace System::Windows {
                 wl_display_roundtrip(display);
                 if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); fflush(stderr); return; }
                 else { fprintf(stderr, "Found wl_compositor.\n"); fflush(stderr); }
-                if (wl_shell_ptr) { fprintf(stderr, "Found wl_shell.\n"); fflush(stderr); }
-                else { fprintf(stderr, "Failed to find wl_shell.\n"); fflush(stderr); }
+                if (xdg_wm_base_ptr) {
+                    fprintf(stderr, "Found xdg_wm_base.\n"); fflush(stderr);
+                    xdg_wm_base_add_listener(xdg_wm_base_ptr, &wm_base_listener, NULL);
+                }
+                else { fprintf(stderr, "Failed to find xdg_wm_base.\n"); fflush(stderr); }
 
                 wl_surface_ptr = wl_compositor_create_surface(compositor);
                 egl_display = eglGetDisplay((EGLNativeDisplayType)display);
@@ -141,13 +247,15 @@ namespace System::Windows {
             egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 
             if (wl_surface_ptr) {
-                if (wl_shell_ptr) {
-                    wl_shell_surface_ptr = wl_shell_get_shell_surface(wl_shell_ptr, wl_surface_ptr);
-                    if (wl_shell_surface_ptr) {
-                        wl_shell_surface_set_toplevel(wl_shell_surface_ptr);
-                        fprintf(stderr, "Wayland surface set to toplevel.\n");
-                        fflush(stderr);
-                    }
+                if (xdg_wm_base_ptr) {
+                    xdg_surface_ptr = xdg_wm_base_get_xdg_surface(xdg_wm_base_ptr, wl_surface_ptr);
+                    xdg_surface_add_listener(xdg_surface_ptr, &surface_listener, NULL);
+                    xdg_toplevel_ptr = xdg_surface_get_toplevel(xdg_surface_ptr);
+                    xdg_toplevel_add_listener(xdg_toplevel_ptr, &toplevel_listener, NULL);
+                    wl_surface_commit(wl_surface_ptr);
+                    wl_display_roundtrip(display);
+                    fprintf(stderr, "Wayland xdg_surface and xdg_toplevel created.\n");
+                    fflush(stderr);
                 }
                 wl_surface_commit(wl_surface_ptr);
                 egl_window = wl_egl_window_create(wl_surface_ptr, 800, 600);
