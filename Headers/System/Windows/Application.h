@@ -90,20 +90,37 @@ namespace System::Windows {
 
 #if defined(__arm__) || defined(__aarch64__)
             eglBindAPI(EGL_OPENGL_ES_API);
-            EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
+            EGLint render_bit = EGL_OPENGL_ES3_BIT;
 #else
             eglBindAPI(EGL_OPENGL_API);
-            EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
+            EGLint render_bit = EGL_OPENGL_BIT;
 #endif
 
             EGLint num_configs;
-            if (!eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs) || num_configs == 0) {
-                fprintf(stderr, "Failed to choose EGL config. Error: %x\n", eglGetError());
+            bool config_found = false;
+
+            // List of attribute sets to try, from most preferred to least
+            EGLint attribs1[] = { EGL_RENDERABLE_TYPE, render_bit, EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
+            EGLint attribs2[] = { EGL_RENDERABLE_TYPE, render_bit, EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 16, EGL_NONE };
+            EGLint attribs3[] = { EGL_RENDERABLE_TYPE, render_bit, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_NONE };
+            EGLint* attrib_lists[] = { attribs1, attribs2, attribs3, NULL };
+
+            for (int i = 0; attrib_lists[i] != NULL; ++i) {
+                if (eglChooseConfig(egl_display, attrib_lists[i], &egl_config, 1, &num_configs) && num_configs > 0) {
+                    config_found = true;
+                    fprintf(stdout, "EGL config chosen (set %d).\n", i);
+                    break;
+                }
+            }
+
+            if (!config_found) {
+                fprintf(stderr, "Failed to choose any EGL config. Error: %x\n", eglGetError());
 #if defined(__arm__) || defined(__aarch64__)
-                // Fallback to ES2
-                attribs[1] = EGL_OPENGL_ES2_BIT;
-                if (!eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs) || num_configs == 0) {
-                    fprintf(stderr, "Failed to choose EGL config (fallback ES2). Error: %x\n", eglGetError());
+                // Last ditch effort for ES2
+                EGLint es2_attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_NONE };
+                if (eglChooseConfig(egl_display, es2_attribs, &egl_config, 1, &num_configs) && num_configs > 0) {
+                    config_found = true;
+                    fprintf(stdout, "EGL config chosen (Last ditch ES2).\n");
                 }
 #endif
             }
