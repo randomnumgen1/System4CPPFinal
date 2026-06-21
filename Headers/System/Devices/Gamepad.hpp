@@ -564,7 +564,7 @@ namespace System::Devices {
             std::string path;
             input_id id;
             std::map<int, int> buttons;
-            std::map<int, int> axes;
+            std::map<int, float> axes;
             std::map<int, bool> buttonsPressedThisFrame;
             std::map<int, bool> buttonsReleasedThisFrame;
 
@@ -750,7 +750,16 @@ namespace System::Devices {
                             joy.buttonsReleasedThisFrame[ev.code] = true;
                         }
                     }else if (ev.type == EV_ABS) {
-                        joy.axes[ev.code] = ev.value;
+                        //joy.axes[ev.code] = ev.value;
+                        //joy.axes[ev.code] = (float)ev.value / 32768.0f;
+
+                        //test [start]
+                       // float normalized_axis = 2.0f * (ev.value - info.minimum) / (info.maximum - info.minimum) - 1.0f;
+                        joy.axes[ev.code] = 2.0f * ((float)ev.value - 0.0f) / (255.0f - 0.0f) - 1.0f;
+                        //test [end]
+
+
+
                     }
                 }
             }
