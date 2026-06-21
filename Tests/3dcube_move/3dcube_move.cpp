@@ -63,7 +63,7 @@ int main() {
     int frameCount = 0;
     while (true) {  
         System::Time::startframe();
-        System::Input::UpdateInputState();
+        //System::Input::UpdateInputState();
         
         // Rotate cube
         cube->transform->Rotate(System::Vector3(0.0f, 45.0f * System::Time::deltaTime, 0.0f), Space::Self);
