@@ -10,7 +10,7 @@ STANDARD = -std=c++17
 VPATH = ../../Sources/System:../../Sources/System/Internal:../../Sources/System/Internal/Audio:../../Sources/System/Internal/Physics:../../Sources/System/Environment:../../Sources/System/IO:../../Sources/System/Tools:../../Sources/System/Windows
 
 # POC sources
-POC_SRCS = 3dcube_render.cpp \
+POC_SRCS = 3dcube_move.cpp \
            Vector3.cpp \
            Quaternion.cpp \
            Matrix4x4.cpp \
