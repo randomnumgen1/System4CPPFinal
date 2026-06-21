@@ -71,7 +71,7 @@ typedef struct __GLsync* GLsync;
 
 
 
- 
+
 
 
 
@@ -1480,7 +1480,7 @@ extern PFNGLMULTIDRAWELEMENTSINDIRECTCOUNTPROC SYSTEM_INTERNAL_glMultiDrawElemen
 typedef HGLRC(APIENTRYP PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC hDC, HGLRC hShareContext, const int* attribList);
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 
-typedef BOOL(APIENTRYP PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc,   const int* piAttribIList,   const FLOAT* pfAttribFList,    UINT nMaxFormats,    int* piFormats,    UINT* nNumFormats);
+typedef BOOL(APIENTRYP PFNWGLCHOOSEPIXELFORMATARBPROC)(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats, UINT* nNumFormats);
 extern PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB;
 
 typedef BOOL(APIENTRY* PFNWGLSWAPINTERVALPROC)(int);
@@ -1510,7 +1510,7 @@ static void UnloadOpenGL() {
 #else
         dlclose(OpenGLHandle);
 #endif
-        OpenGLHandle;
+        OpenGLHandle = nullptr;
     }
 
 }
@@ -1541,16 +1541,42 @@ static OpenGLProc OpenGLGetProc(const char* proc)
 typedef void (*__GLXextproc)(void);
 typedef __GLXextproc(*PFNGLXGETPROCADDRESSPROC) (const GLubyte* procName);
 static PFNGLXGETPROCADDRESSPROC glx_get_proc_address;
+static void* EGLHandle;
+typedef void (*__EGLextproc)(void);
+typedef __EGLextproc(*PFNEGLGETPROCADDRESSPROC) (const char* procName);
+static PFNEGLGETPROCADDRESSPROC egl_get_proc_address;
+
+
 static void LoadOpenGL()
 {
+    if (OpenGLHandle) return;
     OpenGLHandle = dlopen("libGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
-    glx_get_proc_address = (PFNGLXGETPROCADDRESSPROC)dlsym(OpenGLHandle, "glXGetProcAddressARB");
+    if (!OpenGLHandle) {
+        OpenGLHandle = dlopen("libGLESv2.so.2", RTLD_LAZY | RTLD_GLOBAL);
+    }
+
+    if (OpenGLHandle) {
+        glx_get_proc_address = (PFNGLXGETPROCADDRESSPROC)dlsym(OpenGLHandle, "glXGetProcAddressARB");
+    }
+
+    EGLHandle = dlopen("libEGL.so.1", RTLD_LAZY | RTLD_GLOBAL);
+    if (EGLHandle) {
+        egl_get_proc_address = (PFNEGLGETPROCADDRESSPROC)dlsym(EGLHandle, "eglGetProcAddress");
+    }
+
 }
 static OpenGLProc OpenGLGetProc(const char* proc)
 {
-    OpenGLProc Result = (OpenGLProc)glx_get_proc_address((const GLubyte*)proc);
-    if (!Result)
+    OpenGLProc Result = nullptr;
+    if (egl_get_proc_address) {
+        Result = (OpenGLProc)egl_get_proc_address(proc);
+    }
+    if (!Result && glx_get_proc_address) {
+        Result = (OpenGLProc)glx_get_proc_address((const GLubyte*)proc);
+    }
+    if (!Result && OpenGLHandle) {
         Result = (OpenGLProc)dlsym(OpenGLHandle, proc);
+    }
     return Result;
 }
 #endif
@@ -2292,7 +2318,7 @@ void OpenGLInit(OpenGLVersion* Version)
         std::cerr << "Failed to load wglCreateContextAttribsARB!" << std::endl;
     }
 
-    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC) OpenGLGetProc("wglSwapIntervalEXT");
+    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)OpenGLGetProc("wglSwapIntervalEXT");
     if (!wglSwapIntervalEXT) {
         MessageBoxA(NULL, "wglSwapIntervalEXT failed to load!", "Error", MB_OK | MB_ICONERROR);
         std::cerr << "Failed to load wglSwapIntervalEXT!" << std::endl;
@@ -2309,14 +2335,13 @@ void OpenGLInit(OpenGLVersion* Version)
 
 
     SYSTEM_INTERNAL_glViewport(0, 0, 800, 400);
-    SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f); 
+    SYSTEM_INTERNAL_glClearColor(0.0f, 1.0f, 0.0f, 0.5f);
     SYSTEM_INTERNAL_glClear(0x00004000);
 
     Version->Major = 0;
     Version->Minor = 0;
     SYSTEM_INTERNAL_glGetIntegerv(GL_MAJOR_VERSION, &Version->Major);
     SYSTEM_INTERNAL_glGetIntegerv(GL_MINOR_VERSION, &Version->Minor);
-    UnloadOpenGL();
 }
 
 #endif // INCLUDE_OPENGL_GENERATED_H
