@@ -122,6 +122,9 @@ namespace System::Windows {
         inline static struct wl_seat* wl_seat_ptr = NULL;
         inline static struct wl_keyboard* wl_keyboard_ptr = NULL;
         inline static struct wl_pointer* wl_pointer_ptr = NULL;
+        inline static double last_sx = 0;
+        inline static double last_sy = 0;
+        inline static bool first_mouse_event = true;
         inline static EGLDisplay egl_display = EGL_NO_DISPLAY;
         inline static EGLConfig egl_config;
         inline static EGLContext egl_context = EGL_NO_CONTEXT;
@@ -154,10 +157,26 @@ namespace System::Windows {
             keyboard_handle_keymap, keyboard_handle_enter, keyboard_handle_leave, keyboard_handle_key, keyboard_handle_modifiers, keyboard_handle_repeat_info
         };
 
-        static void pointer_handle_enter(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy) {}
-        static void pointer_handle_leave(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface) {}
+        static void pointer_handle_enter(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy) {
+            last_sx = wl_fixed_to_double(sx);
+            last_sy = wl_fixed_to_double(sy);
+            first_mouse_event = false;
+        }
+        static void pointer_handle_leave(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface) {
+            first_mouse_event = true;
+        }
         static void pointer_handle_motion(void* data, struct wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy) {
-            System::Input::UpdateMousePosition(System::Vector2((float)wl_fixed_to_double(sx), (float)wl_fixed_to_double(sy)));
+            double current_sx = wl_fixed_to_double(sx);
+            double current_sy = wl_fixed_to_double(sy);
+
+            if (!first_mouse_event) {
+                System::Input::UpdateRawMouseDelta((float)(current_sx - last_sx), (float)(current_sy - last_sy));
+            }
+
+            System::Input::UpdateMousePosition(System::Vector2((float)current_sx, (float)current_sy));
+            last_sx = current_sx;
+            last_sy = current_sy;
+            first_mouse_event = false;
         }
         static void pointer_handle_button(void* data, struct wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
             // Map Wayland buttons (BTN_LEFT=0x110, BTN_RIGHT=0x111, BTN_MIDDLE=0x112)
