@@ -1,6 +1,8 @@
 #include "Vector2.hpp"
 #include <string>
 #include <unordered_map>
+#include <cstdint>
+#include <stdexcept>
 
 #if _WIN32
 #include <windows.h>   // for VK_* codes
@@ -42,7 +44,7 @@ namespace System {
         static float rawDeltaY;
 
 
-    public: 
+    public:
 
         static Vector2 mousePosition() {
             return mousePos;
@@ -76,7 +78,11 @@ namespace System {
             return !currentKeys[key] && previousKeys[key];
         }
         // Called from WndProc  WM_INPUT
+#if _WIN32
         static void UpdateRawMouseDelta(LONG dx, LONG dy) {
+#else
+        static void UpdateRawMouseDelta(long dx, long dy) {
+#endif
             rawDeltaX += (float)dx;
             rawDeltaY += (float)dy;
         }
@@ -93,7 +99,7 @@ namespace System {
             }
         }
 
-  
+
 
         // Call once per frame to update the key states
         static void UpdateInputState() {
@@ -111,10 +117,11 @@ namespace System {
     private:
         // Map Windows VK codes to your KeyCode enum
         static KeyCode TranslateVK(uint32_t vk) {
+#if _WIN32
             switch (vk) {
             case VK_BACK: return KeyCode::Backspace;
             case VK_RETURN: return KeyCode::Return;
-        
+
 
             case 'A': return KeyCode::A;
             case 'B': return KeyCode::B;
@@ -154,24 +161,20 @@ namespace System {
             case VK_LEFT: return KeyCode::LeftArrow;
             case VK_RIGHT: return KeyCode::RightArrow;
 
-           
+
             case VK_SHIFT: return KeyCode::LeftShift; // refine if needed
             case VK_LBUTTON: return KeyCode::Mouse0;
             case VK_RBUTTON: return KeyCode::Mouse1;
             case VK_MBUTTON: return KeyCode::Mouse2;
             default: return KeyCode::None;
             }
+#else
+            return KeyCode::None; // To be implemented for Wayland
+#endif
         }
-    };
+        };
 
-    // Static member definitions
-    std::unordered_map<KeyCode, bool> Input::currentKeys;
-    std::unordered_map<KeyCode, bool> Input::previousKeys;
-    Vector2 Input::mousePos = Vector2(0, 0);
-    Vector2 Input::lastMousePos = Vector2(0, 0);
-    float Input::rawDeltaX = 0.0f;
-    float Input::rawDeltaY = 0.0f;
 
-}
+    }
 
 #endif
