@@ -129,9 +129,9 @@ int main() {
 		//test
 		
         System::Windows::Application::SwapBuffers();
-        
+        if (frameCount % 100 == 0) {
 		std::cout << "Frame " << frameCount << " completed. deltaTime: " << System::Time::deltaTime << std::endl;
-			  
+		}
         frameCount++;
     }
 
