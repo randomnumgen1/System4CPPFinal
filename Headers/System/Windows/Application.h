@@ -4,7 +4,7 @@
 #include <wayland-client.h>
 #include <wayland-egl.h>
 #include <EGL/egl.h>
-#include <GLES3/gl3.h>
+//#include <GLES3/gl3.h>
 #include <string.h>
 #include <stdio.h>
 #include <System/Internal/InternalGLloader.h>
