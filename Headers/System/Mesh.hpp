@@ -12,6 +12,9 @@
 #include <variant>
 #include <string>
 #include <System/Graphics/GraphicsHelpers.h>
+#include <assert.h>
+
+
 
 #define ENUM_FLAG_OPERATORS(T) \
     inline T operator~ (T a) { return static_cast<T>(~static_cast<std::underlying_type_t<T>>(a)); } \
@@ -354,13 +357,13 @@ namespace System {
             static_assert(sizeof(Vector3) == 12, "Vector3 must be 12 bytes");
 
             if (m_VAO == 0) {
-                throw new std::runtime_error("m_VAO not init");
+                throw std::runtime_error("m_VAO not init");
             }
             if (m_VBO == 0) {
-                throw new std::runtime_error("m_VBO not init");
+                throw std::runtime_error("m_VBO not init");
             }
             if (m_EBO == 0) {
-                throw new std::runtime_error("m_EBO not init");
+                throw std::runtime_error("m_EBO not init");
             }
 
 
