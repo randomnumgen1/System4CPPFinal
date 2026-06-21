@@ -61,8 +61,15 @@ int main() {
     System::Scene* scene = new System::Scene();
     
     int frameCount = 0;
+	
+	System::Devices::GamePad pad;
+	
+	
     while (true) {  
         System::Time::startframe();
+		pad.update();
+		
+		
         //System::Input::UpdateInputState();
         
         // Rotate cube
@@ -71,12 +78,10 @@ int main() {
         scene->Run(800, 600);
 		
 		
-		bool fastMode = System::Input::GetKey(System::KeyCode::LeftShift);
-		float movementSpeed = fastMode ? 10.0f : 1.0f;
+		 
 		
-		
-		float mouseX = System::Input::GetRawMouseDeltaX();
-		float mouseY = System::Input::GetRawMouseDeltaY();
+		float mouseX = pad.getAxis(ABS_X);
+		float mouseY = pad.getAxis(ABS_Y);
 
 		yaw += 100.0f * mouseX * System::Time::deltaTime;
 		pitch += 100.0f * mouseY * System::Time::deltaTime;

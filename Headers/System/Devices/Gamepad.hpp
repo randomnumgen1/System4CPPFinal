@@ -20,7 +20,7 @@
 #include <iostream>
 /*
 int main() {
-    GamePad pad;
+    System::Devices::GamePad pad;
 
     while (true) {
         pad.update();

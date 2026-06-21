@@ -78,7 +78,7 @@ namespace System {
             return !currentKeys[key] && previousKeys[key];
         }
         // Called from WndProc  WM_INPUT
-#if _WIN32
+ 
         static void UpdateRawMouseDelta(float dx, float dy) {
 
 #if _WIN32
