@@ -169,7 +169,50 @@ namespace System {
             default: return KeyCode::None;
             }
 #else
-            return KeyCode::None; // To be implemented for Wayland
+            switch (vk) {
+            case 14: return KeyCode::Backspace;
+            case 28: return KeyCode::Return;
+            case 30: return KeyCode::A;
+            case 48: return KeyCode::B;
+            case 46: return KeyCode::C;
+            case 32: return KeyCode::D;
+            case 18: return KeyCode::E;
+            case 33: return KeyCode::F;
+            case 34: return KeyCode::G;
+            case 35: return KeyCode::H;
+            case 23: return KeyCode::I;
+            case 36: return KeyCode::J;
+            case 37: return KeyCode::K;
+            case 38: return KeyCode::L;
+            case 50: return KeyCode::M;
+            case 49: return KeyCode::N;
+            case 24: return KeyCode::O;
+            case 25: return KeyCode::P;
+            case 16: return KeyCode::Q;
+            case 19: return KeyCode::R;
+            case 31: return KeyCode::S;
+            case 20: return KeyCode::T;
+            case 22: return KeyCode::U;
+            case 47: return KeyCode::V;
+            case 17: return KeyCode::W;
+            case 45: return KeyCode::X;
+            case 21: return KeyCode::Y;
+            case 44: return KeyCode::Z;
+
+            case 103: return KeyCode::UpArrow;
+            case 108: return KeyCode::DownArrow;
+            case 105: return KeyCode::LeftArrow;
+            case 106: return KeyCode::RightArrow;
+
+            case 42: return KeyCode::LeftShift;
+            case 54: return KeyCode::RightShift;
+
+            case 0x110: return KeyCode::Mouse0; // BTN_LEFT
+            case 0x111: return KeyCode::Mouse1; // BTN_RIGHT
+            case 0x112: return KeyCode::Mouse2; // BTN_MIDDLE
+
+            default: return KeyCode::None;
+            }
 #endif
         }
         };

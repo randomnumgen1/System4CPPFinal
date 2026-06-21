@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <System/Internal/InternalGLloader.h>
+#include <System/Input.hpp>
 
 extern "C" {
     struct xdg_wm_base;
@@ -118,6 +119,9 @@ namespace System::Windows {
         inline static struct xdg_wm_base* xdg_wm_base_ptr = NULL;
         inline static struct xdg_surface* xdg_surface_ptr = NULL;
         inline static struct xdg_toplevel* xdg_toplevel_ptr = NULL;
+        inline static struct wl_seat* wl_seat_ptr = NULL;
+        inline static struct wl_keyboard* wl_keyboard_ptr = NULL;
+        inline static struct wl_pointer* wl_pointer_ptr = NULL;
         inline static EGLDisplay egl_display = EGL_NO_DISPLAY;
         inline static EGLConfig egl_config;
         inline static EGLContext egl_context = EGL_NO_CONTEXT;
@@ -137,6 +141,54 @@ namespace System::Windows {
         static void xdg_toplevel_close(void* data, struct xdg_toplevel* xdg_toplevel) {}
         inline static const struct xdg_toplevel_listener toplevel_listener = { xdg_toplevel_configure, xdg_toplevel_close };
 
+        static void keyboard_handle_keymap(void* data, struct wl_keyboard* keyboard, uint32_t format, int fd, uint32_t size) {}
+        static void keyboard_handle_enter(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface, struct wl_array* keys) {}
+        static void keyboard_handle_leave(void* data, struct wl_keyboard* keyboard, uint32_t serial, struct wl_surface* surface) {}
+        static void keyboard_handle_key(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) {
+            System::Input::UpdateKeyState(key, state == WL_KEYBOARD_KEY_STATE_PRESSED);
+        }
+        static void keyboard_handle_modifiers(void* data, struct wl_keyboard* keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) {}
+        static void keyboard_handle_repeat_info(void* data, struct wl_keyboard* keyboard, int32_t rate, int32_t delay) {}
+
+        inline static const struct wl_keyboard_listener keyboard_listener = {
+            keyboard_handle_keymap, keyboard_handle_enter, keyboard_handle_leave, keyboard_handle_key, keyboard_handle_modifiers, keyboard_handle_repeat_info
+        };
+
+        static void pointer_handle_enter(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy) {}
+        static void pointer_handle_leave(void* data, struct wl_pointer* pointer, uint32_t serial, struct wl_surface* surface) {}
+        static void pointer_handle_motion(void* data, struct wl_pointer* pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy) {
+            System::Input::UpdateMousePosition(System::Vector2((float)wl_fixed_to_double(sx), (float)wl_fixed_to_double(sy)));
+        }
+        static void pointer_handle_button(void* data, struct wl_pointer* pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
+            // Map Wayland buttons (BTN_LEFT=0x110, BTN_RIGHT=0x111, BTN_MIDDLE=0x112)
+            // This is a bit hacky as TranslateVK is expecting Windows VK codes. 
+            // For now, let's just pass them through or handle them separately.
+            System::Input::UpdateKeyState(button, state == WL_POINTER_BUTTON_STATE_PRESSED);
+        }
+        static void pointer_handle_axis(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {}
+        static void pointer_handle_frame(void* data, struct wl_pointer* pointer) {}
+        static void pointer_handle_axis_source(void* data, struct wl_pointer* pointer, uint32_t axis_source) {}
+        static void pointer_handle_axis_stop(void* data, struct wl_pointer* pointer, uint32_t time, uint32_t axis) {}
+        static void pointer_handle_axis_discrete(void* data, struct wl_pointer* pointer, uint32_t axis, int32_t discrete) {}
+
+        inline static const struct wl_pointer_listener pointer_listener = {
+            pointer_handle_enter, pointer_handle_leave, pointer_handle_motion, pointer_handle_button, pointer_handle_axis,
+            pointer_handle_frame, pointer_handle_axis_source, pointer_handle_axis_stop, pointer_handle_axis_discrete
+        };
+
+        static void seat_handle_capabilities(void* data, struct wl_seat* seat, uint32_t caps) {
+            if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !wl_keyboard_ptr) {
+                wl_keyboard_ptr = wl_seat_get_keyboard(seat);
+                wl_keyboard_add_listener(wl_keyboard_ptr, &keyboard_listener, NULL);
+            }
+            if ((caps & WL_SEAT_CAPABILITY_POINTER) && !wl_pointer_ptr) {
+                wl_pointer_ptr = wl_seat_get_pointer(seat);
+                wl_pointer_add_listener(wl_pointer_ptr, &pointer_listener, NULL);
+            }
+        }
+        static void seat_handle_name(void* data, struct wl_seat* seat, const char* name) {}
+        inline static const struct wl_seat_listener seat_listener = { seat_handle_capabilities, seat_handle_name };
+
         static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
             fprintf(stderr, "Wayland Registry: %s (name %u, version %u)\n", interface, name, version);
             fflush(stderr);
@@ -145,6 +197,10 @@ namespace System::Windows {
             }
             else if (strcmp(interface, "xdg_wm_base") == 0) {
                 xdg_wm_base_ptr = (struct xdg_wm_base*)wl_registry_bind(registry, name, &xdg_wm_base_interface, 1);
+            }
+            else if (strcmp(interface, "wl_seat") == 0) {
+                wl_seat_ptr = (struct wl_seat*)wl_registry_bind(registry, name, &wl_seat_interface, 1);
+                wl_seat_add_listener(wl_seat_ptr, &seat_listener, NULL);
             }
         }
         static void registry_handle_global_remove(void* data, struct wl_registry* registry, uint32_t name) {}
