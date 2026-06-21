@@ -35,6 +35,7 @@ namespace System::Windows {
         inline static EGLSurface egl_surface = EGL_NO_SURFACE;
 
         static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
+            fprintf(stdout, "Wayland Registry: %s (name %u, version %u)\n", interface, name, version);
             if (strcmp(interface, "wl_compositor") == 0) {
                 compositor = (struct wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 1);
             }
@@ -58,13 +59,20 @@ namespace System::Windows {
             if (!display) {
                 fprintf(stderr, "Failed to connect to Wayland display, trying EGL_DEFAULT_DISPLAY\n");
             }
+            else {
+                fprintf(stdout, "Connected to Wayland display.\n");
+            }
 
             if (display) {
                 struct wl_registry* registry = wl_display_get_registry(display);
                 wl_registry_add_listener(registry, &registry_listener, NULL);
-                wl_display_dispatch(display);
+                wl_display_roundtrip(display);
                 wl_display_roundtrip(display);
                 if (!compositor) { fprintf(stderr, "Failed to find wl_compositor\n"); return; }
+                else { fprintf(stdout, "Found wl_compositor.\n"); }
+                if (wl_shell_ptr) { fprintf(stdout, "Found wl_shell.\n"); }
+                else { fprintf(stderr, "Failed to find wl_shell.\n"); }
+
                 wl_surface_ptr = wl_compositor_create_surface(compositor);
                 egl_display = eglGetDisplay((EGLNativeDisplayType)display);
             }
@@ -72,7 +80,13 @@ namespace System::Windows {
                 egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
             }
 
-            eglInitialize(egl_display, NULL, NULL);
+            if (!eglInitialize(egl_display, NULL, NULL)) {
+                fprintf(stderr, "Failed to initialize EGL\n");
+                return;
+            }
+            else {
+                fprintf(stdout, "EGL initialized successfully.\n");
+            }
             EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
             EGLint num_configs;
             eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs);
@@ -91,11 +105,18 @@ namespace System::Windows {
                     wl_shell_surface_ptr = wl_shell_get_shell_surface(wl_shell_ptr, wl_surface_ptr);
                     if (wl_shell_surface_ptr) {
                         wl_shell_surface_set_toplevel(wl_shell_surface_ptr);
+                        fprintf(stdout, "Wayland surface set to toplevel.\n");
                     }
                 }
                 wl_surface_commit(wl_surface_ptr);
                 egl_window = wl_egl_window_create(wl_surface_ptr, 800, 600);
                 egl_surface = eglCreateWindowSurface(egl_display, egl_config, (EGLNativeWindowType)egl_window, NULL);
+                if (egl_surface == EGL_NO_SURFACE) {
+                    fprintf(stderr, "Failed to create EGL window surface. Error: %x\n", eglGetError());
+                }
+                else {
+                    fprintf(stdout, "EGL window surface created.\n");
+                }
             }
             else {
                 EGLint pbuffer_attribs[] = { EGL_WIDTH, 800, EGL_HEIGHT, 600, EGL_NONE };
