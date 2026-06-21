@@ -27,6 +27,8 @@ namespace System::Windows {
         inline static struct wl_compositor* compositor = NULL;
         inline static struct wl_surface* wl_surface_ptr = NULL;
         inline static struct wl_egl_window* egl_window = NULL;
+        inline static struct wl_shell* wl_shell_ptr = NULL;
+        inline static struct wl_shell_surface* wl_shell_surface_ptr = NULL;
         inline static EGLDisplay egl_display = EGL_NO_DISPLAY;
         inline static EGLConfig egl_config;
         inline static EGLContext egl_context = EGL_NO_CONTEXT;
@@ -35,6 +37,9 @@ namespace System::Windows {
         static void registry_handle_global(void* data, struct wl_registry* registry, uint32_t name, const char* interface, uint32_t version) {
             if (strcmp(interface, "wl_compositor") == 0) {
                 compositor = (struct wl_compositor*)wl_registry_bind(registry, name, &wl_compositor_interface, 1);
+            }
+            else if (strcmp(interface, "wl_shell") == 0) {
+                wl_shell_ptr = (struct wl_shell*)wl_registry_bind(registry, name, &wl_shell_interface, 1);
             }
         }
         static void registry_handle_global_remove(void* data, struct wl_registry* registry, uint32_t name) {}
@@ -82,6 +87,13 @@ namespace System::Windows {
             egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 
             if (wl_surface_ptr) {
+                if (wl_shell_ptr) {
+                    wl_shell_surface_ptr = wl_shell_get_shell_surface(wl_shell_ptr, wl_surface_ptr);
+                    if (wl_shell_surface_ptr) {
+                        wl_shell_surface_set_toplevel(wl_shell_surface_ptr);
+                    }
+                }
+                wl_surface_commit(wl_surface_ptr);
                 egl_window = wl_egl_window_create(wl_surface_ptr, 800, 600);
                 egl_surface = eglCreateWindowSurface(egl_display, egl_config, (EGLNativeWindowType)egl_window, NULL);
             }
