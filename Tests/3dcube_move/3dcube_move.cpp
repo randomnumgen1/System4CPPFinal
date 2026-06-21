@@ -106,27 +106,27 @@ int main() {
 		
 
 		
-		//test
+	//test
 		float horizontal = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
         float vertical = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
 		
-		System::Vector3 forwardDirection = transform.forward * vertical;
-        System::Vector3 rightDirection = transform.right * horizontal;
+		System::Vector3 forwardDirection = camera->transform()->forward() * vertical;
+        System::Vector3 rightDirection = camera->transform()->right() * horizontal;
 
- System::Vector3 moveDirection = forwardDirection + rightDirection;
+		System::Vector3 moveDirection = forwardDirection + rightDirection;
 
 		moveDirection.y = 0.0f;
-        moveDirection.Normalize();
+        
 		
 		
 		//transform.position += moveDirection * 1.0f * Time.deltaTime;
 		
-		if (move != System::Vector3::zero) {
-		camera->transform()->SetPosition(camera->transform()->GetPosition() + moveDirection * 1.0f * System::Time::deltaTime);
+		if (moveDirection != System::Vector3::zero) {
+			moveDirection.Normalize();
+			camera->transform()->SetPosition(camera->transform()->GetPosition() + moveDirection * 5.0f * System::Time::deltaTime);
 		}
 		
 		//test
-		
 		
         System::Windows::Application::SwapBuffers();
         
