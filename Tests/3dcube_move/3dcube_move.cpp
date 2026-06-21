@@ -85,8 +85,8 @@ int main() {
 		//float mouseX = pad.getAxis(ABS_X);
 		//float mouseY = pad.getAxis(ABS_Y);
 		
-		float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
-		float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
+		float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
+		float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
 
 		
 
@@ -107,8 +107,8 @@ int main() {
 
 		
 	//test
-		float horizontal = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
-        float vertical = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
+		float horizontal = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
+        float vertical = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
 		
 		System::Vector3 forwardDirection = camera->transform()->forward() * vertical;
         System::Vector3 rightDirection = camera->transform()->right() * horizontal;
