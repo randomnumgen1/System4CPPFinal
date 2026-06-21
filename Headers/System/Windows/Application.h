@@ -71,8 +71,14 @@ namespace System::Windows {
             EGLint attribs[] = { EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT, EGL_SURFACE_TYPE, EGL_PBUFFER_BIT | EGL_WINDOW_BIT, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_DEPTH_SIZE, 24, EGL_NONE };
             EGLint num_configs;
             eglChooseConfig(egl_display, attribs, &egl_config, 1, &num_configs);
+
+#if defined(__arm__) || defined(__aarch64__)
+            eglBindAPI(EGL_OPENGL_ES_API);
+            EGLint context_attribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+#else
             eglBindAPI(EGL_OPENGL_API);
             EGLint context_attribs[] = { EGL_CONTEXT_MAJOR_VERSION, 3, EGL_CONTEXT_MINOR_VERSION, 3, EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT, EGL_NONE };
+#endif
             egl_context = eglCreateContext(egl_display, egl_config, EGL_NO_CONTEXT, context_attribs);
 
             if (wl_surface_ptr) {
