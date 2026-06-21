@@ -7,7 +7,7 @@ STANDARD = -std=c++17
 
 # VPATH specifies a list of directories to search for prerequisites
 
-VPATH = ../../Sources/System:../../Sources/System/Internal:../../Sources/System/Internal/Audio:../../Sources/System/Internal/Physics:../../Sources/System/Environment:../../Sources/System/IO:../../Sources/System/ToolsVPATH = ../../Sources/System:../../Sources/System/Internal:../../Sources/System/Internal/Audio:../../Sources/System/Internal/Physics:../../Sources/System/Environment:../../Sources/System/IO:../../Sources/System/Tools:../../Sources/System/Windows
+VPATH = ../../Sources/System:../../Sources/System/Internal:../../Sources/System/Internal/Audio:../../Sources/System/Internal/Physics:../../Sources/System/Environment:../../Sources/System/IO:../../Sources/System/Tools:../../Sources/System/Windows
 
 # POC sources
 POC_SRCS = 3dcube_render.cpp \
