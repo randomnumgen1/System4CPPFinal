@@ -534,8 +534,13 @@ namespace System::Devices {
             auto it = pad.buttons.find(static_cast<int>(code));
             return it != pad.buttons.end() && it->second;
         }
-
-        int getAxis(int playerIndex, ButtonCode code) const {
+        /// <summary>
+        ///   
+        /// </summary>
+        /// <param name="playerIndex"></param>
+        /// <param name="code"></param>
+        /// <returns> range -1...1 </returns>
+        float getAxis(int playerIndex, ButtonCode code) const {
             if (playerIndex < 0 || playerIndex >= 4) return 0;
             const auto& pad = joysticks[playerIndex];
             auto it = pad.axes.find(static_cast<int>(code));

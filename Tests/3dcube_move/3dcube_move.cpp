@@ -11,6 +11,8 @@
 #include <System/Shader.hpp>
 #include <System/Material.hpp>
 #include <System/MeshFilter.hpp>
+#include <System/Devices/Gamepad.hpp>
+
 
 
 float horizontalSpeed = 2.0f;
@@ -80,8 +82,12 @@ int main() {
 		
 		 
 		
-		float mouseX = pad.getAxis(ABS_X);
-		float mouseY = pad.getAxis(ABS_Y);
+		//float mouseX = pad.getAxis(ABS_X);
+		//float mouseY = pad.getAxis(ABS_Y);
+		
+			float mouseX = (float)pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X) / 32768.0f;
+		float mouseY = (float)pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y) / 32768.0f;
+
 
 		yaw += 100.0f * mouseX * System::Time::deltaTime;
 		pitch += 100.0f * mouseY * System::Time::deltaTime;
