@@ -82,14 +82,12 @@ int main() {
 		
 		 
 		
-		//float mouseX = pad.getAxis(ABS_X);
-		//float mouseY = pad.getAxis(ABS_Y);
+		// looking around [start]
 		
 		float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
 		float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
 
 		
-
 		yaw += 100.0f * mouseX * System::Time::deltaTime;
 		pitch += 100.0f * mouseY * System::Time::deltaTime;
 
@@ -99,14 +97,13 @@ int main() {
 		
 		camera->transform()->seteulerAngles(System::Vector3(pitch, yaw, 0.0f));
 		
-		
-	 
+		// looking around [end]
 		
 		
 		
 
 		
-	//test
+		// moving around [start]
 		float horizontal = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
         float vertical = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
 		
@@ -126,7 +123,7 @@ int main() {
 			camera->transform()->SetPosition(camera->transform()->GetPosition() + moveDirection * 5.0f * System::Time::deltaTime);
 		}
 		
-		//test
+		// moving around [end]
 		
         System::Windows::Application::SwapBuffers();
         if (frameCount % 100 == 0) {
