@@ -7,8 +7,10 @@ typedef int* IntPtr_t;
 namespace System {
     struct RenderTexture {
         uint32_t renderedTexture;
+        int m_width;
+        int m_height;
         
-        RenderTexture(int width, int height, int depth){
+        RenderTexture(int width, int height, int depth) : m_width(width), m_height(height) {
             renderedTexture = 0;
             System::Graphics::GL::gl_glGenTextures(1, &renderedTexture);
             System::Graphics::GL::gl_glBindTexture(System::Graphics::GLenum1::GL_TEXTURE_2D, renderedTexture);
@@ -23,14 +25,17 @@ namespace System {
             return  renderedTexture ;
         }
 
-        int GetWidth() {
-            return 0;
+        int GetWidth() const {
+            return m_width;
         }
-        int GetHeight() {
-            return 0;
+
+        int GetHeight() const {
+            return m_height;
         }
         ~RenderTexture() {
-         //   System::Graphics::GL::gl_glDeleteTextures(1, &renderedTexture);
+            if (renderedTexture != 0) {
+               // System::Graphics::GL::gl_glDeleteTextures(1, &renderedTexture);
+            } 
         }
 
     
