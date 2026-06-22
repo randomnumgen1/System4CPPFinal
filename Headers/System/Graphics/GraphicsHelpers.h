@@ -411,14 +411,24 @@ namespace System::Graphics{
 		}
 
 
+		//SYSTEM_INTERNAL_glGenTextures
 
 
+ 
 
+ 
+		inline static void gl_glGenTextures(int32_t n, uint32_t* textures) {
+#if defined(SYSTEM_GRAPHICS_OPENGL) 
+			SYSTEM_INTERNAL_glGenTextures(
+				static_cast<GLsizei>(n),
+				reinterpret_cast<GLuint*>(textures)
+			);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 
-
-
-
-
+ 
 
 
 

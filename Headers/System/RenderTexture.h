@@ -10,7 +10,7 @@ namespace System {
         RenderTexture() {
             renderedTexture = 0;
            
-        //    System::Graphics::GL::gl_glGenTextures(1, &renderedTexture);
+        System::Graphics::GL::gl_glGenTextures(1, &renderedTexture);
           //  System::Graphics::GL::gl_glBindTexture(GL_TEXTURE_2D, renderedTexture);
           //  System::Graphics::GL::gl_glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 768, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
           //  System::Graphics::GL::gl_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
