@@ -11,7 +11,9 @@ namespace System {
         /// 8 bits per channel
         /// </summary>
         ARGB32,
-        BGRA32
+        BGRA32,
+       // 8 - bit red channel (good for grayscale)
+        R8
     };
     //RenderTextureType
     struct RenderTexture {
@@ -26,11 +28,30 @@ namespace System {
         RenderTexture(int width, int height, int depth, RenderTextureType RenderType)
             : renderedTexture(0), m_width(width), m_height(height) {
             if (RenderType == RenderTextureType::Default) {
-                throw std::exception("RenderTexture: default not supported yet");
+                throw std::runtime_error("RenderTexture: default not supported yet");
             }
             System::Graphics::GL::gl_glGenTextures(1, &renderedTexture);
             System::Graphics::GL::gl_glBindTexture(System::Graphics::GLenum1::GL_TEXTURE_2D, renderedTexture);
-            // System::Graphics::GL::gl_glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+            if (RenderType == RenderTextureType::R8) {
+                // Red channel only, 8 bits
+
+                /*
+                System::Graphics::GL::gl_glTexImage2D(
+                    GL_TEXTURE_2D,  // Target
+                    0, // Mipmap level 0
+                    GL_R8,  // Internal GPU storage format
+                    width, // Width
+                    height,  // Height
+                    0,  // Border (must be 0)
+                    GL_RED,  // Source data format
+                    GL_UNSIGNED_BYTE, // Source data data type
+                    nullptr// Pointer to raw CPU data
+                ); */
+            }else{
+                throw std::runtime_error("RenderTexture: type not supported yet");
+            }
+            System::Graphics::GL::gl_glBindTexture(System::Graphics::GLenum1::GL_TEXTURE_2D, 0);
+           
         }
         bool isCreated() const {
             return renderedTexture != 0;
