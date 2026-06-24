@@ -5,15 +5,30 @@
 #include <System/Image.hpp>
 #include <System/Graphics/GraphicsHelpers.h>
 namespace System{
-    class Texture2d {
+    class Texture2D {
     private:
         System::Image *image;
-        bool uploaded = false;
-        //textureID
+        bool uploaded;
+        unsigned int textureID;
     public:
-        Texture2d() {
-        //image->m_pixels
+
+        Texture2D(int width, int height) {
+            image = nullptr;
+            uploaded = false;
+            textureID = 0;
+        
         }
+        Texture2D(int width, int height,int mipmaps) {
+            image = nullptr;
+            uploaded = false;
+            textureID = 0;
+
+        }
+         //mipmaps 
+
+      //  Texture2d() {
+        //image->m_pixels
+      //  }
         /// <summary>
         /// updates the texture with the current image pixels.
         /// </summary>
