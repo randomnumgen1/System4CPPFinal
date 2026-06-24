@@ -63,6 +63,21 @@ physicsEngine = new JoltPhysicsEngine();
 
     //this is a individual scene run, called every frame from the main loop.
     void Scene::Run(int windowWidth, int windowHeight) {
+        static bool firstrun = 0;
+        if (!firstrun) {
+            // --- Update phase ---
+            for (GameObject* go : GameObject::allGameObjects) {
+                for (auto const& [type, components] : go->components) {
+                    for (void* comp : components) {
+                        static_cast<Component*>(comp)->Start();
+                    }
+                }
+            }
+            firstrun = true;
+        }
+
+
+
             //System::Time::startframe();
 
             // --- Update phase ---
