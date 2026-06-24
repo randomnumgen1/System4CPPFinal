@@ -1,0 +1,87 @@
+
+GLuint fboA, fboB;
+GLuint texHeightA, texHeightB;
+float m_BrushRadius;
+float m_BrushStrength;
+int m_BrushType;
+
+
+
+void Start(){
+    // --- Create Texture A & FBO A ---
+    glGenTextures(1, &texHeightA);
+    glBindTexture(GL_TEXTURE_2D, texHeightA);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mapWidth, mapHeight, 0, GL_RED, GL_FLOAT, initialData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glGenFramebuffers(1, &fboA);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboA);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texHeightA, 0);
+
+    // --- Create Texture B & FBO B (ADDED THIS) ---
+    glGenTextures(1, &texHeightB);
+    glBindTexture(GL_TEXTURE_2D, texHeightB);
+    // Passing nullptr here is perfectly safe because Texture A will overwrite it on the first frame
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mapWidth, mapHeight, 0, GL_RED, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glGenFramebuffers(1, &fboB);
+    glBindFramebuffer(GL_FRAMEBUFFER, fboB);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texHeightB, 0);
+
+    // Unbind framebuffer to keep global OpenGL state clean
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Update(){
+	
+	Vector2 testhit = Vector2(0.5f, 0.5f);
+	float BrushRadius = 5;
+	float BrushStrength = 5;
+	int currentBrushType = 1;
+	
+    // IMPORTANT: Only run this pass when the user is actively clicking or dragging the brush!
+    if (isMousePressed) {
+        // 1. Set viewport to match your heightmap resolution
+        glViewport(0, 0, mapWidth, mapHeight);
+
+        // 2. Bind the destination Framebuffer (FBO B)
+        glBindFramebuffer(GL_FRAMEBUFFER, fboB); 
+
+        // 3. Setup brush shader and textures
+        glUseProgram(brushShaderID);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texHeightA); // Read from Texture A
+        glUniform1i(glGetUniformLocation(brushShaderID, "u_SrcHeightmap"), 0);
+
+        // 4. Pass brush settings
+        glUniform2f(glGetUniformLocation(brushShaderID, "u_BrushUV"), testhit.x, testhit.y);
+        glUniform1f(glGetUniformLocation(brushShaderID, "u_Radius"), BrushRadius);
+        glUniform1f(glGetUniformLocation(brushShaderID, "u_Strength"), BrushStrength * Time::deltaTime);
+        glUniform1i(glGetUniformLocation(brushShaderID, "u_BrushType"), currentBrushType); 
+
+        // 5. Draw a full-screen 2D quad to trigger the fragment shader for every pixel
+        renderQuad(); 
+
+        // 6. Ping-Pong: Swap FBO and Texture handles for the next frame
+        std::swap(fboA, fboB);
+        std::swap(texHeightA, texHeightB);
+
+        // 7. Unbind the heightmap FBO so normal drawing does not corrupt your data (ADDED THIS)
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    // 8. Restore your regular screen/window viewport to render the 3D terrain scene (ADDED THIS)
+    glViewport(0, 0, windowWidth, windowHeight);
+
+    // Now proceed with your normal scene drawing...
+    // Remember to bind texHeightA when rendering your terrain grid!
+}
+
+
