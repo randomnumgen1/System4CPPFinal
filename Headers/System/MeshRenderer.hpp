@@ -36,6 +36,34 @@ namespace System {
 
             material->shader->setColor("color", material->color);  
             material->shader->setVec3("viewPos", camera->transform()->GetPosition() );
+
+
+
+
+
+            // Apply custom floats
+            for (auto const& [name, value] : material->floats) {
+                material->shader->setFloat(name, value);
+            }
+
+            // Apply custom textures
+            int texUnit = 0;
+            for (auto const& [name, texId] : material->textureIds) {
+                System::Graphics::GL::gl_glActiveTexture(0x84C0 + texUnit); // GL_TEXTURE0 + texUnit
+                System::Graphics::GL::gl_glBindTexture(System::Graphics::GLenum1::GL_TEXTURE_2D, texId);
+                material->shader->setInt(name, texUnit);
+                texUnit++;
+            }
+
+
+
+
+
+
+
+
+
+
             //point light
             if(System::Light::allLights.size() > 0){
                 if (System::Light::allLights[0]->type == System::LightType::Point) {
