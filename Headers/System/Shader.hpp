@@ -40,6 +40,17 @@ namespace System {
         void setColor(const std::string& name, const Color& color) {
             System::Graphics::GL::gl_glUniform4f(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), color.r, color.g, color.b, color.a);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tofind"></param>
+        /// <returns></returns>
+        static Shader* Find(std::string tofind) {
+        
+        }
+
+
+
     private:
         void checkCompileErrors(unsigned int shader, std::string type) {
             int success;
