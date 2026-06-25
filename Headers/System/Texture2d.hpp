@@ -9,9 +9,9 @@ namespace System{
     private:
         System::Image *image;
         bool uploaded;
-        unsigned int textureID;
+       
     public:
-
+ unsigned int textureID;
         Texture2D(int width, int height) {
             image = nullptr;
             uploaded = false;

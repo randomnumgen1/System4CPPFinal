@@ -19,25 +19,25 @@ namespace System {
         Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
 
 
-        void use() {
+        void use() const {
             System::Graphics::GL::gl_glUseProgram(ID);
         }
-        void setBool(const std::string& name, bool value) {
+        void setBool(const std::string& name, bool value) const {
             System::Graphics::GL::gl_glUniform1i(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), (int)value);
         }
-        void setInt(const std::string& name, int value) {
+        void setInt(const std::string& name, int value) const {
             System::Graphics::GL::gl_glUniform1i(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), value);
         }
-        void setFloat(const std::string& name, float value) {
+        void setFloat(const std::string& name, float value) const {
             System::Graphics::GL::gl_glUniform1f(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), value);
         }
-        void setVec3(const std::string& name, const Vector3& value) {
+        void setVec3(const std::string& name, const Vector3& value) const {
             System::Graphics::GL::gl_glUniform3fv(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), 1, &value.x);
         }
-        void setMat4(const std::string& name, const Matrix4x4& mat) {
+        void setMat4(const std::string& name, const Matrix4x4& mat) const {
             System::Graphics::GL::gl_glUniformMatrix4fv(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), 1, false, &mat.m00);
         }
-        void setColor(const std::string& name, const Color& color) {
+        void setColor(const std::string& name, const Color& color) const {
             System::Graphics::GL::gl_glUniform4f(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), color.r, color.g, color.b, color.a);
         }
         /// <summary>

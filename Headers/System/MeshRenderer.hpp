@@ -40,20 +40,8 @@ namespace System {
 
 
 
-
-            // Apply custom floats
-            for (auto const& [name, value] : material->floats) {
-                material->shader->setFloat(name, value);
-            }
-
-            // Apply custom textures
-            int texUnit = 0;
-            for (auto const& [name, texId] : material->textureIds) {
-                System::Graphics::GL::gl_glActiveTexture(0x84C0 + texUnit); // GL_TEXTURE0 + texUnit
-                System::Graphics::GL::gl_glBindTexture(System::Graphics::GLenum1::GL_TEXTURE_2D, texId);
-                material->shader->setInt(name, texUnit);
-                texUnit++;
-            }
+            material->BindProperties();
+           
 
 
 
