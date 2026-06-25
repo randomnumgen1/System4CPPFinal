@@ -13,11 +13,12 @@ namespace System {
     class Shader {
     public:
         unsigned int ID;
-
+        Shader() : ID(0) {}
         Shader(const char* vertexPath, const char* fragmentPath);
         //
         Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
-
+        static Shader* CreateFromSource(const char* vertexSource, const char* fragmentSource);
+        static Shader* CreateFromSource(const char* vertexSource, const char* fragmentSource, const char* geometrySource);
 
         void use() const {
             System::Graphics::GL::gl_glUseProgram(ID);

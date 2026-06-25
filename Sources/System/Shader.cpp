@@ -124,6 +124,63 @@ namespace System {
         System::Graphics::GL::gl_glDeleteShader(geometry);
     }
 
+    Shader* Shader::CreateFromSource(const char* vShaderCode, const char* fShaderCode) {
+        unsigned int vertex, fragment;
+        vertex = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_VERTEX_SHADER);
+        System::Graphics::GL::gl_glShaderSource(vertex, 1, &vShaderCode, NULL);
+        System::Graphics::GL::gl_glCompileShader(vertex);
+
+        Shader* shader = new Shader();
+        shader->checkCompileErrors(vertex, "VERTEX");
+
+        fragment = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_FRAGMENT_SHADER);
+        System::Graphics::GL::gl_glShaderSource(fragment, 1, &fShaderCode, NULL);
+        System::Graphics::GL::gl_glCompileShader(fragment);
+        shader->checkCompileErrors(fragment, "FRAGMENT");
+
+        shader->ID = System::Graphics::GL::gl_glCreateProgram();
+        System::Graphics::GL::gl_glAttachShader(shader->ID, vertex);
+        System::Graphics::GL::gl_glAttachShader(shader->ID, fragment);
+        System::Graphics::GL::gl_glLinkProgram(shader->ID);
+        shader->checkCompileErrors(shader->ID, "PROGRAM");
+
+        System::Graphics::GL::gl_glDeleteShader(vertex);
+        System::Graphics::GL::gl_glDeleteShader(fragment);
+        return shader;
+    }
+
+    Shader* Shader::CreateFromSource(const char* vShaderCode, const char* fShaderCode, const char* gShaderCode) {
+        unsigned int vertex, fragment, geometry;
+        vertex = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_VERTEX_SHADER);
+        System::Graphics::GL::gl_glShaderSource(vertex, 1, &vShaderCode, NULL);
+        System::Graphics::GL::gl_glCompileShader(vertex);
+
+        Shader* shader = new Shader();
+        shader->checkCompileErrors(vertex, "VERTEX");
+
+        fragment = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_FRAGMENT_SHADER);
+        System::Graphics::GL::gl_glShaderSource(fragment, 1, &fShaderCode, NULL);
+        System::Graphics::GL::gl_glCompileShader(fragment);
+        shader->checkCompileErrors(fragment, "FRAGMENT");
+
+        geometry = System::Graphics::GL::gl_glCreateShader(System::Graphics::shaderTypes::GL_GEOMETRY_SHADER);
+        System::Graphics::GL::gl_glShaderSource(geometry, 1, &gShaderCode, NULL);
+        System::Graphics::GL::gl_glCompileShader(geometry);
+        shader->checkCompileErrors(geometry, "GEOMETRY");
+
+        shader->ID = System::Graphics::GL::gl_glCreateProgram();
+        System::Graphics::GL::gl_glAttachShader(shader->ID, vertex);
+        System::Graphics::GL::gl_glAttachShader(shader->ID, fragment);
+        System::Graphics::GL::gl_glAttachShader(shader->ID, geometry);
+        System::Graphics::GL::gl_glLinkProgram(shader->ID);
+        shader->checkCompileErrors(shader->ID, "PROGRAM");
+
+        System::Graphics::GL::gl_glDeleteShader(vertex);
+        System::Graphics::GL::gl_glDeleteShader(fragment);
+        System::Graphics::GL::gl_glDeleteShader(geometry);
+        return shader;
+    }
+
 
 
 

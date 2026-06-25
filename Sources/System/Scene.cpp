@@ -66,9 +66,11 @@ physicsEngine = new JoltPhysicsEngine();
         static bool firstrun = 0;
         if (!firstrun) {
             // --- Update phase ---
+            std::cout << "Scene: calling start on all gameobjects" << std::endl;
             for (GameObject* go : GameObject::allGameObjects) {
+                std::cout << go->name << std::endl;
                 for (auto const& [type, components] : go->components) {
-                    for (void* comp : components) {
+                    for (void* comp : components) { 
                         static_cast<Component*>(comp)->Start();
                     }
                 }
@@ -81,6 +83,7 @@ physicsEngine = new JoltPhysicsEngine();
             //System::Time::startframe();
 
             // --- Update phase ---
+        std::cout << "Scene: calling update on all gameobjects" << std::endl;
             for (GameObject* go : GameObject::allGameObjects) {
                 for (auto const& [type, components] : go->components) {
                     for (void* comp : components) {
