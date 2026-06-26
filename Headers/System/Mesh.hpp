@@ -81,6 +81,8 @@ namespace System {
         }
 
         unsigned int GetVAO() const { return m_VAO; }
+        unsigned int GetVBO() const { return m_VBO; }
+        unsigned int GetEBO() const { return m_EBO; }
 
         void GetNativeIndexBufferPtr();
         void GetNativeVertexBufferPtr();
