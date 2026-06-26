@@ -58,8 +58,7 @@ public:
         new_camera->targetTexture = targetTexture;
         return new_camera;
     }
-
-    void RenderStart(int windowWidth, int windowHeight) ;
+    void Render(int windowWidth, int windowHeight); 
     void TakeScreenshot(const std::string& filename);
     /// <summary>
     /// This matrix is often referred to as "view matrix" in graphics literature.
