@@ -80,7 +80,11 @@ namespace System::Graphics{
 		LINE = 0x1B01,            // GL_LINE
 		FILL = 0x1B02             // GL_FILL
 	};
-
+	enum class FramebufferAttachment : uint32_t {
+		ColorAttachment0 = 0x8CE0,
+		DepthAttachment = 0x8D00,
+		StencilAttachment = 0x8D20
+	};
 	// Enum for depth comparison functions
 	enum class DepthFunc : int32_t {
 		Never = 0x0200, // GL_NEVER
@@ -427,8 +431,8 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
-
  
+
 
 
 
@@ -489,6 +493,20 @@ namespace System::Graphics{
 		inline static void gl_glBindFramebuffer(GL_FrameBufferTarget target, uint32_t framebuffer){
 #if defined(SYSTEM_GRAPHICS_OPENGL)
 			SYSTEM_INTERNAL_glBindFramebuffer(static_cast<GLenum>(target), static_cast<GLuint>(framebuffer));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+		inline static void gl_glGenFramebuffers(int32_t n, uint32_t* ids) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glGenFramebuffers(static_cast<GLsizei>(n), reinterpret_cast<GLuint*>(ids));
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
+		inline static void gl_glFramebufferTexture2D(GL_FrameBufferTarget target, FramebufferAttachment attachment, GLenum1 textarget, uint32_t texture, int32_t level) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glFramebufferTexture2D(static_cast<GLenum>(target), static_cast<GLenum>(attachment), static_cast<GLenum>(textarget), texture, level);
 #else
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
