@@ -96,15 +96,7 @@ physicsEngine = new JoltPhysicsEngine();
             // --- Render phase ---
             System::Camera* cam = Camera::Getmain();
             cam->Render(windowWidth, windowHeight);
-/*
-            cam->RenderStart(windowWidth, windowHeight);
-            
-            for (GameObject* go : GameObject::allGameObjects) {
-                System::MeshRenderer* renderer = go->GetComponent<System::MeshRenderer>();
-                if (renderer) {
-                    renderer->Render(cam);
-                }
-            }*/
+ 
           // Sleep(1);
             //std::this_thread::sleep_for(std::chrono::milliseconds(1));
             // --- End frame ---

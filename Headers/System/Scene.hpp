@@ -18,8 +18,14 @@ namespace System {
         /// Initializes the scene, setting up audio and physics engines.
         /// </summary>
         static void Initialize();
+        /// <summary>
+        /// this is a individual scene run, called every frame from the main loop.
+        /// This doesn't update Time related values, that is done in the main loop.
+        /// </summary>
+        /// <param name="windowWidth"></param>
+        /// <param name="windowHeight"></param>
         static void Run(int windowWidth, int windowHeight);
-
+        
         static void Shutdown();
     };
 }
