@@ -13,6 +13,11 @@ namespace System {
     class Shader {
     public:
         unsigned int ID;
+      //  std::string name;
+
+
+
+
         Shader() : ID(0) {}
         Shader(const char* vertexPath, const char* fragmentPath);
         //
