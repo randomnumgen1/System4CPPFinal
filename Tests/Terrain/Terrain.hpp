@@ -22,7 +22,7 @@ namespace System {
         virtual ~Terrain();
 
         void Initialize(int width, int height, float size);
-		void SaveHeightmapToBitmap(uint32_t tex, int width, int height, const std::string& filename)
+        void SaveHeightmapToBitmap(uint32_t tex, int width, int height, const std::string& filename);
         void ModifyHeight(Vector2 uv, float radius, float strength, BrushType type, float targetHeight = 0.0f);
 
         uint32_t GetHeightmapTexture() const { return m_texHeightA; }
