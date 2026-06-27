@@ -97,9 +97,12 @@ void Camera::Render(int windowWidth, int windowHeight){
         viewMatrix = Matrix4x4::LookAt(transform()->GetPosition(), transform()->GetPosition() + transform()->forward(), transform()->up());
     }else{
         //Render to the target texture
-        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, targetTexture->GetNativeTexturePtr());
-        System::Graphics::GL::gl_glViewport(0, 0, targetTexture->GetWidth(), targetTexture->GetHeight());
+
+        System::Graphics::GL::gl_glBindFramebuffer(System::Graphics::GL_FrameBufferTarget::GL_FRAMEBUFFER, targetTexture->framebuffer);
+        System::Graphics::GL::gl_glViewport(0, 0, (float)targetTexture->GetWidth(), (float)targetTexture->GetHeight());
         System::Graphics::GL::gl_glClear(System::Graphics::GL_BitField::COLOR_BUFFER_BIT | System::Graphics::GL_BitField::DEPTH_BUFFER_BIT);
+
+         
     }
 
 
