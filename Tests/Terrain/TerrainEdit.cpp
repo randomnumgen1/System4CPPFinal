@@ -7,7 +7,7 @@
 #include <System/Scene.hpp>
 #include <System/Camera.hpp>
 #include <System/Light.hpp>
-#include <System/Components/Terrain.hpp>
+#include "Terrain.hpp"
 #include <System/Material.hpp>
 #include <System/MeshRenderer.hpp>
 #include <System/Time.hpp>
@@ -88,10 +88,26 @@ int main() {
     camera->transform()->SetPosition(Vector3(0.0f, 30.0f, -50.0f));
     camera->transform()->SetRotation(Quaternion::Euler(35.0f, 0.0f, 0.0f));
 
+
+
+/*
     GameObject* lightGO = new GameObject("Directional Light");
     Light* light = lightGO->AddComponent<Light>();
     light->type = LightType::Directional;
     light->transform()->SetRotation(Quaternion::Euler(45.0f, 45.0f, 0.0f));
+	*/
+	
+	GameObject* lightGO = new GameObject("Point Light");
+    Light* light = lightGO->AddComponent<Light>();
+    light->type = LightType::Point;
+    light->transform()->SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+    light->intensity = 2.0f;
+	
+	
+	
+	
+	
+	
 
     GameObject* terrainGO = new GameObject("Terrain");
     Terrain* terrain = terrainGO->AddComponent<Terrain>();
