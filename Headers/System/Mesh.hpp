@@ -93,7 +93,7 @@ namespace System {
         void GetUVs(int channel, std::vector<Vector3>& outUVs);
 
         void GetUVs(int channel, std::vector<Vector4>& outUVs) {
-            if ((channel < 0) || (channel > 7)) throw std::out_of_range("Channel must be between 0 and 7");
+            if ((channel < 0) || (channel > 7)) [[unlikely]]  throw std::out_of_range("Channel must be between 0 and 7");
             if (auto* pval = std::get_if<std::vector<Vector4>>(&uvs[channel])) {
                 outUVs = *pval;
             }
