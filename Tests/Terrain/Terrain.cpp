@@ -1,4 +1,4 @@
-#include <System/Components/Terrain.hpp>
+#include "Terrain.hpp"
 #include <System/Graphics/GraphicsHelpers.h>
 #include <System/Time.hpp>
 #include <System/MeshFilter.hpp>
@@ -205,12 +205,14 @@ void Terrain::InitMesh() {
         for (int i = 0; i < resX - 1; ++i) {
             int row1 = j * resX;
             int row2 = (j + 1) * resX;
+            // CW winding
             indices.push_back(row1 + i);
-            indices.push_back(row1 + i + 1);
             indices.push_back(row2 + i);
             indices.push_back(row1 + i + 1);
+
+            indices.push_back(row1 + i + 1);
+            indices.push_back(row2 + i);
             indices.push_back(row2 + i + 1);
-            indices.push_back(row2 + i);
         }
     }
     m_mesh->SetVertices(vertices);
@@ -218,6 +220,11 @@ void Terrain::InitMesh() {
     m_mesh->SetTriangles(indices, 0);
     m_mesh->RecalculateNormals();
     m_mesh->UploadMeshData(false);
+
+    std::cout << "Mesh initialized with " << vertices.size() << " vertices and " << indices.size() << " indices." << std::endl;
+    if (!m_mesh->normals.empty()) {
+        std::cout << "First normal: (" << m_mesh->normals[0].x << ", " << m_mesh->normals[0].y << ", " << m_mesh->normals[0].z << ")" << std::endl;
+    }
 
     m_quadMesh = new Mesh();
     m_quadMesh->SetVertices({Vector3(-0.5f, -0.5f, 0.0f), Vector3(0.5f, -0.5f, 0.0f), Vector3(0.5f, 0.5f, 0.0f), Vector3(-0.5f, 0.5f, 0.0f)});
