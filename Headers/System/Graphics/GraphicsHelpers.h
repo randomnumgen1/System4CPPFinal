@@ -417,7 +417,13 @@ namespace System::Graphics{
 
 		//SYSTEM_INTERNAL_glGenTextures
 
-
+		inline static void gl_glBindAttribLocation(GLuint program, GLuint index, const char* name) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glBindAttribLocation(program, index, name);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
  
 
  

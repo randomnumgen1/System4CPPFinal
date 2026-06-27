@@ -9,21 +9,27 @@
 #include <System/Matrix4x4.hpp>
 #include <System/Color.hpp>
 
-namespace System { 
+namespace System {
     class Shader {
     public:
         unsigned int ID;
-      //  std::string name;
+        std::string name;
 
 
 
 
         Shader() : ID(0) {}
-        Shader(const char* vertexPath, const char* fragmentPath);
+       // Shader(const char* vertexPath, const char* fragmentPath);
         //
-        Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
+       // Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath);
         static Shader* CreateFromSource(const char* vertexSource, const char* fragmentSource);
         static Shader* CreateFromSource(const char* vertexSource, const char* fragmentSource, const char* geometrySource);
+
+        static Shader* CreateFromStrings(std::string shadername, std::string vertexSource, std::string fragmentSource);
+        static Shader* CreateFromStrings(std::string shadername, std::string vertexSource, std::string fragmentSource, std::string geometrySource);
+
+        static Shader* CreateFromFiles(std::string shadername, std::string vertexPath, std::string fragmentPath);
+        static Shader* CreateFromFiles(std::string shadername, std::string vertexPath, std::string fragmentPath, std::string geometryPath);
 
         void use() const {
             System::Graphics::GL::gl_glUseProgram(ID);
@@ -58,6 +64,10 @@ namespace System {
 
 
     private:
+        static std::string ReadFile(const char* path);
+        static unsigned int CompileShader(const char* source, System::Graphics::shaderTypes type);
+        static unsigned int LinkProgram(unsigned int vertex, unsigned int fragment, unsigned int geometry = 0);
+
         void checkCompileErrors(unsigned int shader, std::string type) {
             int success;
             char infoLog[1024];
