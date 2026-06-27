@@ -94,9 +94,14 @@ physicsEngine = new JoltPhysicsEngine();
             }
 
             // --- Render phase ---
-            System::Camera* cam = Camera::Getmain();
-            cam->Render(windowWidth, windowHeight);
+          //  System::Camera* cam = Camera::Getmain();
+          //  cam->Render(windowWidth, windowHeight);
  
+                for (System::Camera* cam : System::Camera::getallCameras()) {
+                    cam->Render(windowWidth, windowHeight);
+                }
+
+
           // Sleep(1);
             //std::this_thread::sleep_for(std::chrono::milliseconds(1));
             // --- End frame ---
