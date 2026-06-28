@@ -12,6 +12,8 @@
 #include <System/MeshRenderer.hpp>
 #include <System/Time.hpp>
 #include <System/Input.hpp>
+#include <System/Devices/Gamepad.hpp>
+
 
 using namespace System;
 
@@ -75,6 +77,9 @@ int main() {
     OpenGLInit(&version);
 
     Scene::Initialize();
+	System::Devices::GamePad pad;
+	
+	
 
     Shader* terrainShader = Shader::CreateFromSource(terrainVertexShader, terrainFragmentShader);
     if (!terrainShader || terrainShader->ID == 0) {
@@ -121,6 +126,8 @@ int main() {
     while (frameCount < 500) {
         Time::startframe();
         Input::UpdateInputState();
+		pad.update();
+
 
         float t = float(frameCount) * 0.05f;
         Vector2 hitUV(0.5f + 0.3f * std::sin(t), 0.5f + 0.3f * std::cos(t));
@@ -139,6 +146,28 @@ int main() {
         if (frameCount % 100 == 0) {
             std::cout << "Frame " << frameCount << std::endl;
         }
+		// moving around [start]
+		float horizontal = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_X);
+        float vertical = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_LEFT_Y);
+		
+		System::Vector3 forwardDirection = camera->transform()->forward() * vertical;
+        System::Vector3 rightDirection = camera->transform()->right() * horizontal;
+
+		System::Vector3 moveDirection = forwardDirection + rightDirection;
+
+		moveDirection.y = 0.0f;
+        
+		
+		
+		//transform.position += moveDirection * 1.0f * Time.deltaTime;
+		
+		if (moveDirection != System::Vector3::zero) {
+			moveDirection.Normalize();
+			camera->transform()->SetPosition(camera->transform()->GetPosition() + moveDirection * 5.0f * System::Time::deltaTime);
+		}
+		
+		// moving around [end]
+		 System::Windows::Application::SwapBuffers();
     }
 
     std::cout << "Saving final heightmap and screenshot..." << std::endl;
