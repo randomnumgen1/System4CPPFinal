@@ -100,7 +100,7 @@ int main() {
 	GameObject* lightGO = new GameObject("Point Light");
     Light* light = lightGO->AddComponent<Light>();
     light->type = LightType::Point;
-    light->transform()->SetPosition(Vector3(0.0f, 100.0f, 0.0f));
+    light->transform()->SetPosition(Vector3(0.0f, 50.0f, -80.0f));//0.0f, 50.0f, -80.0f));
     light->intensity = 2.0f;
 	
 	

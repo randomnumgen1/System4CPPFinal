@@ -148,8 +148,8 @@ namespace System {
 
                 // Calculate the normal of the triangle for CW winding
                 // Swap the order of the cross product compared to CCW
-                Vector3 normal = Vector3::Cross(v2 - v0, v1 - v0);
-
+              //  Vector3 normal = Vector3::Cross(v2 - v0, v1 - v0);
+                Vector3 normal = Vector3::Cross(v1 - v0, v2 - v0);
                 // Weight by triangle area (optional, improves smooth shading)
                 float area = normal.magnitude();
 
