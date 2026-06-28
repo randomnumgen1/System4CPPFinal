@@ -31,7 +31,8 @@ enum bitFlags : uint32_t {
     /// <summary>
     /// has the mesh been modified from the last time it was uploaded to the GPU?
     /// </summary>
-    Modified = 1 << 1
+    Modified = 1 << 1,
+    ModifiedUV = 1 << 3
 
 };
 ENUM_FLAG_OPERATORS(bitFlags);
