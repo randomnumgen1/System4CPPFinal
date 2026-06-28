@@ -160,8 +160,7 @@ int main() {
             std::cout << "Camera Pos: (" << camPos.x << ", " << camPos.y << ", " << camPos.z << ") Rot: (" << camRot.x << ", " << camRot.y << ", " << camRot.z << ")" << std::endl;
             std::cout << "Cube Pos: (" << cubePos.x << ", " << cubePos.y << ", " << cubePos.z << ") Rot: (" << cubeRot.x << ", " << cubeRot.y << ", " << cubeRot.z << ")" << std::endl;
         }
-			
-        }
+			 
         frameCount++;
 
         if (frameCount == 500) {
