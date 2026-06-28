@@ -34,6 +34,21 @@ namespace System {
         void use() const {
             System::Graphics::GL::gl_glUseProgram(ID);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tofind"></param>
+        /// <returns></returns>
+      //  static Shader* Find(std::string tofind) {
+       //     return nullptr;
+       // }
+
+
+
+    private:
+        //only MeshRenderer can set uniforms, to avoid accidental misuse
+        friend class MeshRenderer;
         void setBool(const std::string& name, bool value) const {
             System::Graphics::GL::gl_glUniform1i(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), (int)value);
         }
@@ -52,18 +67,8 @@ namespace System {
         void setColor(const std::string& name, const Color& color) const {
             System::Graphics::GL::gl_glUniform4f(System::Graphics::GL::gl_glGetUniformLocation(ID, name.c_str()), color.r, color.g, color.b, color.a);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tofind"></param>
-        /// <returns></returns>
-      //  static Shader* Find(std::string tofind) {
-       //     return nullptr;
-       // }
 
 
-
-    private:
         static std::string ReadFile(const char* path);
         static unsigned int CompileShader(const char* source, System::Graphics::shaderTypes type);
         static unsigned int LinkProgram(unsigned int vertex, unsigned int fragment, unsigned int geometry = 0);
