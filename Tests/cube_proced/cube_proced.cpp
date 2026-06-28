@@ -123,7 +123,7 @@ int main() {
 		
         // looking around [start]
         float mouseX = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_X);
-        float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y);
+        float mouseY = pad.getAxis(0, System::Devices::GamePad::ButtonCode::AXIS_CONTROLLER_RIGHT_Y) * -1.0f;
 
         yaw += 100.0f * mouseX * System::Time::deltaTime;
         pitch += 100.0f * mouseY * System::Time::deltaTime;
