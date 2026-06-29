@@ -37,10 +37,11 @@ enum bitFlags : uint32_t {
 };
 ENUM_FLAG_OPERATORS(bitFlags);
 namespace System {
-
+    class MeshRenderer;
     class Mesh {
     private:
-
+        //friend MeshRenderer;
+        friend class System::MeshRenderer;
         bitFlags m_bitFlags;
         unsigned int m_VAO, m_VBO, m_EBO;
     public:
