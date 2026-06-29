@@ -7,8 +7,28 @@
 namespace System {
     class MeshFilter : public Component {
     public:
-        Mesh* mesh;
+        Mesh* mesh = nullptr;
 
+
+        Mesh* m_SharedMesh = nullptr;  
+        Mesh* m_InstanceMesh = nullptr; 
+
+
+        void SetMesh(Mesh* newMesh) {
+            mesh = newMesh;
+        }
+        void GetMesh(Mesh* newMesh) {
+            mesh = newMesh;
+        }
+
+        void Setsharedmesh(Mesh* newMesh) {
+            mesh = newMesh;
+        }
+        void Getsharedmesh(Mesh* newMesh) {
+            mesh = newMesh;
+        }
+
+        //void
         Component* Clone() const override {
             MeshFilter* newMeshFilter = new MeshFilter();
             newMeshFilter->mesh = mesh;
