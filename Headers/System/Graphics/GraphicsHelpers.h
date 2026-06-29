@@ -317,6 +317,13 @@ namespace System::Graphics{
 			throw std::runtime_error("GraphicsHelpers gl function not implemented");
 #endif
 		}
+		inline static void gl_glDrawElementsBaseVertex(DrawMode mode, int count, IndexType type, const void* indices, int basevertex) {
+#if defined(SYSTEM_GRAPHICS_OPENGL)
+			SYSTEM_INTERNAL_glDrawElementsBaseVertex(static_cast<GLenum>(mode), static_cast<GLsizei>(count), static_cast<GLenum>(type), indices, basevertex);
+#else
+			throw std::runtime_error("GraphicsHelpers gl function not implemented");
+#endif
+		}
 		/// <summary>
 		/// updates a subset of a buffer objects data store
 		/// </summary>
