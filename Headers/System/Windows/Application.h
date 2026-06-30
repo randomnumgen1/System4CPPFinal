@@ -229,7 +229,9 @@ namespace System::Windows {
         inline static int init = 0;
 
     public:
-
+        /// <summary>
+        /// also initalizes opengl
+        /// </summary>
         static void initWindow() {
 #if _WIN32
 #else
@@ -371,7 +373,34 @@ namespace System::Windows {
             }
 #endif
         }
+        inline static void Quit() {
+        
+#if _WIN32
+            //if (hdc) ReleaseDC(hwnd, hdc);
+            //if (hwnd) DestroyWindow(hwnd);
+#else
+            // Unwind Wayland / EGL objects safely in reverse lifecycle order
+            /*
+            if (egl_display != EGL_NO_DISPLAY) {
+                eglMakeCurrent(egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+                if (egl_surface != EGL_NO_SURFACE) eglDestroySurface(egl_display, egl_surface);
+                if (egl_context != EGL_NO_CONTEXT) eglDestroyContext(egl_display, egl_context);
+                eglTerminate(egl_display);
+            }
+            if (egl_window) wl_egl_window_destroy(egl_window);
+            if (xdg_toplevel_ptr) xdg_toplevel_destroy(xdg_toplevel_ptr);
+            if (xdg_surface_ptr) xdg_surface_destroy(xdg_surface_ptr);
+            if (xdg_wm_base_ptr) xdg_wm_base_destroy(xdg_wm_base_ptr);
+            if (wl_surface_ptr) wl_surface_destroy(wl_surface_ptr);
+            if (wl_keyboard_ptr) wl_keyboard_destroy(wl_keyboard_ptr);
+            if (wl_pointer_ptr) wl_pointer_destroy(wl_pointer_ptr);
+            if (wl_seat_ptr) wl_seat_destroy(wl_seat_ptr);
+            if (compositor) wl_compositor_destroy(compositor);
+            if (display) wl_display_disconnect(display);
+*/
+#endif
 
+        }
 
 
     public:
